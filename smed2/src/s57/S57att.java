@@ -1,9 +1,9 @@
-package S57;
+package s57;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 
-import S57.S57obj.*;
+import s57.S57obj.*;
 
 public class S57att {
 	

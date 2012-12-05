@@ -1,4 +1,4 @@
-package S57;
+package s57;
 
 import java.util.EnumMap;
 
