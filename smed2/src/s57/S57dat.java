@@ -1,4 +1,4 @@
-package S57;
+package s57;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -19,9 +19,9 @@ import panels.PanelMain;
 
 import smed2.Smed2Action;
 
-import S57.S57obj;
-import S57.S57att;
-import S57.S57val;
+import s57.S57obj;
+import s57.S57att;
+import s57.S57val;
 
 public class S57dat extends JPanel {
 	

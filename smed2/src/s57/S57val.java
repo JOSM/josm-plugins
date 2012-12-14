@@ -19,8 +19,8 @@ public class S57val {
 	
 	static class S57key {
 		Conv conv;
-		EnumMap map;
-		S57key(Conv c, EnumMap m) {
+		EnumMap<?, ?> map;
+		S57key(Conv c, EnumMap<?, ?> m) {
 			conv = c; map = m;
 		}
 	}
@@ -1095,7 +1095,7 @@ public class S57val {
 	}
 
 	public static Integer encodeValue(String val, Att att) {        // Convert OSeaM attribute value string to S57 attribute value
-		EnumMap map = keys.get(att).map;
+		EnumMap<?, ?> map = keys.get(att).map;
 		for (Object item : map.keySet()) {
 			if (((S57enum)map.get(item)).val.equals(val))
 				return ((S57enum)map.get(item)).atvl;
@@ -1110,10 +1110,10 @@ public class S57val {
 		case S:
 			return (String)attval.val;
 		case E:
-			return (String)((EnumMap)attval.val).get(attval.att);
+			return (String)((EnumMap<?, ?>)attval.val).get(attval.att);
 		case L:
 			String str = "";
-			for (Object item : (ArrayList)attval.val) {
+			for (Object item : (ArrayList<?>)attval.val) {
 				if (!str.isEmpty()) str += ";";
 				str += keys.get(attval.att).map.get(item);
 			}
@@ -1126,13 +1126,13 @@ public class S57val {
 		return "";
 	}
 	
-	public static Enum enumValue(String val, Att att) {           // Convert OSeaM attribute value string to OSeaM enumeration
-		EnumMap map = keys.get(att).map;
-		Enum unkn = null;
+	public static Enum<?> enumValue(String val, Att att) {           // Convert OSeaM attribute value string to OSeaM enumeration
+		EnumMap<?, ?> map = keys.get(att).map;
+		Enum<?> unkn = null;
 		for (Object item : map.keySet()) {
-			if (unkn == null) unkn = (Enum)item;
+			if (unkn == null) unkn = (Enum<?>)item;
 			if (((S57enum)map.get(item)).val.equals(val))
-				return (Enum)item;
+				return (Enum<?>)item;
 		}
 		return unkn;
 	}
