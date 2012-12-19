@@ -18,10 +18,10 @@ public class S57att {
 	  SIGGEN, SIGGRP, SIGPER, SIGSEQ, SOUACC, SDISMX, SDISMN, SORDAT, SORIND, STATUS, SURATH, SUREND, SURSTA, SURTYP, $SCALE, $SCODE, TECSOU, $TXSTR, TXTDSC, TS_TSP,
 	  TS_TSV, T_ACWL, T_HWLW, T_MTOD, T_THDF, T_TINT, T_TSVL, T_VAHC, TIMEND, TIMSTA, $TINTS, TOPSHP, TRAFIC, VALACM, VALDCO, VALLMA, VALMAG, VALMXR, VALNMR, VALSOU,
 	  VERACC, VERCLR, VERCCL, VERCOP, VERCSA, VERDAT, VERLEN, WATLEV, CAT_TS, PUNITS, NINFOM, NOBJNM, NPLDST, $NTXST, NTXTDS, HORDAT, POSACC, QUAPOS, CLSDNG, DIRIMP,
-	  DISBK1, DISBK2, DISIPU, DISIPD, ELEVA1, ELEVA2, FNCTNM, WTWDIS, BUNVES, COMCTN, HORCLL, HORCLW, TRSHGD, UNLOCD, HIGWAT, HIGNAM, LOWWAT, LOWNAM, MEAWAT, MEANAM,
-	  OTHWAT, OTHNAM, REFLEV, SDRLEV, VCRLEV, SCHREF, USESHP, CURVHW, CURVLW, CURVMW, CURVOW, APTREF, SHPTYP, UPDMSG, ADDMRK, CATBNK, CATNMK, CATBRT, CATBUN, CATCCL,
-	  CATCOM, CATHBR, CATRFD, CATTML, CATGAG, CATVTR, CATTAB, CATEXS, CATWWM, LG_SPD, LG_SPR, LG_BME, LG_LGS, LG_DRT, LG_WDP, LG_WDU, LG_REL, LG_FNC, LG_DES, LG_PBR,
-	  LC_CSI, LC_CSE, LC_ASI, LC_ASE, LC_CCI, LC_CCE, LC_BM1, LC_BM2, LC_LG1, LC_LG2, LC_DR1, LC_DR2, LC_SP1, LC_SP2, LC_WD1, LC_WD2, LITRAD
+	  DISBK1, DISBK2, DISIPU, DISIPD, ELEVA1, ELEVA2, FNCTNM, WTWDIS, BUNVES, BNKWTW, COMCTN, HORCLL, HORCLW, TRSHGD, UNLOCD, HIGWAT, HIGNAM, LOWWAT, LOWNAM, MEAWAT,
+	  MEANAM, OTHWAT, OTHNAM, REFLEV, SDRLEV, VCRLEV, SCHREF, USESHP, CURVHW, CURVLW, CURVMW, CURVOW, APTREF, SHPTYP, UPDMSG, ADDMRK, CATBNK, CATNMK, CATBRT, CATBUN,
+	  CATCCL, CATCOM, CATHBR, CATRFD, CATTML, CATGAG, CATVTR, CATTAB, CATEXS, CATWWM, LG_SPD, LG_SPR, LG_BME, LG_LGS, LG_DRT, LG_WDP, LG_WDU, LG_REL, LG_FNC, LG_DES,
+	  LG_PBR, LC_CSI, LC_CSE, LC_ASI, LC_ASE, LC_CCI, LC_CCE, LC_BM1, LC_BM2, LC_LG1, LC_LG2, LC_DR1, LC_DR2, LC_SP1, LC_SP2, LC_WD1, LC_WD2, LITRAD
 	}
 
 	private static final EnumMap<Att, Integer> AttS57 = new EnumMap<Att, Integer>(Att.class);
@@ -78,7 +78,7 @@ public class S57att {
 		AttIENC.put(Att.LG_PBR, 18011); AttIENC.put(Att.LC_CSI, 18012); AttIENC.put(Att.LC_CSE, 18013); AttIENC.put(Att.LC_ASI, 18014); AttIENC.put(Att.LC_ASE, 18015);
 		AttIENC.put(Att.LC_CCI, 18016); AttIENC.put(Att.LC_CCE, 18017); AttIENC.put(Att.LC_BM1, 18018); AttIENC.put(Att.LC_BM2, 18019); AttIENC.put(Att.LC_LG1, 18020);
 		AttIENC.put(Att.LC_LG2, 18021); AttIENC.put(Att.LC_DR1, 18022); AttIENC.put(Att.LC_DR2, 18023); AttIENC.put(Att.LC_SP1, 18024); AttIENC.put(Att.LC_SP2, 18025);
-		AttIENC.put(Att.LC_WD1, 18026); AttIENC.put(Att.LC_WD2, 18027); AttIENC.put(Att.SHPTYP, 33066); AttIENC.put(Att.UPDMSG, 40000);
+		AttIENC.put(Att.LC_WD1, 18026); AttIENC.put(Att.LC_WD2, 18027); AttIENC.put(Att.SHPTYP, 33066); AttIENC.put(Att.UPDMSG, 40000); AttIENC.put(Att.BNKWTW, 17999);
 	}
 	
 	private static final EnumMap<Att, String> AttSTR = new EnumMap<Att, String>(Att.class);
@@ -127,19 +127,19 @@ public class S57att {
 		AttSTR.put(Att.VERDAT, "vertical_datum"); AttSTR.put(Att.VERLEN, "vertical_length"); AttSTR.put(Att.WATLEV, "water_level"); AttSTR.put(Att.CAT_TS, "category");
 		AttSTR.put(Att.PUNITS, "units"); AttSTR.put(Att.NINFOM, "national_information"); AttSTR.put(Att.NOBJNM, "national_name"); AttSTR.put(Att.NPLDST, "national_pilot_district");
 		AttSTR.put(Att.NTXTDS, "national_description"); AttSTR.put(Att.HORDAT, "horizontal_datum"); AttSTR.put(Att.POSACC, "positional_accuracy");
-		AttSTR.put(Att.QUAPOS, "position_quality"); AttSTR.put(Att.ADDMRK, "addition"); AttSTR.put(Att.CATBNK, "category"); AttSTR.put(Att.CATNMK, "category");
-		AttSTR.put(Att.CLSDNG, "class"); AttSTR.put(Att.DIRIMP, "impact"); AttSTR.put(Att.DISBK1, "distance_start"); AttSTR.put(Att.DISBK2, "distance_end");
-		AttSTR.put(Att.DISIPU, "distance_up"); AttSTR.put(Att.DISIPD, "distance_down"); AttSTR.put(Att.ELEVA1, "minimum_elevation"); AttSTR.put(Att.ELEVA2, "maximum_elevation");
-		AttSTR.put(Att.FNCTNM, "function"); AttSTR.put(Att.WTWDIS, "distance"); AttSTR.put(Att.BUNVES, "availibility"); AttSTR.put(Att.CATBRT, "category");
-		AttSTR.put(Att.CATBUN, "category"); AttSTR.put(Att.CATCCL, "category"); AttSTR.put(Att.CATHBR, "category"); AttSTR.put(Att.CATRFD, "category");
-		AttSTR.put(Att.CATTML, "category"); AttSTR.put(Att.COMCTN, "communication"); AttSTR.put(Att.HORCLL, "clearance_length"); AttSTR.put(Att.HORCLW, "clearance_width");
-		AttSTR.put(Att.TRSHGD, "goods"); AttSTR.put(Att.UNLOCD, "locode"); AttSTR.put(Att.CATGAG, "category"); AttSTR.put(Att.HIGWAT, "high_value");
-		AttSTR.put(Att.HIGNAM, "high_name"); AttSTR.put(Att.LOWWAT, "low_value"); AttSTR.put(Att.LOWNAM, "low_name"); AttSTR.put(Att.MEAWAT, "mean_value");
-		AttSTR.put(Att.MEANAM, "mean_name"); AttSTR.put(Att.OTHWAT, "local_value"); AttSTR.put(Att.OTHNAM, "local_name"); AttSTR.put(Att.REFLEV, "gravity_reference");
-		AttSTR.put(Att.SDRLEV, "sounding_name"); AttSTR.put(Att.VCRLEV, "vertical_name"); AttSTR.put(Att.CATVTR, "category"); AttSTR.put(Att.CATTAB, "operation");
-		AttSTR.put(Att.SCHREF, "schedule"); AttSTR.put(Att.USESHP, "use"); AttSTR.put(Att.CURVHW, "high_velocity"); AttSTR.put(Att.CURVLW, "low_velocity");
-		AttSTR.put(Att.CURVMW, "mean_velocity"); AttSTR.put(Att.CURVOW, "other_velocity"); AttSTR.put(Att.APTREF, "passing_time"); AttSTR.put(Att.CATEXS, "category");
-		AttSTR.put(Att.CATWWM, "category"); AttSTR.put(Att.SHPTYP, "ship"); AttSTR.put(Att.UPDMSG, "message"); AttSTR.put(Att.LITRAD, "radius");
+		AttSTR.put(Att.QUAPOS, "position_quality"); AttSTR.put(Att.ADDMRK, "addition"); AttSTR.put(Att.BNKWTW, "bank");AttSTR.put(Att.CATBNK, "category");
+		AttSTR.put(Att.CATNMK, "category"); AttSTR.put(Att.CLSDNG, "class"); AttSTR.put(Att.DIRIMP, "impact"); AttSTR.put(Att.DISBK1, "distance_start");
+		AttSTR.put(Att.DISBK2, "distance_end");AttSTR.put(Att.DISIPU, "distance_up"); AttSTR.put(Att.DISIPD, "distance_down"); AttSTR.put(Att.ELEVA1, "minimum_elevation");
+		AttSTR.put(Att.ELEVA2, "maximum_elevation"); AttSTR.put(Att.FNCTNM, "function"); AttSTR.put(Att.WTWDIS, "distance"); AttSTR.put(Att.BUNVES, "availibility");
+		AttSTR.put(Att.CATBRT, "category"); AttSTR.put(Att.CATBUN, "category"); AttSTR.put(Att.CATCCL, "category"); AttSTR.put(Att.CATHBR, "category");
+		AttSTR.put(Att.CATRFD, "category"); AttSTR.put(Att.CATTML, "category"); AttSTR.put(Att.COMCTN, "communication"); AttSTR.put(Att.HORCLL, "clearance_length");
+		AttSTR.put(Att.HORCLW, "clearance_width"); AttSTR.put(Att.TRSHGD, "goods"); AttSTR.put(Att.UNLOCD, "locode"); AttSTR.put(Att.CATGAG, "category");
+		AttSTR.put(Att.HIGWAT, "high_value"); AttSTR.put(Att.HIGNAM, "high_name"); AttSTR.put(Att.LOWWAT, "low_value"); AttSTR.put(Att.LOWNAM, "low_name");
+		AttSTR.put(Att.MEAWAT, "mean_value"); AttSTR.put(Att.MEANAM, "mean_name"); AttSTR.put(Att.OTHWAT, "local_value"); AttSTR.put(Att.OTHNAM, "local_name");
+		AttSTR.put(Att.REFLEV, "gravity_reference"); AttSTR.put(Att.SDRLEV, "sounding_name"); AttSTR.put(Att.VCRLEV, "vertical_name"); AttSTR.put(Att.CATVTR, "category");
+		AttSTR.put(Att.CATTAB, "operation"); AttSTR.put(Att.SCHREF, "schedule"); AttSTR.put(Att.USESHP, "use"); AttSTR.put(Att.CURVHW, "high_velocity");
+		AttSTR.put(Att.CURVLW, "low_velocity"); AttSTR.put(Att.CURVMW, "mean_velocity"); AttSTR.put(Att.CURVOW, "other_velocity"); AttSTR.put(Att.APTREF, "passing_time");
+		AttSTR.put(Att.CATEXS, "category"); AttSTR.put(Att.CATWWM, "category"); AttSTR.put(Att.SHPTYP, "ship"); AttSTR.put(Att.UPDMSG, "message"); AttSTR.put(Att.LITRAD, "radius");
 	}
 	
 	static class ObjAtt {
@@ -192,7 +192,7 @@ public class S57att {
 	  objatt.add(new ObjAtt(Obj.TSSLPT, Att.CATTSS)); objatt.add(new ObjAtt(Obj.TSSRON, Att.CATTSS)); objatt.add(new ObjAtt(Obj.TWRTPT, Att.CATTRK));
 	  objatt.add(new ObjAtt(Obj.VEGATN, Att.CATVEG)); objatt.add(new ObjAtt(Obj.VEHTRF, Att.CATVTR)); objatt.add(new ObjAtt(Obj.WATTUR, Att.CATWAT));
 	  objatt.add(new ObjAtt(Obj.WEDKLP, Att.CATWED)); objatt.add(new ObjAtt(Obj.WRECKS, Att.CATWRK)); objatt.add(new ObjAtt(Obj.TS_FEB, Att.CAT_TS));
-	  objatt.add(new ObjAtt(Obj.UNKOBJ, Att.RADIUS)); objatt.add(new ObjAtt(Obj.LIGHTS, Att.LITRAD));
+	  objatt.add(new ObjAtt(Obj.UNKOBJ, Att.RADIUS)); objatt.add(new ObjAtt(Obj.LIGHTS, Att.LITRAD)); objatt.add(new ObjAtt(Obj.NOTMRK, Att.BNKWTW));
 	}
 	
 	private enum Ver {NON, NOT, YES}
