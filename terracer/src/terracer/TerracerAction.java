@@ -463,7 +463,7 @@ public final class TerracerAction extends JosmAction {
             @Override
             public boolean executeCommand() {
                 boolean result = super.executeCommand();
-                if (result) {
+                if (result && tagsInConflict != null) {
                     try {
                         // Build conflicts commands only after all primitives have been added to dataset to fix #8942
                         List<Command> conflictCommands = CombinePrimitiveResolverDialog.launchIfNecessary(
@@ -703,7 +703,7 @@ public final class TerracerAction extends JosmAction {
             @Override
             public int compareTo(SortWithIndex o) {
                 return Double.compare(x, o.x);
-            };
+            }
         }
 
         final int length = a.length;

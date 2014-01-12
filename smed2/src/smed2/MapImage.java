@@ -27,9 +27,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
-import seamap.MapContext;
-import seamap.Renderer;
-import seamap.SeaMap.*;
+import render.MapContext;
+import render.Renderer;
+import s57.S57map.*;
 
 public class MapImage extends ImageryLayer implements ZoomChangeListener, MapContext {
 
@@ -91,7 +91,7 @@ public class MapImage extends ImageryLayer implements ZoomChangeListener, MapCon
 			right = bounds.getMax().lon();
 			width = Main.map.mapView.getBounds().getWidth();
 			height = Main.map.mapView.getBounds().getHeight();
-			zoom = ((int) Math.min(18, Math.max(9, Math.round(Math.floor(Math.log(4096 / bounds.asRect().width) / Math.log(2))))));
+			zoom = ((int) Math.min(18, Math.max(9, Math.round(Math.floor(Math.log(1024 / bounds.asRect().height) / Math.log(2))))));
 		}
 	}
 

@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.ohe.ClockSystem;
 import org.openstreetmap.josm.plugins.ohe.OhePlugin;
 import org.openstreetmap.josm.plugins.ohe.OpeningTimeUtils;
@@ -66,8 +67,7 @@ public class OheDialogPanel extends JPanel {
             if (valuesMap.size() == 1)
                 value = valuesMap.keySet().iterator().next();
             else if (valuesMap.size() > 1) {
-                // TODO let the user choose which value he wants to edit (e.g.
-                // with a combobox)
+                // TODO let the user choose which value he wants to edit (e.g. with a combobox)
                 int mostOccurences = 0;
                 for (String v : valuesMap.keySet())
                     if (valuesMap.get(v) > mostOccurences) {
@@ -99,7 +99,7 @@ public class OheDialogPanel extends JPanel {
         toolsPanel.add(twentyfourSevenButton, GBC.std());
         toolsPanel.add(Box.createGlue(), GBC.std().fill(GBC.HORIZONTAL));
         toolsPanel.add(actualPostionLabel, GBC.eop());
-
+        
         editorPanel = new OheEditor(this);
 
         // adding all Components in a Gridbaglayout
@@ -120,7 +120,10 @@ public class OheDialogPanel extends JPanel {
         return new String[] { oldkey, keyField.getText(), valueField.getText() };
     }
 
-    // returns the compiled Time from the valueField
+    /**
+     * Returns the compiled Time from the valueField.
+     * @return the compiled Time from the valueField
+     */
     public ArrayList<int[]> getTime() throws Exception {
         String value = valueField.getText();
         ArrayList<int[]> time = null;
@@ -129,8 +132,10 @@ public class OheDialogPanel extends JPanel {
             try {
                 time = OpeningTimeUtils.convert(compiler.startCompile());
             } catch (Throwable t) {
+                Main.warn(t);
+                
                 int tColumns[] = null;
-                String info = null;
+                String info = t.getMessage();
 
                 if (t instanceof ParseException) {
                     ParseException parserExc = (ParseException) t;
@@ -138,41 +143,55 @@ public class OheDialogPanel extends JPanel {
                 } else if (t instanceof SyntaxException) {
                     SyntaxException syntaxError = (SyntaxException) t;
                     tColumns = new int[] { syntaxError.getStartColumn(), syntaxError.getEndColumn() };
-                    info = syntaxError.getInfo();
                 } else if (t instanceof TokenMgrError) {
-                    TokenMgrError tokenMgrError = (TokenMgrError) t;
-                    tColumns = new int[] { tokenMgrError.errorColumn - 1, tokenMgrError.errorColumn + 1 };
-                } else {
-                    t.printStackTrace();
+                    try {
+                        // With JavaCC 6 Message is: "Lexical error at line 1, column 20.  Encountered: "P" (80), after : ""
+                        int idx = info.indexOf("column ");
+                        if (idx > -1) {
+                            int col = Integer.parseInt(info.substring(idx+"column ".length(), info.indexOf('.', idx)));
+                            tColumns = new int[] { col - 1, col + 1 };
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        Main.warn(e);
+                    } catch (NumberFormatException e) {
+                        Main.warn(e);
+                    }
                 }
 
                 // shows a Information Dialog, where the Error occurred
-                if (tColumns != null) {
-                    int first = Math.max(0, tColumns[0]);
-                    int last = Math.min(value.length(), tColumns[1]);
-                    String begin = value.substring(0, first);
-                    String middle = value.substring(first, last);
-                    String end = value.substring(last);
-                    valueField.setCaretPosition(first);
-                    // TODO focus on the valueField
-                    String message = "<html>" + tr("There is something wrong in the value near:") + "<br>" + begin
-                            + "<span style='background-color:red;'>" + middle + "</span>" + end;
-                    if (info != null)
-                        message += "<br>" + tr("Info: {0}", tr(info));
-                    message += "<br>" + tr("Correct the value manually and than press Enter.");
-                    message += "</html>";
-                    JOptionPane.showMessageDialog(this, message, tr("Error in timeformat"),
-                            JOptionPane.INFORMATION_MESSAGE);
+                if (tColumns != null || info != null) {
+                    String message = "<html>";
+                    if (tColumns != null) {
+                        int first = Math.max(0, tColumns[0]);
+                        int last = Math.min(value.length(), tColumns[1]);
+                        String begin = value.substring(0, first);
+                        String middle = value.substring(first, last);
+                        String end = value.substring(last);
+                        valueField.setCaretPosition(first);
+                        // TODO focus on the valueField
+                        message += tr("There is something wrong in the value near:") + "<br>" + begin
+                                + "<span style='background-color:red;'>" + middle + "</span>" + end;
+                    }
+                    if (info != null) {
+                        if (tColumns != null) {
+                            message += "<br>";
+                        }
+                        message += tr("Info: {0}", tr(info));
+                    }
+                    message += "<br>" + tr("Correct the value manually and than press Enter.") + "</html>";
+                    JOptionPane.showMessageDialog(this, message, tr("Error in timeformat"), JOptionPane.INFORMATION_MESSAGE);
                 }
 
-                throw new Exception("Error in the TimeValue");
+                throw new Exception("Error in the TimeValue", t);
             }
         }
 
         return time;
     }
 
-    // updates the valueField with the given timeRects
+    /**
+     * Updates the valueField with the given timeRects.
+     */
     public void updateValueField(ArrayList<TimeRect> timeRects) {
         if (valueField != null && timeRects != null)
             valueField.setText(OpeningTimeUtils.makeStringFromRects(timeRects));
@@ -183,7 +202,8 @@ public class OheDialogPanel extends JPanel {
     }
 
     /**
-     * @return the hourMode
+     * Returns the clock system (12 or 24 hours).
+     * @return the clock system
      */
     public ClockSystem getHourMode() {
         return clockSystem;
