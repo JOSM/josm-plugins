@@ -138,10 +138,10 @@
         </rule>
     </src>
 
-    <src name="Education Nationale" country-code="FR">
+    <src name="Éducation Nationale" country-code="FR">
         <rule>
             <condition k="ref:(FR:)?UAI" />
-            <link name="View UAI sheet of school/college" href="http://www.education.gouv.fr/bce/avancee/fiche.php?NUMERO_UAI=%v%&amp;type_info=UAI_all" />
+            <link name="View UAI sheet of school/college" href="http://www.education.gouv.fr/pid24302/annuaire-resultat-recherche.html?lycee_name=%v%" />
         </rule>
     </src>
 
@@ -150,6 +150,38 @@
         <rule>
             <condition k="ref:(FR:)?FINESS" v="[A-Z0-9-]{9}" />
             <link name="View %name% sheet of hospital/home" href="http://finess.sante.gouv.fr/finess/jsp/actionDetailEtablissement.do?noFiness=%v%" />
+        </rule>
+    </src>
+
+    <!-- NAF -->
+    <src name="NAF" country-code="FR">
+        <rule>
+            <condition k="ref:(FR:)?NAF" v="[A-Z0-9-]{5}" />
+            <link name="View explanation of %name% code" href="http://www.rouen.cci.fr/outils/ape/Naf_liste.asp?param=2&amp;code=%v%" />
+        </rule>
+    </src>
+
+    <!-- SIREN -->
+    <src name="SIREN" country-code="FR">
+        <rule>
+            <condition k="ref:FR:SIRET" v="(\p{Digit}{9})[0-9-]{5}" id="ref" />
+            <link name="View score3.fr page of %name% code" href="http://www.score3.fr/STANDARD-%ref.v.1%.shtml" />
+        </rule>
+    </src>
+
+    <!-- SIRET -->
+    <src name="Avis SIRET" country-code="FR">
+        <rule>
+            <condition k="ref:FR:SIRET" v="(\p{Digit}{9})([0-9-]{5})" id="ref" />
+            <link name="Get INSEE avis (pdf) for this establishment" href="http://avis-situation-sirene.insee.fr/avisitu/AvisPdf.do?nic=%ref.v.2%&amp;siren=%ref.v.1%" />
+        </rule>
+    </src>
+
+    <!-- LaPoste -->
+    <src name="LaPoste" country-code="FR">
+        <rule>
+            <condition k="ref:FR:LaPoste" v="[0-9-]{5}[A-Z]" />
+            <link name="View %name% page of this post office" href="http://www.laposte.fr/particulier/outils/trouver-un-bureau-de-poste/bureau-detail/%v%/%v%" />
         </rule>
     </src>
     
