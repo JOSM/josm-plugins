@@ -66,6 +66,11 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
      * The measurement label for area of the currently selected loop
      */
     protected JLabel selectAreaLabel;
+    
+    /**
+     * The measurement label for radius if the currently selected loop is a circle.
+     */
+    protected JLabel selectRadiusLabel;
 
     /**
      * The measurement label for the segment angle, actually updated, if 2 nodes are selected
@@ -116,6 +121,11 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
 
         selectAreaLabel = new JLabel(getAreaText(0));
         valuePanel.add(selectAreaLabel);
+        
+        valuePanel.add(new JLabel(tr("Selection Radius")));
+
+        selectRadiusLabel = new JLabel(getRadiusText(0));
+        valuePanel.add(selectRadiusLabel);
 
         JLabel angle = new JLabel(tr("Angle"));
         angle.setToolTipText(tr("Angle between two selected Nodes"));
@@ -141,6 +151,10 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
     protected String getAreaText(double v) {
         return NavigatableComponent.getSystemOfMeasurement().getAreaText(v, new DecimalFormat("#0.000"), 1e-3);
     }
+    
+    protected String getRadiusText(double v) {
+        return NavigatableComponent.getSystemOfMeasurement().getDistText(v, new DecimalFormat("#0.000"), 1e-3);
+    }
 
     protected String getAngleText(double v) {
         return new DecimalFormat("#0.0").format(v) + " \u00b0";
@@ -155,19 +169,29 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        double length = 0.0;
-        double segAngle = 0.0;
-        double area = 0.0;
+        double length  	= 0d;
+        double segAngle = 0d;
+        double area 	= 0d;
+        double radius 	= 0d;
+        
         Node lastNode = null;
+        
         // Don't mix up way and nodes computation (fix #6872). Priority given to ways
         ways = new SubclassFilteredCollection<OsmPrimitive, Way>(newSelection, OsmPrimitive.wayPredicate);
+        
         if (ways.isEmpty()) {
+        	
             nodes = new SubclassFilteredCollection<OsmPrimitive, Node>(newSelection, OsmPrimitive.nodePredicate);
+            
             for (Node n : nodes) {
+            	
                 if (n.getCoor() != null) {
+                	
                     if (lastNode == null) {
+                    	
                         lastNode = n;
                     } else {
+                    	
                         length += lastNode.getCoor().greatCircleDistance(n.getCoor());
                         segAngle = MeasurementLayer.angleBetween(lastNode.getCoor(), n.getCoor());
                         lastNode = n;
@@ -175,31 +199,63 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
                 }
             }
         } else {
+        	
             nodes = null;
+            
             for (Way w : ways) {
+            	
                 Node lastN = null;
-                double wayArea = 0.0;
+                
+                double wayArea    = 0d;
+                Double firstSegLength  = null;
+                
+                boolean isCircle = true;
+                
                 for (Node n: w.getNodes()) {
+                	
                     if (lastN != null && lastN.getCoor() != null && n.getCoor() != null) {
-                        length += lastN.getCoor().greatCircleDistance(n.getCoor());
+                    	
+                    	double segLength = lastN.getCoor().greatCircleDistance(n.getCoor());
+                    	
+                    	if (firstSegLength == null)  firstSegLength = segLength;
+                    	
+                    	if (isCircle && Math.abs(firstSegLength - segLength) > 0.000001) {
+                    		
+                    		isCircle = false;
+                    	}
+                    	
+                        length += segLength;
+                        
                         //http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
                         wayArea += (MeasurementLayer.calcX(n.getCoor()) * MeasurementLayer.calcY(lastN.getCoor()))
                                  - (MeasurementLayer.calcY(n.getCoor()) * MeasurementLayer.calcX(lastN.getCoor()));
+                        
                         segAngle = MeasurementLayer.angleBetween(lastN.getCoor(), n.getCoor());
                     }
+                    
                     lastN = n;
                 }
+                
                 if (lastN != null && lastN == w.getNodes().iterator().next())
                     wayArea = Math.abs(wayArea / 2);
+                
+                	// é uma area 
                 else
                     wayArea = 0;
+                
                 area += wayArea;
+            }
+            
+            if (ways.size() == 1 && area > 0d) {
+            	
+            	radius = length / (2 * Math.PI);
             }
         }
         
         final String lengthLabel = getDistText(length);
         final String angleLabel = getAngleText(segAngle);
         final String areaLabel = getAreaText(area);
+        final String radiusLabel = getRadiusText(radius);
         
         GuiHelper.runInEDT(new Runnable() {
             @Override
@@ -207,6 +263,7 @@ public class MeasurementDialog extends ToggleDialog implements SelectionChangedL
                 selectLengthLabel.setText(lengthLabel);
                 segAngleLabel.setText(angleLabel);
                 selectAreaLabel.setText(areaLabel);
+                selectRadiusLabel.setText(radiusLabel);
             }
         });
         
