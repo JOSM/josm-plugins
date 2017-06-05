@@ -126,7 +126,14 @@
             <link name="View %name% sheet of church" href="http://egliseinfo.catholique.fr/#!lieu:%v%" />
         </rule>
     </src>
-
+   
+   <src name="MemorialGenWeb" country-code="FR">
+        <rule>
+            <condition k="ref:(FR:)?MemorialGenWeb" v="[0-9]*" />
+            <link name="View MemorialGenWeb sheet of memorial" href="http://www.memorial-genweb.org/~memorial2/html/fr/resultcommune.php?idsource=%v%" />
+        </rule>
+    </src>
+   
     <src name="MHS" country-code="FR">
         <rule>
             <condition k="ref:(FR:)?mhs" v="\p{Upper}{2}\p{Digit}{8}" />
