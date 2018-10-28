@@ -31,13 +31,13 @@ import org.openstreetmap.josm.tools.PlatformManager;
 /**
  * OpenJFX plugin brings OpenJFX (JavaFX) to other plugins.
  */
-public class JavafxPlugin extends Plugin {
+public class JavaFxPlugin extends Plugin {
 
     /**
      * Constructs a new {@code OpenJfxPlugin}.
      * @param info plugin info
      */
-    public JavafxPlugin(PluginInformation info) {
+    public JavaFxPlugin(PluginInformation info) {
         super(info);
         AudioPlayer.setSoundPlayerClass(JavaFxMediaPlayer.class);
         String ext = null;
@@ -53,7 +53,7 @@ public class JavafxPlugin extends Plugin {
     }
 
     private static void extractNativeLibs(String ext) {
-        CodeSource src = JavafxPlugin.class.getProtectionDomain().getCodeSource();
+        CodeSource src = JavaFxPlugin.class.getProtectionDomain().getCodeSource();
         if (src != null) {
             try (ZipFile zf = new ZipFile(Paths.get(src.getLocation().toURI()).toFile(), StandardCharsets.UTF_8)) {
                 Path dir = getNativeDir();
@@ -76,12 +76,12 @@ public class JavafxPlugin extends Plugin {
                 Logging.error(e);
             }
         } else {
-            Logging.error("Unable to locate openjfx jar file");
+            Logging.error("Unable to locate javafx jar file");
         }
     }
 
     private static Path getNativeDir() throws IOException {
-        return Files.createDirectories(new File(Preferences.main().getPluginsDirectory(), "openjfx").toPath());
+        return Files.createDirectories(new File(Preferences.main().getPluginsDirectory(), "javafx").toPath());
     }
 
     private static class LibVisitor extends SimpleFileVisitor<Path> {
