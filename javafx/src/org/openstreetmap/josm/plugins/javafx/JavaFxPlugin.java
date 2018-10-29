@@ -26,28 +26,20 @@ import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.javafx.io.audio.JavaFxMediaPlayer;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * OpenJFX plugin brings OpenJFX (JavaFX) to other plugins.
  */
-public class JavaFxPlugin extends Plugin {
+abstract class JavaFxPlugin extends Plugin {
 
     /**
      * Constructs a new {@code OpenJfxPlugin}.
      * @param info plugin info
+     * @param ext native libraries extension
      */
-    public JavaFxPlugin(PluginInformation info) {
+    protected JavaFxPlugin(PluginInformation info, String ext) {
         super(info);
         AudioPlayer.setSoundPlayerClass(JavaFxMediaPlayer.class);
-        String ext = null;
-        if (PlatformManager.isPlatformWindows()) {
-            ext = ".dll";
-        } else if (PlatformManager.isPlatformUnixoid()) {
-            ext = ".so";
-        } else if (PlatformManager.isPlatformOsx()) {
-            ext = ".dylib";
-        }
         extractNativeLibs(ext);
         loadNativeLibs(ext);
     }
