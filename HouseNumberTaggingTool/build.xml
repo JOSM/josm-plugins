@@ -3,13 +3,13 @@
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="Initial version."/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="12859"/>
+    <property name="plugin.main.version" value="12860"/>
     <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
     -->
     <property name="plugin.author" value="Oliver Raupach"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.housenumbertool.HouseNumberTaggingToolPlugin"/>
-    <property name="plugin.description" value="Simple tool to tag house numbers."/>
+    <property name="plugin.description" value="Simple tool to tag house numbers and addresses."/>
     <property name="plugin.icon" value="images/home-icon32.png"/>
     <property name="plugin.link" value="https://josm.openstreetmap.de/wiki/Help/Plugin/HouseNumberTaggingTool"/>
 
