@@ -13,7 +13,7 @@
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.globalsat.GlobalsatPlugin"/>
     <property name="plugin.description" value="Download GPS points from Globalsat dg100 data logger directly in JOSM."/>
     <property name="plugin.icon" value="images/globalsatImport.png"/>
-    <property name="plugin.link" value="http://www.raphael-mack.de/josm-globalsat-gpx-import-plugin/"/>
+    <property name="plugin.link" value="https://www.raphael-mack.de/josm-globalsat-gpx-import-plugin/"/>
     <!--<property name="plugin.early" value="..."/>-->
     <!--<property name="plugin.requires" value="..."/>-->
     <!--<property name="plugin.stage" value="..."/>-->
