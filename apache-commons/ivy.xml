@@ -21,6 +21,8 @@
         <dependency org="org.apache.commons" name="commons-imaging" rev="1.0-alpha1" conf="api->default"/>
         <!-- Apache Commons IO does not use the standard org name -->
         <dependency org="commons-io" name="commons-io" rev="2.6" conf="api->default"/>
+        <!-- Apache Commons Logging also does not use the standard org name -->
+        <dependency org="commons-logging" name="commons-logging" rev="1.2" conf="api->default"/>
         <dependency org="org.apache.commons" name="commons-lang3" rev="3.9" conf="api->default"/>
         <dependency org="org.apache.commons" name="commons-math3" rev="3.6.1" conf="api->default"/>
         <dependency org="org.apache.commons" name="commons-text" rev="1.8" conf="api->default"/>
