@@ -8,7 +8,7 @@
     <property name="plugin.author" value="Nakor"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.undelete.Undelete"/>
     <property name="plugin.description" value="Allows undeleting object from OSM database"/>
-    <property name="plugin.icon" value="images/undelete.png"/>
+    <property name="plugin.icon" value="images/undelete.svg"/>
     <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/JOSM/Plugins/Undelete"/>
 
     <!-- ** include targets that all plugins have in common ** -->
