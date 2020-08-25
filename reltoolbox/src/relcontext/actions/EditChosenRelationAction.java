@@ -24,7 +24,7 @@ public class EditChosenRelationAction extends AbstractAction implements ChosenRe
     private ChosenRelation rel;
 
     public EditChosenRelationAction(ChosenRelation rel) {
-        putValue(SMALL_ICON, ImageProvider.get("dialogs/mappaint", "pencil"));
+        putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit", ImageProvider.ImageSizes.SMALLICON));
         putValue(SHORT_DESCRIPTION, tr("Open relation editor for the chosen relation"));
         this.rel = rel;
         rel.addChosenRelationListener(this);
