@@ -6,6 +6,7 @@
     <property name="plugin.author" value="simon04"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.flatlaf.FlatLafPlugin"/>
     <property name="plugin.description" value="FlatLaf - Flat Look and Feel"/>
+    <property name="plugin.icon" value="images/FlatLaf.svg"/>
     <property name="plugin.early" value="true" />
     <property name="plugin.stage" value="-4" /><!-- very early plugin -->
     <property name="plugin.link" value="https://www.formdev.com/flatlaf/"/>
