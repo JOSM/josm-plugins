@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="flatlaf" default="dist" basedir=".">
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="10580"/>
+    <property name="plugin.main.version" value="16974"/>
 
     <property name="plugin.author" value="simon04"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.flatlaf.FlatLafPlugin"/>
     <property name="plugin.description" value="FlatLaf - Flat Look and Feel"/>
     <property name="plugin.early" value="true" />
+    <property name="plugin.stage" value="-4" /><!-- very early plugin -->
     <property name="plugin.link" value="https://www.formdev.com/flatlaf/"/>
 
     <!-- ** include targets that all plugins have in common ** -->
