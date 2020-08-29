@@ -453,7 +453,7 @@ public class Address extends MapMode {
     }
 
     private void createDialog() {
-        ImageIcon iconLink = ImageProvider.get(null, "Mf_relation");
+        ImageIcon iconLink = ImageProvider.get(null, "Osm_element_relation");
         link.setIcon(iconLink);
         link.setEnabled(false);
         JPanel p = new JPanel(new GridBagLayout());
