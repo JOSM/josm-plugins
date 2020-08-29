@@ -6,7 +6,9 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
@@ -22,8 +24,10 @@ public class FlatLafPlugin extends Plugin {
     public FlatLafPlugin(PluginInformation info) {
         super(info);
         UIManager.getDefaults().put("ClassLoader", getClass().getClassLoader());
-        UIManager.installLookAndFeel("FlatLaf Light", FlatLightLaf.class.getName());
-        UIManager.installLookAndFeel("FlatLaf Dark", FlatDarkLaf.class.getName());
+        FlatDarculaLaf.install();
+        FlatDarkLaf.install();
+        FlatIntelliJLaf.install();
+        FlatLightLaf.install();
     }
 
 }
