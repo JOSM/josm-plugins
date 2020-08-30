@@ -24,10 +24,10 @@ public class FlatLafPlugin extends Plugin {
     public FlatLafPlugin(PluginInformation info) {
         super(info);
         UIManager.getDefaults().put("ClassLoader", getClass().getClassLoader());
-        FlatDarculaLaf.install();
-        FlatDarkLaf.install();
-        FlatIntelliJLaf.install();
-        FlatLightLaf.install();
+        UIManager.installLookAndFeel("FlatLaf Darcula", FlatDarculaLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Dark", FlatDarkLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf IntelliJ", FlatIntelliJLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Light", FlatLightLaf.class.getName());
     }
 
 }
