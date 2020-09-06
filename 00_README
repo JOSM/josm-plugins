@@ -11,17 +11,16 @@ FAQ
 ===
 * How can I check in my own plugin?
   
-  - You need an account for the OSM subversion repository, see
-    https://wiki.openstreetmap.org/wiki/Accounts#SVN_access_.28OSM_software.29
+  - You need an account for the plugin subversion repository, see
+    https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins#ManagingaplugininpluginSVN
   
-  - Make sure to check out the tree  http://svn.openstreetmap.org/applications/editors/josm/
-    (or one of its parents).
-        svn checkout http://svn.openstreetmap.org/applications/editors/josm/
+  - Make sure to check out the tree https://josm.openstreetmap.de/osmsvn/applications/editors/josm/
+        svn checkout https://josm.openstreetmap.de/osmsvn/applications/editors/josm/
     
     This will also check out the JOSM source from https://josm.openstreetmap.de/svn.
         
     Note that the build environment is not complete if you check out 
-    http://svn.openstreetmap.org/applications/editors/josm/plugins/ only.
+    https://josm.openstreetmap.de/osmsvn/applications/editors/josm/plugins/ only.
         
   - Create your own plugin directory. You may create a copy of the template directory
     according to '00_plugin_dir_template'.
@@ -52,5 +51,3 @@ FAQ
     
   - Check in your plugin jar into 'dist'. You have to do it manually. 
     There is no automatic build process. See also '00_plugin_dir_template/REAME'.
-  
-    
