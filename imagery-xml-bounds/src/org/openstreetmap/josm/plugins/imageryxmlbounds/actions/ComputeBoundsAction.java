@@ -75,7 +75,7 @@ public class ComputeBoundsAction extends AbstractAction implements XmlBoundsCons
 
         putValue(SHORT_DESCRIPTION, tr("Generate Imagery XML bounds for the selection"));
         putValue(NAME, ACTION_NAME);
-        new ImageProvider("xml_24.png").getResource().attachImageIcon(this, true);
+        new ImageProvider("imagery_xml_bounds_icon").getResource().attachImageIcon(this, true);
         setEnabled(false);
 
         if (layer != null) {

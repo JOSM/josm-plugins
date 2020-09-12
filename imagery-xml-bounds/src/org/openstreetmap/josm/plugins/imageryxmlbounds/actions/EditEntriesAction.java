@@ -41,7 +41,7 @@ public class EditEntriesAction extends JosmAction implements XmlBoundsConstants,
     public EditEntriesAction(JTable defaultTable, ImageryDefaultLayerTableModel defaultModel) {
         putValue(SHORT_DESCRIPTION, tr("edit bounds for selected defaults"));
         putValue(NAME, ACTION_NAME);
-        new ImageProvider("xml_24.png").getResource().attachImageIcon(this, true);
+        new ImageProvider("imagery_xml_bounds_icon").getResource().attachImageIcon(this, true);
         this.defaultModel = defaultModel;
         this.defaultTable = defaultTable;
         this.defaultTable.getSelectionModel().addListSelectionListener(this);

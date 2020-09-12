@@ -95,7 +95,7 @@ public class XmlBoundsLayer extends OsmDataLayer implements LayerChangeListener,
 
     @Override
     public Icon getIcon() {
-        return ImageProvider.get("xml_24.png");
+        return ImageProvider.get("imagery_xml_bounds_icon");
     }
 
     @Override
