@@ -12,7 +12,7 @@
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.imageryxmlbounds.ImageryXmlBoundsPlugin"/>
     <property name="plugin.description" value="Generate Imagery XML bounds from a multipolygon"/>
     <property name="plugin.canloadatruntime" value="true"/>
-    <property name="plugin.icon" value="images/xml_24.png"/>
+    <property name="plugin.icon" value="images/imagery_xml_bounds_icon.svg"/>
     <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/JOSM/Plugins/Imagery-XML-Bounds"/>
 
     <!-- ** include targets that all plugins have in common ** -->
