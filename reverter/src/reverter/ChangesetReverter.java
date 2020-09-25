@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationTyp
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -46,7 +48,6 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Fetches and stores data for reverting of specific changeset.
@@ -234,7 +235,7 @@ public class ChangesetReverter {
                 addChangesetIdPrefix(
                         trn("Downloading history for {0} object", "Downloading history for {0} objects", num, num)), num + 1);
         try {
-            HashMap<Long,Integer> nodeList = new HashMap<>(),
+            HashMap<Long, Integer> nodeList = new HashMap<>(),
                     wayList = new HashMap<>(),
                     relationList = new HashMap<>();
 
@@ -257,17 +258,17 @@ public class ChangesetReverter {
             rdr.readMultiObjects(OsmPrimitiveType.RELATION, relationList, progressMonitor);
             if (progressMonitor.isCanceled()) return;
             // If multi-read failed, retry with regular read
-            for (Map.Entry<Long,Integer> entry : nodeList.entrySet()) {
+            for (Map.Entry<Long, Integer> entry : nodeList.entrySet()) {
                 if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(),OsmPrimitiveType.NODE), entry.getValue(), progressMonitor);
+                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.NODE), entry.getValue(), progressMonitor);
             }
-            for (Map.Entry<Long,Integer> entry : wayList.entrySet()) {
+            for (Map.Entry<Long, Integer> entry : wayList.entrySet()) {
                 if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(),OsmPrimitiveType.WAY), entry.getValue(), progressMonitor);
+                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.WAY), entry.getValue(), progressMonitor);
             }
-            for (Map.Entry<Long,Integer> entry : relationList.entrySet()) {
+            for (Map.Entry<Long, Integer> entry : relationList.entrySet()) {
                 if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(),OsmPrimitiveType.RELATION), entry.getValue(), progressMonitor);
+                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.RELATION), entry.getValue(), progressMonitor);
             }
             if (progressMonitor.isCanceled()) return;
             nds = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
@@ -444,35 +445,44 @@ public class ChangesetReverter {
         /* Check referrers for deleted objects: if object is referred by another object that
          * isn't going to be deleted or modified, create a conflict.
          */
-        for (Iterator<OsmPrimitive> it = toDelete.iterator(); it.hasNext();) {
-            OsmPrimitive p = it.next();
-            if (p.isDeleted()) {
-                it.remove();
-                continue;
-            }
-            for (OsmPrimitive referrer : p.getReferrers()) {
-                if (toDelete.contains(referrer)) continue; // object is going to be deleted
-                if (nds.getPrimitiveById(referrer) != null)
-                    continue; /* object is going to be modified so it cannot refer to
-                               * objects created in changeset to be reverted
-                               */
-                if (!conflicted.contains(p)) {
-                    cmds.add(new ConflictAddCommand(layer.data, createConflict(p, true)));
-                    conflicted.add(p);
+        List<OsmPrimitive> delSorted = toDelete.stream()
+                .filter(p -> !p.isDeleted())
+                .sorted(OsmPrimitiveComparator.orderingRelationsWaysNodes())
+                .collect(Collectors.toList());
+        boolean restartNeeded;
+        do {
+            restartNeeded = false;
+            for (int i = 0; i < delSorted.size() && !restartNeeded; i++) {
+                OsmPrimitive p = delSorted.get(i);
+                for (OsmPrimitive referrer : p.getReferrers()) {
+                    if (toDelete.contains(referrer)) continue; // object is going to be deleted
+                    if (nds.getPrimitiveById(referrer) != null)
+                        continue; /* object is going to be modified so it cannot refer to
+                         * objects created in changeset to be reverted
+                         */
+                    if (conflicted.add(p)) {
+                        cmds.add(new ConflictAddCommand(layer.data, createConflict(p, true)));
+                        if (p instanceof Relation) {
+                            // handle possible special case with nested relations
+                            for (int j = 0; j < i; j++) {
+                                if (delSorted.get(j).getReferrers().contains(p)) {
+                                    // we have to create a conflict for a previously processed relation
+                                    restartNeeded = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    toDelete.remove(p);
+                    break;
                 }
-                it.remove();
-                break;
             }
-        }
-
+        } while (restartNeeded);
         // Create a Command to delete all marked objects
-        Collection<? extends OsmPrimitive> collection;
-        collection = Utils.filteredCollection(toDelete, Relation.class);
-        if (!collection.isEmpty()) cmds.add(new DeleteCommand(collection));
-        collection = Utils.filteredCollection(toDelete, Way.class);
-        if (!collection.isEmpty()) cmds.add(new DeleteCommand(collection));
-        collection = Utils.filteredCollection(toDelete, Node.class);
-        if (!collection.isEmpty()) cmds.add(new DeleteCommand(collection));
+        delSorted.retainAll(toDelete);
+        if (!delSorted.isEmpty()) {
+            cmds.add(new DeleteCommand(delSorted));
+        }
         return cmds;
     }
 
