@@ -103,6 +103,7 @@ public final class TerracerAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        cleanup();
         Collection<OsmPrimitive> sel = getLayerManager().getEditDataSet().getSelected();
         Way outline = null;
         Way street = null;
@@ -219,9 +220,6 @@ public final class TerracerAction extends JosmAction {
                         housenumbers, streetname, associatedStreet != null, false, "yes");
             } catch (UserCancelException ex) {
                 Logging.trace(ex);
-            } finally {
-                this.commands.clear();
-                this.commands = null;
             }
         } else {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
@@ -229,6 +227,13 @@ public final class TerracerAction extends JosmAction {
             new HouseNumberInputHandler(this, outline, init, street, streetname, outline.get("building"),
                     associatedStreet, housenumbers, title).dialog.showDialog();
         }
+        cleanup();
+    }
+
+    private void cleanup() {
+        commands = null;
+        primitives = null;
+        tagsInConflict = null;
     }
 
     public Integer getNumber(String number) {
