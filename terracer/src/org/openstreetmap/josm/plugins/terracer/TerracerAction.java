@@ -439,6 +439,8 @@ public final class TerracerAction extends JosmAction {
         Relation newAssociatedStreet = new Relation(associatedStreet);
         // remove housenumbers as they have been deleted
         newAssociatedStreet.removeMembersFor(housenumbers);
+        // see #19853 avoid to duplicate existing members
+        newAssociatedStreet.removeMembersFor(ways);
         for (Way w : ways) {
             newAssociatedStreet.addMember(new RelationMember("house", w));
         }
