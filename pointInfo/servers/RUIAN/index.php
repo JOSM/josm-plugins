@@ -77,7 +77,7 @@ if (pg_num_rows($result) > 0)
   $query="
     select nb.user_nick, nb.datum, nbd.popis, nb.poznamka
     from neplatne_budovy nb, neplatne_budovy_duvod nbd
-    where nb.duvod = nbd.id and nb.kod = ".$row["kod"]."
+    where nb.duvod = nbd.id and not nb.deleted and nb.kod = ".$row["kod"]."
     ;
   ";
   $result=pg_query($CONNECT,$query);

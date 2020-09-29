@@ -33,11 +33,6 @@ public class PointInfoPreference extends DefaultTabPreferenceSetting {
     }
 
     @Override
-    public String getIconName() {
-        return "info-sml.png";
-    }
-
-    @Override
     public void addGui(PreferenceTabbedPane gui) {
         JPanel panel = new JPanel(new GridBagLayout());
         // autoMode

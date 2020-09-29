@@ -40,7 +40,7 @@ class PointInfoAction extends MapMode implements MouseListener {
     private String coordinatesText = "";
 
     PointInfoAction() {
-        super(tr("Point info"), "info-sml", tr("Point info."),
+        super(tr("Point info"), "pointinfo", tr("Point info."),
                 Shortcut.registerShortcut("tools:pointInfo", tr("Tool: {0}", tr("Point info")), KeyEvent.VK_X, Shortcut.CTRL_SHIFT),
                 getCursor());
     }
@@ -62,7 +62,7 @@ class PointInfoAction extends MapMode implements MouseListener {
     }
 
     private static Cursor getCursor() {
-        return ImageProvider.getCursor("crosshair", "info-sml");
+        return ImageProvider.getCursor("crosshair", "pointinfo");
     }
 
     protected void infoAsync(Point clickPoint) {
@@ -109,7 +109,7 @@ class PointInfoAction extends MapMode implements MouseListener {
                         });
                         JScrollPane scrollPane = new JScrollPane(msgLabel);
                         Object[] objects = {scrollPane};
-                        final ImageIcon icon = new ImageIcon(getClass().getResource("/images/dialogs/info-sml.png"));
+                        final ImageIcon icon = ImageProvider.get("dialogs/pointinfo", ImageProvider.ImageSizes.SETTINGS_TAB);
                         JOptionPane.showMessageDialog(
                                 null, objects, tr("PointInfo") + " " + coordinatesText, JOptionPane.PLAIN_MESSAGE, icon);
                     }
