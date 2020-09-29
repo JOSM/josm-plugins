@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -33,6 +35,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class MergeAddrPointsAction extends JosmAction {
@@ -108,7 +111,8 @@ public class MergeAddrPointsAction extends JosmAction {
         List<Command> cmds = new LinkedList<>();
         int multi = 0;
         int conflicts = 0;
-
+        List<Pair<Node, Way>> replaced = new ArrayList<>();
+        Set<Relation> modifiedRelations = new HashSet<>();
         for (Way w : buildings) {
             Node mergeNode = null;
             int oldMulti = multi;
@@ -146,22 +150,31 @@ public class MergeAddrPointsAction extends JosmAction {
                 if (!tags.isEmpty())
                     cmds.add(new ChangePropertyCommand(Collections.singleton(w), tags));
                 if (!hasConflicts) {
-                    for (OsmPrimitive p : mergeNode.getReferrers()) {
-                        Relation r = (Relation) p;
-                        Relation rnew = new Relation(r);
-                        for (int i = 0; i < r.getMembersCount(); i++) {
-                            RelationMember member = r.getMember(i);
-                            if (mergeNode.equals(member.getMember())) {
-                                rnew.removeMember(i);
-                                rnew.addMember(i, new RelationMember(member.getRole(), w));
-                            }
-                        }
-                        cmds.add(new ChangeCommand(r, rnew));
-                    }
-                    cmds.add(new DeleteCommand(mergeNode));
+                    replaced.add(Pair.create(mergeNode, w));
+                    modifiedRelations.addAll(mergeNode.referrers(Relation.class).collect(Collectors.toList()));
                 }
             }
         }
+
+        for (Relation r : modifiedRelations) {
+            Relation rnew = new Relation(r);
+            boolean modified = false;
+            for (Pair<Node, Way> repl : replaced) {
+                for (int i = 0; i < rnew.getMembersCount(); i++) {
+                    RelationMember member = rnew.getMember(i);
+                    if (repl.a.equals(member.getMember())) {
+                        rnew.removeMember(i);
+                        rnew.addMember(i, new RelationMember(member.getRole(), repl.b));
+                        modified = true;
+                    }
+                }
+            }
+            if (modified) {
+                cmds.add(new ChangeCommand(r, rnew));
+            }
+        }
+        cmds.add(new DeleteCommand(replaced.stream().map(p -> p.a).collect(Collectors.toList())));
+
         if (multi != 0)
             new Notification(trn("There is {0} building with multiple address nodes inside",
                     "There are {0} buildings with multiple address nodes inside", multi, multi))
