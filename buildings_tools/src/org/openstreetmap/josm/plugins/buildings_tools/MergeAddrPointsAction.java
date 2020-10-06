@@ -173,7 +173,9 @@ public class MergeAddrPointsAction extends JosmAction {
                 cmds.add(new ChangeCommand(r, rnew));
             }
         }
-        cmds.add(new DeleteCommand(replaced.stream().map(p -> p.a).collect(Collectors.toList())));
+        if (!replaced.isEmpty()) {
+            cmds.add(new DeleteCommand(replaced.stream().map(p -> p.a).collect(Collectors.toList())));
+        }
 
         if (multi != 0)
             new Notification(trn("There is {0} building with multiple address nodes inside",
