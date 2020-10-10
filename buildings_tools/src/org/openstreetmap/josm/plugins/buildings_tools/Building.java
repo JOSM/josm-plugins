@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -23,6 +22,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -426,9 +426,7 @@ class Building {
             List<Node> otherNodes = other.getNodes();
             snapToWay(otherNodes, Arrays.asList(nodes));
             if (otherNodes.size() != other.getNodesCount()) {
-                Way newWay = new Way(other);
-                newWay.setNodes(otherNodes);
-                cmds.add(new ChangeCommand(other, newWay));
+                cmds.add(new ChangeNodesCommand(other, otherNodes));
             }
         }
 
@@ -470,9 +468,7 @@ class Building {
             Node addrNode = getAddressNode(w);
             if (addrNode != null) {
                 Collection<Command> addressCmds = cmdList != null ? cmdList : new LinkedList<>();
-                for (Entry<String, String> entry : addrNode.getKeys().entrySet()) {
-                    w.put(entry.getKey(), entry.getValue());
-                }
+                addrNode.getKeys().forEach(w::put);
                 for (OsmPrimitive p : addrNode.getReferrers()) {
                     Relation r = (Relation) p;
                     Relation rnew = new Relation(r);
