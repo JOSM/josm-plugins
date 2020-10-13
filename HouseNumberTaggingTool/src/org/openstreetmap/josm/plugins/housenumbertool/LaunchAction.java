@@ -26,7 +26,8 @@ public class LaunchAction extends JosmAction implements DataSelectionListener {
         super("HouseNumberTaggingTool", 
               "home-icon32", 
               "Launches the HouseNumberTaggingTool dialog", 
-              Shortcut.registerShortcut("edit:housenumbertaggingtool", tr("Data: {0}", "HouseNumberTaggingTool"), KeyEvent.VK_K, Shortcut.DIRECT),
+              Shortcut.registerShortcut("edit:housenumbertaggingtool", tr("Data: {0}", "HouseNumberTaggingTool"),
+                KeyEvent.VK_K, Shortcut.DIRECT),
               true);
 
         this.pluginDir = pluginDir;
