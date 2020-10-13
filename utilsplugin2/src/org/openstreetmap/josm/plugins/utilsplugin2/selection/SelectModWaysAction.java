@@ -27,7 +27,7 @@ public class SelectModWaysAction extends JosmAction {
     public SelectModWaysAction() {
         super(tr("Select last modified ways"), "selmodways",
                 tr("Select last modified ways"),
-                Shortcut.registerShortcut("tools:selmodways", tr("Tool: {0}", "Select last modified ways"),
+                Shortcut.registerShortcut("tools:selmodways", tr("Selection: {0}", tr("Select last modified ways")),
                         KeyEvent.VK_Z, Shortcut.ALT_SHIFT), true);
         putValue("help", ht("/Action/SelectLastModifiedWays"));
     }

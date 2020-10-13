@@ -93,7 +93,7 @@ public class OhePlugin extends Plugin {
         OheMenuAction() {
             super(tr("Edit opening hours"), "opening_hours.png",
                     tr("Edit time-tag of selected element in a graphical interface"), Shortcut.registerShortcut(
-                            "tools:opening_hourseditor", tr("Tool: {0}", tr("Edit opening hours")), KeyEvent.VK_O,
+                            "tools:opening_hourseditor", tr("Data: {0}", tr("Edit opening hours")), KeyEvent.VK_O,
                             Shortcut.ALT_CTRL_SHIFT), true);
         }
 

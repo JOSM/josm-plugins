@@ -99,7 +99,7 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
     public MeasurementDialog()
     {
         super(tr("Measured values"), "measure", tr("Open the measurement window."),
-                Shortcut.registerShortcut("subwindow:measurement", tr("Toggle: {0}", tr("Measured values")),
+                Shortcut.registerShortcut("subwindow:measurement", tr("Windows: {0}", tr("Measured values")),
                         KeyEvent.VK_U, Shortcut.CTRL_SHIFT), 150);
 
         resetButton = new SideButton(new AbstractAction() {

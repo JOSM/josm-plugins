@@ -27,7 +27,7 @@ public class AdjacentNodesAction extends JosmAction {
 
     public AdjacentNodesAction() {
         super(tr("Adjacent nodes"), "adjnodes", tr("Select adjacent nodes"),
-                Shortcut.registerShortcut("tools:adjnodes", tr("Tool: {0}", "Adjacent nodes"),
+                Shortcut.registerShortcut("tools:adjnodes", tr("Selection: {0}", tr("Adjacent nodes")),
                         KeyEvent.VK_E, Shortcut.DIRECT), true);
         putValue("help", ht("/Action/AdjacentNodes"));
     }

@@ -26,7 +26,7 @@ public class IntersectedWaysAction extends JosmAction {
 
     public IntersectedWaysAction() {
         super(tr("Intersecting ways"), "intway", tr("Select intersecting ways"),
-                Shortcut.registerShortcut("tools:intway", tr("Tool: {0}", "Intersecting ways"),
+                Shortcut.registerShortcut("tools:intway", tr("Selection: {0}", tr("Intersecting ways")),
                         KeyEvent.VK_I, Shortcut.DIRECT), true);
         putValue("help", ht("/Action/SelectIntersectingWays"));
     }

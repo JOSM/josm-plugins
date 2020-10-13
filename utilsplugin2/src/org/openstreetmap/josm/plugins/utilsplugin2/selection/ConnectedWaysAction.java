@@ -24,7 +24,7 @@ public class ConnectedWaysAction extends JosmAction {
 
     public ConnectedWaysAction() {
         super(tr("All connected ways"), "adjwaysall", tr("Select all connected ways"),
-                Shortcut.registerShortcut("tools:adjwaysall", tr("Tool: {0}", "All connected ways"),
+                Shortcut.registerShortcut("tools:adjwaysall", tr("Selection: {0}", tr("All connected ways")),
                         KeyEvent.VK_E, Shortcut.CTRL_SHIFT), true);
         putValue("help", ht("/Action/SelectConnectedWays"));
     }

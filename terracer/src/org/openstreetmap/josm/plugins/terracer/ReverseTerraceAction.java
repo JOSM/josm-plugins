@@ -41,7 +41,7 @@ public class ReverseTerraceAction extends JosmAction {
             "reverse_terrace",
             tr("Reverses house numbers on a terrace."),
             Shortcut.registerShortcut("tools:ReverseTerrace",
-                    tr("Tool: {0}", tr("Reverse a Terrace")),
+                    tr("More tools: {0}", tr("Reverse a terrace")),
                     KeyEvent.VK_V, Shortcut.ALT_CTRL_SHIFT),
                         true);
     }

@@ -24,7 +24,7 @@ public class UndoSelectionAction extends JosmAction {
     public UndoSelectionAction() {
         super(tr("Undo selection"), "undoselection",
                 tr("Reselect last added object or selection form history"),
-                Shortcut.registerShortcut("tools:undoselection", tr("Tool: {0}", "Undo selection"),
+                Shortcut.registerShortcut("tools:undoselection", tr("Selection: {0}", tr("Undo selection")),
                         KeyEvent.VK_Z, Shortcut.CTRL_SHIFT), true);
         putValue("help", ht("/Action/UndoSelection"));
     }

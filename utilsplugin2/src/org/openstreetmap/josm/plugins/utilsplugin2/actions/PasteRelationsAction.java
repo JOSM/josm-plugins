@@ -39,7 +39,8 @@ public class PasteRelationsAction extends JosmAction {
 
     public PasteRelationsAction() {
         super(TITLE, "dumbutils/pasterelations", tr("Paste relation membership from objects in the buffer onto selected object(s)"),
-              Shortcut.registerShortcut("tools:pasterelations", tr("Tool: {0}", tr("Paste Relations")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+              Shortcut.registerShortcut("tools:pasterelations", tr("More tools: {0}", tr("Paste Relations")), KeyEvent.CHAR_UNDEFINED,
+                Shortcut.NONE),
               true);
     }
 

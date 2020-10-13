@@ -34,7 +34,7 @@ public class SelectHighwayAction extends JosmAction {
 
     public SelectHighwayAction() {
         super(tr("Select Highway"), "selecthighway", tr("Select highway for the name/ref given"),
-                Shortcut.registerShortcut("tools:selecthighway", tr("Tool: {0}", "Select Highway"),
+                Shortcut.registerShortcut("tools:selecthighway", tr("Selection: {0}", tr("Select Highway")),
                         KeyEvent.VK_W, Shortcut.ALT_CTRL), true);
     }
 
