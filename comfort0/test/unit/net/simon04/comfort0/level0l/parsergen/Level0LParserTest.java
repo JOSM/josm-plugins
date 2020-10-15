@@ -7,14 +7,25 @@ import static org.junit.Assert.assertThat;
 import java.io.StringReader;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 public class Level0LParserTest {
+
+    /**
+     * Setup rule
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
+
     @Test
     public void testNode() throws Exception {
         final String level0l = "" +
@@ -58,7 +69,7 @@ public class Level0LParserTest {
                 "  nd 364933006 # the second node\n" +
                 "  wy 4579143 forward\n" +
                 "  nd 249673494 stop # the end\n" +
-                "  name = Küstenbus Linie 123\n" +
+                "  name = Küstenbus Linie 123–124\n" +
                 "  network = VVW\n" +
                 "  operator = Regionalverkehr Küste\n" +
                 "  ref = 123\n" +
@@ -66,6 +77,7 @@ public class Level0LParserTest {
                 "  type = route\n";
         final RelationData relation = new Level0LParser(new StringReader(level0l)).relation();
         assertThat(relation.getId(), is(56688L));
+        assertThat(relation.getName(), is("Küstenbus Linie 123–124"));
         assertThat(relation.getMembersCount(), is(4));
         assertThat(relation.getMembers().get(0).getMemberId(), is(294942404L));
         assertThat(relation.getMembers().get(0).getMemberType(), is(OsmPrimitiveType.NODE));

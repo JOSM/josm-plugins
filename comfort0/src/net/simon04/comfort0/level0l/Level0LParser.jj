@@ -32,7 +32,7 @@ TOKEN: {
 }
 
 <COMMENT>
-SKIP: { < ~["\n", "\r"] > }
+SKIP: { < ["\u0020"-"\uffff"] > }
 
 <COMMENT>
 TOKEN: {
@@ -42,7 +42,7 @@ TOKEN: {
 <VALUE>
 TOKEN: {
     <V_EOL: ("\n" | "\r" | "\r\n") > : DEFAULT
-    | <TEXT: (~["\n", "\r"])+ >
+    | <TEXT: (["\u0020"-"\uffff"])+ >
 }
 
 List<PrimitiveData> primitives():

@@ -60,8 +60,8 @@ public class OsmToLevel0LTest {
                     "  nd 298884289 #incomplete\n" +
                     "  nd 261728686 #261728686 (54.0906309, 12.2441924)\n" +
                     "\n" +
-                    "relation 56688 #route (\"Küstenbus Linie 123\", 4 members, incomplete)\n" +
-                    "  name = Küstenbus Linie 123\n" +
+                    "relation 56688 #route (\"Küstenbus Linie 123–124\", 4 members, incomplete)\n" +
+                    "  name = Küstenbus Linie 123–124\n" +
                     "  network = VVW\n" +
                     "  operator = Regionalverkehr Küste\n" +
                     "  ref = 123\n" +
