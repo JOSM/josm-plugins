@@ -38,7 +38,7 @@ public class OsmToLevel0LTest {
         final OsmToLevel0L converter = new OsmToLevel0L();
         converter.visit(node);
         assertThat(converter.toString(), is(""
-                + "node 1234: 123.45, 67.89 #Comfort0 \u200E(123.45, 67.89)\n"
+                + "node 1234: 123.45, 67.89 #Comfort0 (123.45, 67.89)\n"
                 + "  name = Comfort0\n"));
     }
 
@@ -51,14 +51,14 @@ public class OsmToLevel0LTest {
             final OsmToLevel0L converter = new OsmToLevel0L();
             converter.visit(dataSet.allPrimitives());
             assertThat(converter.toString(), is("" +
-                    "way 4579143 #\u200Eincomplete\n" +
+                    "way 4579143 #incomplete\n" +
                     "\n" +
-                    "way 26659127 #\u200EPastower Straße\u200E (3 nodes)\n" +
+                    "way 26659127 #Pastower Straße (3 nodes)\n" +
                     "  highway = unclassified\n" +
                     "  name = Pastower Straße\n" +
                     "  nd 292403538 #incomplete\n" +
                     "  nd 298884289 #incomplete\n" +
-                    "  nd 261728686 #261728686 \u200E(54.0906309, 12.2441924)\n" +
+                    "  nd 261728686 #261728686 (54.0906309, 12.2441924)\n" +
                     "\n" +
                     "relation 56688 #route (\"Küstenbus Linie 123\", 4 members, incomplete)\n" +
                     "  name = Küstenbus Linie 123\n" +
@@ -69,26 +69,26 @@ public class OsmToLevel0LTest {
                     "  type = route\n" +
                     "  nd 294942404  #incomplete\n" +
                     "  nd 364933006  #incomplete\n" +
-                    "  wy 4579143  #\u200Eincomplete\n" +
+                    "  wy 4579143  #incomplete\n" +
                     "  nd 249673494  #incomplete\n" +
                     "\n" +
                     "node 249673494 #incomplete\n" +
                     "\n" +
-                    "node 261728686: 54.0906309, 12.2441924 #261728686 \u200E(54.0906309, 12.2441924)\n" +
+                    "node 261728686: 54.0906309, 12.2441924 #261728686 (54.0906309, 12.2441924)\n" +
                     "\n" +
                     "node 292403538 #incomplete\n" +
                     "\n" +
                     "node 294942404 #incomplete\n" +
                     "\n" +
-                    "node 298884269: 54.0901746, 12.2482632 #298884269 \u200E(54.0901746, 12.2482632)\n" +
+                    "node 298884269: 54.0901746, 12.2482632 #298884269 (54.0901746, 12.2482632)\n" +
                     "\n" +
-                    "node 298884272: 54.0901447, 12.2516513 #298884272 \u200E(54.0901447, 12.2516513)\n" +
+                    "node 298884272: 54.0901447, 12.2516513 #298884272 (54.0901447, 12.2516513)\n" +
                     "\n" +
                     "node 298884289 #incomplete\n" +
                     "\n" +
                     "node 364933006 #incomplete\n" +
                     "\n" +
-                    "node 1831881213: 54.0900666, 12.2539381 #Neu Broderstorf \u200E(54.0900666, 12.2539381)\n" +
+                    "node 1831881213: 54.0900666, 12.2539381 #Neu Broderstorf (54.0900666, 12.2539381)\n" +
                     "  name = Neu Broderstorf\n" +
                     "  traffic_sign = city_limit\n"));
         }

@@ -101,6 +101,9 @@ public class OsmToLevel0L implements OsmPrimitiveVisitor, KeyValueVisitor {
 
     @Override
     public String toString() {
-        return sb.toString().replaceFirst("^\\n", "");
+        return sb.toString()
+                .replace("\u200C", "")
+                .replace("\u200E", "")
+                .replaceFirst("^\\n", "");
     }
 }
