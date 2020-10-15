@@ -16,14 +16,14 @@
 
     <property name="parser.dir" location="src/net/simon04/comfort0/level0l"/>
     <target name="pre-compile" depends="javacc"/>
-    <target name="javacc" depends="init" unless="javacc.notRequired">
+    <target name="javacc" depends="init,init-ivy" unless="javacc.notRequired">
         <ivy:cachepath file="${core.tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${parser.dir}/parsergen"/>
         <java classname="javacc" fork="true" failonerror="true">
             <classpath refid="javacc.classpath"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
-            <arg value="-JDK_VERSION=1.7"/>
+            <arg value="-JDK_VERSION=${java.lang.version}"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${parser.dir}/parsergen"/>
             <arg value="${parser.dir}/Level0LParser.jj"/>
