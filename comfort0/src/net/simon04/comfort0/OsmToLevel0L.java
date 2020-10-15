@@ -104,6 +104,7 @@ public class OsmToLevel0L implements OsmPrimitiveVisitor, KeyValueVisitor {
         return sb.toString()
                 .replace("\u200C", "")
                 .replace("\u200E", "")
+                .replace("\u200F", "")
                 .replaceFirst("^\\n", "");
     }
 }

@@ -66,8 +66,6 @@ public class EditLevel0LAction extends JosmAction {
     private Path writeLevel0(DataSet dataSet) throws IOException {
         final byte[] level0 = new OsmToLevel0L().visit(dataSet.getSelected())
                 .toString()
-                .replace("\u200E", "")
-                .replace("\u200F", "")
                 .getBytes(CHARSET);
         final Path path = Files.createTempFile("josm_level0_", ".txt");
         Files.write(path, level0);
