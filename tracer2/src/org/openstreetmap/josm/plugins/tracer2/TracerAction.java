@@ -59,7 +59,7 @@ class TracerAction extends MapMode implements MouseListener, KeyListener {
 
     TracerAction() {
         super(tr("Tracer2"), "tracer2-sml", tr("Tracer2."),
-                Shortcut.registerShortcut("tools:tracer2", tr("Tool: {0}", tr("Tracer2")), KeyEvent.VK_T, Shortcut.DIRECT),
+                Shortcut.registerShortcut("tools:tracer2", tr("More tools: {0}", tr("Tracer2")), KeyEvent.VK_T, Shortcut.DIRECT),
                 getCursor());
     }
 

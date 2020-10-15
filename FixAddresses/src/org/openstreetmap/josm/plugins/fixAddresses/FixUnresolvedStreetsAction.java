@@ -27,8 +27,8 @@ public class FixUnresolvedStreetsAction extends JosmAction implements DataSelect
     public FixUnresolvedStreetsAction() {
         super(tr("Fix street addresses"), "fixstreets_24",
                 tr("Find and fix addresses without (valid) streets."),
-                Shortcut.registerShortcut("tools:AddressEdit", tr("Tool: {0}",
-                tr("Address Edit")), KeyEvent.VK_X, Shortcut.CTRL_SHIFT), false);
+                Shortcut.registerShortcut("tools:AddressEdit", tr("Data: {0}",
+                tr("Fix street addresses")), KeyEvent.VK_X, Shortcut.CTRL_SHIFT), false);
 
         setEnabled(false);
         addressEditContainer = new AddressEditContainer();

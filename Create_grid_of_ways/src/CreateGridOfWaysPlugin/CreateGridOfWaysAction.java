@@ -35,7 +35,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class CreateGridOfWaysAction extends JosmAction {
 
     public CreateGridOfWaysAction() {
-        super(tr("Create grid of ways"), "creategridofways", tr("Forms a grid of ways in base to two existing that have various nodes and one in common"), Shortcut.registerShortcut("tools:CreateGridOfWays", tr("Tool: {0}", tr("Create grid of ways")),
+        super(tr("Create grid of ways"), "creategridofways",
+            tr("Forms a grid of ways in base to two existing that have various nodes and one in common"),
+            Shortcut.registerShortcut("tools:CreateGridOfWays", tr("More tools: {0}", tr("Create grid of ways")),
         KeyEvent.VK_G, Shortcut.SHIFT), true);
     }
 

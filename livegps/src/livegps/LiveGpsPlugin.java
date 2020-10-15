@@ -47,7 +47,7 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
                     "capturemenu",
                     tr("Connect to gpsd server and show current position in LiveGPS layer."),
                     Shortcut.registerShortcut("menu:livegps:capture", tr(
-                            "Menu: {0}", tr("Capture GPS Track")),
+                            "GPS: {0}", tr("Capture GPS Track")),
                             KeyEvent.VK_R, Shortcut.CTRL), true);
         }
 
@@ -61,7 +61,7 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
         public CenterAction() {
             super(tr("Center Once"), "centermenu",
                     tr("Center the LiveGPS layer to current position."),
-                    Shortcut.registerShortcut("edit:centergps", tr("Edit: {0}",
+                    Shortcut.registerShortcut("edit:centergps", tr("GPS: {0}",
                             tr("Center Once")), KeyEvent.VK_HOME,
                             Shortcut.DIRECT), true);
         }
@@ -81,7 +81,7 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
                     "autocentermenu",
                     tr("Continuously center the LiveGPS layer to current position."),
                     Shortcut.registerShortcut("menu:livegps:autocenter", tr(
-                            "Menu: {0}", tr("Capture GPS Track")),
+                            "GPS: {0}", tr("Auto-Center")),
                             KeyEvent.VK_HOME, Shortcut.CTRL), true);
         }
 

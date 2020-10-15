@@ -41,7 +41,7 @@ class PointInfoAction extends MapMode implements MouseListener {
 
     PointInfoAction() {
         super(tr("Point info"), "pointinfo", tr("Point info."),
-                Shortcut.registerShortcut("tools:pointInfo", tr("Tool: {0}", tr("Point info")), KeyEvent.VK_X, Shortcut.CTRL_SHIFT),
+                Shortcut.registerShortcut("tools:pointInfo", tr("More tools: {0}", tr("Point info")), KeyEvent.VK_X, Shortcut.CTRL_SHIFT),
                 getCursor());
     }
 

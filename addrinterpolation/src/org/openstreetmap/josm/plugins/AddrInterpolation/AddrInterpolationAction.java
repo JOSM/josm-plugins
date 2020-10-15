@@ -20,7 +20,7 @@ public class AddrInterpolationAction extends JosmAction implements DataSelection
 
     public AddrInterpolationAction() {
         super(tr("Address Interpolation"), "AddrInterpolation", tr("Handy Address Interpolation Functions"),
-                Shortcut.registerShortcut("tools:AddressInterpolation", tr("Tool: {0}", tr("Address Interpolation")),
+                Shortcut.registerShortcut("tools:AddressInterpolation", tr("Data: {0}", tr("Address Interpolation")),
                         KeyEvent.VK_Z, Shortcut.ALT_CTRL), false);
         setEnabled(false);
         SelectionEventManager.getInstance().addSelectionListener(this);
