@@ -9,7 +9,7 @@
     <property name="plugin.author" value="Paul Hartmann"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.photo_geotagging.GeotaggingPlugin"/>
     <property name="plugin.description" value="Write gps position info to the image file header. Run this feature from the right click menu of the image layer."/>
-    <property name="plugin.icon" value="images/geotagging.png"/>
+    <property name="plugin.icon" value="images/geotagging.svg"/>
     <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/JOSM/Plugins/Photo_Geotagging"/>
     <property name="plugin.canloadatruntime" value="true"/>
     <property name="plugin.requires" value="apache-commons"/>
