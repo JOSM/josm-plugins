@@ -53,7 +53,7 @@ public class PhotoAdjustMapMode extends MapMode implements LayerChangeListener, 
      * @param worker Worker that does the actual work.
      */
     public PhotoAdjustMapMode(PhotoAdjustWorker worker) {
-        super(tr("Adjust photos"), "photoadjust.png",
+        super(tr("Adjust photos"), "photoadjust",
               tr("Move and position photos"),
               // It is almost impossible to find an unused shortcut.
               Shortcut.registerShortcut("mapmode:photoadjust",

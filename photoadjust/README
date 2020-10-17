@@ -16,19 +16,19 @@ See i18n/README for plugin translation.
 
 
 Resources:
-  images/untaglayer.png:
+  images/untaglayer.svg:
     combination of:
-      JOSM plugin photo_geotagging, images/geotagging.png
-        Author: Paul Hartmann
-        License: GPL v2 or any later version
-      self made text (CC0)
-    License: GPL v2 or later
-  images/photoadjust.png:
-    combination of:
-      JOSM images/dialogs/geoimage/gpx2img.png
+      JOSM resources/images/dialogs/geoimage/togglegit.svg
+      JOSM resources/images/download_new_layer.svg
         Author: JOSM contributors and others, see JOSM CONTRIBUTION
         License: GNU General Public License v2 or later
-      self made arrows (CC0)
+    License: GPL v2 or later
+  images/photoadjust.svg, images/mapmode/photoadjust.svg:
+    combination of:
+      JOSM resources/images/mapmode/move/move.svg
+      JOSM resources/images/dialogs/geoimage/togglegit.svg
+        Author: JOSM contributors and others, see JOSM CONTRIBUTION
+        License: GNU General Public License v2 or later
     License: GPL v2 or later
   src/org/openstreetmap/josm/plugins/photoadjust/
     different authors (see SVN log)
