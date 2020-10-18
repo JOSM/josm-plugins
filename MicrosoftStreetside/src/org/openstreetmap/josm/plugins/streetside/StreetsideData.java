@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.streetside;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
@@ -30,7 +33,7 @@ import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
  * @see StreetsideAbstractImage
  * @see StreetsideSequence
  */
-public class StreetsideData {
+public class StreetsideData implements Data {
   private final Set<StreetsideAbstractImage> images = ConcurrentHashMap.newKeySet();
   /**
    * The image currently selected, this is the one being shown.
@@ -410,5 +413,10 @@ public class StreetsideData {
       images.clear();
       images.addAll(newImages);
     }
+  }
+
+  @Override
+  public Collection<DataSource> getDataSources() {
+	return Collections.emptyList();
   }
 }

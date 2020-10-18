@@ -183,6 +183,7 @@ ActiveLayerChangeListener, StreetsideDataListener {
 	 *
 	 * @return The {@link StreetsideData} object that stores the database.
 	 */
+	@Override
 	public StreetsideData getData() {
 		return data;
 	}

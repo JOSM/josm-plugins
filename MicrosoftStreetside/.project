@@ -31,5 +31,6 @@
 		<nature>org.sonarlint.eclipse.core.sonarlintNature</nature>
 		<nature>ch.acanda.eclipse.pmd.builder.PMDNature</nature>
 		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
+		<nature>org.apache.ivyde.eclipse.ivynature</nature>
 	</natures>
 </projectDescription>
