@@ -234,9 +234,14 @@ public final class ReplaceGeometryUtils {
         Way referenceWay = selection.get(idxNew);
         Way subjectWay = selection.get(1 - idxNew);
 
-        if (!overrideNewCheck && (subjectWay.isNew() || !referenceWay.isNew())) {
-            throw new ReplaceGeometryException(
-                    tr("Both ways are new and have new nodes, cannot decide which one has the correct geometry."));
+        String msg = null;
+        if (!subjectWay.isNew() && !referenceWay.isNew()) {
+            msg = tr("Please select one way that exists in the database and one new way with correct geometry.");
+        } else if (!overrideNewCheck && (subjectWay.isNew() || !referenceWay.isNew())) {
+            msg = tr("Both ways are new and have new nodes, cannot decide which one has the correct geometry.");
+        }
+        if (msg != null) {
+            throw new ReplaceGeometryException(msg);
         }
         return buildReplaceWayCommand(subjectWay, referenceWay);
     }
