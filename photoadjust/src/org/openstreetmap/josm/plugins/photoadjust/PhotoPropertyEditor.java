@@ -67,13 +67,13 @@ public class PhotoPropertyEditor {
      */
     private static class PropertyEditorAction extends JosmAction implements LayerChangeListener, ImageDataUpdateListener {
         public PropertyEditorAction() {
-            super(tr("Edit photo GPS data"),    // String name
-                    (String)null,                         // String iconName
-                    tr("Edit GPS data of selected photo."), // String tooltip
-                    null,                                 // Shortcut shortcut
-                    true,                                 // boolean registerInToolbar
-                    "photoadjust/propertyeditor", // String toolbarId
-                    false                          // boolean installAdapters
+            super(tr("Edit photo GPS data"),  // String name
+                    "photopropedit",  // String iconName
+                    tr("Edit GPS data of selected photo."),  // String tooltip
+                    null,  // Shortcut shortcut
+                    true,  // boolean registerInToolbar
+                    "photoadjust/propertyeditor",  // String toolbarId
+                    false  // boolean installAdapters
                     );
             this.installAdapters();
         }

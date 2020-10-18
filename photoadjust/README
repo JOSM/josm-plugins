@@ -30,6 +30,13 @@ Resources:
         Author: JOSM contributors and others, see JOSM CONTRIBUTION
         License: GNU General Public License v2 or later
     License: GPL v2 or later
+  images/photopropedit.svg:
+    combination of:
+      JOSM resources/images/dialogs/edit.svg
+      JOSM resources/images/dialogs/geoimage/togglegit.svg
+        Author: JOSM contributors and others, see JOSM CONTRIBUTION
+        License: GNU General Public License v2 or later
+    License: GPL v2 or later
   src/org/openstreetmap/josm/plugins/photoadjust/
     different authors (see SVN log)
     License: GPL v2 or later
