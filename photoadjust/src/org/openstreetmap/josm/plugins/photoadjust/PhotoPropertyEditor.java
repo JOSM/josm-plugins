@@ -639,7 +639,7 @@ public class PhotoPropertyEditor {
             private Double minimum;
             private Double maximum;
 
-            public DoubleInputVerifier(JosmTextField txtFld) {
+            protected DoubleInputVerifier(JosmTextField txtFld) {
                 textField = txtFld;
             }
 
