@@ -4,6 +4,7 @@ package relcontext.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Shortcut;
 
 import relcontext.ChosenRelation;
 import relcontext.ChosenRelationListener;
@@ -41,16 +43,16 @@ import relcontext.ChosenRelationListener;
  * Make a single polygon out of the multipolygon relation. The relation must have only outer members.
  * @author Zverik
  */
-public class ReconstructPolygonAction extends AbstractAction implements ChosenRelationListener {
+public class ReconstructPolygonAction extends JosmAction implements ChosenRelationListener {
     private ChosenRelation rel;
 
     private static final List<String> IRRELEVANT_KEYS = Arrays.asList(new String[] {
             "source", "created_by", "note"});
 
     public ReconstructPolygonAction(ChosenRelation rel) {
-        super(tr("Reconstruct polygon"));
-        putValue(SMALL_ICON, ImageProvider.get("dialogs", "filter"));
-        putValue(LONG_DESCRIPTION, "Reconstruct polygon from multipolygon relation");
+        super(tr("Reconstruct polygon"), "dialogs/filter", tr("Reconstruct polygon from multipolygon relation"),
+                Shortcut.registerShortcut("reltoolbox:reconstructpoly", tr("Relation Toolbox: {0}", tr("Reconstruct polygon from multipolygon relation")),
+                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false);
         this.rel = rel;
         rel.addChosenRelationListener(this);
         setEnabled(isSuitableRelation(rel.get()));
