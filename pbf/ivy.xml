@@ -1,0 +1,6 @@
+<ivy-module version="2.0">
+  <info organisation="org.openstreetmap.josm.plugins" module="pbf"/>
+  <dependencies>
+    <dependency conf="default->default" org="org.openstreetmap.pbf" name="osmpbf" rev="1.4.0"/>
+  </dependencies>
+</ivy-module>

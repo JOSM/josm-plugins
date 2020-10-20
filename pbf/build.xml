@@ -13,26 +13,6 @@
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
-  
-    <!--
-    **********************************************************
-    ** compile - complies the source tree
-    **********************************************************
-    -->
-    <target name="compile" depends="init">
-        <echo message="compiling sources for ${plugin.jar} ... "/>
-        <javac classpath="${josm}" debug="true" destdir="${plugin.build.dir}" includeAntRuntime="false">
-            <!-- get rid of "internal proprietary API" warning -->
-            <compilerarg value="-XDignore.symbol.file"/>
-            <src path="src" />
-            <src path="gen" />
-            <exclude name="org/**"/>
-        </javac>
-        <javac classpath="${josm}" debug="true" destdir="${plugin.build.dir}" includeAntRuntime="false">
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
-            <src path="src" />
-            <include name="org/**"/>
-        </javac>
-    </target>
+    <target name="pre-compile" depends="fetch_dependencies"/>
+
 </project>
