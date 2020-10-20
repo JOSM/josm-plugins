@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -94,7 +94,7 @@ public class PbfWriter implements Closeable {
             public void addStringsToStringtable() {
                 StringTable stable = getStringTable();
                 for (T i : contents) {
-                    for (Entry<String, String> tag : i.getKeys().entrySet()) {
+                    for (Map.Entry<String, String> tag : i.getKeys().entrySet()) {
                         stable.incr(tag.getKey());
                         stable.incr(tag.getValue());
                     }
@@ -209,7 +209,7 @@ public class PbfWriter implements Closeable {
 
                     // Then we must include tag information.
                     if (doesBlockHaveTags) {
-                        for (Entry<String, String> t : i.getKeys().entrySet()) {
+                        for (Map.Entry<String, String> t : i.getKeys().entrySet()) {
                             bi.addKeysVals(stable.getIndex(t.getKey()));
                             bi.addKeysVals(stable.getIndex(t.getValue()));
                         }
@@ -222,8 +222,6 @@ public class PbfWriter implements Closeable {
 
             /**
              * Serialize all nodes in the non-dense format.
-             *
-             * @param parentbuilder Add to this PrimitiveBlock.
              */
             public Osmformat.PrimitiveGroup serializeNonDense() {
                 if (contents.isEmpty()) {
@@ -240,7 +238,7 @@ public class PbfWriter implements Closeable {
                     bi.setId(id);
                     bi.setLon(lon);
                     bi.setLat(lat);
-                    for (Entry<String, String> t : i.getKeys().entrySet()) {
+                    for (Map.Entry<String, String> t : i.getKeys().entrySet()) {
                         bi.addKeys(stable.getIndex(t.getKey()));
                         bi.addVals(stable.getIndex(t.getValue()));
                     }
@@ -272,7 +270,7 @@ public class PbfWriter implements Closeable {
                         bi.addRefs(id - lastid);
                         lastid = id;
                     }
-                    for (Entry<String, String> t : i.getKeys().entrySet()) {
+                    for (Map.Entry<String, String> t : i.getKeys().entrySet()) {
                         bi.addKeys(stable.getIndex(t.getKey()));
                         bi.addVals(stable.getIndex(t.getValue()));
                     }
@@ -327,7 +325,7 @@ public class PbfWriter implements Closeable {
                         bi.addRolesSid(stable.getIndex(j.getRole()));
                     }
 
-                    for (Entry<String, String> t : i.getKeys().entrySet()) {
+                    for (Map.Entry<String, String> t : i.getKeys().entrySet()) {
                         bi.addKeys(stable.getIndex(t.getKey()));
                         bi.addVals(stable.getIndex(t.getValue()));
                     }
