@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -176,7 +176,9 @@ public final class CircleArcMaker {
 
         Set<Way> targetWays = new HashSet<>();
         if (!selectedWays.isEmpty()) {
-            orig.forEach(n -> targetWays.addAll(n.getParentWays()));
+            for (int i = pos1 + 1; i < pos3; i++) {
+                targetWays.addAll(nodes.get(i).getParentWays());
+            }
         } else {
             targetWays.add(w);
         }
@@ -365,8 +367,9 @@ public final class CircleArcMaker {
                 }
             }
             if (twWasChanged) {
-                cmds.add(new ChangeCommand(ds, originalTw, tw));
+                cmds.add(new ChangeNodesCommand(ds, originalTw, new ArrayList<>(tw.getNodes())));
             }
+            tw.setNodes(null); // see #19885
         }
     }
 
