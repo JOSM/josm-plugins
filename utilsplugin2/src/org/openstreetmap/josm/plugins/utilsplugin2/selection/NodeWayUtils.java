@@ -394,11 +394,6 @@ public final class NodeWayUtils {
                 filteredAdd(newestWays, w);
             }
         }
-        for (Way w : newestWays) {
-            newestNodes.removeAll(w.getNodes());
-            // do not select nodes of already selected ways
-        }
-
         filteredAddAll(newNodes, newestNodes);
         newWays.addAll(newestWays); // already filtered
     }
@@ -487,10 +482,23 @@ public final class NodeWayUtils {
         return interCount;
     }
 
+    /**
+     * Compute ways inside selected polygons.
+     * @param selected the selected polygons and maybe other elements
+     * @param dataset the dataset
+     * @return ways inside selected polygons
+     */
     public static Collection<OsmPrimitive> selectAllInside(Collection<OsmPrimitive> selected, DataSet dataset) {
         return selectAllInside(selected, dataset, true);
     }
 
+    /**
+     * Compute elements (ways, nodes) inside selected polygons.
+     * @param selected the selected polygons and maybe other elements
+     * @param dataset the dataset
+     * @param ignoreNodesOfFoundWays if {@code true}, the result will not contain the nodes of the computed ways.
+     * @return ways inside selected polygons, if wanted also the nodes.
+     */
     public static Set<OsmPrimitive> selectAllInside(Collection<OsmPrimitive> selected, DataSet dataset, boolean ignoreNodesOfFoundWays) {
         Set<Way> newWays = new HashSet<>();
         Set<Node> newNodes = new HashSet<>();

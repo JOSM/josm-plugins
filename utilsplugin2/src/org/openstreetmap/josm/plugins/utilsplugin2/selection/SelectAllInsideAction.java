@@ -22,6 +22,9 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  */
 public class SelectAllInsideAction extends JosmAction {
 
+    /**
+     * Constructs a new {@code SelectAllInsideAction}.
+     */
     public SelectAllInsideAction() {
         super(tr("All inside [testing]"), "selinside", tr("Select all inside selected polygons"),
                 Shortcut.registerShortcut("tools:selinside", tr("Selection: {0}", tr("All inside")),
@@ -32,7 +35,7 @@ public class SelectAllInsideAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getLayerManager().getActiveDataSet();
-        Collection<OsmPrimitive> insideSelected = NodeWayUtils.selectAllInside(ds.getSelected(), ds, true);
+        Collection<OsmPrimitive> insideSelected = NodeWayUtils.selectAllInside(ds.getSelected(), ds, false);
 
         if (!insideSelected.isEmpty()) {
             ds.addSelected(insideSelected);
