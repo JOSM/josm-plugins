@@ -53,6 +53,19 @@ public class ExtractPointAction extends JosmAction {
             .setIcon(JOptionPane.WARNING_MESSAGE).show();
             return;
         }
+        final boolean ok = checkAndConfirmOutlyingOperation("extnode",
+                tr("Extract node confirmation"),
+                tr("You are about to extract a node which can have other referrers not yet downloaded."
+                        + "<br>"
+                        + "This can cause problems because other objects (that you do not see) might use them."
+                        + "<br>"
+                        + "Do you really want to extract?"),
+                "", // incomplete node should not happen
+                selectedNodes, null);
+        if (!ok) {
+            return;
+        }
+
         Node nd = selectedNodes.iterator().next();
         Node ndCopy = new Node(nd.getCoor());
         List<Command> cmds = new LinkedList<>();
