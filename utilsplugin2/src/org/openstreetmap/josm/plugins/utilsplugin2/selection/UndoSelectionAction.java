@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -50,7 +50,7 @@ public class UndoSelectionAction extends JosmAction {
             int num = history.size();
             int k = 0;
 
-            Set<OsmPrimitive> newSel = new HashSet<>();
+            Set<OsmPrimitive> newSel = new LinkedHashSet<>();
             while (k < num) {
                 if (index+1 < history.size()) index++; else index = 0;
                 Collection<? extends OsmPrimitive> histsel = history.get(index);
