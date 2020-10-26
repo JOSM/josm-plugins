@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public class EditLevel0LAction extends JosmAction {
         super(tr("Edit as Level0L"),
                 "theta",
                 tr("Edit the selected objects in an external editor in the Level0L format"),
-                null, false);
+                null, false, "EditLevel0LAction", true);
     }
 
     @Override
@@ -55,6 +56,16 @@ public class EditLevel0LAction extends JosmAction {
         } catch (Exception ex) {
             Logging.error(ex);
         }
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        updateEnabledStateOnCurrentSelection(true);
+    }
+
+    @Override
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+        setEnabled(selection != null && !selection.isEmpty());
     }
 
     private void editLevel0() throws IOException {
