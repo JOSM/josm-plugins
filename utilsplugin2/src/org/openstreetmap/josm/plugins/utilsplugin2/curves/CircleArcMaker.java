@@ -165,7 +165,7 @@ public final class CircleArcMaker {
         if (!selectedWays.isEmpty()) {
             for (int i = pos1 + 1; i < pos3; i++) {
                 Node n = nodes.get(i);
-                if (n.isTagged() || n.isReferredByWays(2) || n.referrers(Relation.class).count() > 0) {
+                if (n.isTagged() || (!n.isNew() && n.isReferredByWays(2)) || n.referrers(Relation.class).count() > 0) {
                     fixNodes.add(n);
                 }
             }
