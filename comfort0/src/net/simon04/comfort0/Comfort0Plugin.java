@@ -22,6 +22,7 @@ public class Comfort0Plugin extends Plugin {
         final MainMenu menu = MainApplication.getMenu();
         MainMenu.add(menu.editMenu, new EditLevel0LAction());
         MainMenu.addAfter(menu.editMenu, new CopyLevel0LAction(), false, menu.copy);
+        MainMenu.addAfter(menu.editMenu, new PasteLevel0LAction(), false, menu.paste);
 
     }
 }

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -97,16 +98,19 @@ public class EditLevel0LAction extends JosmAction {
     }
 
     private void readLevel0(Path path, final DataSet dataSet) throws IOException, ParseException {
-        final List<PrimitiveData> primitives;
         try (BufferedReader reader = Files.newBufferedReader(path, CHARSET)) {
-            primitives = new Level0LParser(reader).primitives();
+            final List<PrimitiveData> primitives = readLevel0(reader, dataSet);
+            Logging.info("Comfort0: Reading file {0} yielded {1} primitives", path, primitives.size());
         }
-        Logging.info("Comfort0: Reading file {0} yielded {1} primitives", path, primitives.size());
-
-        buildChangeCommands(dataSet, primitives);
     }
 
-    private void buildChangeCommands(DataSet dataSet, List<PrimitiveData> primitives) {
+    static List<PrimitiveData> readLevel0(Reader reader, final DataSet dataSet) throws ParseException {
+        final List<PrimitiveData> primitives = new Level0LParser(reader).primitives();
+        buildChangeCommands(dataSet, primitives);
+        return primitives;
+    }
+
+    static void buildChangeCommands(DataSet dataSet, List<PrimitiveData> primitives) {
         final List<Command> commands = new ArrayList<>();
         for (PrimitiveData fromLevel0L : primitives) {
             final OsmPrimitive fromDataSet = dataSet.getPrimitiveById(fromLevel0L);
