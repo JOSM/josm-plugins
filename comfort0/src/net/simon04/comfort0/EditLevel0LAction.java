@@ -1,6 +1,7 @@
 package net.simon04.comfort0;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
@@ -26,6 +27,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -59,7 +61,7 @@ public class EditLevel0LAction extends JosmAction {
         final DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
         final Path path = writeLevel0(dataSet);
         final Process editor = new EditorLauncher(path).launch();
-        Logging.info("Comfort0: Launching editor on file {0}", path);
+        new Notification(tr("Comfort0: Launching editor on file {0}", path)).show();
         new Thread(() -> awaitEditing(dataSet, path, editor), path.getFileName().toString()).start();
     }
 
@@ -115,11 +117,15 @@ public class EditLevel0LAction extends JosmAction {
             }
         }
 
-        Logging.info("Comfort0: Changing {0} primitives", commands.size());
         if (commands.isEmpty()) {
             return;
         }
         final SequenceCommand command = new SequenceCommand("Comfort0", commands);
-        GuiHelper.runInEDT(() -> UndoRedoHandler.getInstance().add(command));
+        GuiHelper.runInEDT(() -> {
+            new Notification(trn(
+                    "Comfort0: Changing {0} primitive",
+                    "Comfort0: Changing {0} primitives", commands.size(), commands.size())).show();
+            UndoRedoHandler.getInstance().add(command);
+        });
     }
 }
