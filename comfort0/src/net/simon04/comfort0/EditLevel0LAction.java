@@ -106,11 +106,20 @@ public class EditLevel0LAction extends JosmAction {
 
     static List<PrimitiveData> readLevel0(Reader reader, final DataSet dataSet) throws ParseException {
         final List<PrimitiveData> primitives = new Level0LParser(reader).primitives();
-        buildChangeCommands(dataSet, primitives);
+        final SequenceCommand command = buildChangeCommands(dataSet, primitives);
+        GuiHelper.runInEDT(() -> {
+            if (command == null || command.getChildren().isEmpty()) {
+                return;
+            }
+            new Notification(trn(
+                    "Comfort0: Changing {0} primitive",
+                    "Comfort0: Changing {0} primitives", command.getChildren().size(), command.getChildren().size())).show();
+            UndoRedoHandler.getInstance().add(command);
+        });
         return primitives;
     }
 
-    static void buildChangeCommands(DataSet dataSet, List<PrimitiveData> primitives) {
+    static SequenceCommand buildChangeCommands(DataSet dataSet, List<PrimitiveData> primitives) {
         final List<Command> commands = new ArrayList<>();
         for (PrimitiveData fromLevel0L : primitives) {
             final OsmPrimitive fromDataSet = dataSet.getPrimitiveById(fromLevel0L);
@@ -131,16 +140,9 @@ public class EditLevel0LAction extends JosmAction {
                 commands.add(command);
             }
         }
-
         if (commands.isEmpty()) {
-            return;
+            return null;
         }
-        final SequenceCommand command = new SequenceCommand("Comfort0", commands);
-        GuiHelper.runInEDT(() -> {
-            new Notification(trn(
-                    "Comfort0: Changing {0} primitive",
-                    "Comfort0: Changing {0} primitives", commands.size(), commands.size())).show();
-            UndoRedoHandler.getInstance().add(command);
-        });
+        return new SequenceCommand("Comfort0", commands);
     }
 }
