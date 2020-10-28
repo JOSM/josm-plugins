@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class EditorLauncher {
 
-    private Path fileToEdit;
+    private final Path fileToEdit;
 
     /**
      * Constructs a new {@link EditorLauncher}.
