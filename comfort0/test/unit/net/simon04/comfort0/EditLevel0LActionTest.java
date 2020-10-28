@@ -68,7 +68,7 @@ public class EditLevel0LActionTest {
 
         node.put("fixme", "delete me!");
         command = buildChangeCommand(dataSet, ChangePropertyCommand.class);
-        assertThat(command.getTags(), is(new TagMap("name", "Neu Broderstorf", "traffic_sign", "city_limit")));
+        assertThat(command.getTags(), is(new TagMap("name", "Neu Broderstorf", "traffic_sign", "city_limit", "fixme", "")));
         node.remove("fixme");
 
         node.setCoor(new LatLon(55.0900666, 13.2539381));

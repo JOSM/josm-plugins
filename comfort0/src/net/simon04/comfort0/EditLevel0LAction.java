@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -136,9 +137,11 @@ public class EditLevel0LAction extends JosmAction {
             final OsmPrimitive newInstance = fromLevel0L.getType().newVersionedInstance(fromDataSet.getUniqueId(), fromDataSet.getVersion());
             newInstance.load(fromLevel0L);
 
-            final boolean equalKeys = Objects.equals(newInstance.getKeys(), fromDataSet.getKeys());
-            if (!equalKeys) {
-                final ChangePropertyCommand command = new ChangePropertyCommand(Collections.singleton(fromDataSet), newInstance.getKeys());
+            final TagMap newKeys = newInstance.getKeys();
+            if (!Objects.equals(newKeys, fromDataSet.getKeys())) {
+                fromDataSet.getKeys().keySet().forEach(key ->
+                                newKeys.computeIfAbsent(key, k -> ""));
+                final ChangePropertyCommand command = new ChangePropertyCommand(Collections.singleton(fromDataSet), newKeys);
                 commands.add(command);
             }
 
