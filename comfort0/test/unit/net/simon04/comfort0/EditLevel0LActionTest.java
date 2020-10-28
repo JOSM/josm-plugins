@@ -3,6 +3,7 @@ package net.simon04.comfort0;
 import static org.CustomMatchers.hasSize;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,7 +35,7 @@ public class EditLevel0LActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     private SequenceCommand buildChangeCommands(DataSet dataSet) throws ParseException {
         final String level0l = "node 1831881213: 54.0900666, 12.2539381 #Neu Broderstorf (54.0900666, 12.2539381)\n" +
@@ -43,12 +45,12 @@ public class EditLevel0LActionTest {
         return EditLevel0LAction.buildChangeCommands(dataSet, primitives);
     }
 
-    private ChangePropertyCommand buildChangeCommand(DataSet dataSet) throws ParseException {
+    private <T extends PseudoCommand> T buildChangeCommand(DataSet dataSet, Class<T> type) throws ParseException {
         SequenceCommand commands = buildChangeCommands(dataSet);
         assertThat(commands.getChildren(), hasSize(1));
         final PseudoCommand command = commands.getChildren().iterator().next();
-        assertThat(command, instanceOf(ChangePropertyCommand.class));
-        return (ChangePropertyCommand) command;
+        assertThat(command, instanceOf(type));
+        return type.cast(command);
     }
 
     @Test
@@ -57,7 +59,7 @@ public class EditLevel0LActionTest {
         node.setCoor(new LatLon(54.0900666, 12.2539381));
         final DataSet dataSet = new DataSet(node);
 
-        ChangePropertyCommand command = buildChangeCommand(dataSet);
+        ChangePropertyCommand command = buildChangeCommand(dataSet, ChangePropertyCommand.class);
         assertThat(command.getTags(), is(new TagMap("name", "Neu Broderstorf", "traffic_sign", "city_limit")));
 
         node.put("name", "Neu Broderstorf");
@@ -65,11 +67,11 @@ public class EditLevel0LActionTest {
         assertThat(buildChangeCommands(dataSet), nullValue());
 
         node.put("fixme", "delete me!");
-        command = buildChangeCommand(dataSet);
+        command = buildChangeCommand(dataSet, ChangePropertyCommand.class);
         assertThat(command.getTags(), is(new TagMap("name", "Neu Broderstorf", "traffic_sign", "city_limit")));
         node.remove("fixme");
 
         node.setCoor(new LatLon(55.0900666, 13.2539381));
-        assertThat(buildChangeCommands(dataSet), nullValue()); // TODO
+        assertThat(buildChangeCommand(dataSet, MoveCommand.class), notNullValue());
     }
 }

@@ -21,9 +21,11 @@ import net.simon04.comfort0.level0l.parsergen.ParseException;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
@@ -137,6 +139,11 @@ public class EditLevel0LAction extends JosmAction {
             final boolean equalKeys = Objects.equals(newInstance.getKeys(), fromDataSet.getKeys());
             if (!equalKeys) {
                 final ChangePropertyCommand command = new ChangePropertyCommand(Collections.singleton(fromDataSet), newInstance.getKeys());
+                commands.add(command);
+            }
+
+            if (fromDataSet instanceof Node && !Objects.equals(((Node) fromDataSet).getCoor(), ((Node) newInstance).getCoor())) {
+                final MoveCommand command = new MoveCommand(((Node) fromDataSet), ((Node) newInstance).getCoor());
                 commands.add(command);
             }
         }
