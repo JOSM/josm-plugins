@@ -74,7 +74,6 @@ public class PbfReader extends AbstractReader {
 
             if (header.hasBbox()) {
                 HeaderBBox bbox = header.getBbox();
-                if (bbox != null) {
                     double minlat = parseRawDegrees(bbox.getBottom());
                     double minlon = parseRawDegrees(bbox.getLeft());
                     double maxlat = parseRawDegrees(bbox.getTop());
@@ -85,7 +84,6 @@ public class PbfReader extends AbstractReader {
                     } else {
                         Logging.error("Invalid Bounds: "+b);
                     }
-                }
             }
         }
 
