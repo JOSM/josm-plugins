@@ -51,7 +51,7 @@ public class PbfReader extends AbstractReader {
 
     protected class PbfParser extends BinaryParser {
 
-        private IllegalDataException exception = null;
+        private IllegalDataException exception;
         private boolean discourageUpload;
         private double parseRawDegrees(long raw) {
             return raw * .000000001;
@@ -317,7 +317,7 @@ public class PbfReader extends AbstractReader {
      * Parse the given input source and return the dataset.
      *
      * @param source the source input stream. Must not be null.
-     * @param progressMonitor  the progress monitor. If null, {@see NullProgressMonitor#INSTANCE} is assumed
+     * @param progressMonitor  the progress monitor. If null, {link NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source

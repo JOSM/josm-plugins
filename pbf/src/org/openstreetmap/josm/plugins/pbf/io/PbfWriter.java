@@ -52,7 +52,7 @@ public class PbfWriter implements Closeable {
         protected boolean useDense = true;
 
         /** Has the header been written yet? */
-        protected boolean headerWritten = false;
+        protected boolean headerWritten;
 
         /**
          * Constructs a new {@code PbfSerializer}.
@@ -170,6 +170,7 @@ public class PbfWriter implements Closeable {
 
             /**
              * Serialize all nodes in the 'dense' format.
+             * @return a group of primitives
              */
             public Osmformat.PrimitiveGroup serializeDense() {
                 if (contents.isEmpty()) {
@@ -222,6 +223,7 @@ public class PbfWriter implements Closeable {
 
             /**
              * Serialize all nodes in the non-dense format.
+             * @return a group of primitives
              */
             public Osmformat.PrimitiveGroup serializeNonDense() {
                 if (contents.isEmpty()) {
@@ -431,7 +433,7 @@ public class PbfWriter implements Closeable {
                 groups.add(relations);
                 relations = null;
             } else {
-                return; // No data. Is this an empty file?
+                // No data. Is this an empty file?
             }
         }
 
