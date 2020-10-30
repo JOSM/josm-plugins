@@ -9,10 +9,6 @@
   </fileset>
   <filter name="DerivedFiles" enabled="true"/>
   <filter name="FilesFromPackage" enabled="true">
-    <filter-data value="src/com"/>
-    <filter-data value="src/crosby"/>
-    <filter-data value="gen/com"/>
-    <filter-data value="gen/crosby"/>
     <filter-data value="data"/>
     <filter-data value="images"/>
     <filter-data value="styles"/>
