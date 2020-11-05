@@ -97,16 +97,12 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
                 Logging.info("Reverted changeset {0}", Long.toString(changesetId));
                 newLayer = false; // reuse layer for subsequent reverts
             } catch (OsmTransferException e) {
-                if (!allcmds.isEmpty()) {
-                    GuiHelper.runInEDT(() -> UndoRedoHandler.getInstance().undo(allcmds.size()));
-                }
+            	rollback(allcmds);
                 Logging.error(e);
                 throw e;
             } catch (UserCancelException e) {
-                if (!allcmds.isEmpty()) {
-                    GuiHelper.runInEDT(() -> UndoRedoHandler.getInstance().undo(allcmds.size()));
-                }
-                Logging.warn("Revert canceled");
+            	rollback(allcmds);
+                GuiHelper.executeByMainWorkerInEDT(() -> new Notification(tr("Revert was canceled")).show());
                 Logging.trace(e);
                 return;
             }
@@ -119,6 +115,12 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
                     MainApplication.getMap().conflictDialog.warnNumNewConflicts(numberOfConflicts);
                 }
             });
+        }
+    }
+
+    private static void rollback(List<Command> allcmds) {
+        if (!allcmds.isEmpty()) {
+            GuiHelper.runInEDT(() -> UndoRedoHandler.getInstance().undo(allcmds.size()));
         }
     }
 
@@ -184,18 +186,19 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
         return new RevertChangesetCommand(desc, cmds);
     }
 
-    @Override
-    protected void cancel() {
+	@Override
+	protected void cancel() {
         // nothing to do
-    }
+	}
 
-    @Override
-    protected void finish() {
+	@Override
+	protected void finish() {
         // nothing to do
 
-    }
+	}
 
     /**
+     * Return number of conflicts for this changeset.
      * @return number of conflicts for this changeset
      */
     public final int getNumberOfConflicts() {

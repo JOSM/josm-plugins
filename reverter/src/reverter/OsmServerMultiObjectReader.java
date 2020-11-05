@@ -42,7 +42,7 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
             progressMonitor.finishTask();
         }
     }
-    private List<String> makeQueryStrings(OsmPrimitiveType type, Map<Long,Integer> list) {
+    private static List<String> makeQueryStrings(OsmPrimitiveType type, Map<Long,Integer> list) {
         List<String> result = new ArrayList<>((list.size()+maxQueryIds-1)/maxQueryIds);
         StringBuilder sb = new StringBuilder();
         int cnt=0;
@@ -72,23 +72,21 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
     }
 
     protected static final int maxQueryIds = 128;
-    public void readMultiObjects(OsmPrimitiveType type, Map<Long,Integer> list, ProgressMonitor progressMonitor) {
+    public void readMultiObjects(OsmPrimitiveType type, Map<Long,Integer> list, ProgressMonitor progressMonitor) throws OsmTransferException {
         for (String query : makeQueryStrings(type,list)) {
             if (progressMonitor.isCanceled()) {
                 return;
             }
-            rdr.callback = new ParseCallback() {
-                @Override
-                public void primitiveParsed(PrimitiveId id) {
-                    if (id.getType() == type && list.remove(id.getUniqueId()) != null) {
-                        progressMonitor.worked(1);
-                    }
+            rdr.callback = id -> {
+                if (id.getType() == type && list.remove(id.getUniqueId()) != null) {
+                    progressMonitor.worked(1);
                 }
             };
             try (InputStream in = getInputStream(query, NullProgressMonitor.INSTANCE)) {
                 rdr.addData(in);
-            } catch (IOException | IllegalDataException | OsmTransferException e) {
+            } catch (IOException | IllegalDataException e) {
                 Logging.warn(e);
+                throw new OsmTransferException(e);
             } finally {
                 rdr.callback = null;
             }
