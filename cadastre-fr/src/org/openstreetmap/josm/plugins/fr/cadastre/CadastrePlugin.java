@@ -36,7 +36,6 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.Plugin;
@@ -70,7 +69,7 @@ import org.openstreetmap.josm.tools.Logging;
  *         &lt;matthieu.lochegnies@gmail.com&gt; for the extension to codeCommune;
  *         Don-vip&lt;vincent.privat@gmail.com&gt; for the maintenance and Edigeo support
  *
- * @version 3.0
+ * @version 3.1
  * <br>History:
  * <br>0.1 17-Jun-2008 first prototype using a first Lambert projection impl. in core
  * <br>0.2 22-Jun-2008 first stable version
@@ -528,20 +527,17 @@ public class CadastrePlugin extends Plugin {
      * Ask to change projection if current one is not suitable for French cadastre.
      */
     public static void askToChangeProjection() {
-        GuiHelper.runInEDTAndWait(new Runnable() {
-            @Override
-            public void run() {
-                if (JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
-                        tr("To enable the cadastre WMS plugin, change\n"
-                                + "the current projection to one of the cadastre\n"
-                                + "projections and retry"),
-                                tr("Change the current projection"), JOptionPane.OK_CANCEL_OPTION)
-                    == JOptionPane.OK_OPTION) {
-                    PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
-                    p.selectPreferencesTabByClass(MapPreference.class);
-                    p.getTabbedPane().getSetting(ProjectionPreference.class).selectProjection(ProjectionPreference.lambert_cc9);
-                    p.setVisible(true);
-                }
+        GuiHelper.runInEDTAndWait(() -> {
+            if (JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
+                    tr("To enable the cadastre WMS plugin, change\n"
+                            + "the current projection to one of the cadastre\n"
+                            + "projections and retry"),
+                            tr("Change the current projection"), JOptionPane.OK_CANCEL_OPTION)
+                == JOptionPane.OK_OPTION) {
+                PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
+                p.selectPreferencesTabByClass(ProjectionPreference.class);
+                p.getTabbedPane().getSetting(ProjectionPreference.class).selectProjection(ProjectionPreference.lambert_cc9);
+                p.setVisible(true);
             }
         });
     }
