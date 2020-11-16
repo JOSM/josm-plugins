@@ -1,25 +1,23 @@
 package org.openstreetmap.josm.plugins.rasterfilters.preferences;
 
-import java.awt.GridBagConstraints;
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.EAST;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.GridBagLayout;
 import java.util.List;
-import java.util.Objects;
 
-import javax.json.JsonObject;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -30,36 +28,21 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class RasterFiltersPreferences implements SubPreferenceSetting {
 
-    private FiltersDownloader downloader = new FiltersDownloader();
-    AbstractTableModel model;
-    JPanel holder;
+    private AbstractTableModel model;
+    private JPanel holder;
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-
         model = new FiltersTableModel();
 
         if (holder == null) {
-            holder = new JPanel();
-            holder.setLayout(new GridBagLayout());
-
+            holder = new JPanel(new GridBagLayout());
             holder.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-            model.addTableModelListener(new TableModelListener() {
-
-                @Override
-                public void tableChanged(TableModelEvent e) {
-                    int row = e.getFirstRow();
-                    int col = e.getColumn();
-                    TableModel model = (TableModel) e.getSource();
-
-                    Boolean isDownloadedUpdate = (Boolean) model.getValueAt(
-                            row, col);
-                    List<FilterInfo> filtersList = ((FiltersTableModel) model).filtersInfoList;
-
-                    filtersList.get(row).setNeedToDownload(isDownloadedUpdate);
-
-                }
+            model.addTableModelListener(e -> {
+                int row = e.getFirstRow();
+                int col = e.getColumn();
+                TableModel tmodel = (TableModel) e.getSource();
+                ((FiltersTableModel) tmodel).filtersInfoList.get(row).setNeedToDownload((Boolean) tmodel.getValueAt(row, col));
             });
 
             JTable table = new JTable(model);
@@ -67,65 +50,48 @@ public class RasterFiltersPreferences implements SubPreferenceSetting {
             table.getColumnModel().getColumn(3).setMaxWidth(20);
             JScrollPane pane = new JScrollPane(table);
 
-            holder.add(pane, GBC.eol().fill(GBC.BOTH));
+            holder.add(pane, GBC.eol().fill(BOTH));
 
-            GridBagConstraints c = GBC.eol();
-            c.anchor = GBC.EAST;
-
-            JButton download = new JButton("Download");
-            download.addActionListener(downloader);
-            holder.add(download, c);
+            JButton download = new JButton(tr("Download"));
+            download.addActionListener(new FiltersDownloader());
+            holder.add(download, GBC.eol().anchor(EAST));
         }
 
-        MapPreference pref = gui.getMapPreference();
-        pref.addSubTab(this, "Image Filters", holder);
-
+        getTabPreferenceSetting(gui).addSubTab(this, tr("Image Filters"), holder);
     }
 
     @Override
     public boolean ok() {
-        List<FilterInfo> filtersInfoList = ((FiltersTableModel) model).getFiltersInfoList();
-
-        for (FilterInfo temp : filtersInfoList) {
-            JsonObject meta = temp.getMeta();
-            String paramName = meta.getString("name");
-            paramName = "rasterfilters." + paramName;
-            Config.getPref().putBoolean(paramName, temp.isNeedToDownload());
+        for (FilterInfo temp : ((FiltersTableModel) model).getFiltersInfoList()) {
+            Config.getPref().putBoolean("rasterfilters." + temp.getMeta().getString("name"), temp.isNeedToDownload());
         }
-
         return false;
     }
 
     @Override
     public boolean isExpert() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public TabPreferenceSetting getTabPreferenceSetting(PreferenceTabbedPane gui) {
-        return gui.getMapPreference();
+        return gui.getImageryPreference();
     }
 
-    static class FiltersTableModel extends AbstractTableModel {
+    private static class FiltersTableModel extends AbstractTableModel {
 
-        String[] columnNames = {"Filter Name", "Author", "Description", ""};
-        Class<?>[] columnClasses = {String.class, String.class, String.class, Boolean.class};
-        List<FilterInfo> filtersInfoList;
-        Object[][] data;
+        private final String[] columnNames = {tr("Filter Name"), tr("Author"), tr("Description"), ""};
+        private final Class<?>[] columnClasses = {String.class, String.class, String.class, Boolean.class};
+        private final List<FilterInfo> filtersInfoList = FiltersDownloader.downloadFiltersInfoList();
+        private final Object[][] data = new Object[filtersInfoList.size()][4];
 
         FiltersTableModel() {
-
-            filtersInfoList = FiltersDownloader.downloadFiltersInfoList();
-            data = new Object[filtersInfoList.size()][4];
-
             for (int i = 0; i < filtersInfoList.size(); i++) {
                 data[i][0] = filtersInfoList.get(i).getName();
                 data[i][1] = filtersInfoList.get(i).getOwner();
                 data[i][2] = filtersInfoList.get(i).getDescription();
                 data[i][3] = filtersInfoList.get(i).isNeedToDownload();
             }
-
         }
 
         @Override
@@ -166,11 +132,7 @@ public class RasterFiltersPreferences implements SubPreferenceSetting {
 
         @Override
         public boolean isCellEditable(int row, int col) {
-            if (col == 3) {
-                return true;
-            }
-
-            return false;
+            return col == 3;
         }
 
         @Override
@@ -184,77 +146,5 @@ public class RasterFiltersPreferences implements SubPreferenceSetting {
         public List<FilterInfo> getFiltersInfoList() {
             return filtersInfoList;
         }
-    }
-
-}
-
-class FilterInfo {
-    private String name;
-    private String description;
-    private JsonObject meta;
-    private boolean needToDownload;
-    private String owner;
-
-    FilterInfo(String name, String description, JsonObject meta, boolean needToDownload) {
-        this.setName(name);
-        this.setDescription(description);
-        this.meta = meta;
-        this.setNeedToDownload(needToDownload);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public JsonObject getMeta() {
-        return meta;
-    }
-
-    public void setMeta(JsonObject meta) {
-        this.meta = meta;
-    }
-
-    public boolean isNeedToDownload() {
-        return needToDownload;
-    }
-
-    public void setNeedToDownload(boolean needToDownload) {
-        this.needToDownload = needToDownload;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public String toString() {
-        return "name: " + getName() + "\nDescription: " + getDescription() + "\nMeta: " + getMeta();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, meta, description);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return (o instanceof FilterInfo) && name.equals(((FilterInfo) o).getName())
-                && meta.equals(((FilterInfo) o).getMeta()) && description.equals(((FilterInfo) o).getDescription());
     }
 }
