@@ -2,21 +2,18 @@ package org.openstreetmap.josm.plugins.rasterfilters.preferences;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +33,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -60,70 +59,19 @@ public class FiltersDownloader implements ActionListener {
     static List<FilterInfo> filtersInfoList = new ArrayList<>();
 
     public static List<FilterInfo> downloadFiltersInfoList() {
-
-//        JsonObject jsonRequest = Json
-//                .createObjectBuilder()
-//                .add("id", new Random().nextInt())
-//                .add("method", "wiki.getPageHTML")
-//                .add("params",
-//                        Json.createArrayBuilder().add("ImageFilters").build())
-//                .build();
-
-//        String jsonRequestString = jsonRequest.toString();
-
-//        URL wikiApi;
-//        HttpURLConnection wikiConnection;
         try {
-//            wikiApi = new URL("https://josm.openstreetmap.de/wiki/ImageFilters");
-//            wikiConnection = (HttpURLConnection) wikiApi.openConnection();
-//            wikiConnection.setDoOutput(true);
-//            wikiConnection.setDoInput(true);
-//
-//            wikiConnection.setRequestProperty("Content-Type",
-//                    "application/json");
-//            wikiConnection.setRequestProperty("Method", "POST");
-//            wikiConnection.connect();
-
-//            OutputStream os = wikiConnection.getOutputStream();
-//            os.write(jsonRequestString.getBytes("UTF-8"));
-//            os.close();
-
-//            int HttpResult = wikiConnection.getResponseCode();
-//            if (HttpResult == HttpURLConnection.HTTP_OK) {
-
-//                JsonReader jsonStream = Json
-//                        .createReader(new InputStreamReader(wikiConnection
-//                                .getInputStream(), "utf-8"));
-
-//                BufferedReader inReader = new BufferedReader(new InputStreamReader(wikiConnection.getInputStream()));
-
-//                JsonObject jsonResponse = jsonStream.readObject();
-//                jsonStream.close();
-            Document doc = Jsoup.connect("https://josm.openstreetmap.de/wiki/ImageFilters").get();
-            Elements trTagElems = doc.getElementsByTag("tr");
-
-//                Elements trTagElems = Jsoup.parse(
-//                        jsonResponse.getString("result"))
-//                        .getElementsByTag("tr");
-            for (Element element : trTagElems) {
-
+            Document doc = Jsoup.connect(HelpUtil.getWikiBaseHelpUrl() + "/ImageFilters").get();
+            for (Element element : doc.getElementsByTag("tr")) {
                 Elements elems = element.getElementsByTag("td");
                 if (!elems.isEmpty()) {
                     String name = elems.get(0).text();
                     String owner = elems.get(1).text();
                     String description = elems.get(2).text();
-
-                    String link = elems.get(0).getElementsByTag("a")
-                            .attr("href");
+                    String link = elems.get(0).getElementsByTag("a").attr("href");
 
                     JsonObject meta = loadMeta(link);
-
                     if (meta != null) {
-                        String paramName = "rasterfilters."
-                                + meta.getString("name");
-
-                        boolean needToLoad = Config.getPref().getBoolean(paramName);
-
+                        boolean needToLoad = Config.getPref().getBoolean("rasterfilters." + meta.getString("name"));
                         if (needToLoad) {
                             JsonArray binaries = meta.getJsonArray("binaries");
                             filterTitles.add(meta.getString("title"));
@@ -132,8 +80,7 @@ public class FiltersDownloader implements ActionListener {
                                 loadBinaryToFile(binaries.getString(i));
                             }
                         }
-                        FilterInfo newFilterInfo = new FilterInfo(name,
-                                description, meta, needToLoad);
+                        FilterInfo newFilterInfo = new FilterInfo(name, description, meta, needToLoad);
                         newFilterInfo.setOwner(owner);
 
                         if (!filtersInfoList.contains(newFilterInfo)) {
@@ -142,12 +89,8 @@ public class FiltersDownloader implements ActionListener {
                     }
                 }
             }
-
-//            } else {
-//                Main.debug("Error happenned while requesting for the list of filters");
-//            }
-        } catch (IOException e1) {
-            Logging.error(e1);
+        } catch (IOException e) {
+            Logging.error(e);
         }
 
         loadBinariesFromMeta(filtersMetaToLoad);
@@ -164,91 +107,43 @@ public class FiltersDownloader implements ActionListener {
             link = link.substring(m.start());
         }
 
-//        JsonObject jsonRequest = Json.createObjectBuilder()
-//                .add("id", new Random().nextInt())
-//                .add("method", "wiki.getPageHTML")
-//                .add("params", Json.createArrayBuilder().add(link).build())
-//                .build();
-
-//        String jsonStringRequest = jsonRequest.toString();
-
-        URL wikiApi;
-        HttpURLConnection wikiConnection;
         JsonObject meta = null;
 
         try {
-//            wikiApi = new URL("https://josm.openstreetmap.de/jsonrpc");
-//            wikiConnection = (HttpURLConnection) wikiApi.openConnection();
-//            wikiConnection.setDoOutput(true);
-//            wikiConnection.setDoInput(true);
-//
-//            wikiConnection.setRequestProperty("Content-Type",
-//                    "application/json");
-//            wikiConnection.setRequestProperty("Method", "POST");
-//            wikiConnection.connect();
-//
-//            OutputStream os = wikiConnection.getOutputStream();
-//            os.write(jsonStringRequest.getBytes("UTF-8"));
-//            os.close();
-//
-//            int HttpResult = wikiConnection.getResponseCode();
-//            if (HttpResult == HttpURLConnection.HTTP_OK) {
-
-//            JsonReader jsonStream = Json
-//                    .createReader(new InputStreamReader(wikiConnection
-//                            .getInputStream(), "UTF-8"));
-
-//            JsonObject jsonResponse = jsonStream.readObject();
-//            jsonStream.close();
-
-//            String jsonPage = jsonResponse.getString("result");
-
-            Document doc = Jsoup.connect("https://josm.openstreetmap.de/wiki/" + link).get();
-            String json = doc.getElementsByTag("pre").first().text();
-
-            JsonReader reader = Json.createReader(new StringReader(json));
-            meta = reader.readObject();
-            reader.close();
-
-//            } else {
-//                Main.debug(wikiConnection.getResponseMessage());
-//            }
-        } catch (IOException e1) {
-            Logging.error(e1);
+            Document doc = Jsoup.connect(HelpUtil.getWikiBaseHelpUrl() + "/" + link).get();
+            try (JsonReader reader = Json.createReader(new StringReader(doc.getElementsByTag("pre").first().text()))) {
+                meta = reader.readObject();
+            }
+        } catch (IOException e) {
+            Logging.error(e);
         }
 
-        filtersMeta.add(meta);
+        if (meta != null) {
+            filtersMeta.add(meta);
+        }
 
         return meta;
     }
 
     public static void initFilters() {
-        File file = new File(pluginDir, "urls.map");
-        Logging.debug("EXIST FILE? " + file.exists());
-
-        try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+        try (BufferedReader br = Files.newBufferedReader(new File(pluginDir, "urls.map").toPath(), StandardCharsets.UTF_8)) {
             String temp;
-
             while ((temp = br.readLine()) != null) {
                 String[] mapEntry = temp.split("\\t");
                 File fileUrl = new File(mapEntry[1]);
                 if (fileUrl.exists()) {
-                    URL url;
                     try {
-                        url = new URL("jar", "", fileUrl.toURI().toURL() + "!/");
+                        URL url = new URL("jar", "", fileUrl.toURI().toURL() + "!/");
                         Logging.debug("binaryUrl: " + url.toString());
                         binariesLocalUrls.add(url);
                     } catch (MalformedURLException e) {
-                        Logging.debug("Initializing filters with unknown protocol. \n"
-                                + e.getMessage());
+                        Logging.debug("Initializing filters with unknown protocol. \n" + e.getMessage());
                     }
                 }
             }
         } catch (IOException e) {
             Logging.error(e);
         }
-
-        Logging.debug("BinariesLocal : " + binariesLocalUrls.toString());
 
         loader = new URLClassLoader(
                 binariesLocalUrls.toArray(new URL[binariesLocalUrls.size()]),
@@ -263,14 +158,9 @@ public class FiltersDownloader implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         for (FilterInfo temp : filtersInfoList) {
             if (temp.isNeedToDownload()) {
-
-                if (!filtersMetaToLoad.contains(temp.getMeta())) {
-                    filtersMetaToLoad.add(temp.getMeta());
-                }
-
+                filtersMetaToLoad.add(temp.getMeta());
                 filterTitles.add(temp.getMeta().getString("title"));
             } else {
                 filterTitles.remove(temp.getMeta().getString("title"));
@@ -278,23 +168,16 @@ public class FiltersDownloader implements ActionListener {
         }
 
         loadBinariesFromMeta(filtersMetaToLoad);
-
         filtersMetaToLoad.clear();
     }
 
     public static void loadBinariesFromMeta(Set<JsonObject> metaList) {
-
         File file = new File(pluginDir, "urls.map");
-        Logging.debug("pluginDir and urls map" + file.getAbsoluteFile());
-
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             for (JsonObject temp : metaList) {
                 JsonArray binaries = temp.getJsonArray("binaries");
-
                 for (int i = 0; i < binaries.size(); i++) {
-
                     String localFile = loadBinaryToFile(binaries.getString(i));
-
                     try {
                         writer.append(binaries.getString(i));
                         writer.append("\t");
@@ -315,60 +198,28 @@ public class FiltersDownloader implements ActionListener {
     }
 
     public static String loadBinaryToFile(String fromUrl) {
-
-        // Logging.debug("Need to load binary from " + fromUrl);
-
-        URL url = null;
-        URLConnection con = null;
-
         Pattern p = Pattern.compile("\\w.*/");
         Matcher m = p.matcher(fromUrl);
 
         String localFile = null;
-        File plugin = pluginDir;
-        Logging.debug("plugin dir" + plugin.getAbsolutePath());
-
-        if (m.find()) {
-            if (plugin.exists()) {
-                localFile = fromUrl.substring(m.end());
-                Logging.debug("localFile: " + localFile);
-            }
+        if (m.find() && pluginDir.exists()) {
+            localFile = fromUrl.substring(m.end());
         }
 
         try {
-            url = new URL(fromUrl);
-            con = url.openConnection();
-            String plugDir = plugin.getAbsolutePath();
-            File file = new File(plugDir, localFile);
-            Logging.debug("Binary file: " + file.getAbsolutePath());
-
+            File file = new File(pluginDir.getAbsolutePath(), localFile);
             if (file.exists()) {
-                Logging.debug("File " + localFile + " already exists");
-
                 return file.getAbsolutePath();
             } else {
-
-                BufferedInputStream in = new BufferedInputStream(
-                        con.getInputStream());
-                BufferedOutputStream out = new BufferedOutputStream(
-                        new FileOutputStream(file));
-                int i;
-
-                while ((i = in.read()) != -1) {
-                    out.write(i);
+                try (InputStream in = HttpClient.create(new URL(fromUrl)).connect().getContent()) {
+                    Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
-
-                out.flush();
-                out.close();
-                in.close();
-
                 return localFile;
             }
-        } catch (IOException e1) {
-            Logging.error(e1);
+        } catch (IOException e) {
+            Logging.error(e);
         }
 
         return null;
     }
-
 }
