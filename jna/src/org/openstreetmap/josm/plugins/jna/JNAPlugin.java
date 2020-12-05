@@ -3,6 +3,9 @@ package org.openstreetmap.josm.plugins.jna;
 
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.plugins.jna.mac.JosmMacNativeLogHandler;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformManager;
 
 /**
  * This plugin provides the Java Native Access (JNA) library for JOSM plugins.
@@ -14,5 +17,8 @@ public class JNAPlugin extends Plugin {
      */
     public JNAPlugin(PluginInformation info) {
         super(info);
+        if (PlatformManager.isPlatformOsx()) {
+            Logging.getLogger().addHandler(new JosmMacNativeLogHandler());
+        }
     }
 }
