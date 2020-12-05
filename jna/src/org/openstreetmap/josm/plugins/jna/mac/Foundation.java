@@ -31,7 +31,7 @@ abstract class Foundation {
     /**
      * Logs an error message to the Apple System Log facility.
      * @param format format string.
-     *   The format specification allowed by these functions is that which is understood by NSString’s formatting capabilities
+     *   The format specification allowed by these functions is that which is understood by NSString's formatting capabilities
      *   (which is not necessarily the set of format escapes and flags understood by printf).
      *   The supported format specifiers are described in
      *   <a href="https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFStrings/formatSpecifiers.html">
