@@ -4,6 +4,7 @@ package org.openstreetmap.josm.plugins.jna.mac;
 import java.nio.charset.StandardCharsets;
 
 import com.sun.jna.Native; // NOSONAR
+import com.sun.jna.NativeLong;
 
 /**
  * The core of Rococoa - statics to handle selectors and messaging at a function call level.
@@ -40,7 +41,7 @@ abstract class Foundation {
      * @param args arguments to be inserted into the string
      */
     public static void nsLog(String format, Object args) {
-        ID formatAsCFString = cfString(format);
+        NativeLong formatAsCFString = cfString(format);
         try {
             foundationLibrary.NSLog(formatAsCFString, args);
         } finally {
@@ -53,7 +54,7 @@ abstract class Foundation {
      *
      * Note that the returned string must be freed with {@link #cfRelease(ID)}.
      */
-    static ID cfString(String s) {
+    static NativeLong cfString(String s) {
         // Use a byte[] rather than letting jna do the String -> char* marshalling itself.
         // Turns out about 10% quicker for long strings.
         byte[] utf16Bytes = s.getBytes(StandardCharsets.UTF_16LE);
@@ -64,7 +65,7 @@ abstract class Foundation {
     /**
      * Release the NSObject with id
      */
-    static void cfRelease(ID id) {
+    static void cfRelease(NativeLong id) {
         foundationLibrary.CFRelease(id);
     }
 }

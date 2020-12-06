@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.jna.mac;
 
 import com.sun.jna.Library; // NOSONAR
+import com.sun.jna.NativeLong;
 
 /**
  * JNA Library for plain C calls, standard JNA marshalling applies to these.
@@ -10,9 +11,10 @@ import com.sun.jna.Library; // NOSONAR
  */
 interface FoundationLibrary extends Library {
 
-    void NSLog(ID pString, Object thing);
+    void NSLog(NativeLong pString, Object thing);
 
-    ID CFStringCreateWithBytes(ID allocator, byte[] bytes, int byteCount, int encoding, byte isExternalRepresentation);
+    NativeLong CFStringCreateWithBytes(NativeLong allocator, byte[] bytes, int byteCount, int encoding,
+            byte isExternalRepresentation);
 
-    void CFRelease(ID cfTypeRef);
+    void CFRelease(NativeLong cfTypeRef);
 }
