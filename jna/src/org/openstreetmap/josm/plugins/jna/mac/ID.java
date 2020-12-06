@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.plugins.jna.mac;
 
 import com.sun.jna.Native; // NOSONAR
-import com.sun.jna.NativeLibrary; // NOSONAR
-import com.sun.jna.NativeLong; // NOSONAR
+import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 
 /**
  * Represents an Objective-C ID.

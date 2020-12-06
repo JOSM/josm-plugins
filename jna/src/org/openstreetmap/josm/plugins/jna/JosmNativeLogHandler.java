@@ -37,7 +37,7 @@ public abstract class JosmNativeLogHandler extends Handler {
     }
 
     private static boolean isLoggable(LogRecord record, Level level, BooleanProperty prop) {
-        return level.equals(record.getLevel()) && prop.isSet();
+        return level.equals(record.getLevel()) && prop.get();
     }
 
     // CHECKSTYLE.ON: SingleSpaceSeparator
