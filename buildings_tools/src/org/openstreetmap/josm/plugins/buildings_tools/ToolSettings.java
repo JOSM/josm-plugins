@@ -27,8 +27,8 @@ public final class ToolSettings {
     }
 
     private static Shape shape = loadShape();
-    private static double width = 0;
-    private static double lenstep = 0;
+    private static double width;
+    private static double lenstep;
     private static boolean useAddr;
     private static final Map<String, String> TAGS = new HashMap<>();
     private static boolean autoSelect;
@@ -38,8 +38,8 @@ public final class ToolSettings {
         return shape;
     }
 
-    public static void setAddrDialog(boolean _useAddr) {
-        useAddr = _useAddr;
+    public static void setAddrDialog(boolean useAddr) {
+        ToolSettings.useAddr = useAddr;
     }
 
     public static void setSizes(double newwidth, double newlenstep) {
@@ -123,8 +123,8 @@ public final class ToolSettings {
         return autoSelect;
     }
 
-    public static void setAutoSelect(boolean _autoSelect) {
-        autoSelect = _autoSelect;
+    public static void setAutoSelect(boolean autoSelect) {
+        ToolSettings.autoSelect = autoSelect;
     }
 
     public static boolean isNoClickAndDrag() {
