@@ -90,8 +90,7 @@ public class FallbackProvider implements KeyringProvider {
         encryption.freshKeyring(true);
         byte[] randomArray = new byte[36];
         new SecureRandom().nextBytes(randomArray);
-        if (_save(SAMPLE_KEY, (SAMPLE_KEY + new String(randomArray, StandardCharsets.UTF_8)).toCharArray(),
-                "Sample value ensuring that decryption is working.")) {
+        if (_save(SAMPLE_KEY, (SAMPLE_KEY + new String(randomArray, StandardCharsets.UTF_8)).toCharArray())) {
             LOG.fine("saved sample key");
             return true;
         } else {
@@ -116,9 +115,10 @@ public class FallbackProvider implements KeyringProvider {
 
     @Override
     public void save(String key, char[] password, String description) {
-        _save(key, password, description);
+        _save(key, password);
     }
-    private boolean _save(String key, char[] password, String description) {
+
+    private boolean _save(String key, char[] password) {
         try {
             prefs.putByteArray(key, encryption.encrypt(password));
         } catch (Exception x) {

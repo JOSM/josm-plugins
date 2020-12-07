@@ -24,7 +24,6 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.AbstractCredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Utils;
 
 public class NPMCredentialsAgent extends AbstractCredentialsAgent {
 
@@ -244,7 +243,7 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
             sensitive.add(tr("oauth secret"));
         }
         if (!sensitive.isEmpty()) {
-            text.append(tr("<br><strong>Warning:</strong> There may be sensitive data left in your preference file. ({0})", Utils.join(", ", sensitive)));
+            text.append(tr("<br><strong>Warning:</strong> There may be sensitive data left in your preference file. ({0})", String.join(", ", sensitive)));
         }
         pnlMessage.setText(text.toString());
         return pnlMessage;
@@ -254,6 +253,4 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     public String getSaveUsernameAndPasswordCheckboxText() {
         return tr("Save user and password ({0})", type.getName());
     }
-
-    
 }

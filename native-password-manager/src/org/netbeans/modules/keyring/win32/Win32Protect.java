@@ -42,7 +42,7 @@
 
 package org.netbeans.modules.keyring.win32;
 
-import com.sun.jna.Memory;
+import com.sun.jna.Memory; // NOSONAR
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -125,7 +125,7 @@ public class Win32Protect implements EncryptionProvider {
     public @Override void freshKeyring(boolean fresh) {}
 
     public interface CryptLib extends StdCallLibrary {
-        CryptLib INSTANCE = (CryptLib) Native.loadLibrary("Crypt32", CryptLib.class); // NOI18N
+        CryptLib INSTANCE = Native.load("Crypt32", CryptLib.class); // NOI18N
         /** @see <a href="http://msdn.microsoft.com/en-us/library/aa380261(VS.85,printer).aspx">Reference</a> */
         boolean CryptProtectData(
                 CryptIntegerBlob pDataIn,
@@ -166,10 +166,10 @@ public class Win32Protect implements EncryptionProvider {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList( new String[] {
+            return Arrays.asList(
                 "cbData",
-                "pbData",
-            } );
+                "pbData"
+            );
         }
     }
 

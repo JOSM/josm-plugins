@@ -42,7 +42,7 @@
 
 package org.netbeans.modules.keyring.mac;
 
-import com.sun.jna.Library;
+import com.sun.jna.Library; // NOSONAR
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
@@ -51,7 +51,7 @@ import com.sun.jna.Pointer;
  */
 public interface SecurityLibrary extends Library {
 
-    SecurityLibrary LIBRARY = (SecurityLibrary) Native.loadLibrary("Security", SecurityLibrary.class);
+    SecurityLibrary LIBRARY = Native.load("Security", SecurityLibrary.class);
 
     int SecKeychainAddGenericPassword(
             Pointer keychain,

@@ -53,10 +53,10 @@ import java.util.logging.Logger;
 import org.netbeans.spi.keyring.KeyringProvider;
 
 /**
- *
+ * JNA wrapper for certain functions from KDE Wallet API.
  * @author psychollek, ynov
  */
-public class KWalletProvider implements KeyringProvider{
+public class KWalletProvider implements KeyringProvider {
 
     private static final Logger logger = Logger.getLogger(KWalletProvider.class.getName());
     private char[] handler = "0".toCharArray();

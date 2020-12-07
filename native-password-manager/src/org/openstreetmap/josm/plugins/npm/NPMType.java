@@ -40,24 +40,28 @@ public enum NPMType {
             "Windows data encryption",
             tr("Encrypt data with Windows logon credentials")
     );
-    
+
     private static String genericIntro(String name) {
         return tr("The native password manager plugin detected {0} on your system.", name);
-//                + "You can let {1} handle your sensitive data from now on. "
-//                + "This means your username and password is no longer saved in plain text in your preferences file. "
-//                + "(It is still transferred over the network unencrypted, though.)", name, name);
     }
-    
+
     private final String prefString;
-    private final Class<? extends KeyringProvider> providerClass;
     private final String name;
-    private KeyringProvider provider;
+    private final KeyringProvider provider;
     private final String introText;
     private final String selectionText;
 
     NPMType(String prefString, Class<? extends KeyringProvider> providerClass, String name, String selectionText) {
         this.prefString = prefString;
-        this.providerClass = providerClass;
+        if (providerClass != null) {
+            try {
+                this.provider = providerClass.getDeclaredConstructor().newInstance();
+            } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException ex) {
+                throw new JosmRuntimeException(ex);
+            }
+        } else {
+            this.provider = null;
+        }
         this.name = name;
         this.introText = genericIntro(name);
         this.selectionText = selectionText;
@@ -89,14 +93,6 @@ public enum NPMType {
     }
     
     public KeyringProvider getProvider() {
-        if (providerClass == null) return null;
-        if (provider == null) {
-            try {
-                provider = providerClass.getDeclaredConstructor().newInstance();
-            } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException ex) {
-                throw new JosmRuntimeException(ex);
-            }
-        }
         return provider;
     }
 }

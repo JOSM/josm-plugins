@@ -42,7 +42,7 @@
 
 package org.netbeans.modules.keyring.gnome;
 
-import com.sun.jna.DefaultTypeMapper;
+import com.sun.jna.DefaultTypeMapper; // NOSONAR
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -67,15 +67,15 @@ public interface GnomeKeyringLibrary extends Library {
         private static final String GENERIC = "gnome-keyring";
         // http://packages.ubuntu.com/search?suite=precise&arch=any&mode=exactfilename&searchon=contents&keywords=libgnome-keyring.so.0
         private static final String EXPLICIT_ONEIRIC = "/usr/lib/libgnome-keyring.so.0";
-        private static Object load(Map<String,?> options) {
+        private static GnomeKeyringLibrary load(Map<String,?> options) {
             try {
-                return Native.loadLibrary(GENERIC, GnomeKeyringLibrary.class, options);
+                return Native.load(GENERIC, GnomeKeyringLibrary.class, options);
             } catch (UnsatisfiedLinkError x) {
                 // #203735: on Oneiric, may have trouble finding right lib.
                 // Precise is using multiarch (#211401) which should work automatically using JNA 3.4+ (#211403).
                 // Unclear if this workaround is still needed for Oneiric with 3.4, but seems harmless to leave it in for now.
                 if (new File(EXPLICIT_ONEIRIC).isFile()) {
-                    return Native.loadLibrary(EXPLICIT_ONEIRIC, GnomeKeyringLibrary.class, options);
+                    return Native.load(EXPLICIT_ONEIRIC, GnomeKeyringLibrary.class, options);
                 } else {
                     throw x;
                 }
@@ -84,7 +84,7 @@ public interface GnomeKeyringLibrary extends Library {
         private LibFinder() {}
     }
 
-    GnomeKeyringLibrary LIBRARY = (GnomeKeyringLibrary) LibFinder.load(Collections.singletonMap(OPTION_TYPE_MAPPER, new DefaultTypeMapper() {
+    GnomeKeyringLibrary LIBRARY = LibFinder.load(Collections.singletonMap(OPTION_TYPE_MAPPER, new DefaultTypeMapper() {
         {
             addTypeConverter(Boolean.TYPE, new TypeConverter() { // #198921
                 @Override public Object toNative(Object value, ToNativeContext context) {
@@ -106,7 +106,7 @@ public interface GnomeKeyringLibrary extends Library {
     /*GnomeKeyringItemType*/int GNOME_KEYRING_ITEM_GENERIC_SECRET = 0;
 
     // GnomeKeyringAttributeList gnome_keyring_attribute_list_new() = g_array_new(FALSE, FALSE, sizeof(GnomeKeyringAttribute))
-    int GnomeKeyringAttribute_SIZE = Pointer.SIZE * 3; // conservatively: 2 pointers + 1 enum
+    int GnomeKeyringAttribute_SIZE = Native.POINTER_SIZE * 3; // conservatively: 2 pointers + 1 enum
 
     void gnome_keyring_attribute_list_append_string(
             /*GnomeKeyringAttributeList*/Pointer attributes,
@@ -145,12 +145,12 @@ public interface GnomeKeyringLibrary extends Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList( new String[] {
+            return Arrays.asList(
                 "keyring",
                 "item_id",
                 "attributes",
-                "secret",
-            } );
+                "secret"
+            );
         }
     }
 
