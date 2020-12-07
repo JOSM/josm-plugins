@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -133,7 +132,7 @@ public class MergeAddrPointsAction extends JosmAction {
             if (mergeNode != null) {
                 boolean hasConflicts = false;
                 Map<String, String> tags = new HashMap<>();
-                for (Entry<String, String> entry : mergeNode.getKeys().entrySet()) {
+                for (Map.Entry<String, String> entry : mergeNode.getKeys().entrySet()) {
                     String newValue = entry.getValue();
                     if (newValue == null)
                         continue;

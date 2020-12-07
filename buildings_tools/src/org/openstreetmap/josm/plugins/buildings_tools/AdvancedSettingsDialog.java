@@ -3,7 +3,7 @@ package org.openstreetmap.josm.plugins.buildings_tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Map.Entry;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -25,7 +25,7 @@ public class AdvancedSettingsDialog extends MyDialog {
 
         panel.add(new JLabel(tr("Buildings tags:")), GBC.eol().fill(GBC.HORIZONTAL));
 
-        for (Entry<String, String> entry : ToolSettings.getTags().entrySet()) {
+        for (Map.Entry<String, String> entry : ToolSettings.getTags().entrySet()) {
             tagsModel.add(entry.getKey(), entry.getValue());
         }
         panel.add(new TagEditorPanel(tagsModel, null, Changeset.MAX_CHANGESET_TAG_LENGTH), GBC.eop().fill(GBC.BOTH));

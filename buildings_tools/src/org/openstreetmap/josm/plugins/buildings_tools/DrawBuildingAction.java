@@ -19,7 +19,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
@@ -326,7 +326,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             }
             if (w != null) {
                 if (!alt || ToolSettings.isUsingAddr())
-                    for (Entry<String, String> kv : ToolSettings.getTags().entrySet()) {
+                    for (Map.Entry<String, String> kv : ToolSettings.getTags().entrySet()) {
                         w.put(kv.getKey(), kv.getValue());
                     }
                 if (ToolSettings.isUsingAddr())

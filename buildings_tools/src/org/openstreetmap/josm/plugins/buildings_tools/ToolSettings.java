@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
@@ -68,7 +67,7 @@ public final class ToolSettings {
         TAGS.clear();
         TAGS.putAll(tags);
         ArrayList<String> values = new ArrayList<>(TAGS.size() * 2);
-        for (Entry<String, String> entry : TAGS.entrySet()) {
+        for (Map.Entry<String, String> entry : TAGS.entrySet()) {
             values.add(entry.getKey());
             values.add(entry.getValue());
         }
