@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -471,15 +471,14 @@ class Building {
                 addrNode.getKeys().forEach(w::put);
                 for (OsmPrimitive p : addrNode.getReferrers()) {
                     Relation r = (Relation) p;
-                    Relation rnew = new Relation(r);
-                    for (int i = 0; i < r.getMembersCount(); i++) {
-                        RelationMember member = r.getMember(i);
+                    List<RelationMember> members = new ArrayList<>(r.getMembers());
+                    for (int i = 0; i < members.size(); i++) {
+                        RelationMember member = members.get(i);
                         if (addrNode.equals(member.getMember())) {
-                            rnew.removeMember(i);
-                            rnew.addMember(i, new RelationMember(member.getRole(), w));
+                            members.set(i, new RelationMember(member.getRole(), w));
                         }
                     }
-                    addressCmds.add(new ChangeCommand(r, rnew));
+                    addressCmds.add(new ChangeMembersCommand(r, members));
                 }
                 addressCmds.add(new DeleteCommand(addrNode));
                 if (cmdList == null) {

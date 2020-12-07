@@ -15,13 +15,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -157,20 +157,19 @@ public class MergeAddrPointsAction extends JosmAction {
         }
 
         for (Relation r : modifiedRelations) {
-            Relation rnew = new Relation(r);
+            List<RelationMember> members = new ArrayList<>(r.getMembers());
             boolean modified = false;
             for (Pair<Node, Way> repl : replaced) {
-                for (int i = 0; i < rnew.getMembersCount(); i++) {
-                    RelationMember member = rnew.getMember(i);
+                for (int i = 0; i < members.size(); i++) {
+                    RelationMember member = members.get(i);
                     if (repl.a.equals(member.getMember())) {
-                        rnew.removeMember(i);
-                        rnew.addMember(i, new RelationMember(member.getRole(), repl.b));
+                        members.set(i, new RelationMember(member.getRole(), repl.b));
                         modified = true;
                     }
                 }
             }
             if (modified) {
-                cmds.add(new ChangeCommand(r, rnew));
+                cmds.add(new ChangeMembersCommand(r, members));
             }
         }
         if (!replaced.isEmpty()) {
