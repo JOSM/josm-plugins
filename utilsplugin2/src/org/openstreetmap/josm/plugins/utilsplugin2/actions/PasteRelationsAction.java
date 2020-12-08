@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -81,24 +81,25 @@ public class PasteRelationsAction extends JosmAction {
         List<Command> commands = new ArrayList<>();
         for (Map.Entry<Relation, String> entry : relations.entrySet()) {
             Relation rel = entry.getKey();
-            Relation r = new Relation(rel);
+            List<RelationMember> members = new ArrayList<>(rel.getMembers());
             boolean changed = false;
             for (OsmPrimitive p : selection) {
-                if (!r.getMemberPrimitives().contains(p) && !r.equals(p)) {
+                if (!rel.getMemberPrimitives().contains(p) && !rel.equals(p)) {
                     String role = entry.getValue();
-                    if ("associatedStreet".equals(r.get("type"))) {
-                        if (p.get("highway") != null) {
+                    if (rel.hasTag("type", "associatedStreet")) {
+                        if (p.hasKey("highway")) {
                             role = "street";
-                        } else if (p.get("addr:housenumber") != null) {
+                        } else if (p.hasKey("addr:housenumber")) {
                             role = "house";
                         }
                     }
-                    r.addMember(new RelationMember(role, p));
+                    members.add(new RelationMember(role, p));
                     changed = true;
                 }
             }
-            if (changed)
-                commands.add(new ChangeCommand(rel, r));
+            if (changed) {
+                commands.add(new ChangeMembersCommand(rel, members));
+            }
         }
 
         if (!commands.isEmpty())

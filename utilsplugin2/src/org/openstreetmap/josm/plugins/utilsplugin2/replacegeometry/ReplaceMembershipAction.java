@@ -15,7 +15,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -70,11 +70,15 @@ public class ReplaceMembershipAction extends JosmAction {
         final List<Command> commands = new ArrayList<>();
         for (final Map.Entry<Relation, Set<RelationToChildReference>> i : byRelation.entrySet()) {
             final Relation oldRelation = i.getKey();
-            final Relation newRelation = new Relation(oldRelation);
+            List<RelationMember> members = new ArrayList<>(oldRelation.getMembers());
+            boolean modified = false;
             for (final RelationToChildReference reference : i.getValue()) {
-                newRelation.setMember(reference.getPosition(), new RelationMember(reference.getRole(), secondObject));
+                members.set(reference.getPosition(), new RelationMember(reference.getRole(), secondObject));
+                modified = true;
             }
-            commands.add(new ChangeCommand(oldRelation, newRelation));
+            if (modified) {
+                commands.add(new ChangeMembersCommand(oldRelation, members));
+            }
         }
 
         return commands.isEmpty() ? null : new ReplaceGeometryCommand(tr("Replace Membership"), commands);

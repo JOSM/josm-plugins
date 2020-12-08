@@ -84,7 +84,7 @@ public class UnGlueRelationAction extends JosmAction {
             // error message nothing to do
         } else {
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Unglued Relations"), cmds));
-            //Set selection all primiteves (new and old)
+            //Set selection all primitives (new and old)
             newPrimitives.addAll(selection);
             ds.setSelected(newPrimitives);
             MainApplication.getMap().mapView.repaint();
