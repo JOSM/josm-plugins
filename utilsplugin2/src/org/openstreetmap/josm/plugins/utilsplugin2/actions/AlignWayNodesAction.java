@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -26,7 +25,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Pastes relation membership from objects in the paste buffer onto selected object(s).
+ * Align way nodes. Similar to Align nodes in line, but uses a parent way as context.
  *
  * @author Zverik
  */
@@ -138,23 +137,31 @@ public class AlignWayNodesAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         Set<Node> nodes = filterNodes(selection);
-        Set<Way> ways = findCommonWays(nodes);
-        setEnabled(ways != null && ways.size() == 1 && !nodes.isEmpty());
+        if (nodes.isEmpty())
+            setEnabled(false);
+        else {
+            Set<Way> ways = findCommonWays(nodes);
+            setEnabled(ways != null && ways.size() == 1);
+        }
     }
 
-    private Set<Way> findCommonWays(Set<Node> nodes) {
+    private static Set<Way> findCommonWays(Set<Node> nodes) {
         Set<Way> ways = null;
-        for (Node n : nodes.stream().filter(n -> n.getDataSet() != null).collect(Collectors.toList())) {
+        for (Node n : nodes) {
+            if (n.getDataSet() == null)
+                continue;
             if (ways == null)
                 ways = new HashSet<>(n.getParentWays());
             else {
                 ways.retainAll(n.getParentWays());
+                if (ways.isEmpty())
+                    break;
             }
         }
         return ways;
     }
 
-    private Set<Node> filterNodes(Collection<? extends OsmPrimitive> selection) {
+    private static Set<Node> filterNodes(Collection<? extends OsmPrimitive> selection) {
         Set<Node> result = new HashSet<>();
         if (selection != null) {
             for (OsmPrimitive p : selection) {
@@ -173,7 +180,7 @@ public class AlignWayNodesAction extends JosmAction {
      * @param nodes the selected nodes
      * @return the index of the node right after the largest empty span
      */
-    private int findFirstNode(Way way, Set<Node> nodes) {
+    private static int findFirstNode(Way way, Set<Node> nodes) {
         int pos = 0;
         while (pos < way.getNodesCount() && !nodes.contains(way.getNode(pos))) {
             pos++;

@@ -168,7 +168,7 @@ public final class ReplaceGeometryUtils {
             // see #8396: first try to find nearest new node
             nodeToReplace = findNearestNode(subjectNode, nodePool.stream().filter(Node::isNew).collect(Collectors.toList()));
             if (nodeToReplace == null) {
-            	nodeToReplace = findNearestNode(subjectNode, nodePool);
+                nodeToReplace = findNearestNode(subjectNode, nodePool);
             }
         }
 

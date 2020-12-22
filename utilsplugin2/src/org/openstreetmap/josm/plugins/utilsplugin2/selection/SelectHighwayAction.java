@@ -118,15 +118,16 @@ public class SelectHighwayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null) {
-            setEnabled(false);
-            return;
-        }
-        int count = 0, rank = 100;
-        for (OsmPrimitive p : selection) {
-            if (p instanceof Way) {
-                count++;
-                rank = Math.min(rank, getHighwayRank(p));
+        int count = 0;
+        int rank = 100;
+        if (selection != null) {
+            for (OsmPrimitive p : selection) {
+                if (p instanceof Way) {
+                    count++;
+                    if (count > 2)
+                        break;
+                    rank = Math.min(rank, getHighwayRank(p));
+                }
             }
         }
         setEnabled(count == 1 || (count == 2 && rank > 0));

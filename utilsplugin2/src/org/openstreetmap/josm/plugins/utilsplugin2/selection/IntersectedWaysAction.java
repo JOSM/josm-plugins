@@ -57,10 +57,6 @@ public class IntersectedWaysAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null) {
-            setEnabled(false);
-            return;
-        }
-        setEnabled(!selection.isEmpty());
+        setEnabled(selection != null && !selection.isEmpty());
     }
 }
