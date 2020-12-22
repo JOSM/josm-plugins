@@ -101,6 +101,10 @@ public class SelectBoundaryAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection != null && !selection.isEmpty());
+        boolean hasSel = selection != null && !selection.isEmpty();
+        if (!hasSel) {
+            lastUsedStartingWay = null;
+        }
+        setEnabled(hasSel);
     }
 }

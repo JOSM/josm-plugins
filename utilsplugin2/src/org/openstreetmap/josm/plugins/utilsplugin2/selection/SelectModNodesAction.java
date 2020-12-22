@@ -80,6 +80,10 @@ public class SelectModNodesAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditDataSet() != null);
+        boolean hasEditLayer = getLayerManager().getEditDataSet() != null;
+        if (!hasEditLayer) {
+            lastCmd = null;
+        }
+        setEnabled(hasEditLayer);
     }
 }

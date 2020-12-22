@@ -96,10 +96,10 @@ public class AdjacentNodesAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        if (selection == null) {
-            setEnabled(false);
-            return;
+        boolean hasSel = selection != null && !selection.isEmpty();
+        if (!hasSel) {
+            activeWays.clear();
         }
-        setEnabled(!selection.isEmpty());
+        setEnabled(hasSel);
     }
 }
