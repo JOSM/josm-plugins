@@ -136,7 +136,7 @@ abstract class EdigeoFile {
     protected final Path path;
     private boolean bomFound;
     private boolean eomFound;
-    EdigeoCharset charset;
+    private EdigeoCharset charset;
     private Block currentBlock;
 
     EdigeoFile(Path path) {
