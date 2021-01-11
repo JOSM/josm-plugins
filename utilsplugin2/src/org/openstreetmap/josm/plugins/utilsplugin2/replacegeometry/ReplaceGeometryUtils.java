@@ -54,6 +54,8 @@ public final class ReplaceGeometryUtils {
 
     /**
      * Replace new or uploaded object with new object
+     * @param firstObject an object
+     * @param secondObject another object
      * @return (in case of success) a command to update the geometry of one primitive and remove the other
      */
     public static ReplaceGeometryCommand buildReplaceWithNewCommand(OsmPrimitive firstObject, OsmPrimitive secondObject) {
@@ -96,6 +98,8 @@ public final class ReplaceGeometryUtils {
 
     /**
      * Replace a new or uploaded node with a new node
+     * @param firstNode a node
+     * @param secondNode another node
      * @return (in case of success) a command to update the geometry of one primitive and remove the other
      */
     public static ReplaceGeometryCommand buildReplaceNodeWithNewCommand(Node firstNode, Node secondNode) {
@@ -111,6 +115,9 @@ public final class ReplaceGeometryUtils {
 
     /**
      * Replace a node with another node (similar to MergeNodesAction)
+     * @param subjectNode node to be replaced
+     * @param referenceNode node with greater spatial quality
+     * @return command to replace node or null if user cancelled
      */
     public static ReplaceGeometryCommand buildReplaceNodeCommand(Node subjectNode, Node referenceNode) {
         if (!subjectNode.getParentWays().isEmpty()) {
@@ -136,6 +143,7 @@ public final class ReplaceGeometryUtils {
      *
      * @param subjectNode node to be replaced
      * @param referenceObject object with greater spatial quality
+     * @return command to replace
      */
     public static ReplaceGeometryCommand buildUpgradeNodeCommand(Node subjectNode, OsmPrimitive referenceObject) {
         if (!subjectNode.getParentWays().isEmpty()) {
@@ -413,6 +421,9 @@ public final class ReplaceGeometryUtils {
     /**
      * Checks if a way has at least one important node (e.g. interesting tag,
      * role membership), and thus cannot be safely modified.
+     * @param geometry the new geometry for the replaced way
+     * @param way the way that should be replaced
+     * @return true if at least one node is not in {@code geometry} but is important
      */
     static boolean hasImportantNode(Way geometry, Way way) {
         for (Node n : way.getNodes()) {
@@ -474,6 +485,8 @@ public final class ReplaceGeometryUtils {
 
     /**
      * Find node from the collection which is nearest to <tt>node</tt>. Max distance is taken in consideration.
+     * @param node the node
+     * @param nodes the collection
      * @return null if there is no such node.
      */
     static Node findNearestNode(Node node, Collection<Node> nodes) {
