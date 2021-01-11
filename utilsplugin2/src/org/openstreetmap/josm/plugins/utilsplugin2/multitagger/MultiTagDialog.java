@@ -34,7 +34,6 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -137,7 +136,6 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
                     tableModel.shownTypes.remove(type);
                 tableModel.updateData(MainApplication.getLayerManager().getEditDataSet().getSelected());
             });
-            ImageProvider.get(type);
             p.add(jt);
         }
         return p;
@@ -169,15 +167,6 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         tableModel.doSelectionChanged(newSelection);
     }
 
-    /*private OsmPrimitive getSelectedPrimitive() {
-        int idx = tbl.getSelectedRow();
-        if (idx>= 0) {
-            return tableModel.getPrimitiveAt(tbl.convertRowIndexToModel(idx));
-        } else {
-            return null;
-        }
-    }*/
-
     private final MouseAdapter tableMouseAdapter = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -188,15 +177,11 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
 
     };
 
-    private final ListSelectionListener selectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            currentSelection = getSelectedPrimitives();
-            if (currentSelection != null && MainApplication.isDisplayingMapView()) {
-                if (highlightHelper.highlightOnly(currentSelection)) {
-                    MainApplication.getMap().mapView.repaint();
-                }
-            }
+    private final ListSelectionListener selectionListener = e -> {
+        currentSelection = getSelectedPrimitives();
+        if (currentSelection != null && MainApplication.isDisplayingMapView()
+                && highlightHelper.highlightOnly(currentSelection)) {
+            MainApplication.getMap().mapView.repaint();
         }
     };
 
@@ -296,7 +281,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         @Override
         public void actionPerformed(ActionEvent e) {
             String txt = cbTagSet.getText();
-            System.out.println(txt);
+            Logging.debug(txt);
             List<String> history = cbTagSet.getHistory();
             history.remove(txt);
             if (history.isEmpty()) {
@@ -374,6 +359,14 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
                 }
             }
             return label;
+        }
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (!visible) {
+            tableModel.updateData(Collections.emptyList());
         }
     }
 }

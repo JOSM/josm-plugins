@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -27,7 +29,7 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class MultiTaggerTableModel extends AbstractTableModel implements DataSelectionListener {
 
-    ArrayList<OsmPrimitive> list = new ArrayList<>(50);
+    List<OsmPrimitive> list = new ArrayList<>();
     String[] mainTags = new String[]{};
     boolean[] isSpecialTag = new boolean[]{};
     Set<OsmPrimitiveType> shownTypes = new HashSet<>();
@@ -66,20 +68,20 @@ public class MultiTaggerTableModel extends AbstractTableModel implements DataSel
         }
         String var = mainTags[columnIndex-1];
         OsmPrimitive p = list.get(rowIndex);
-        if (var.equals("id")) {
+        switch (var) {
+        case "id":
             return String.valueOf(p.getUniqueId());
-        } else if (var.equals("type")) {
-            return OsmPrimitiveType.from(p).getAPIName().substring(0, 1).toUpperCase();
-        } else if (var.equals("area")) {
-            if (p.getDisplayType() == OsmPrimitiveType.CLOSEDWAY) {
+        case "type":
+            return OsmPrimitiveType.from(p).getAPIName().substring(0, 1).toUpperCase(Locale.ENGLISH);
+        case "area":
+            if (p.getDisplayType() == OsmPrimitiveType.CLOSEDWAY)
                 return String.format("%.1f", Geometry.closedWayArea((Way) p));
-            } else {
-                return "";
-            }
-        } else if (var.equals("length")) {
-            if (p instanceof Way) {
+            break;
+        case "length":
+            if (p instanceof Way)
                 return String.format("%.1f", ((Way) p).getLength());
-            }
+            break;
+        default:
         }
         return "";
     }
@@ -178,12 +180,7 @@ public class MultiTaggerTableModel extends AbstractTableModel implements DataSel
     void updateData(Collection<? extends OsmPrimitive> sel) {
         if (table.isEditing()) table.getCellEditor().stopCellEditing();
 
-        list.clear();
-        for (OsmPrimitive p : sel) {
-            if (shownTypes.contains(p.getDisplayType())) {
-                list.add(p);
-            }
-        }
+        list = sel.stream().filter(p -> shownTypes.contains(p.getDisplayType())).collect(Collectors.toList());
         fireTableDataChanged();
     }
 

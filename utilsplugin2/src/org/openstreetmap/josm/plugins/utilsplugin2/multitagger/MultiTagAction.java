@@ -48,6 +48,8 @@ public final class MultiTagAction extends JosmAction {
         setEnabled(getLayerManager().getEditLayer() != null);
         if (dlg != null && dlg.isVisible()) {
             dlg.doSelectionChanged(selection);
+        } else {
+        	dlg = null;
         }
     }
 }
