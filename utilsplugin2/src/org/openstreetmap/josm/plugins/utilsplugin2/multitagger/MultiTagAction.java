@@ -49,7 +49,7 @@ public final class MultiTagAction extends JosmAction {
         if (dlg != null && dlg.isVisible()) {
             dlg.doSelectionChanged(selection);
         } else {
-        	dlg = null;
+            dlg = null;
         }
     }
 }
