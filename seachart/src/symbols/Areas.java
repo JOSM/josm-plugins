@@ -80,6 +80,26 @@ public final class Areas {
         CableFlash.add(new Instr(Form.PGON, p));
     }
 
+    public static final Symbol Dash = new Symbol();
+    static {
+        Dash.add(new Instr(Form.BBOX, new Rectangle2D.Double(-15, -30, 30, 30)));
+        Dash.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND)));
+        Dash.add(new Instr(Form.LINE, new Line2D.Double(0, 0, 0, -30)));
+    }
+
+    public static final Symbol Foul = new Symbol();
+    static {
+        Foul.add(new Instr(Form.BBOX, new Rectangle2D.Double(-30, -60, 60, 60)));
+        Foul.add(new Instr(Form.STRK, new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Foul.add(new Instr(Form.FILL, Color.black));
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(0, -30); p.lineTo(-20, 30);
+        p.moveTo(20, -30); p.lineTo(0, 30);
+        p.moveTo(-20, -15); p.lineTo(30, -15);
+        p.moveTo(-30, 15); p.lineTo(20, 15);
+        Foul.add(new Instr(Form.PLIN, p));
+    }
+
     public static final Symbol LaneArrow = new Symbol();
     static {
         LaneArrow.add(new Instr(Form.BBOX, new Rectangle2D.Double(-20, -240, 40, 240)));
@@ -94,6 +114,12 @@ public final class Areas {
     static {
         LineAnchor.add(new Instr(Form.BBOX, new Rectangle2D.Double(-30, -60, 60, 90)));
         LineAnchor.add(new Instr(Form.SYMB, new Symbols.SubSymbol(Harbours.Anchor, 0.5, 0, 0, null, new Delta(Handle.CC, AffineTransform.getRotateInstance(Math.toRadians(-90.0))))));
+    }
+
+    public static final Symbol LineFoul = new Symbol();
+    static {
+        LineFoul.add(new Instr(Form.BBOX, new Rectangle2D.Double(-30, -60, 60, 90)));
+        LineFoul.add(new Instr(Form.SYMB, new Symbols.SubSymbol(Foul, 0.5, 0, 0, null, new Delta(Handle.CC, AffineTransform.getRotateInstance(Math.toRadians(-90.0))))));
     }
 
     public static final Symbol LinePlane = new Symbol();

@@ -602,7 +602,7 @@ public class Signals extends Rules {
                 }
             }
         } else {
-            if (Renderer.zoom >= 15) {
+            if ((Renderer.zoom >= 15) && (lights.get(0) != null)) {
                 AttMap atts = lights.get(0);
                 ArrayList<CatLIT> cats = new ArrayList<>();
                 if (atts.containsKey(Att.CATLIT)) {

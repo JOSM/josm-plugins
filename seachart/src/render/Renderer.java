@@ -96,9 +96,19 @@ public final class Renderer {
         Symbols.drawSymbol(g2, symbol, sScale, point.getX(), point.getY(), null, delta);
     }
 
+    public static void symbol(Symbol symbol, double scale, Delta delta) {
+        Point2D point = context.getPoint(Rules.feature.geom.centre);
+        Symbols.drawSymbol(g2, symbol, (sScale * scale), point.getX(), point.getY(), null, delta);
+    }
+
     public static void symbol(Symbol symbol, Scheme scheme, Delta delta) {
         Point2D point = context.getPoint(Rules.feature.geom.centre);
         Symbols.drawSymbol(g2, symbol, sScale, point.getX(), point.getY(), scheme, delta);
+    }
+
+    public static void symbol(Symbol symbol, double scale, Scheme scheme) {
+        Point2D point = context.getPoint(Rules.feature.geom.centre);
+        Symbols.drawSymbol(g2, symbol, (sScale * scale), point.getX(), point.getY(), scheme, null);
     }
 
     public static void colLetters(ArrayList<?> cols) {
@@ -425,21 +435,20 @@ public final class Renderer {
             g2.setPaint(style.line);
             g2.draw(p);
             Symbol legend = new Symbol();
-            legend.add(new Instr(Form.BBOX, new Rectangle2D.Double(0, 0, 500, 100)));
-            Path2D.Double path = new Path2D.Double(); path.moveTo(0, 0); path.lineTo(500, 0); path.lineTo(500, 100); path.lineTo(0, 100); path.closePath();
+            legend.add(new Instr(Form.BBOX, new Rectangle2D.Double(0, 0, 600, 250)));
+            Path2D.Double path = new Path2D.Double(); path.moveTo(0, 0); path.lineTo(600, 0); path.lineTo(600, 250); path.lineTo(0, 250); path.closePath();
             legend.add(new Instr(Form.FILL, Color.white));
             legend.add(new Instr(Form.PGON, path));
-            legend.add(new Instr(Form.TEXT, new Caption("Mercator Projection", new Font("Arial", Font.PLAIN, 50), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(250, 60)))));
-            point = context.getPoint(new Snode(map.bounds.minlat, map.bounds.minlon));
-            Symbols.drawSymbol(g2, legend, sScale, point.getX(), point.getY(), null, new Delta(Handle.BL, AffineTransform.getTranslateInstance(0, 0)));
-            legend = new Symbol();
-            legend.add(new Instr(Form.BBOX, new Rectangle2D.Double(0, 0, 500, 100)));
-            legend.add(new Instr(Form.TEXT, new Caption("© OpenStreetMap contributors", new Font("Arial", Font.PLAIN, 30), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(250, 100)))));
+            legend.add(new Instr(Form.TEXT, new Caption("Mercator Projection", new Font("Arial", Font.PLAIN, 50), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(300, 60)))));
+            legend.add(new Instr(Form.TEXT, new Caption("© OpenStreetMap contributors", new Font("Arial", Font.PLAIN, 30), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, 40)))));
+            legend.add(new Instr(Form.TEXT, new Caption("EMODnet Bathymetry Consortium (2018)", new Font("Arial", Font.PLAIN, 30), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, 40)))));
+            legend.add(new Instr(Form.TEXT, new Caption("EMODnet Digital Bathymetry (DTM)", new Font("Arial", Font.PLAIN, 30), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, 40)))));
+            legend.add(new Instr(Form.TEXT, new Caption("http://doi.org/10.12770/18ff0d48-b203-4a65-94a9-5fd8b0ec35f6", new Font("Arial", Font.PLAIN, 20), Color.black, new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, 35)))));
             point = context.getPoint(new Snode(map.bounds.minlat, map.bounds.minlon));
             Symbols.drawSymbol(g2, legend, sScale, point.getX(), point.getY(), null, new Delta(Handle.BL, AffineTransform.getTranslateInstance(0, 0)));
         }
     }
-
+    
     public static void lineCircle(LineStyle style, double radius, UniHLU units) {
         switch (units) {
         case HLU_FEET:

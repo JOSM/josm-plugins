@@ -316,6 +316,8 @@ public class Rules {
 				if (testObject(Obj.PRCARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.SPLARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.SEAARE)) for (Feature f : objects) if (testFeature(f)) areas();
+				if (testObject(Obj.CBLARE)) for (Feature f : objects) if (testFeature(f)) areas();
+				if (testObject(Obj.PIPARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.DMPGRD)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.OBSTRN)) for (Feature f : objects) if (testFeature(f)) obstructions();
 				if (testObject(Obj.UWTROC)) for (Feature f : objects) if (testFeature(f)) obstructions();
@@ -394,9 +396,25 @@ public class Rules {
 				Renderer.lineVector(new LineStyle(Color.black, 10));
 			break;
 		case DEPARE:
-			Double depmax = 0.0;
-			if (((depmax = (Double) getAttVal(Obj.DEPARE, Att.DRVAL2)) != null) && (depmax <= 0.0)) {
-				Renderer.lineVector(new LineStyle(Symbols.Gdries));
+			Double depmax = (Double) getAttVal(Obj.DEPARE, Att.DRVAL2);
+			if (depmax != null) {
+				if (depmax <= 0.0) {
+					Renderer.lineVector(new LineStyle(Symbols.Gdries));
+				} else if (depmax <= 2.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0x2090ff)));
+				} else if (depmax <= 5.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0x40a0ff)));
+				} else if (depmax <= 10.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0x60b0ff)));
+				} else if (depmax <= 15.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0x80c0ff)));
+				} else if (depmax <= 20.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0xa0d0ff)));
+				} else if (depmax <= 50.0) {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0xc0e0ff)));
+				} else {
+					Renderer.lineVector(new LineStyle(Color.blue, 2, new Color(0xe0f0ff)));
+				}
 			}
 			break;
 		case LAKARE:
@@ -546,9 +564,19 @@ public class Rules {
 			if (Renderer.zoom >= 12) {
 				Renderer.symbol(Areas.Plane, new Scheme(Symbols.Msymb));
 				Renderer.lineSymbols(Areas.Restricted, 0.5, Areas.LinePlane, null, 10, Symbols.Mline);
+				addName(15, new Font("Arial", Font.BOLD, 80), new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, -90)));
 			}
-			addName(15, new Font("Arial", Font.BOLD, 80), new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, -90)));
 			break;
+		case CBLARE:
+			if (Renderer.zoom >= 12) {
+			Renderer.lineSymbols(Areas.Restricted, 1.0, Areas.Cable, null, 4, Symbols.Mline);
+			}
+			break;
+		case PIPARE:
+			if (Renderer.zoom >= 12) {
+			Renderer.lineSymbols(Areas.Restricted, 1.0, Areas.Pipeline, null, 4, Symbols.Mline);
+			break;
+			}
 		default:
 			break;
 		}
@@ -720,10 +748,13 @@ public class Rules {
 			if (testAttribute(Obj.SOUNDG, Att.TECSOU, TecSOU.SOU_COMP) && hasAttribute(Obj.SOUNDG, Att.VALSOU)) {
 				double depth = (double) getAttVal(Obj.SOUNDG, Att.VALSOU);
 				Color col = new Color(0x00ffffff, true);
-				if (depth > 0.0) col = Symbols.Bwater;
-				if (depth > 5.0) col = new Color(0xcde2f1);
-				if (depth > 20.0) col = new Color(0xe6eff8);
-				if (depth > 50.0) col = new Color(0xf3f8fc);
+				if (depth > 0.0) col =  new Color(0x2090ff);
+				if (depth > 2.0) col =  new Color(0x40a0ff);
+				if (depth > 5.0) col =  new Color(0x60b0ff);
+				if (depth > 10.0) col = new Color(0x80c0ff);
+				if (depth > 15.0) col = new Color(0xa0d0ff);
+				if (depth > 20.0) col = new Color(0xc0e0ff);
+				if (depth > 50.0) col = new Color(0xe0f0ff);
 				Renderer.rasterPixel(Math.toRadians(1.0/60.0/16.0), col);
 			} else if ((Renderer.zoom >= 14) && hasAttribute(Obj.SOUNDG, Att.VALSOU)) {
 				double depth = (double) getAttVal(Obj.SOUNDG, Att.VALSOU);
@@ -861,10 +892,16 @@ public class Rules {
 			break;
 		case ACHARE:
 			if (Renderer.zoom >= 12) {
+				ArrayList<CatACH> cats = (ArrayList<CatACH>) getAttList(Obj.ACHARE, Att.CATACH);
 				if (feature.geom.prim != Pflag.AREA) {
 					Renderer.symbol(Harbours.Anchorage, new Scheme(Color.black));
 				} else {
-					Renderer.symbol(Harbours.Anchorage, new Scheme(Symbols.Mline));
+					if (cats.contains(CatACH.ACH_SMCM)) {
+						Renderer.symbol(Buoys.Shapes.get(BoySHP.BOY_SPHR), new Scheme(Symbols.Msymb));
+			        	Renderer.symbol(Topmarks.TopMooring, Topmarks.BuoyDeltas.get(BoySHP.BOY_SPHR));
+					} else {
+						Renderer.symbol(Harbours.Anchorage, new Scheme(Symbols.Mline));
+					}
 					Renderer.lineSymbols(Areas.Restricted, 1.0, Areas.LineAnchor, null, 10, Symbols.Mline);
 				}
 				addName(15, new Font("Arial", Font.BOLD, 60), Symbols.Mline, new Delta(Handle.LC, AffineTransform.getTranslateInstance(70, 0)));
@@ -872,7 +909,6 @@ public class Rules {
 				if (Renderer.zoom >= 15 && sts.contains(StsSTS.STS_RESV)) {
 					Renderer.labelText("Reserved", new Font("Arial", Font.PLAIN, 50), Symbols.Mline, new Delta(Handle.TC, AffineTransform.getTranslateInstance(0, 60)));
 				}
-				ArrayList<CatACH> cats = (ArrayList<CatACH>) getAttList(Obj.ACHARE, Att.CATACH);
 				int dy = (cats.size() - 1) * -30;
 				for (CatACH cat : cats) {
 					switch (cat) {
@@ -898,6 +934,12 @@ public class Rules {
 						break;
 					case ACH_SEAP:
 						Renderer.symbol(Areas.Seaplane, new Scheme(Symbols.Msymb), new Delta(Handle.RC, AffineTransform.getTranslateInstance(-60, dy)));
+						dy += 60;
+						break;
+					case ACH_SMCF:
+					case ACH_SMCM:
+						Renderer.labelText("Small", new Font("Arial", Font.PLAIN, 40), Symbols.Msymb, new Delta(Handle.RC, AffineTransform.getTranslateInstance(-60, dy)));
+						Renderer.labelText("Craft", new Font("Arial", Font.PLAIN, 40), Symbols.Msymb, new Delta(Handle.LC, AffineTransform.getTranslateInstance(60, dy)));
 						dy += 60;
 						break;
 					default:
@@ -1116,13 +1158,13 @@ public class Rules {
 				Renderer.symbol(Harbours.Bollard);
 				break;
 			case MOR_BUOY:
-			    if (Renderer.zoom >= 17) {
+			    if (Renderer.zoom >= 16) {
 			        BoySHP shape = (BoySHP) getAttEnum(feature.type, Att.BOYSHP);
 			        if (shape == BoySHP.BOY_UNKN) {
 			            shape = BoySHP.BOY_SPHR;
 			        }
-			        Renderer.symbol(Buoys.Shapes.get(shape), getScheme(feature.type));
-			        Renderer.symbol(Topmarks.TopMooring, Topmarks.BuoyDeltas.get(shape));
+			        Renderer.symbol(Buoys.Shapes.get(shape), (1.0 / (1.0 + (0.25 * (18 - Renderer.zoom)))), getScheme(feature.type));
+			        Renderer.symbol(Topmarks.TopMooring, (1.0 / (1.0 + (0.25 * (18 - Renderer.zoom)))), Topmarks.BuoyDeltas.get(shape));
 		            Signals.addSignals();
 		            addName(15, new Font("Arial", Font.BOLD, 40), new Delta(Handle.BL, AffineTransform.getTranslateInstance(60, -50)));
 			    }
@@ -1234,6 +1276,12 @@ public class Rules {
 					Renderer.lineText("Boom", new Font("Arial", Font.PLAIN, 40), Color.black, -20);
 				}
 			}
+			if (getAttEnum(feature.type, Att.CATOBS) == CatOBS.OBS_FLGD) {
+					Renderer.symbol(Areas.Foul, new Scheme(Color.black));
+					if (feature.geom.prim == Pflag.AREA) {
+					Renderer.lineSymbols(Areas.Dash, 1.0, Areas.LineFoul, null, 10, Color.black);
+				}
+			}
 		}
 		if ((Renderer.zoom >= 14) && (feature.type == Obj.UWTROC)) {
 			switch ((WatLEV) getAttEnum(feature.type, Att.WATLEV)) {
@@ -1245,6 +1293,7 @@ public class Rules {
 				break;
 			default:
 				Renderer.symbol(Areas.Rock);
+				break;
 			}
 		}
 	}

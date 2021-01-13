@@ -3,6 +3,7 @@ package jchart;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -126,7 +127,7 @@ public final class Jchart {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 4) {
-            System.err.println("Usage: java -jar jrender.jar <osm data file> <zoom> <scale> <output image file> [<bounds (S W N E)>]");
+            System.err.println("Usage: java -jar jchart.jar <osm data file> <zoom> <scale> <output image file> [<bounds (S W N E)>]");
             System.exit(-1);
         }
         File in = new File(args[0]);
@@ -151,6 +152,8 @@ public final class Jchart {
         if (ext[1].equalsIgnoreCase("png")) {
             Graphics2D g2 = img.createGraphics();
             Renderer.reRender(g2, new Rectangle((int) size.getX(), (int) size.getY()), zoom, Double.parseDouble(args[2]), map, context);
+            
+            //Renderer.labelText("000", new Font("Arial", Font.PLAIN, 20), Color.red);
             try {
                 ImageIO.write(img, "png", new File(args[3]));
             } catch (Exception e) {
