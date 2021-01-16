@@ -171,12 +171,14 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
             Logging.warn(MessageFormat.format("No revert commands found for changeset {0}", Long.toString(changesetId)));
             return null;
         }
-        for (Command c : cmds) {
-            if (c instanceof ConflictAddCommand) {
-                numberOfConflicts++;
-            }
-            c.executeCommand();
-        }
+        GuiHelper.runInEDT(() -> {
+        	for (Command c : cmds) {
+        		if (c instanceof ConflictAddCommand) {
+        			numberOfConflicts++;
+        		}
+        		c.executeCommand();
+        	}
+        });
         final String desc;
         if (revertType == RevertType.FULL) {
             desc = tr("Revert changeset {0}", String.valueOf(changesetId));
