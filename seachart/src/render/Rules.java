@@ -182,7 +182,7 @@ public class Rules {
 			atts = objs.get(0);
 		else
 			return null;
-		if ((item = atts.get(att)) == null)
+		if ((atts == null) || ((item = atts.get(att)) == null))
 			return null;
 		else
 			return item.val;
@@ -702,7 +702,7 @@ public class Rules {
 	}
 
 	private static void cables() {
-		if ((Renderer.zoom >= 16) && (feature.geom.length < 2)) {
+		if ((Renderer.zoom >= 16) && (feature.geom.length < 20)) {
 			if (feature.type == Obj.CBLSUB) {
 				Renderer.lineSymbols(Areas.Cable, 0.0, null, null, 0, Symbols.Mline);
 			} else if (feature.type == Obj.CBLOHD) {
@@ -1299,7 +1299,7 @@ public class Rules {
 	}
 
 	private static void pipelines() {
-		if ((Renderer.zoom >= 16) && (feature.geom.length < 2)) {
+		if ((Renderer.zoom >= 16) && (feature.geom.length < 20)) {
 			if (feature.type == Obj.PIPSOL) {
 				switch ((CatPIP) getAttEnum(feature.type, Att.CATPIP)) {
 				case PIP_ITAK:

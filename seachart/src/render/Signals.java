@@ -616,8 +616,8 @@ public class Signals extends Rules {
 					}
 				}
 			} else {
-				if ((Renderer.zoom >= 15) && (lights.get(0) != null)) {
-					AttMap atts = lights.get(0);
+				AttMap atts = lights.get(0);
+				if ((Renderer.zoom >= 15) && (atts != null)) {
 					ArrayList<CatLIT> cats = new ArrayList<>();
 					if (atts.containsKey(Att.CATLIT)) {
 						cats = (ArrayList<CatLIT>) atts.get(Att.CATLIT).val;
