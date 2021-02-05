@@ -15,4 +15,9 @@
     <import file="../build-common.xml"/>
     <target name="pre-compile" depends="fetch_dependencies"/>
 
+    <target name="additional-manifest">
+        <manifest file="MANIFEST" mode="update">
+            <attribute name="Multi-Release" value="true"/>
+        </manifest>
+    </target>
 </project>
