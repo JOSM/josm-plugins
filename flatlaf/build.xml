@@ -15,6 +15,13 @@
     <import file="../build-common.xml"/>
     <target name="pre-compile" depends="fetch_dependencies"/>
 
+    <target name="setup-dist">
+        <antcall target="setup-dist-default"/>
+        <copy todir="${plugin.build.dir}">
+            <fileset dir="${plugin.src.dir}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
     <target name="additional-manifest">
         <manifest file="MANIFEST" mode="update">
             <attribute name="Multi-Release" value="true"/>
