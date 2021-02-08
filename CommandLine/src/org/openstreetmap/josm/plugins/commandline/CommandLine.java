@@ -74,7 +74,6 @@ public class CommandLine extends Plugin {
     protected String commandSymbol;
     protected History history;
     protected MapFrame currentMapFrame;
-    protected MapMode previousMode;
 
     static final String pluginDir = Preferences.main().getPluginsDirectory().getAbsolutePath() + "/CommandLine/";
 
@@ -112,15 +111,6 @@ public class CommandLine extends Plugin {
         currentCommand = command;
         currentCommand.resetLoading();
         parseSelection(ds.getSelected());
-        if (!(map.mapMode instanceof AnyAction
-           || map.mapMode instanceof DummyAction
-           || map.mapMode instanceof LengthAction
-           || map.mapMode instanceof NodeAction
-           || map.mapMode instanceof PointAction
-           || map.mapMode instanceof RelationAction
-           || map.mapMode instanceof WayAction)) {
-            previousMode = map.mapMode;
-        }
         if (currentCommand.currentParameterNum < currentCommand.parameters.size())
             setMode(Mode.SELECTION);
         else
@@ -330,7 +320,7 @@ public class CommandLine extends Plugin {
 
     public void endInput() {
         setMode(Mode.IDLE);
-        MainApplication.getMap().selectMapMode(previousMode);
+        MainApplication.getMap().selectMapMode(null);
         MainApplication.getMap().mapView.repaint();
     }
 
