@@ -286,11 +286,11 @@ public class Rules {
 				if (testObject(Obj.HRBBSN)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.LOKBSN)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.LKBSPT)) for (Feature f : objects) if (testFeature(f)) areas();
+				if (testObject(Obj.COALNE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.LAKARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.RIVERS)) for (Feature f : objects) if (testFeature(f)) waterways();
 				if (testObject(Obj.CANALS)) for (Feature f : objects) if (testFeature(f)) waterways();
 				if (testObject(Obj.DEPARE)) for (Feature f : objects) if (testFeature(f)) areas();
-				if (testObject(Obj.COALNE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.ROADWY)) for (Feature f : objects) if (testFeature(f)) highways();
 				if (testObject(Obj.RAILWY)) for (Feature f : objects) if (testFeature(f)) highways();
 			}
@@ -417,9 +417,11 @@ public class Rules {
 				}
 			}
 			break;
+		case CANALS:
 		case LAKARE:
+		case RIVERS:
 			if ((Renderer.zoom >= 12) || (feature.geom.area > 10.0))
-				Renderer.lineVector(new LineStyle(Symbols.Bwater));
+				Renderer.lineVector(new LineStyle(Symbols.Bwater, 11, Symbols.Bwater));
 			break;
 		case DRGARE:
 			if (Renderer.zoom < 16)
@@ -702,7 +704,7 @@ public class Rules {
 	}
 
 	private static void cables() {
-		if ((Renderer.zoom >= 16) && (feature.geom.length < 20)) {
+		if (((Renderer.zoom >= 14) && (feature.geom.length > 2) && (feature.geom.length < 20)) || ((Renderer.zoom >= 16) && (feature.geom.length <= 2))) {
 			if (feature.type == Obj.CBLSUB) {
 				Renderer.lineSymbols(Areas.Cable, 0.0, null, null, 0, Symbols.Mline);
 			} else if (feature.type == Obj.CBLOHD) {
@@ -1299,7 +1301,7 @@ public class Rules {
 	}
 
 	private static void pipelines() {
-		if ((Renderer.zoom >= 16) && (feature.geom.length < 20)) {
+		if (((Renderer.zoom >= 14) && (feature.geom.length > 2) && (feature.geom.length < 20)) || ((Renderer.zoom >= 16) && (feature.geom.length <= 2))) {
 			if (feature.type == Obj.PIPSOL) {
 				switch ((CatPIP) getAttEnum(feature.type, Att.CATPIP)) {
 				case PIP_ITAK:
