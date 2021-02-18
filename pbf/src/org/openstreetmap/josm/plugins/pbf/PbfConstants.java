@@ -14,7 +14,7 @@ public interface PbfConstants {
     /**
      * File extension.
      */
-    String EXTENSION = "osm.pbf";
+    String EXTENSION = "pbf";
 
     /**
      * File filter used in import/export dialogs.
