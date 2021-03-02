@@ -7,7 +7,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 
 /**
  * This plugin is used to write latitude and longitude information
- * to the EXIF header of jpg files.
+ * to the EXIF header of jpg and tiff files.
  * It extends the core geoimage feature of JOSM by adding a new entry
  * to the right click menu of any image layer.
  *

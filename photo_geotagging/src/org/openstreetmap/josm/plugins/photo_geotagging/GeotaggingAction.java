@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.plugins.photo_geotagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -32,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -69,22 +72,40 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         GeoImageLayer layer = getLayer();
 
         final List<ImageEntry> images = new ArrayList<>();
-        for (ImageEntry e : layer.getImages()) {
-             /* Only write lat/lon to the file, if the position is known and
-                the GPS data changed. */
-            if (e.getPos() != null && e.hasNewGpsData()) {
-                images.add(e);
-            }
-        }
+        int notSupportedFilesCount = 0;
+        String notSupportedName = null;
+        boolean hasTiff = false;
 
         final JPanel cont = new JPanel(new GridBagLayout());
         cont.add(new JLabel(tr("Write position information into the exif header of the following files:")), GBC.eol());
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
         DecimalFormat dFormatter = new DecimalFormat("###0.000000");
-        for (ImageEntry e : images) {
-            listModel.addElement(e.getFile().getAbsolutePath()+
-                " ("+dFormatter.format(e.getPos().lat())+","+dFormatter.format(e.getPos().lon())+")");
+
+        for (ImageEntry e : layer.getImages()) {
+             /* Only write lat/lon to the file, if the position is known and
+                the GPS data changed. */
+            if (e.getPos() != null && e.hasNewGpsData()) {
+                String pth = e.getFile().getAbsolutePath();
+                switch (FilenameUtils.getExtension(pth).toLowerCase()) {
+                    case "tif":
+                    case "tiff":
+                        hasTiff = true;
+                        // fall through (this comment makes the compiler happy)
+                    case "jpg":
+                    case "jpeg":
+                        images.add(e);
+                        listModel.addElement(pth + " (" + dFormatter.format(e.getPos().lat()) + ","
+                                + dFormatter.format(e.getPos().lon()) + ")");
+                        break;
+                    default:
+                        notSupportedFilesCount++;
+                        if (notSupportedName == null) {
+                            notSupportedName = e.getFile().getName();
+                        }
+                        break;
+                }
+            }
         }
 
         JList<String> entryList = new JList<>(listModel);
@@ -92,6 +113,19 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         JScrollPane scroll = new JScrollPane(entryList);
         scroll.setPreferredSize(new Dimension(900, 250));
         cont.add(scroll, GBC.eol().fill(GBC.BOTH));
+
+        if (notSupportedFilesCount > 0) {
+            JLabel warn = new JLabel(trn("The file \"{0}\" can not be updated. Only JPEG and TIFF images are supported.",
+                    "{1} files can not be updated. Only JPEG and TIFF images are supported.", notSupportedFilesCount, notSupportedName, Integer.toString(notSupportedFilesCount)));
+            warn.setForeground(Color.RED);
+            cont.add(warn, GBC.eol());
+        }
+
+        if (hasTiff) {
+            JLabel warn = new JLabel(tr("Warning: Some metadata in TIFF files may be lost. Always keep a backup!"));
+            warn.setForeground(Color.RED);
+            cont.add(warn, GBC.eol());
+        }
 
         final JPanel settingsPanel = new JPanel(new GridBagLayout());
         settingsPanel.setBorder(BorderFactory.createTitledBorder(tr("settings")));
@@ -333,7 +367,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             // instead, let's use new File(), which doesn't actually create a file
             // for getting a unique file name, we use UUID.randomUUID()
             do {
-                fileTmp = new File(file.getParentFile(), "img" + UUID.randomUUID() + ".jpg");
+                fileTmp = new File(file.getParentFile(), "img" + UUID.randomUUID() + ".tmp");
             } while (fileTmp.exists());
             if (debug) {
                 System.err.println("TMP: "+fileTmp.getAbsolutePath());

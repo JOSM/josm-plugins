@@ -22,15 +22,16 @@ import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
 import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
+import org.apache.commons.imaging.formats.tiff.write.TiffImageWriterLossy;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 
 public class ExifGPSTagger {
     /**
      * Set the GPS values in JPEG EXIF metadata.
-     * This is taken from one of the examples of the sanselan project.
+     * This is based on one of the examples of the sanselan project.
      *
-     * @param jpegImageFile A source image file.
+     * @param imageFile A source image file.
      * @param dst The output file.
      * @param lat latitude
      * @param lon longitude
@@ -40,9 +41,9 @@ public class ExifGPSTagger {
      * @param imgDir image direction in degrees (0..360) - can be null if not available
      * @throws IOException in case of I/O error
      */
-    public static void setExifGPSTag(File jpegImageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir) throws IOException {
+    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir) throws IOException {
         try {
-            setExifGPSTagWorker(jpegImageFile, dst, lat, lon, gpsTime, speed, ele, imgDir);
+            setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir);
         } catch (ImageReadException ire) {
             throw new IOException(tr("Read error: "+ire), ire);
         } catch (ImageWriteException ire2) {
@@ -50,18 +51,19 @@ public class ExifGPSTagger {
         }
     }
 
-    public static void setExifGPSTagWorker(File jpegImageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir)
+    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir)
             throws IOException, ImageReadException, ImageWriteException {
+
         TiffOutputSet outputSet = null;
+        ImageMetadata metadata = Imaging.getMetadata(imageFile);
 
-        ImageMetadata metadata = Imaging.getMetadata(jpegImageFile);
-        JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-        if (null != jpegMetadata) {
-            TiffImageMetadata exif = jpegMetadata.getExif();
-
+        if (metadata instanceof JpegImageMetadata) {
+            TiffImageMetadata exif = ((JpegImageMetadata) metadata).getExif();
             if (null != exif) {
                 outputSet = exif.getOutputSet();
             }
+        } else if (metadata instanceof TiffImageMetadata) {
+            outputSet = ((TiffImageMetadata) metadata).getOutputSet();
         }
 
         if (null == outputSet) {
@@ -96,7 +98,7 @@ public class ExifGPSTagger {
             // make sure to remove old value if present (this method will
             // not fail if the tag does not exist).
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_TIME_STAMP);
-            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_TIME_STAMP, 
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_TIME_STAMP,
                     RationalNumber.valueOf(hour),
                     RationalNumber.valueOf(minute),
                     RationalNumber.valueOf(second));
@@ -144,7 +146,11 @@ public class ExifGPSTagger {
         }
 
         try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(dst))) {
-            new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);
+            if (metadata instanceof JpegImageMetadata) {
+                new ExifRewriter().updateExifMetadataLossless(imageFile, os, outputSet);
+            } else if (metadata instanceof TiffImageMetadata) {
+                new TiffImageWriterLossy().write(os, outputSet);
+            }
         }
     }
 }
