@@ -69,7 +69,7 @@ public class DrawSplineAction extends MapMode implements MapViewPaintable, KeyPr
                 tr("Draw a spline curve"), // tooltip
                 Shortcut.registerShortcut("mapmode:spline",
                         tr("Mode: {0}", tr("Spline drawing")),
-                        KeyEvent.VK_P, Shortcut.DIRECT),
+                        KeyEvent.VK_L, Shortcut.DIRECT),
                 getCursor());
 
         backspaceShortcut = Shortcut.registerShortcut("mapmode:backspace", tr("Backspace in Add mode"),
