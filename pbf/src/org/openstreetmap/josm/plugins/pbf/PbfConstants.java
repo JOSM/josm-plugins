@@ -14,11 +14,11 @@ public interface PbfConstants {
     /**
      * File extension.
      */
-    String EXTENSION = "pbf";
+    String EXTENSION = "osm.pbf";
 
     /**
      * File filter used in import/export dialogs.
      */
-    ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter(EXTENSION, EXTENSION,
+    ExtensionFileFilter FILE_FILTER = new ExtensionFileFilter("pbf", EXTENSION,
             tr("OSM Server Files pbf compressed") + " (*."+EXTENSION+")");
 }
