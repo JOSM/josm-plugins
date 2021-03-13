@@ -63,15 +63,15 @@ public class XmlBoundsImporter extends FileImporter implements XmlBoundsConstant
 		try (ImageryReader reader = new ValidatingImageryReader(source != null ? source : file.getAbsolutePath())) {
             entries = reader.parse();
         } catch (SAXException e) {
-      	    Logging.trace(e);
-            if (JOptionPane.showConfirmDialog(
+      	    Logging.warn(e);
+      	    if (JOptionPane.YES_OPTION != GuiHelper.runInEDTAndWaitAndReturn(() -> JOptionPane.showConfirmDialog(
                     MainApplication.getMainFrame(),
                     tr("Validating error in file {0}:\n{1}\nDo you want to continue without validating the file ?",
                             source != null ? source : file.getPath(), e.getLocalizedMessage()),
                     tr("Open Imagery XML file"),
-                    JOptionPane.YES_NO_CANCEL_OPTION) != JOptionPane.YES_OPTION) {
-                return null;
-            }
+                    JOptionPane.YES_NO_CANCEL_OPTION))) {
+      	        return null;
+      	    }
 
             try (ImageryReader reader = new ImageryReader(source != null ? source : file.getAbsolutePath())) {
             	entries = reader.parse();

@@ -3,14 +3,12 @@ package org.openstreetmap.josm.plugins.imageryxmlbounds.io;
 
 import java.io.IOException;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.plugins.imageryxmlbounds.XmlBoundsConstants;
+import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,10 +49,10 @@ public class ValidatingImageryReader extends ImageryReader implements XmlBoundsC
      * @throws IOException if any I/O error occurs
      */
     public static void validate(String source) throws SAXException, IOException {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try (CachedFile xmlSchema = new CachedFile(XML_SCHEMA)) {
-            Schema schema = factory.newSchema(new StreamSource(xmlSchema.getInputStream()));
-            schema.newValidator().validate(new StreamSource(source));
+            XmlUtils.newXmlSchemaFactory()
+                .newSchema(new StreamSource(xmlSchema.getInputStream()))
+                .newValidator().validate(new StreamSource(source));
         }
     }
 }
