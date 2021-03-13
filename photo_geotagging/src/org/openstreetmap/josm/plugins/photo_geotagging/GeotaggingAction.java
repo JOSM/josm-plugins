@@ -117,7 +117,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         if (notSupportedFilesCount > 0) {
             JLabel warn = new JLabel(notSupportedFilesCount == 1
                     ? tr("The file \"{0}\" can not be updated. Only JPEG and TIFF images are supported.", notSupportedName)
-                    : tr("{0} files can not be updated. Only JPEG and TIFF images are supported.", notSupportedFilesCount));
+                    : trn("{0} file can not be updated. Only JPEG and TIFF images are supported.",
+                          "{0} files can not be updated. Only JPEG and TIFF images are supported.", notSupportedFilesCount, notSupportedFilesCount));
             warn.setForeground(Color.RED);
             cont.add(warn, GBC.eol());
         }
