@@ -19,6 +19,7 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.ViewFactory;
 
 /**
+ * XLM editor kit.
  * @author kees
  */
 public class XmlEditorKit extends StyledEditorKit {

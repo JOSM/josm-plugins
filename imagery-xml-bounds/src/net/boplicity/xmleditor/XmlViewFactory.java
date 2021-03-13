@@ -20,6 +20,7 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
 /**
+ * XML View Factory
  * @author kees
  */
 public class XmlViewFactory extends Object implements ViewFactory {

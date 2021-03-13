@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
- *
+ * Compute bounds action.
  * @author Don-vip
  *
  */

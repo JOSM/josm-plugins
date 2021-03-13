@@ -15,8 +15,8 @@ import org.openstreetmap.josm.plugins.imageryxmlbounds.XmlBoundsConstants;
 import org.openstreetmap.josm.plugins.imageryxmlbounds.actions.ComputeBoundsAction;
 
 /**
+ * XML bounds exporter.
  * @author Don-vip
- *
  */
 public class XmlBoundsExporter extends FileExporter implements XmlBoundsConstants {
 

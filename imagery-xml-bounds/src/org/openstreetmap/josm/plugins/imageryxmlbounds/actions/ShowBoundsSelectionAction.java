@@ -4,7 +4,7 @@ package org.openstreetmap.josm.plugins.imageryxmlbounds.actions;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 
 /**
- *
+ * Show bounds selection action.
  * @author Don-vip
  *
  */
