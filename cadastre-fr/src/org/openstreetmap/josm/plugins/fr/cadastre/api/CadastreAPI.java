@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.fr.cadastre.api;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
@@ -16,6 +18,7 @@ import javax.json.JsonStructure;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
@@ -23,7 +26,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
  */
 public final class CadastreAPI {
 
-    private static final String API_ENDPOINT = "https://sandbox.geo.api.gouv.fr/cadastre/";
+    private static final String API_ENDPOINT = "https://sandbox.geo.api.gouv.fr/cadastre";
 
     private CadastreAPI() {
         // Hide public sontructor for utility classes
@@ -52,7 +55,14 @@ public final class CadastreAPI {
         URL url = new URL(API_ENDPOINT + "/feuilles?bbox=" + String.join(",",
                 Double.toString(minlon), Double.toString(minlat), Double.toString(maxlon), Double.toString(maxlat)));
         try {
-            JsonStructure json = Json.createReader(new StringReader(HttpClient.create(url).connect().fetchContent())).read();
+            Response response = HttpClient.create(url).connect();
+            if (response.getResponseCode() >= 400) {
+                throw new IOException(
+                        tr("Cadastre GeoAPI returned HTTP error {0}. This is not a JOSM bug.\nPlease report the issue to {1}, {2} or {3}",
+                        response.getResponseCode(), "https://github.com/etalab/geo.data.gouv.fr/issues", "https://twitter.com/geodatagouv",
+                        "geo@data.gouv.fr"));
+            }
+            JsonStructure json = Json.createReader(new StringReader(response.fetchContent())).read();
             if (json instanceof JsonArray) {
                 return json.asJsonArray().stream().map(x -> x.asJsonObject().getString("id")).collect(Collectors.toSet());
             } else {
