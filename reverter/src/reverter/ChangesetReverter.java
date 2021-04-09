@@ -511,7 +511,7 @@ public class ChangesetReverter {
                             DataSet history = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
                             if (!history.isEmpty()) {
                                 Node historyNode = (Node) history.allPrimitives().iterator().next();
-                                if (historyNode.isLatLonKnown() && changeset.getClosedAt().after(historyNode.getTimestamp())) {
+                                if (historyNode.isLatLonKnown() && changeset.getClosedAt().toEpochMilli() > historyNode.getTimestamp().getTime()) {
                                     n.load(historyNode.save());
                                     break;
                                 }
