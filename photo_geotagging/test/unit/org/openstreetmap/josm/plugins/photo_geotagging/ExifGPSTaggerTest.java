@@ -24,10 +24,9 @@ public class ExifGPSTaggerTest {
     public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
-    @Ignore("To enable after https://issues.apache.org/jira/browse/IMAGING-179 is fixed")
     public void testTicket11757() throws Exception {
         final File in = new File(TestUtils.getTestDataRoot(), "_DSC1234.jpg");
-        ExifGPSTagger.setExifGPSTag(in, tempFolder.newFile(), 12, 34, new Date(), 12.34, Math.E, Math.PI);
+        ExifGPSTagger.setExifGPSTag(in, tempFolder.newFile(), 12, 34, new Date(), 12.34, Math.E, Math.PI, true);
     }
 
     @Test
@@ -43,7 +42,7 @@ public class ExifGPSTaggerTest {
     public void testTicket11902() throws Exception {
         final File in = new File(TestUtils.getTestDataRoot(), "IMG_7250_small.JPG");
         final File out = tempFolder.newFile();
-        ExifGPSTagger.setExifGPSTag(in, out, 12, 34, new Date(), 12.34, Math.E, Math.PI);
+        ExifGPSTagger.setExifGPSTag(in, out, 12, 34, new Date(), 12.34, Math.E, Math.PI, false);
         final Process jhead = Runtime.getRuntime().exec(new String[]{"jhead", out.getAbsolutePath()});
         final String stdout = new Scanner(jhead.getErrorStream()).useDelimiter("\\A").next();
         System.out.println(stdout);

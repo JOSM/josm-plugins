@@ -39,11 +39,12 @@ public class ExifGPSTagger {
      * @param speed speed in km/h - can be null if not available
      * @param ele elevation - can be null if not available
      * @param imgDir image direction in degrees (0..360) - can be null if not available
+     * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
      */
-    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir) throws IOException {
+    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir, boolean lossy) throws IOException {
         try {
-            setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir);
+            setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir, lossy);
         } catch (ImageReadException ire) {
             throw new IOException(tr("Read error: "+ire), ire);
         } catch (ImageWriteException ire2) {
@@ -51,7 +52,7 @@ public class ExifGPSTagger {
         }
     }
 
-    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir)
+    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir, boolean lossy)
             throws IOException, ImageReadException, ImageWriteException {
 
         TiffOutputSet outputSet = null;
@@ -147,7 +148,11 @@ public class ExifGPSTagger {
 
         try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(dst))) {
             if (metadata instanceof JpegImageMetadata) {
-                new ExifRewriter().updateExifMetadataLossless(imageFile, os, outputSet);
+                if (lossy) {
+                    new ExifRewriter().updateExifMetadataLossy(imageFile, os, outputSet);
+                } else {
+                    new ExifRewriter().updateExifMetadataLossless(imageFile, os, outputSet);
+                }
             } else if (metadata instanceof TiffImageMetadata) {
                 new TiffImageWriterLossy().write(os, outputSet);
             }

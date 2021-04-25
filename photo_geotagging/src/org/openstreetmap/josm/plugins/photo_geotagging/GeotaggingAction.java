@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -209,6 +210,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         private boolean canceled = false;
         private Boolean override_backup = null;
+        private boolean lossy = false;
 
         private File fileFrom;
         private File fileTo;
@@ -257,7 +259,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             chooseFiles(e.getFile());
             if (canceled) return;
             ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e.getPos().lat(), e.getPos().lon(),
-                    e.getGpsTime(), e.getSpeed(), e.getElevation(), e.getExifImgDir());
+                    e.getGpsTime(), e.getSpeed(), e.getElevation(), e.getExifImgDir(), lossy);
+            lossy = false;
 
             if (mTime != null) {
                 if (!fileTo.setLastModified(mTime))
@@ -286,10 +289,10 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                     processEntry(e);
                 } catch (final IOException ioe) {
                     ioe.printStackTrace();
+                    restoreFile();
                     try {
                         SwingUtilities.invokeAndWait(() -> {
                             ExtendedDialog dlg = new ExtendedDialog(progressMonitor.getWindowParent(), tr("Error"), new String[] {tr("Abort"), tr("Retry"), tr("Ignore")});
-                            dlg.setIcon(JOptionPane.ERROR_MESSAGE);
                             dlg.setButtonIcons("cancel", "dialogs/refresh", "dialogs/next");
                             String msg;
                             if (ioe instanceof NoSuchFileException) {
@@ -297,11 +300,26 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                             } else {
                                 msg = ioe.toString();
                             }
-                            dlg.setContent(tr("Unable to process file ''{0}'':", e.getFile().toString()) + "<br/>" + msg);
+                            boolean tmpLossy = false;
+                            if (!lossy && ioe.getCause() instanceof ExifRewriter.ExifOverflowException) {
+                                tmpLossy = true;
+                                dlg.setIcon(JOptionPane.WARNING_MESSAGE);
+                                dlg.setContent(tr(
+                                        "The GPS tag could not be added to the file \"{0}\" because there is not enough free space in the EXIF section.<br>"
+                                                + "This can likely be fixed by rewriting the entire EXIF section, however some metadata may get lost in the process.<br><br>"
+                                                + "Would you like to try again using the lossy approach?",
+                                        e.getFile().getName()));
+                                dlg.setDefaultButton(2);
+                            } else {
+                                dlg.setIcon(JOptionPane.ERROR_MESSAGE);
+                                dlg.setContent(tr("Unable to process file ''{0}'':", e.getFile().toString()) + "<br/>" + msg);
+                                dlg.setDefaultButton(3);
+                            }
                             dlg.showDialog();
                             switch (dlg.getValue()) {
                                 case 2:  // retry
                                     currentIndex--;
+                                    lossy = tmpLossy;
                                     break;
                                 case 3:  // continue
                                     break;
@@ -413,6 +431,15 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             } catch (Exception e) {
                 System.err.println(e);
                 canceled = true;
+            }
+        }
+
+        private void restoreFile() {
+            if (fileFrom != null && fileFrom.exists()) {
+                if (fileTo != null && fileTo.exists()) {
+                    fileTo.delete();
+                }
+                fileFrom.renameTo(fileTo);
             }
         }
 
