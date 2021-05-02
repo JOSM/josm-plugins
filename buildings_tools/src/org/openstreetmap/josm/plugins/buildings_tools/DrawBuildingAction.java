@@ -39,6 +39,8 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -50,7 +52,6 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         None, Drawing, DrawingWidth, DrawingAngFix
     }
 
-    private final Cursor cursorCrosshair;
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
     private Cursor currCursor;
@@ -65,17 +66,21 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     final transient Building building = new Building();
 
+    private final PreferenceChangedListener shapeChangeListener = event -> updCursor();
+
     public DrawBuildingAction() {
         super(tr("Draw buildings"), "building", tr("Draw buildings"),
                 Shortcut.registerShortcut("mapmode:buildings",
                         tr("Mode: {0}", tr("Draw buildings")),
                         KeyEvent.VK_B, Shortcut.DIRECT),
-                getCursor());
+                // Set super.cursor to crosshair without overlay because super.cursor is final,
+                // but we use two different cursors with overlays for rectangular and circular buildings
+                // the actual cursor is drawn in enterMode()
+                ImageProvider.getCursor("crosshair", null));
 
-        cursorCrosshair = getCursor();
+        currCursor = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
-        currCursor = cursorCrosshair;
     }
 
     private static Cursor getCursor() {
@@ -133,20 +138,24 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     @Override
     public void enterMode() {
         super.enterMode();
+
         MapFrame map = MainApplication.getMap();
         if (getLayerManager().getEditDataSet() == null) {
             map.selectSelectTool(false);
             return;
         }
         selectedColor = new NamedColorProperty(marktr("selected"), selectedColor).get();
-        currCursor = cursorCrosshair;
         map.mapView.addMouseListener(this);
         map.mapView.addMouseMotionListener(this);
         map.mapView.addTemporaryLayer(this);
         map.keyDetector.addKeyListener(this);
         map.keyDetector.addModifierExListener(this);
         SelectionEventManager.getInstance().addSelectionListener(this);
+        Config.getPref().addKeyPreferenceChangeListener("buildings_tool.shape", shapeChangeListener);
+
         updateSnap(getLayerManager().getEditDataSet().getSelected());
+        // super.enterMode() draws the basic cursor. Overwrite it with the cursor for the current building mode.
+        updCursor();
     }
 
     @Override
@@ -159,6 +168,8 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         map.keyDetector.removeKeyListener(this);
         map.keyDetector.removeModifierExListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
+        Config.getPref().removeKeyPreferenceChangeListener("buildings_tool.shape", shapeChangeListener);
+
         if (mode != Mode.None)
             map.mapView.repaint();
         mode = Mode.None;
@@ -385,13 +396,11 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     }
 
     private void updCursor() {
-        if (mousePos == null)
-            return;
         if (!MainApplication.isDisplayingMapView())
             return;
-        Node n = null;
-        if (!ctrl) {
-            n = MainApplication.getMap().mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
+
+        if (!ctrl && (mousePos != null)) {
+            Node n = MainApplication.getMap().mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
             if (n != null) {
                 setCursor(cursorJoinNode);
                 return;
