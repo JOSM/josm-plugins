@@ -50,6 +50,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -189,11 +190,11 @@ public class Address extends MapMode {
             }
         } else {
             List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive::isSelectable);
-            for (WaySegment ws : wss) {
-                if (ws.way.get(tagHighway) != null && ws.way.get(tagHighwayName) != null)
-                    mouseOnExistingWays.add(ws.way);
-                else if (ws.way.get(tagBuilding) != null && ws.way.get(tagHouseNumber) == null)
-                    mouseOnExistingBuildingWays.add(ws.way);
+            for (IWaySegment<Node, Way> ws : wss) {
+                if (ws.getWay().get(tagHighway) != null && ws.getWay().get(tagHighwayName) != null)
+                    mouseOnExistingWays.add(ws.getWay());
+                else if (ws.getWay().get(tagBuilding) != null && ws.getWay().get(tagHouseNumber) == null)
+                    mouseOnExistingBuildingWays.add(ws.getWay());
             }
             if (mouseOnExistingWays.size() == 1) {
                 // clicked on existing highway => set new street name
@@ -309,16 +310,16 @@ public class Address extends MapMode {
         cmds.add(new AddCommand(OsmDataManager.getInstance().getEditDataSet(), n));
         List<WaySegment> wss = MainApplication.getMap().mapView.getNearestWaySegments(e.getPoint(), OsmPrimitive::isSelectable);
         Map<Way, List<Integer>> insertPoints = new HashMap<>();
-        for (WaySegment ws : wss) {
+        for (IWaySegment<Node, Way> ws : wss) {
             List<Integer> is;
-            if (insertPoints.containsKey(ws.way)) {
-                is = insertPoints.get(ws.way);
+            if (insertPoints.containsKey(ws.getWay())) {
+                is = insertPoints.get(ws.getWay());
             } else {
                 is = new ArrayList<>();
-                insertPoints.put(ws.way, is);
+                insertPoints.put(ws.getWay(), is);
             }
 
-            is.add(ws.lowerIndex);
+            is.add(ws.getLowerIndex());
         }
         Set<Pair<Node, Node>> segSet = new HashSet<>();
         ArrayList<Way> replacedWays = new ArrayList<>();
