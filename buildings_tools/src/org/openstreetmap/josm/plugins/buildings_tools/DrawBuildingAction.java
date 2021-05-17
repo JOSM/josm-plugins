@@ -1,9 +1,30 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.buildings_tools;
 
-import static org.openstreetmap.josm.plugins.buildings_tools.BuildingsToolsPlugin.latlon2eastNorth;
-import static org.openstreetmap.josm.tools.I18n.marktr;
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
+import org.openstreetmap.josm.data.osm.IWaySegment;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Shortcut;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -21,30 +42,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.openstreetmap.josm.actions.mapmode.MapMode;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.DataSelectionListener;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
-import org.openstreetmap.josm.gui.util.ModifierExListener;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
-import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Shortcut;
+import static org.openstreetmap.josm.plugins.buildings_tools.BuildingsToolsPlugin.latlon2eastNorth;
+import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class DrawBuildingAction extends MapMode implements MapViewPaintable, DataSelectionListener,
         KeyPressReleaseListener, ModifierExListener {
@@ -219,9 +219,9 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             Node n = MainApplication.getMap().mapView.getNearestNode(mousePos, OsmPrimitive::isUsable);
             if (n != null)
                 return latlon2eastNorth(n.getCoor());
-            WaySegment ws = MainApplication.getMap().mapView.getNearestWaySegment(mousePos,
+            IWaySegment<Node, Way> ws = MainApplication.getMap().mapView.getNearestWaySegment(mousePos,
                     OsmPrimitive::isSelectable);
-            if (ws != null && ws.way.get("building") != null) {
+            if (ws != null && ws.getWay().get("building") != null) {
                 EastNorth p1 = latlon2eastNorth(ws.getFirstNode().getCoor());
                 EastNorth p2 = latlon2eastNorth(ws.getSecondNode().getCoor());
                 EastNorth enX = Geometry.closestPointToSegment(p1, p2,
