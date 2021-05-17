@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="buildings_tools" default="dist" basedir=".">
     <!-- enter the SVN commit message -->
-    <property name="commit.message" value="buildings_tools: add option to disable click+drag"/>
+    <property name="commit.message" value="buildings_tools: recompile for compatibility with JOSM r17867"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="17329"/>
+    <property name="plugin.main.version" value="17867"/>
     
     <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
