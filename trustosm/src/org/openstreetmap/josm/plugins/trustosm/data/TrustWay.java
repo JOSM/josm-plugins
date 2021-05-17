@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.bouncycastle.openpgp.PGPSignature;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.tools.Logging;
 
 public class TrustWay extends TrustOsmPrimitive {
 
@@ -53,7 +54,7 @@ public class TrustWay extends TrustOsmPrimitive {
         if (osmItem instanceof Way) {
             osm = osmItem;
         } else {
-            System.err.println("Error while creating TrustWay: OsmPrimitive "+osmItem.getUniqueId()+" is not a Way!");
+            Logging.error("Error while creating TrustWay: OsmPrimitive "+osmItem.getUniqueId()+" is not a Way!");
         }
     }
 
@@ -73,7 +74,7 @@ public class TrustWay extends TrustOsmPrimitive {
         return segmentSig;
     }
 
-    public TrustSignatures getSigsOnSegment(WaySegment seg) {
+    public TrustSignatures getSigsOnSegment(IWaySegment<Node, ?> seg) {
         List<Node> nodes = new ArrayList<>();
         nodes.add(seg.getFirstNode());
         nodes.add(seg.getSecondNode());

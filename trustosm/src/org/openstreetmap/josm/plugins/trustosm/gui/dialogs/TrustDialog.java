@@ -42,6 +42,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -87,7 +88,7 @@ public class TrustDialog extends ToggleDialog implements DataSelectionListener, 
     /** The selected osmData */
     private Collection<? extends OsmPrimitive> osmData;
 
-    private final List<WaySegment> selectedSegments = new ArrayList<>();
+    private final List<IWaySegment<Node, Way>> selectedSegments = new ArrayList<>();
     private final List<OsmPrimitive> selectedPrimitives = new ArrayList<>();
 
     /** The JTree for showing the geometry */
@@ -232,7 +233,7 @@ public class TrustDialog extends ToggleDialog implements DataSelectionListener, 
                             + " ----- " +
                             seg.getSecondNode().getDisplayName(DefaultNameFormatter.getInstance()));
                     TrustSignatures sigs;
-                    String id = TrustOsmPrimitive.createUniqueObjectIdentifier(seg.way);
+                    String id = TrustOsmPrimitive.createUniqueObjectIdentifier(seg.getWay());
                     if (TrustOSMplugin.signedItems.containsKey(id)
                             && (sigs = ((TrustWay) TrustOSMplugin.signedItems.get(id)).getSigsOnSegment(seg)) != null) {
                         switch (sigs.getStatus()) {
@@ -400,7 +401,7 @@ public class TrustDialog extends ToggleDialog implements DataSelectionListener, 
                         List<Node> nodes = new ArrayList<>();
                         nodes.add(seg.getFirstNode());
                         nodes.add(seg.getSecondNode());
-                        Way w = seg.way;
+                        Way w = seg.getWay();
                         String id = TrustOsmPrimitive.createUniqueObjectIdentifier(w);
                         TrustWay trust = TrustOSMplugin.signedItems.containsKey(id) ?
                                 (TrustWay) TrustOSMplugin.signedItems.get(id) : new TrustWay(w);
@@ -448,7 +449,7 @@ public class TrustDialog extends ToggleDialog implements DataSelectionListener, 
                         }*/
                     } else if (o instanceof WaySegment) {
                         WaySegment seg = (WaySegment) o;
-                        String id = TrustOsmPrimitive.createUniqueObjectIdentifier(seg.way);
+                        String id = TrustOsmPrimitive.createUniqueObjectIdentifier(seg.getWay());
                         if (TrustOSMplugin.signedItems.containsKey(id)) {
                             List<Node> nodes = new ArrayList<>();
                             nodes.add(seg.getFirstNode());
@@ -653,7 +654,7 @@ public class TrustDialog extends ToggleDialog implements DataSelectionListener, 
         g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         // highlight all selected WaySegments
-        for (WaySegment seg : selectedSegments) {
+        for (IWaySegment<?, ?> seg : selectedSegments) {
             GeneralPath b = new GeneralPath();
             Point p1 = mv.getPoint(seg.getFirstNode());
             Point p2 = mv.getPoint(seg.getSecondNode());
