@@ -1,6 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.alignways;
 
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.IWaySegment;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.tools.Logging;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -15,16 +26,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * @author tilusnet &lt;tilusnet@gmail.com&gt;
@@ -47,7 +48,7 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
             PivotLocations.class);
     private final Color pivotColor = Color.YELLOW;
     private final Color crossColor = pivotColor;
-    private final Map<Node, ArrayList<WaySegment>> adjWaySegs = new HashMap<>();
+    private final Map<Node, ArrayList<IWaySegment<Node, Way>>> adjWaySegs = new HashMap<>();
 
     public AlignWaysAlgnSegment(MapView mapview, Point p)
             throws IllegalArgumentException {
@@ -61,13 +62,13 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
      * rotation pivot.
      */
     @Override
-    public void setSegment(WaySegment segment) {
+    public void setSegment(IWaySegment<Node, Way> segment) {
         super.setSegment(segment);
         setPivots();
     }
 
     @Override
-    void setSegmentEndpoints(WaySegment segment) {
+    void setSegmentEndpoints(IWaySegment<Node, Way> segment) {
         super.setSegmentEndpoints(segment);
 
         // Update the list of adjacent waysegments to the endpoints
@@ -191,8 +192,8 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
      * @param node The Node (endpoint) to analyse.
      * @return The collection of the adjacent waysegments.
      */
-    private Collection<WaySegment> determineAdjacentWaysegments(Node node) {
-        Collection<WaySegment> wsSet = new HashSet<>();
+    private Collection<IWaySegment<Node, Way>> determineAdjacentWaysegments(Node node) {
+        Collection<IWaySegment<Node, Way>> wsSet = new HashSet<>();
         final double radius = 10.0;
         final int stepsOnCircle = 24;
         final double incrementOnCircle = 2 * Math.PI / stepsOnCircle;
@@ -204,7 +205,7 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
             double y = p.getY() + (Math.sin(ang) * radius);
             Point pnew = new Point();
             pnew.setLocation(x, y);
-            WaySegment ws = MainApplication.getMap().mapView.getNearestWaySegment(pnew, OsmPrimitive::isUsable);
+            IWaySegment<Node, Way> ws = MainApplication.getMap().mapView.getNearestWaySegment(pnew, OsmPrimitive::isUsable);
             if (ws != null && !ws.equals(this.segment) &&
                     (ws.getFirstNode().equals(node) || ws.getSecondNode().equals(node))) {
                 // We won't want to add a:
@@ -225,7 +226,7 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
      * @param node The (endpoint) node.
      * @return Collection of the adjacent way segments.
      */
-    public ArrayList<WaySegment> getAdjacentWaySegments(Node node) {
+    public ArrayList<IWaySegment<Node, Way>> getAdjacentWaySegments(Node node) {
         return adjWaySegs.get(node);
     }
 
@@ -235,7 +236,7 @@ public class AlignWaysAlgnSegment extends AlignWaysSegment {
 
         // Note: segment should never be null here, and its nodes should never be missing.
         // If they are, it's a bug, possibly related to tracking of DataSet deletions.
-        if (segment.way.getNodesCount() <= segment.lowerIndex + 1) {
+        if (segment.getWay().getNodesCount() <= segment.getUpperIndex()) {
             Logging.warn("Not drawing AlignWays pivot points: underlying nodes disappeared");
             return;
         }

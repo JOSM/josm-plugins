@@ -1,21 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.alignways;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.util.ArrayList;
-import java.util.Map;
-
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.alignways.geometry.AlignWaysGeomLine;
 import org.openstreetmap.josm.plugins.alignways.geometry.AlignWaysGeomLine.IntersectionStatus;
 import org.openstreetmap.josm.plugins.alignways.geometry.AlignWaysGeomPoint;
+
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Map;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * @author tilusnet &lt;tilusnet@gmail.com&gt;
@@ -52,7 +53,7 @@ public class AlignWaysCmdKeepAngles extends AlignWaysCmdKeepLength {
             return;
         }
 
-        ArrayList<WaySegment> alws = algnSeg.getAdjacentWaySegments(endpoint);
+        ArrayList<IWaySegment<Node, Way>> alws = algnSeg.getAdjacentWaySegments(endpoint);
         int alwsSize = alws.size();
         if (0 < alwsSize && alwsSize <= 2) {
             // We need the intersection point of
@@ -163,7 +164,7 @@ public class AlignWaysCmdKeepAngles extends AlignWaysCmdKeepLength {
         return AlignWaysGeomPoint.isSetCollinear(awAdjPts);
     }
 
-    private Node getNonEqualNode(WaySegment waySegment, Node endpoint) {
+    private <N extends INode> N getNonEqualNode(IWaySegment<N, ?> waySegment, N endpoint) {
         if (waySegment.getFirstNode().equals(endpoint)) {
             return waySegment.getSecondNode();
         } else if (waySegment.getSecondNode().equals(endpoint)) {

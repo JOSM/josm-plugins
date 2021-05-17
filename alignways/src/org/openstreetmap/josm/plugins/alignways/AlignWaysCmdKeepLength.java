@@ -15,9 +15,10 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
@@ -85,8 +86,8 @@ public class AlignWaysCmdKeepLength extends Command {
 
         MapView mapView = MainApplication.getMap().mapView;
         algnSeg = AlignWaysSegmentMgr.getInstance(mapView).getAlgnSeg();
-        WaySegment algnWS = algnSeg.getSegment();
-        WaySegment refWS = AlignWaysSegmentMgr.getInstance(mapView).getRefSeg().getSegment();
+        IWaySegment<Node, Way> algnWS = algnSeg.getSegment();
+        IWaySegment<Node, Way> refWS = AlignWaysSegmentMgr.getInstance(mapView).getRefSeg().getSegment();
 
         this.pivot = algnSeg.getCurrPivotCoord();
         this.displaceableNodes = algnSeg.getSegmentEndPoints();
@@ -203,7 +204,7 @@ public class AlignWaysCmdKeepLength extends Command {
     @Override
     public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
         Collection<OsmPrimitive> prims = new HashSet<>(displaceableNodes);
-        prims.add(algnSeg.getSegment().way);
+        prims.add(algnSeg.getSegment().getWay());
         return Collections.unmodifiableCollection(prims);
     }
 

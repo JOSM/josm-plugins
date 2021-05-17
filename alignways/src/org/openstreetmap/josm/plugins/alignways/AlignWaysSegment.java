@@ -14,10 +14,10 @@ import java.util.HashSet;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.IWaySegment;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.tools.Logging;
@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class AlignWaysSegment implements MapViewPaintable {
 
-    protected WaySegment segment;
+    protected IWaySegment<Node, Way> segment;
     protected MapView mapview;
     protected Color segmentColor = Color.WHITE;
     protected Collection<Node> segmentEndPoints;
@@ -44,7 +44,7 @@ public class AlignWaysSegment implements MapViewPaintable {
         this.mapview = mapview;
     }
 
-    void setSegment(WaySegment segment) {
+    void setSegment(IWaySegment<Node, Way> segment) {
         this.segment = segment;
         if (segment != null) {
             setSegmentEndpoints(segment);
@@ -52,7 +52,7 @@ public class AlignWaysSegment implements MapViewPaintable {
         }
     }
 
-    void setSegmentEndpoints(WaySegment segment) {
+    void setSegmentEndpoints(IWaySegment<Node, Way> segment) {
         if (segment != null) {
             try {
                 segmentEndPoints = new HashSet<>();
@@ -64,7 +64,7 @@ public class AlignWaysSegment implements MapViewPaintable {
         }
     }
 
-    protected WaySegment getNearestWaySegment(Point p) {
+    protected IWaySegment<Node, Way> getNearestWaySegment(Point p) {
         return mapview.getNearestWaySegment(p, OsmPrimitive::isUsable);
     }
 
@@ -74,7 +74,7 @@ public class AlignWaysSegment implements MapViewPaintable {
         }
     }
 
-    public WaySegment getSegment() {
+    public IWaySegment<Node, Way> getSegment() {
         return segment;
     }
 
@@ -86,7 +86,7 @@ public class AlignWaysSegment implements MapViewPaintable {
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
         // Note: segment should never be null here, and its nodes should never be missing.
         // If they are, it's a bug, possibly related to tracking of DataSet deletions.
-        if (segment.way.getNodesCount() <= segment.lowerIndex + 1) {
+        if (segment.getWay().getNodesCount() <= segment.getUpperIndex()) {
             Logging.warn("Not drawing AlignWays highlighting segment: underlying nodes disappeared");
             return;
         }
@@ -116,7 +116,7 @@ public class AlignWaysSegment implements MapViewPaintable {
         if (segment == null)
             return false;
 
-        return (primitive instanceof Way && segment.way.equals(primitive)) ||
+        return (primitive instanceof Way && segment.getWay().equals(primitive)) ||
                 (primitive instanceof Node && segmentEndPoints.contains(primitive));
 
     }
