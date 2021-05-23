@@ -754,7 +754,9 @@
     </target>
     <target name="fetch_dependencies" depends="clean_ivy, init-ivy">
         <echo>fetching dependencies with ivy</echo>
-        <ivy:settings file="ivy_settings.xml" />
+        <available property="plugin.ivysettings.exists" file="ivy_settings.xml"/>
+        <ivy:settings file="ivy_settings.xml" if:set="plugin.ivysettings.exists"/>
+        <ivy:settings file="${josm.ivysettings}" unless:set="plugin.ivysettings.exists"/>
         <ivy:resolve />
         <ivy:retrieve pattern="${plugin.lib.dir}/[artifact]-[revision](-[classifier]).[ext]" conf="default" />
     </target>
