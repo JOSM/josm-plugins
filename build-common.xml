@@ -29,7 +29,7 @@
     <property name="plugin.lib.dir"         location="lib"/>
     <!-- this is the directory where the plugin jar is copied to -->
     <property name="plugin.dist.dir"        location="../../dist"/>
-    <property name="java.lang.version"      value="1.8" />
+    <property name="java.lang.version"      value="8" />
     <property name="javadoc.executable"     value="javadoc" />
     <property name="javadoc.link"           value="https://docs.oracle.com/javase/8/docs/api" />
     <property name="manifest"               value="MANIFEST"/>
@@ -119,7 +119,7 @@
             <fileset refid="jaxb.jars"/>
         </path>
         <javac srcdir="${plugin.src.dir}" debug="true" destdir="${plugin.build.dir}" includeantruntime="false"
-            encoding="UTF-8" target="${java.lang.version}" source="${java.lang.version}" fork="yes">
+            encoding="UTF-8" release="${java.lang.version}" fork="yes">
             <compilerarg value="-J-Xbootclasspath/p:${toString:jdk8.boot.classpath}" unless:set="isJava9"/>
             <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
             <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
@@ -587,7 +587,7 @@
     <target name="test-compile" depends="test-init,dist" if="test.present" unless="skip-test">
         <sequential>
             <javac debug="on" includeantruntime="false" srcdir="${plugin.test.dir}/unit" destdir="${plugin.test.dir}/build/unit" encoding="UTF-8"
-                target="${java.lang.version}" source="${java.lang.version}">
+                release="${java.lang.version}">
                 <classpath>
                     <fileset refid="plugin.requires.jars"/>
                     <path refid="test.classpath"/>
@@ -643,7 +643,7 @@
     <target name="checkstyle-compile" depends="resolve-tools">
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="../00_core_tools/checkstyle/src" failonerror="true"
-            destdir="${checkstyle-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
+            destdir="${checkstyle-build.dir}" release="${java.lang.version}" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpathref="checkstyle.classpath">
         </javac>
