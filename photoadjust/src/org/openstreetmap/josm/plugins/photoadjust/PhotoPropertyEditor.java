@@ -66,6 +66,8 @@ public class PhotoPropertyEditor {
      * Action if the menu entry is selected.
      */
     private static class PropertyEditorAction extends JosmAction implements LayerChangeListener, ImageDataUpdateListener {
+        boolean imgDataUpdLstReg = false;
+
         public PropertyEditorAction() {
             super(tr("Edit photo GPS data"),  // String name
                     "photopropedit",  // String iconName
@@ -134,6 +136,7 @@ public class PhotoPropertyEditor {
             Layer layer = e.getAddedLayer();
             if (layer instanceof GeoImageLayer) {
                 ((GeoImageLayer) layer).getImageData().addImageDataUpdateListener(this);
+                imgDataUpdLstReg = true;
             }
         }
 
@@ -142,7 +145,13 @@ public class PhotoPropertyEditor {
             Layer layer = e.getRemovedLayer();
 
             if (layer instanceof GeoImageLayer) {
-                ((GeoImageLayer) layer).getImageData().removeImageDataUpdateListener(this);
+                // In some combinations the listener might not be registered,
+                // e.g. if the plugin was added while the geo image layer
+                // existed and then the layer is removed.
+                if (imgDataUpdLstReg) {
+                    ((GeoImageLayer) layer).getImageData().removeImageDataUpdateListener(this);
+                    imgDataUpdLstReg = false;
+                }
             }
             this.updateEnabledState();
         }
