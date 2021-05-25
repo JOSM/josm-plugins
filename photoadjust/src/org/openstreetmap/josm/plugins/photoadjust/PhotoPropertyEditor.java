@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Simple editor for photo GPS data.
@@ -66,7 +67,6 @@ public class PhotoPropertyEditor {
      * Action if the menu entry is selected.
      */
     private static class PropertyEditorAction extends JosmAction implements LayerChangeListener, ImageDataUpdateListener {
-        boolean imgDataUpdLstReg = false;
 
         public PropertyEditorAction() {
             super(tr("Edit photo GPS data"),  // String name
@@ -136,7 +136,6 @@ public class PhotoPropertyEditor {
             Layer layer = e.getAddedLayer();
             if (layer instanceof GeoImageLayer) {
                 ((GeoImageLayer) layer).getImageData().addImageDataUpdateListener(this);
-                imgDataUpdLstReg = true;
             }
         }
 
@@ -148,9 +147,10 @@ public class PhotoPropertyEditor {
                 // In some combinations the listener might not be registered,
                 // e.g. if the plugin was added while the geo image layer
                 // existed and then the layer is removed.
-                if (imgDataUpdLstReg) {
+                try {
                     ((GeoImageLayer) layer).getImageData().removeImageDataUpdateListener(this);
-                    imgDataUpdLstReg = false;
+                } catch (IllegalArgumentException ignore) {
+                    Logging.trace(ignore);
                 }
             }
             this.updateEnabledState();
