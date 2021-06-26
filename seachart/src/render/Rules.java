@@ -1301,7 +1301,7 @@ public class Rules {
 	}
 
 	private static void pipelines() {
-		if (((Renderer.zoom >= 14) && (feature.geom.length > 2) && (feature.geom.length < 20)) || ((Renderer.zoom >= 16) && (feature.geom.length <= 2))) {
+		if ((Renderer.zoom >= 14)  && (feature.geom.length < 20)) {
 			if (feature.type == Obj.PIPSOL) {
 				switch ((CatPIP) getAttEnum(feature.type, Att.CATPIP)) {
 				case PIP_ITAK:

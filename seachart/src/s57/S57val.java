@@ -372,7 +372,7 @@ public final class S57val { // S57 Attribute values lookup tables & methods
         Catmpa.put(CatMPA.MPA_FIRG, new S57enum(4, "firing")); Catmpa.put(CatMPA.MPA_MINL, new S57enum(5, "mine-laying")); Catmpa.put(CatMPA.MPA_SMLA, new S57enum(6, "small_arms"));
     }
 
-    public enum CatMOR { MOR_UNKN, MOR_DLPN, MOR_DDPN, MOR_BLRD, MOR_WALL, MOR_PILE, MOR_CHAN, MOR_BUOY, MOR_SHRP, MOR_AUTO, MOR_POST, MOR_WIRE, MOR_CABL }
+    public enum CatMOR { MOR_UNKN, MOR_DLPN, MOR_DDPN, MOR_BLRD, MOR_WALL, MOR_PILE, MOR_CHAN, MOR_BUOY, MOR_SHRP, MOR_AUTO, MOR_POST, MOR_WIRE, MOR_CABL, MOR_TROT }
 
     private static final EnumMap<CatMOR, S57enum> Catmor = new EnumMap<>(CatMOR.class); static {
         Catmor.put(CatMOR.MOR_UNKN, new S57enum(0, ""));
@@ -380,6 +380,7 @@ public final class S57val { // S57 Attribute values lookup tables & methods
         Catmor.put(CatMOR.MOR_WALL, new S57enum(4, "wall")); Catmor.put(CatMOR.MOR_PILE, new S57enum(5, "pile")); Catmor.put(CatMOR.MOR_CHAN, new S57enum(6, "chain"));
         Catmor.put(CatMOR.MOR_BUOY, new S57enum(7, "buoy")); Catmor.put(CatMOR.MOR_SHRP, new S57enum(8, "shore_ropes")); Catmor.put(CatMOR.MOR_AUTO, new S57enum(9, "automatic"));
         Catmor.put(CatMOR.MOR_POST, new S57enum(10, "post")); Catmor.put(CatMOR.MOR_WIRE, new S57enum(11, "wire")); Catmor.put(CatMOR.MOR_CABL, new S57enum(12, "cable"));
+        Catmor.put(CatMOR.MOR_TROT, new S57enum(12, "trot"));
     }
 
     public enum CatNAV { NAV_UNKN, NAV_CLRG, NAV_TRST, NAV_LDNG }
