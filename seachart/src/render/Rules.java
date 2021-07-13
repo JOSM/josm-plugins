@@ -1670,6 +1670,7 @@ public class Rules {
 			default:
 				Renderer.symbol(Areas.WreckND);
 			}
+			addName(15, new Font("Arial", Font.BOLD, 40), new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, -50)));
 		}
 	}
 }
