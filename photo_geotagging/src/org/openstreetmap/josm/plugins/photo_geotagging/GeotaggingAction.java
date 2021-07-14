@@ -11,7 +11,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.text.DecimalFormat;
@@ -44,10 +43,10 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -210,7 +209,6 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         private boolean canceled = false;
         private Boolean override_backup = null;
-        private boolean lossy = false;
 
         private File fileFrom;
         private File fileTo;
@@ -225,7 +223,127 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             this.mTimeMode = mTimeMode;
         }
 
-        private void processEntry(ImageEntry e) throws IOException {
+
+        @Override
+        protected void realRun() {
+            List<ImageEntry> failedEntries = processEntries(images, false);
+            if (!failedEntries.isEmpty()) {
+                int ret = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                    ExtendedDialog dlg = new ExtendedDialog(progressMonitor.getWindowParent(), tr("Warning"),
+                            tr("Abort"), tr("Retry"));
+
+                    dlg.setButtonIcons("cancel", "dialogs/refresh")
+                       .setIcon(JOptionPane.WARNING_MESSAGE);
+
+                    StringBuilder sb = new StringBuilder(trn(
+                            "The GPS tag could not be added to the following file because there is not enough free space in the EXIF section:",
+                            "The GPS tag could not be added to the following files because there is not enough free space in the EXIF section:",
+                            failedEntries.size()));
+
+                    sb.append("<ul>");
+                    for (int i = 0; i < failedEntries.size(); i++) {
+                        sb.append("<li>");
+
+                        if (i == 5 && failedEntries.size() > i + 1) {
+                            int remaining = failedEntries.size() - i;
+                            sb.append("<i>")
+                              .append(trn("({0} more file)", "({0} more files)", remaining, remaining))
+                              .append("</i></li>");
+                            break;
+                        } else {
+                            sb.append(failedEntries.get(i).getFile().getName()).append("</li>");
+                        }
+                    }
+                    sb.append("</ul><br>")
+                      .append(tr("This can likely be fixed by rewriting the entire EXIF section, however some metadata may get lost in the process.<br><br>"
+                              + "Would you like to try again using the lossy approach?"));
+
+                    dlg.setContent(sb.toString())
+                       .setDefaultButton(2)
+                       .showDialog();
+
+                    return dlg.getValue();
+                });
+                if (ret == 2) {
+                    processEntries(failedEntries, true);
+                }
+            }
+        }
+
+        List<ImageEntry> processEntries(List<ImageEntry> entries, boolean lossy) {
+            progressMonitor.subTask(tr("Writing position information to image files..."));
+            progressMonitor.setTicksCount(entries.size());
+            progressMonitor.setTicks(0);
+
+            final List<ImageEntry> exifFailedEntries = new ArrayList<>();
+
+            final long startTime = System.currentTimeMillis();
+
+            currentIndex = 0;
+            while (currentIndex < entries.size()) {
+                if (canceled)
+                    return exifFailedEntries;
+                ImageEntry e = entries.get(currentIndex);
+                if (debug) {
+                    System.err.print("i:" + currentIndex + " " + e.getFile().getName() + " ");
+                }
+                try {
+                    processEntry(e, lossy);
+                } catch (final IOException ioe) {
+                    ioe.printStackTrace();
+                    restoreFile();
+                    if (!lossy && ioe.getCause() instanceof ExifRewriter.ExifOverflowException) {
+                        exifFailedEntries.add(e);
+                    } else {
+                        int ret = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                            ExtendedDialog dlg = new ExtendedDialog(progressMonitor.getWindowParent(),
+                                    tr("Error"),
+                                    tr("Abort"), tr("Retry"), tr("Ignore"));
+                            dlg.setButtonIcons("cancel", "dialogs/refresh", "dialogs/next");
+
+                            String msg;
+                            if (ioe instanceof NoSuchFileException) {
+                                msg = tr("File not found.");
+                            } else {
+                                msg = ioe.toString();
+                            }
+
+                            dlg.setIcon(JOptionPane.ERROR_MESSAGE)
+                               .setContent(tr("Unable to process file ''{0}'':", e.getFile().toString()) + "<br/>" + msg)
+                               .setDefaultButton(3)
+                               .showDialog();
+
+                            return dlg.getValue();
+                        });
+
+                        switch (ret) {
+                            case 2: // retry
+                                currentIndex--;
+                                break;
+                            case 3: // continue
+                                break;
+                            default: // abort
+                                canceled = true;
+                        }
+                    }
+                }
+                progressMonitor.worked(1);
+
+                float millisecondsPerFile = (float) (System.currentTimeMillis() - startTime) / (currentIndex + 1); // currentIndex starts at 0
+                int filesLeft = entries.size() - currentIndex - 1;
+                String timeLeft = Utils.getDurationString((long) Math.ceil(millisecondsPerFile * filesLeft));
+
+                progressMonitor.subTask(tr("Writing position information to image files... Estimated time left: {0}", timeLeft));
+
+                if (debug) {
+                    System.err.println("finished " + e.getFile());
+                }
+                currentIndex++;
+            }
+            return exifFailedEntries;
+        }
+
+        private void processEntry(ImageEntry e, boolean lossy) throws IOException {
             fileFrom = null;
             fileTo = null;
             fileDelete = null;
@@ -260,7 +378,6 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             if (canceled) return;
             ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e.getPos().lat(), e.getPos().lon(),
                     e.getGpsTime(), e.getSpeed(), e.getElevation(), e.getExifImgDir(), lossy);
-            lossy = false;
 
             if (mTime != null) {
                 if (!fileTo.setLastModified(mTime))
@@ -269,81 +386,6 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
             cleanupFiles();
             e.unflagNewGpsData();
-        }
-
-        @Override
-        protected void realRun() {
-            progressMonitor.subTask(tr("Writing position information to image files..."));
-            progressMonitor.setTicksCount(images.size());
-
-            final long startTime = System.currentTimeMillis();
-
-            currentIndex = 0;
-            while (currentIndex < images.size()) {
-                if (canceled) return;
-                ImageEntry e = images.get(currentIndex);
-                if (debug) {
-                    System.err.print("i:"+currentIndex+" "+e.getFile().getName()+" ");
-                }
-                try {
-                    processEntry(e);
-                } catch (final IOException ioe) {
-                    ioe.printStackTrace();
-                    restoreFile();
-                    try {
-                        SwingUtilities.invokeAndWait(() -> {
-                            ExtendedDialog dlg = new ExtendedDialog(progressMonitor.getWindowParent(), tr("Error"), new String[] {tr("Abort"), tr("Retry"), tr("Ignore")});
-                            dlg.setButtonIcons("cancel", "dialogs/refresh", "dialogs/next");
-                            String msg;
-                            if (ioe instanceof NoSuchFileException) {
-                                msg = tr("File not found.");
-                            } else {
-                                msg = ioe.toString();
-                            }
-                            boolean tmpLossy = false;
-                            if (!lossy && ioe.getCause() instanceof ExifRewriter.ExifOverflowException) {
-                                tmpLossy = true;
-                                dlg.setIcon(JOptionPane.WARNING_MESSAGE);
-                                dlg.setContent(tr(
-                                        "The GPS tag could not be added to the file \"{0}\" because there is not enough free space in the EXIF section.<br>"
-                                                + "This can likely be fixed by rewriting the entire EXIF section, however some metadata may get lost in the process.<br><br>"
-                                                + "Would you like to try again using the lossy approach?",
-                                        e.getFile().getName()));
-                                dlg.setDefaultButton(2);
-                            } else {
-                                dlg.setIcon(JOptionPane.ERROR_MESSAGE);
-                                dlg.setContent(tr("Unable to process file ''{0}'':", e.getFile().toString()) + "<br/>" + msg);
-                                dlg.setDefaultButton(3);
-                            }
-                            dlg.showDialog();
-                            switch (dlg.getValue()) {
-                                case 2:  // retry
-                                    currentIndex--;
-                                    lossy = tmpLossy;
-                                    break;
-                                case 3:  // continue
-                                    break;
-                                default: // abort
-                                    canceled = true;
-                            }
-                        });
-                    } catch (InterruptedException | InvocationTargetException ex) {
-                        throw new JosmRuntimeException(ex);
-                    }
-                }
-                progressMonitor.worked(1);
-
-                float millisecondsPerFile = (float) (System.currentTimeMillis() - startTime)
-                        / (currentIndex + 1); // currentIndex starts at 0
-                int filesLeft = images.size() - currentIndex - 1;
-                String timeLeft = Utils.getDurationString((long) Math.ceil(millisecondsPerFile * filesLeft));
-                progressMonitor.subTask(tr("Writing position information to image files... Estimated time left: {0}", timeLeft));
-
-                if (debug) {
-                    System.err.println("finished " + e.getFile());
-                }
-                currentIndex++;
-            }
         }
 
         private void chooseFiles(File file) throws IOException {
