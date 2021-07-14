@@ -1,15 +1,18 @@
-plugins {
-  id "org.sonarqube" version "2.6.2"
-  id "org.kordamp.markdown.convert" version "1.1.0"
-  id 'org.openstreetmap.josm' version "0.4.4"
-  id "com.github.ben-manes.versions" version "0.17.0"
-  id 'com.github.spotbugs' version '1.6.1'
-  id "net.ltgt.errorprone" version "0.0.14"
+import com.github.spotbugs.snom.SpotBugsTask
+import net.ltgt.gradle.errorprone.CheckSeverity
 
+plugins {
+  id 'java'
   id 'eclipse'
   id 'jacoco'
-  id 'java'
   id 'pmd'
+  id("com.github.ben-manes.versions").version("0.39.0")
+  id("net.ltgt.errorprone").version("2.0.2")
+  id("org.kordamp.markdown.convert").version("1.2.0")
+  id("org.sonarqube").version("3.3")
+  id('com.github.spotbugs').version('4.7.2')
+  id('org.openstreetmap.josm').version("0.7.1")
+  id("com.diffplug.spotless").version("5.14.1")
 }
 
 apply from: 'gradle/tool-config.gradle'
@@ -32,17 +35,36 @@ archivesBaseName = 'MicrosoftStreetside'
 repositories {
   jcenter()
   mavenCentral()
+  maven {
+    url "https://josm.openstreetmap.de/nexus/content/repositories/releases/"
+  }
 }
 
+def versions = [
+  awaitility: "4.1.0",
+  jackson: "2.12.4",
+  jmockit: "1.49.a",
+  junit: "5.7.1",
+  wiremock: "2.27.2"
+]
+
 dependencies {
-  compile 'com.fasterxml.jackson.core:jackson-core:2.2.4'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.2.4'
-  compile 'com.fasterxml.jackson.core:jackson-annotations:2.2.4'
-  compile 'us.monoid.web:resty:0.3.2'
-  compile 'log4j:log4j:1.2.17'
-  testImplementation ('org.openstreetmap.josm:josm-unittest'){changing=true}
-  testImplementation 'com.github.tomakehurst:wiremock:2.17.0'
-  testImplementation 'junit:junit:4.12'
+  if (!JavaVersion.current().isJava9Compatible()) {
+    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  }
+  implementation "com.fasterxml.jackson.core:jackson-core:${versions.jackson}"
+  implementation "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
+  implementation "com.fasterxml.jackson.core:jackson-annotations:${versions.jackson}"
+  implementation "us.monoid.web:resty:0.3.2"
+  implementation "log4j:log4j:1.2.17"
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
+  testImplementation("org.junit.jupiter:junit-jupiter-params:${versions.junit}")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
+  testImplementation("org.junit.vintage:junit-vintage-engine:${versions.junit}")
+  testImplementation ("org.openstreetmap.josm:josm-unittest"){changing=true}
+  testImplementation "com.github.tomakehurst:wiremock:${versions.wiremock}"
+  testImplementation("org.jmockit:jmockit:${versions.jmockit}")
+  testImplementation("org.awaitility:awaitility:${versions.awaitility}")
 }
 
 sourceSets {
@@ -68,14 +90,25 @@ sourceSets {
   }
 }
 
+spotless {
+  enforceCheck = false
+  format("misc") {
+    target("**/*.gradle", "**.*.md", "**/.gitignore")
+
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+  }
+  java {
+    trimTrailingWhitespace()
+    indentWithSpaces(2)
+    endWithNewline()
+    removeUnusedImports()
+  }
+}
+
 josm {
   debugPort = 7051
-  manifest {
-      //oldVersionDownloadLink 10824, 'v1.5.3', new URL('https://github.com/JOSM/Mapillary/releases/download/v1.5.3/Mapillary.jar')
-  }
-  i18n {
-    pathTransformer = getGithubPathTransformer('spatialdev/MicrosoftStreetside')
-  }
 }
 
 eclipse {
@@ -99,7 +132,7 @@ tasks.withType(JavaCompile) {
 tasks.withType(Javadoc) {
   failOnError false
 }
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
+tasks.withType(SpotBugsTask) {
   reports {
     xml.enabled = false
     html.enabled = true
@@ -109,6 +142,10 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 test {
+  project.afterEvaluate {
+    jvmArgs("-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}")
+  }
+  useJUnitPlatform()
   testLogging {
     exceptionFormat "full"
     events TestLogEvent.FAILED, TestLogEvent.SKIPPED

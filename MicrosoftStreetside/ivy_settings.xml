@@ -1,7 +1,7 @@
 <ivysettings>
-    <version-matchers usedefaults="true">
+    <!--<version-matchers usedefaults="true">
         <maven-tsnap-vm/>
-    </version-matchers>
+    </version-matchers>-->
     <settings defaultResolver="central"/>
     <resolvers>
         <ibiblio name="central" m2compatible="true"/>
