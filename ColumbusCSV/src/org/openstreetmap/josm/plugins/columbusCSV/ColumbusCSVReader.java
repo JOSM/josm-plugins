@@ -451,7 +451,7 @@ public class ColumbusCSVReader {
         SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyMMdd/HHmmss");
     
         try {
-            wpt.setTime(sdf.parse(csvLine[2] + "/" + csvLine[3]));
+            wpt.setInstant(sdf.parse(csvLine[2] + "/" + csvLine[3]).toInstant());
         } catch (ParseException ex) {
             dateConversionErrors++;
             Logging.error(ex);
