@@ -208,7 +208,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         final private int mTimeMode;
 
         private boolean canceled = false;
-        private Boolean override_backup = null;
+        Boolean override_backup = null;
 
         private File fileFrom;
         private File fileTo;
