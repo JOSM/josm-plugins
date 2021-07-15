@@ -230,9 +230,9 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             if (!failedEntries.isEmpty()) {
                 int ret = GuiHelper.runInEDTAndWaitAndReturn(() -> {
                     ExtendedDialog dlg = new ExtendedDialog(progressMonitor.getWindowParent(), tr("Warning"),
-                            tr("Abort"), tr("Retry"));
+                            tr("Abort"), tr("Proceed"));
 
-                    dlg.setButtonIcons("cancel", "dialogs/refresh")
+                    dlg.setButtonIcons("cancel", "dialogs/next")
                        .setIcon(JOptionPane.WARNING_MESSAGE);
 
                     StringBuilder sb = new StringBuilder(trn(
@@ -255,8 +255,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                         }
                     }
                     sb.append("</ul><br>")
-                      .append(tr("This can likely be fixed by rewriting the entire EXIF section, however some metadata may get lost in the process.<br><br>"
-                              + "Would you like to try again using the lossy approach?"));
+                      .append(tr("This can likely be fixed by rewriting the entire EXIF section, however some (rare) unknown tags may get lost in the process.<br>"
+                              + "Would you like to proceed anyway?"));
 
                     dlg.setContent(sb.toString())
                        .setDefaultButton(2)
