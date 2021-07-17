@@ -54,7 +54,7 @@ public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
         }
     }
 
-    protected HttpRequest createRequest() throws IOException {
+    HttpRequest createRequest() throws IOException {
         HttpRequest.Builder requestBuilder;
         try {
             requestBuilder = HttpRequest.newBuilder()
