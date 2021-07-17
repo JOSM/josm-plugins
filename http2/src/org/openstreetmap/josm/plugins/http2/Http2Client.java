@@ -45,6 +45,16 @@ public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
 
     @Override
     protected void setupConnection(ProgressMonitor progressMonitor) throws IOException {
+        request = createRequest();
+
+        notifyConnect(progressMonitor);
+        
+        if (requiresBody()) {
+            logRequestBody();
+        }
+    }
+
+    protected HttpRequest createRequest() throws IOException {
         HttpRequest.Builder requestBuilder;
         try {
             requestBuilder = HttpRequest.newBuilder()
@@ -76,13 +86,7 @@ public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
                 }
             }
         }
-        request = requestBuilder.build();
-
-        notifyConnect(progressMonitor);
-        
-        if (requiresBody()) {
-            logRequestBody();
-        }
+        return requestBuilder.build();
     }
 
     @Override
