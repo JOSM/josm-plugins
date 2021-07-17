@@ -78,7 +78,10 @@ public final class Renderer {
             g2.setStroke(new BasicStroke(0, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             do {} while (!Rules.rules());
         }
-        grid();
+        if ((context.grid() > 0) && (map != null)) {
+        	rose();
+        	grid();
+        }
     }
 
     public static void symbol(Symbol symbol) {
@@ -352,6 +355,7 @@ public final class Renderer {
             double ratio = point.getX() / point.getY();
             double nspan = 60 * Math.toDegrees(map.bounds.maxlon - map.bounds.minlon) / (context.grid() * (ratio > 1.0 ? ratio : 1.0));
             double mult = 1.0;
+            boolean ndiv = false;
             if (nspan < 1.0) {
                 do {
                     nspan *= 10.0;
@@ -365,11 +369,38 @@ public final class Renderer {
             }
             if (nspan < 2.0) nspan = 1.0;
             else if (nspan < 5.0) nspan = 2.0;
-            else nspan = 5.0;
+            else {
+            	nspan = 5.0;
+            	ndiv = true;
+            }
             nspan = nspan / mult / 60.0;
             double left = Math.toDegrees(map.bounds.minlon) + 180.0;
             left = Math.ceil(left / nspan);
             left = Math.toRadians((left * nspan) - 180.0);
+            double tspan = 60 * Math.toDegrees(map.bounds.maxlat - map.bounds.minlat) / (context.grid() / (ratio < 1.0 ? ratio : 1.0));
+            mult = 1.0;
+            boolean tdiv = false;
+            if (tspan < 1.0) {
+                do {
+                    tspan *= 10.0;
+                    mult *= 10.0;
+                } while (tspan < 1.0);
+             } else if (tspan > 10.0){
+                do {
+                    tspan /= 10.0;
+                    mult /= 10.0;
+                } while (tspan > 10.0);
+            }
+            if (tspan < 2.0) tspan = 1.0;
+            else if (tspan < 5.0) tspan = 2.0;
+            else {
+            	tspan = 5.0;
+            	tdiv = true;
+            }
+            tspan = tspan / mult / 60.0;
+            double bottom = Math.toDegrees(map.bounds.minlat) + 90.0;
+            bottom = Math.ceil(bottom / tspan);
+            bottom = Math.toRadians((bottom * tspan) - 90.0);
             g2.setStroke(new BasicStroke((float) (style.width * sScale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             Path2D.Double p = new Path2D.Double();
             for (double lon = left; lon < map.bounds.maxlon; lon += Math.toRadians(nspan)) {
@@ -377,6 +408,17 @@ public final class Renderer {
                 p.moveTo(point.getX(), point.getY());
                 point = context.getPoint(new Snode(map.bounds.minlat, lon));
                 p.lineTo(point.getX(), point.getY());
+                for (int i = 1; i < 10; i++) {
+                    int grad = (i % (ndiv ? 2 : 5)) == 0 ? 2 : 1;
+                	point = context.getPoint(new Snode(map.bounds.maxlat, lon + (i * (nspan / 10))));
+                    p.moveTo(point.getX(), point.getY());
+                    point = context.getPoint(new Snode(map.bounds.maxlat - (grad * (tspan / 10)), lon + (i * (nspan / 10))));
+                    p.lineTo(point.getX(), point.getY());
+                	point = context.getPoint(new Snode(map.bounds.minlat, lon + (i * (nspan / 10))));
+                    p.moveTo(point.getX(), point.getY());
+                    point = context.getPoint(new Snode(map.bounds.minlat + (grad * (tspan / 10)), lon + (i * (nspan / 10))));
+                    p.lineTo(point.getX(), point.getY());
+                }
                 double deg = Math.toDegrees(lon);
                 String ew = (deg < -0.001) ? "W" : (deg > 0.001) ? "E" : "";
                 deg = Math.abs(deg);
@@ -392,26 +434,6 @@ public final class Renderer {
             }
             g2.setPaint(style.line);
             g2.draw(p);
-            double tspan = 60 * Math.toDegrees(map.bounds.maxlat - map.bounds.minlat) / (context.grid() / (ratio < 1.0 ? ratio : 1.0));
-            mult = 1.0;
-            if (tspan < 1.0) {
-                do {
-                    tspan *= 10.0;
-                    mult *= 10.0;
-                } while (tspan < 1.0);
-             } else if (tspan > 10.0){
-                do {
-                    tspan /= 10.0;
-                    mult /= 10.0;
-                } while (tspan > 10.0);
-            }
-            if (tspan < 2.0) tspan = 1.0;
-            else if (tspan < 5.0) tspan = 2.0;
-            else tspan = 5.0;
-            tspan = tspan / mult / 60.0;
-            double bottom = Math.toDegrees(map.bounds.minlat) + 90.0;
-            bottom = Math.ceil(bottom / tspan);
-            bottom = Math.toRadians((bottom * tspan) - 90.0);
             g2.setStroke(new BasicStroke((float) (style.width * sScale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
             p = new Path2D.Double();
             for (double lat = bottom; lat < map.bounds.maxlat; lat += Math.toRadians(tspan)) {
@@ -447,6 +469,39 @@ public final class Renderer {
             point = context.getPoint(new Snode(map.bounds.minlat, map.bounds.minlon));
             Symbols.drawSymbol(g2, legend, sScale, point.getX(), point.getY(), null, new Delta(Handle.BL, AffineTransform.getTranslateInstance(0, 0)));
         }
+    }
+    
+    public static void rose() {
+        LineStyle style = new LineStyle(Color.black, (float)2.0);
+        Point2D point = context.getPoint(new Snode(Math.toRadians(53.91649), Math.toRadians(-0.16141)));
+        g2.setPaint(Color.white);
+        g2.fill(new Ellipse2D.Double(point.getX() - 30, point.getY() - 30, 60, 60));
+        g2.setStroke(new BasicStroke((float) (style.width * sScale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(point.getX() - 30, point.getY());p.lineTo(point.getX() + 30, point.getY());
+        p.moveTo(point.getX(), point.getY() - 30);p.lineTo(point.getX(), point.getY() + 30);
+        for (int i = 0; i < 360; i++) {
+        	double inner = ((i % 10) == 0) ? 0.92 : ((i % 5) == 0) ? 0.96 : 0.98;
+        	double xouter = 1750 * Math.sin(Math.toRadians(i));
+        	double youter = -1750 * Math.cos(Math.toRadians(i));
+            p.moveTo(point.getX() + xouter, point.getY() + youter);
+            p.lineTo(point.getX() + (inner * xouter), point.getY() + (inner * youter));
+            if ((i % 10) == 0) {
+            	Handle h = Handle.BC;
+            	if ((i > 0) && (i <= 90)) h = Handle.BL;
+            	else if (i == 90) h = Handle.LC;
+            	else if ((i > 90) && (i < 180)) h = Handle.LC;
+            	else if (i == 180) h = Handle.CC;
+            	else if ((i > 180) && (i <= 270)) h = Handle.RC;
+            	else if (i > 270) h = Handle.BR;
+            	Symbol value = new Symbol();
+            	value.add(new Instr(Form.BBOX, new Rectangle2D.Double(0, 0, 60, 30)));
+                value.add(new Instr(Form.TEXT, new Caption(String.format("%03d", i), new Font("Arial", Font.PLAIN, 40), Color.black, new Delta(Handle.CC, AffineTransform.getTranslateInstance(30, 25)))));
+                Symbols.drawSymbol(g2, value, sScale, point.getX(), point.getY(), null, new Delta(h, AffineTransform.getTranslateInstance(1.02*xouter/sScale, 1.02*youter/sScale)));
+            }
+        }
+        g2.setPaint(style.line);
+        g2.draw(p);
     }
     
     public static void lineCircle(LineStyle style, double radius, UniHLU units) {
