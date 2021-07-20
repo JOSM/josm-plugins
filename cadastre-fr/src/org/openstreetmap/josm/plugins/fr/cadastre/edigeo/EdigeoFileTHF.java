@@ -15,6 +15,7 @@ import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.plugins.fr.cadastre.download.CadastreDownloadData;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -494,7 +495,8 @@ public class EdigeoFileTHF extends EdigeoFile {
             lot.fill(ds, data);
         }
         ds.getWays().forEach(w -> {
-            SequenceCommand command = SimplifyWayAction.createSimplifyCommand(w, 0.25);
+            SequenceCommand command = SimplifyWayAction.createSimplifyCommand(w,
+                    Config.getPref().getDouble("cadastre.simplify-way.max-error", 0.20));
             if (command != null) {
                 command.executeCommand();
             }
