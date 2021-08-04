@@ -180,7 +180,8 @@
         </delete>
         <manifest file="${manifest}" mode="update">
             <attribute name="Plugin-Mainversion" value="${plugin.main.version}"/>
-            <attribute name="Plugin-Version" value="${version.entry.commit.revision}"/>
+            <attribute name="Plugin-Version" value="${version.entry.commit.revision}" unless:set="plugin.version"/>
+            <attribute name="Plugin-Version" value="${plugin.version}" if:set="plugin.version"/>
             <attribute name="Plugin-Class" value="${plugin.class}" />
             <attribute name="Plugin-Description" value="${plugin.description}" />
             <attribute name="Plugin-Date" value="${version.entry.commit.date}" />
