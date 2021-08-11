@@ -32,7 +32,7 @@ public class DownloadDataTask extends DownloadOsmTask {
 
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
-        downloadTask = new InternalDownloadTasK(settings, new NetworkReader(url, handler, true), progressMonitor);
+        downloadTask = new InternalDownloadTask(settings, new NetworkReader(url, handler, true), progressMonitor, zoomAfterDownload);
         currentBounds = null;
         if (handler == null || !handler.hasLicenseToBeAccepted() || askLicenseAgreement(handler.getLicense())) {
             return MainApplication.worker.submit(downloadTask);
@@ -77,10 +77,10 @@ public class DownloadDataTask extends DownloadOsmTask {
         return tr("Download open data");
     }
 
-    protected class InternalDownloadTasK extends DownloadTask {
+    protected class InternalDownloadTask extends DownloadTask {
 
-        public InternalDownloadTasK(DownloadParams settings, NetworkReader reader, ProgressMonitor progressMonitor) {
-            super(settings, reader, progressMonitor);
+        public InternalDownloadTask(DownloadParams settings, NetworkReader reader, ProgressMonitor progressMonitor, boolean zoomAfterDownload) {
+            super(settings, reader, progressMonitor, zoomAfterDownload);
         }
 
         @Override
@@ -111,7 +111,6 @@ public class DownloadDataTask extends DownloadOsmTask {
         }
         try {
             return new AskLicenseAgreementDialog(license).showDialog().getValue() == 1;
-
         } catch (IOException e) {
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("License URL not available: {0}", license.toString()));
             return false;
