@@ -100,6 +100,7 @@ public class JavaFxWrapper<T extends Node> extends JFXPanel {
     }
 
     /**
+     * Initializes FX
      * @return The scene to be used for initializing JavaFX
      */
     protected Scene initFX() {

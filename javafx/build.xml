@@ -3,16 +3,14 @@
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="Commit message"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="14234"/>
+    <property name="plugin.main.version" value="18166"/>
 
     <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
     -->
     <property name="plugin.author" value="Don-vip"/>
-    <property name="plugin.class.windows" value="org.openstreetmap.josm.plugins.javafx.JavaFxPluginWindows"/>
-    <property name="plugin.class.unixoid" value="org.openstreetmap.josm.plugins.javafx.JavaFxPluginUnixoid"/>
-    <property name="plugin.class.osx" value="org.openstreetmap.josm.plugins.javafx.JavaFxPluginOsx"/>
-    <property name="plugin.description" value="Provides the OpenJFX (JavaFX) library for JOSM core and other JOSM plugins. Provides additional features such as MP3 audio playback."/>
+    <property name="plugin.class" value="org.openstreetmap.josm.plugins.javafx.JavaFxPlugin"/>
+    <property name="plugin.description" value="Provides additional OpenJFX (JavaFX) features such as MP3 audio playback."/>
     <!--<property name="plugin.minimum.java.version" value="10"/>-->
     <property name="plugin.provides" value="javafx"/>
     <!--<property name="plugin.icon" value="..."/>-->
@@ -21,13 +19,7 @@
     <!--<property name="plugin.requires" value="..."/>-->
     <property name="plugin.stage" value="5"/>
 
-    <condition property="isWindows"><os family="Windows"/></condition>
-    <condition property="isUnix"><os family="Unix"/></condition>
-    <condition property="isMac"><os family="Mac"/></condition>
     <property name="plugin.dist.dir" location="../../dist"/>
-    <property name="plugin.jar"      location="${plugin.dist.dir}/${ant.project.name}-windows.jar" if:set="isWindows"/>
-    <property name="plugin.jar"      location="${plugin.dist.dir}/${ant.project.name}-osx.jar" if:set="isMac"/>
-    <property name="plugin.jar"      location="${plugin.dist.dir}/${ant.project.name}-unixoid.jar" if:set="isUnix"/>
 
 	<!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
@@ -36,61 +28,7 @@
         <!-- include fetch_dependencies task -->
     </target>
 
-    <macrodef name="build-native-manifest">
-        <attribute name="class"/>
-        <attribute name="manifest"/>
-        <attribute name="platform"/>
-        <sequential>
-            <copy file="MANIFEST" tofile="@{manifest}" />
-            <manifest file="@{manifest}" mode="update">
-                <attribute name="Plugin-Class" value="@{class}" />
-                <attribute name="Plugin-Platform" value="@{platform}" />
-            </manifest>
-        </sequential>
-    </macrodef>
-
-    <target name="additional-manifest">
-        <build-native-manifest platform="Windows" class="${plugin.class.windows}" manifest="${manifest.windows}"/>
-        <build-native-manifest platform="Unixoid" class="${plugin.class.unixoid}" manifest="${manifest.unixoid}" />
-        <build-native-manifest platform="Osx" class="${plugin.class.osx}" manifest="${manifest.osx}" />
-    </target>
-
-    <macrodef name="build-native-jar">
-        <attribute name="jar"/>
-        <attribute name="manifest"/>
-        <attribute name="qualifier"/>
-        <attribute name="copy"/>
-        <sequential>
-            <echo>Building @{qualifier} jar...</echo>
-            <!-- Building the JAR file directly from javafx jar files is awfully slow,
-                 see https://bz.apache.org/bugzilla/show_bug.cgi?id=43144 -->
-            <mkdir dir="${plugin.lib.dir}/@{qualifier}"/>
-            <unzip dest="${plugin.lib.dir}/@{qualifier}">
-                <patternset>
-                    <exclude name="META-INF/maven/*"/>
-                    <exclude name="META-INF/DEPENDENCIES"/>
-                    <exclude name="META-INF/LICENSE"/>
-                    <exclude name="META-INF/NOTICE"/>
-                    <exclude name="META-INF/*.RSA"/>
-                    <exclude name="META-INF/*.SF"/>
-                    <exclude name="module-info.class"/>
-                </patternset>
-                <fileset dir="${plugin.lib.dir}">
-                    <include name="*-@{qualifier}.jar"/>
-                    <include name="*-monocle*.jar"/>
-                </fileset>
-            </unzip>
-            <jar destfile="@{jar}" manifest="@{manifest}" manifestencoding="UTF-8" level="9">
-                <fileset dir="${plugin.build.dir}"/>
-                <fileset dir="${plugin.lib.dir}/@{qualifier}"/>
-            </jar>
-            <delete dir="${plugin.lib.dir}/@{qualifier}" failonerror="false" />
-        </sequential>
-    </macrodef>
-
     <target name="build-jar">
-        <build-native-jar jar="${plugin.unixoid.jar}" manifest="${manifest.unixoid}" qualifier="linux" copy="isUnix" />
-        <build-native-jar jar="${plugin.windows.jar}" manifest="${manifest.windows}" qualifier="win" copy="isWindows" />
-        <build-native-jar jar="${plugin.osx.jar}" manifest="${manifest.osx}" qualifier="mac" copy="isMac" />
+        <jar destfile="${plugin.jar}" basedir="${plugin.build.dir}" manifest="${manifest}" manifestencoding="UTF-8" duplicate="preserve" level="9"/>
     </target>
 </project>
