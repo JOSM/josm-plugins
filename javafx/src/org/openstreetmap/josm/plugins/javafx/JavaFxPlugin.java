@@ -22,7 +22,7 @@ public class JavaFxPlugin extends Plugin {
      * Constructs a new {@code JavaFxPlugin}.
      * @param info plugin info
      */
-    protected JavaFxPlugin(PluginInformation info) {
+    public JavaFxPlugin(PluginInformation info) {
         super(info);
         if (!isJavaFx()) {
             Logging.error("JavaFX is not available");
