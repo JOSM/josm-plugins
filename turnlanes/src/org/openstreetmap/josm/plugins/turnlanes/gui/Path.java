@@ -354,7 +354,7 @@ abstract class Path {
                 final double a1 = angle(l1);
                 final double r1 = radius(a1) - s * ws;
 
-                final Curve c1 = new Curve(prev, fromRadius - ws, r1, offsetAngle(prev, a1), l1, fromAngle);
+                final Curve c1 = new Curve(prev, fromRadius - ws, r1, a1, l1, fromAngle);
 
                 final double l2 = m2 - m1;
                 final double a2 = angle(l2);
@@ -368,7 +368,7 @@ abstract class Path {
                 final double a1 = angle(l1);
                 final double r1 = radius(a1) - s * ws;
 
-                final Curve c1 = new Curve(prev, fromRadius - s * ws, r1, offsetAngle(prev, a1), l1, fromAngle);
+                final Curve c1 = new Curve(prev, fromRadius - s * ws, r1, a1, l1, fromAngle);
 
                 final double w = ws + (ML - m1) * (we - ws) / (m2 - m1);
 
@@ -380,14 +380,14 @@ abstract class Path {
                 final double a2 = angle(l2);
                 final double r2 = radius(a2) - s * we;
 
-                final Curve c2 = new Curve(prev, fromRadius - s * w, r2, offsetAngle(prev, a2), l2, fromAngle);
+                final Curve c2 = new Curve(prev, fromRadius - s * w, r2, a2, l2, fromAngle);
 
                 return new Curve(c2, r2, toRadius - s * we, angle - a2, ML - m2);
             } else {
                 final double w1 = ws + (PL - m1) * (we - ws) / (m2 - m1);
                 final double w2 = we - (m2 - ML) * (we - ws) / (m2 - m1);
 
-                return new Curve(prev, fromRadius - s * w1, toRadius - s * w2, offsetAngle(prev, angle), length,
+                return new Curve(prev, fromRadius - s * w1, toRadius - s * w2, angle, length,
                         fromAngle);
             }
         }
@@ -400,14 +400,9 @@ abstract class Path {
             return hypot(fromRadius * cos(a), height * sin(a));
         }
 
-        private double offsetAngle(Path prev, double a) {
-            return a; // + GuiUtil.normalize(previous.getEndAngle()
-            // - prev.getEndAngle());
-        }
-
         private Path simpleOffset(Path prev, double w) {
             final double s = signum(angle);
-            return new Curve(prev, fromRadius - s * w, toRadius - s * w, offsetAngle(prev, angle), length, fromAngle);
+            return new Curve(prev, fromRadius - s * w, toRadius - s * w, angle, length, fromAngle);
         }
 
         @Override

@@ -100,7 +100,7 @@ public final class TurnlanesUtils {
     }
 
     /**
-     *
+     * Lines up given ways
      * @param a first way
      * @param b second way
      * @return the node at which {@code a} and {@code b} are connected

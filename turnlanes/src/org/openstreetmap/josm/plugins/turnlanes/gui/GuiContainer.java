@@ -121,6 +121,7 @@ class GuiContainer {
     }
 
     /**
+     * Returns meters per pixel
      * @return meters per pixel
      */
     public double getMpp() {

@@ -61,7 +61,7 @@ public final class Turn {
         }
 
         final List<Way> tmp = TurnlanesUtils.getMemberWays(r, Constants.TURN_ROLE_VIA);
-        final LinkedList<Road> via = new LinkedList<>();
+        final List<Road> via = new LinkedList<>();
 
         final Road.End fromRoadEnd = c.getJunction(TurnlanesUtils.lineUp(from, tmp.get(0))).getRoadEnd(from);
 
@@ -95,7 +95,6 @@ public final class Turn {
             }
         }
         final Road.End toRoadEnd = c.getJunction(n).getRoadEnd(to);
-        n = TurnlanesUtils.getOppositeEnd(to, n);
 
         final Set<Turn> result = new HashSet<>();
         for (int i : indices(r, Constants.TURN_KEY_LANES)) {

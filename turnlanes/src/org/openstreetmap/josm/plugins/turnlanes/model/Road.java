@@ -85,6 +85,7 @@ public class Road {
         }
 
         /**
+         * Returns the turns <em>onto</em> this road at this end
          * @return the turns <em>onto</em> this road at this end
          */
         public Set<Turn> getTurns() {
