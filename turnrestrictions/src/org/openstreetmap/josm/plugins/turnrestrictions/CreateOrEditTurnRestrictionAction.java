@@ -17,7 +17,7 @@ import org.openstreetmap.josm.plugins.turnrestrictions.editor.TurnRestrictionSel
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * This action is triggered by a global shortcut (default is Shift-Ctrl-T on windows).
+ * This action is triggered by a global shortcut (default is Alt-Shift-2).
  * Depending on the current selection it either launches an editor for a new turn
  * restriction or a popup component from which one can choose a turn restriction to
  * edit.
