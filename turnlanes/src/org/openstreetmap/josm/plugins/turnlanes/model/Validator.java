@@ -295,11 +295,15 @@ public class Validator {
             final Way from = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_FROM);
             final Way to = TurnlanesUtils.getMemberWay(r, Constants.TURN_ROLE_TO);
 
-            if (from.firstNode().equals(from.lastNode())) {
-                issues.add(Issue.newError(r, from, "The from-way both starts as well as ends at the via-node."));
+            if (from.isEmpty()) {
+                issues.add(Issue.newError(r, from, tr("The from-way is empty.")));
+            } else if (from.firstNode().equals(from.lastNode())) {
+                issues.add(Issue.newError(r, from, tr("The from-way both starts as well as ends at the via-node.")));
             }
-            if (to.firstNode().equals(to.lastNode())) {
-                issues.add(Issue.newError(r, to, "The to-way both starts as well as ends at the via-node."));
+            if (to.isEmpty()) {
+                issues.add(Issue.newError(r, from, tr("The to-way is empty.")));
+            } else if (to.firstNode().equals(to.lastNode())) {
+                issues.add(Issue.newError(r, to, tr("The to-way both starts as well as ends at the via-node.")));
             }
             if (!issues.isEmpty()) {
                 return issues;
@@ -326,10 +330,10 @@ public class Validator {
                 final Node via = TurnlanesUtils.getMemberNode(r, Constants.TURN_ROLE_VIA);
 
                 if (!from.isFirstLastNode(via)) {
-                    issues.add(Issue.newError(r, from, "The from-way does not start or end at the via-node."));
+                    issues.add(Issue.newError(r, from, tr("The from-way does not start or end at the via-node.")));
                 }
                 if (!to.isFirstLastNode(via)) {
-                    issues.add(Issue.newError(r, to, "The to-way does not start or end at the via-node."));
+                    issues.add(Issue.newError(r, to, tr("The to-way does not start or end at the via-node.")));
                 }
 
                 fromJunctionNode = via;
