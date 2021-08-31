@@ -1,6 +1,42 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.housenumbertool;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -9,22 +45,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.io.*;
-import java.util.List;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 /**
  * @author Oliver Raupach 09.01.2012
@@ -46,9 +68,9 @@ public class TagDialog extends ExtendedDialog {
     private static final String TAG_ADDR_SUBURB = "addr:suburb";
 
     private static final String[] BUILDING_STRINGS = {
-        "yes", "apartments", "chapel", "church", "commercial", "dormitory", "hotel", "house", "residential", "terrace",  
-        "industrial", "retail", "warehouse", "cathedral",  "civic", "hospital", "school", "train_station", "transportation", 
-        "university", "public", "bridge", "bunker", "cabin", "construction", "farm_auxiliary", "garage", "garages", 
+        "yes", "apartments", "chapel", "church", "commercial", "dormitory", "hotel", "house", "residential", "terrace",
+        "industrial", "retail", "warehouse", "cathedral",  "civic", "hospital", "school", "train_station", "transportation",
+        "university", "public", "bridge", "bunker", "cabin", "construction", "farm_auxiliary", "garage", "garages",
         "greenhouse", "hangar", "hut", "roof", "shed", "stable"};
 
     private static final int FPS_MIN = -10;
@@ -62,13 +84,13 @@ public class TagDialog extends ExtendedDialog {
 
     private static final String TEMPLATE_DATA = "/template.data";
 
-    private AutoCompletingComboBox source;
-    private AutoCompletingComboBox country;
-    private AutoCompletingComboBox state;
-    private AutoCompletingComboBox suburb;
-    private AutoCompletingComboBox city;
-    private AutoCompletingComboBox postcode;
-    private AutoCompletingComboBox street;
+    private AutoCompComboBox<AutoCompletionItem> source;
+    private AutoCompComboBox<AutoCompletionItem> country;
+    private AutoCompComboBox<AutoCompletionItem> state;
+    private AutoCompComboBox<AutoCompletionItem> suburb;
+    private AutoCompComboBox<AutoCompletionItem> city;
+    private AutoCompComboBox<AutoCompletionItem> postcode;
+    private AutoCompComboBox<AutoCompletionItem> street;
     private JTextField housnumber;
     private JCheckBox buildingEnabled;
     private JCheckBox sourceEnabled;
@@ -220,8 +242,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(sourceEnabled, c);
 
-        source = new AutoCompletingComboBox();
-        source.setPossibleAcItems(acm.getTagValues(TAG_SOURCE));
+        source = new AutoCompComboBox<>();
+        source.getModel().addAllElements(acm.getTagValues(TAG_SOURCE));
         source.setPreferredSize(new Dimension(200, 24));
         source.setEditable(true);
         source.setSelectedItem(dto.getSource());
@@ -270,8 +292,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(countryEnabled, c);
 
-        country = new AutoCompletingComboBox();
-        country.setPossibleAcItems(acm.getTagValues(TAG_ADDR_COUNTRY));
+        country = new AutoCompComboBox<>();
+        country.getModel().addAllElements(acm.getTagValues(TAG_ADDR_COUNTRY));
         country.setPreferredSize(new Dimension(200, 24));
         country.setEditable(true);
         country.setSelectedItem(dto.getCountry());
@@ -320,8 +342,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(stateEnabled, c);
 
-        state = new AutoCompletingComboBox();
-        state.setPossibleAcItems(acm.getTagValues(TAG_ADDR_STATE));
+        state = new AutoCompComboBox<>();
+        state.getModel().addAllElements(acm.getTagValues(TAG_ADDR_STATE));
         state.setPreferredSize(new Dimension(200, 24));
         state.setEditable(true);
         state.setSelectedItem(dto.getState());
@@ -370,8 +392,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(suburbEnabled, c);
 
-        suburb = new AutoCompletingComboBox();
-        suburb.setPossibleAcItems(acm.getTagValues(TAG_ADDR_SUBURB));
+        suburb = new AutoCompComboBox<>();
+        suburb.getModel().addAllElements(acm.getTagValues(TAG_ADDR_SUBURB));
         suburb.setPreferredSize(new Dimension(200, 24));
         suburb.setEditable(true);
         suburb.setSelectedItem(dto.getSuburb());
@@ -420,8 +442,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(cityEnabled, c);
 
-        city = new AutoCompletingComboBox();
-        city.setPossibleAcItems(acm.getTagValues(TAG_ADDR_CITY));
+        city = new AutoCompComboBox<>();
+        city.getModel().addAllElements(acm.getTagValues(TAG_ADDR_CITY));
         city.setPreferredSize(new Dimension(200, 24));
         city.setEditable(true);
         city.setSelectedItem(dto.getCity());
@@ -470,8 +492,8 @@ public class TagDialog extends ExtendedDialog {
         c.insets = new Insets(5, 5, 0, 5);
         editPanel.add(zipEnabled, c);
 
-        postcode = new AutoCompletingComboBox();
-        postcode.setPossibleAcItems(acm.getTagValues(TAG_ADDR_POSTCODE));
+        postcode = new AutoCompComboBox<>();
+        postcode.getModel().addAllElements(acm.getTagValues(TAG_ADDR_POSTCODE));
         postcode.setPreferredSize(new Dimension(200, 24));
         postcode.setEditable(true);
         postcode.setSelectedItem(dto.getPostcode());
@@ -548,11 +570,11 @@ public class TagDialog extends ExtendedDialog {
         g.add(streetRadio);
         g.add(placeRadio);
 
-        street = new AutoCompletingComboBox();
+        street = new AutoCompComboBox<>();
         if (dto.isTagStreet()) {
-            street.setPossibleItems(getPossibleStreets());
+            street.getModel().addAllElements(getPossibleStreets());
         } else {
-            street.setPossibleAcItems(acm.getTagValues(TAG_ADDR_PLACE));
+            street.getModel().addAllElements(acm.getTagValues(TAG_ADDR_PLACE));
         }
         street.setPreferredSize(new Dimension(200, 24));
         street.setEditable(true);
@@ -755,7 +777,7 @@ public class TagDialog extends ExtendedDialog {
         setVisible(false);
     }
 
-    private String getAutoCompletingComboBoxValue(AutoCompletingComboBox box) {
+    private String getAutoCompletingComboBoxValue(AutoCompComboBox<AutoCompletionItem> box) {
         Object item = box.getSelectedItem();
         if (item != null) {
             if (item instanceof String) {
@@ -885,7 +907,7 @@ public class TagDialog extends ExtendedDialog {
 
         if (!commands.isEmpty()) {
             SequenceCommand sequenceCommand = new SequenceCommand(
-                 trn("Updating properties of up to {0} object", 
+                 trn("Updating properties of up to {0} object",
                      "Updating properties of up to {0} objects", commands.size(), commands.size()), commands);
 
             // executes the commands and adds them to the undo/redo chains
@@ -893,14 +915,14 @@ public class TagDialog extends ExtendedDialog {
         }
     }
 
-    private Collection<String> getPossibleStreets() {
-        /**
-         * Generates a list of all visible names of highways in order to do autocompletion on the road name.
-         */
-        Set<String> names = new TreeSet<>();
+    /**
+     * Generates a list of all visible names of highways in order to do autocompletion on the road name.
+     */
+    private Collection<AutoCompletionItem> getPossibleStreets() {
+        Set<AutoCompletionItem> names = new TreeSet<>();
         for (OsmPrimitive osm : MainApplication.getLayerManager().getEditDataSet().allNonDeletedPrimitives()) {
             if (osm.getKeys() != null && osm.keySet().contains("highway") && osm.keySet().contains("name")) {
-                names.add(osm.get("name"));
+                names.add(new AutoCompletionItem(osm.get("name")));
             }
         }
         return names;
@@ -945,9 +967,9 @@ public class TagDialog extends ExtendedDialog {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (streetRadio.isSelected()) {
-                street.setPossibleItems(getPossibleStreets());
+                street.getModel().addAllElements(getPossibleStreets());
             } else {
-                street.setPossibleAcItems(acm.getTagValues(TAG_ADDR_PLACE));
+                street.getModel().addAllElements(acm.getTagValues(TAG_ADDR_PLACE));
             }
         }
     }
