@@ -44,7 +44,7 @@ public class GuiProjections {
         /*
          * Component to choose a Projection
          */
-        public Chooser() {
+        Chooser() {
             setEditable(false);
             setToolTipText(tr("Projection of the PDF-Document"));
              Monitor monitor = new Monitor();
@@ -54,15 +54,15 @@ public class GuiProjections {
                  addItem(p);
             }
             addActionListener(monitor);
-            setProjection (ProjectionRegistry.getProjection());
+            setProjection(ProjectionRegistry.getProjection());
         }
 
-        public void setProjection (Projection p) {
+        public void setProjection(Projection p) {
             /*
              * set current Projection to @p
              * update internal variables
              */
-            if (p==null) return;    // better keep the old one
+            if (p == null) return;    // better keep the old one
             projection = p;
             pName.setText(p.toString());
             pCode.setText(p.toCode());
@@ -95,30 +95,29 @@ public class GuiProjections {
              * Still not found ==> add it now
              */
             Logging.debug("New projection encountered");
-            ProjectionChoice px = new SingleProjectionChoice(p.toString(), localId, projectionCode) ;
+            ProjectionChoice px = new SingleProjectionChoice(p.toString(), localId, projectionCode);
             addItem(px);
             setSelectedItem(px);
         }
 
+        /**
+         * monitor user selection and set internal var accordingly
+         */
         private class Monitor implements ActionListener {
-            /*
-             * (non-Javadoc)
-             * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-             *
-             * monitor user selection and set internal var accordingly
-             */
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                ProjectionChoice pc = (ProjectionChoice)((Chooser) e.getSource()).getSelectedItem();
-                setProjection(pc.getProjection());
-                } catch (Exception X) {
+                    ProjectionChoice pc = (ProjectionChoice) ((Chooser) e.getSource()).getSelectedItem();
+                    setProjection(pc.getProjection());
+                } catch (Exception ex) {
+                    Logging.debug(ex);
                 }
             }
         }
     }
 
-    public GuiProjections(){
+    public GuiProjections() {
         build();
     }
 
@@ -142,25 +141,29 @@ public class GuiProjections {
     }
 
     private String userHints(Projection p) {
-        /*
-         * Provide some hints about projection @p
-         */
-        String s="";
+        // Provide some hints about projection @p
+        String s = "";
         ProjectionBounds bd;
         try {
-            bd=p.getWorldBoundsBoxEastNorth();
-            s += String.format("(%3$.0f %4$.0f) : (%5$.0f %6$.0f)", bd.getCenter().east(),bd.getCenter().north(), bd.getMin().east(),bd.getMin().north(),bd.getMax().east(),bd.getMax().north());
+            bd = p.getWorldBoundsBoxEastNorth();
+            s += String.format("(%3$.0f %4$.0f) : (%5$.0f %6$.0f)",
+                    bd.getCenter().east(),
+                    bd.getCenter().north(),
+                    bd.getMin().east(),
+                    bd.getMin().north(),
+                    bd.getMax().east(),
+                    bd.getMax().north());
         } catch (Exception e) {
-            e.toString();
+            Logging.debug(e);
             // Leave it, if we cant get it
         }
         return s;
     }
 
     private void build() {
-        pCode = new JLabel("code",SwingConstants.RIGHT);
-        pName = new JLabel("Name",SwingConstants.RIGHT);
-        pInfo = new JLabel("Info",SwingConstants.RIGHT);
+        pCode = new JLabel("code", SwingConstants.RIGHT);
+        pName = new JLabel("Name", SwingConstants.RIGHT);
+        pInfo = new JLabel("Info", SwingConstants.RIGHT);
         chooser = new Chooser();
 
         GridBagConstraints c = new GridBagConstraints();
@@ -169,10 +172,10 @@ public class GuiProjections {
         c.anchor = GridBagConstraints.LINE_END;
 
         panel = new GuiPanel(new GridBagLayout());
-        panel.add(new JLabel(tr("Projection:"),SwingConstants.RIGHT),c);
-        panel.add(pCode,c);
-        c.weightx = 1.0; c.gridx = 2; panel.add(chooser,c);
+        panel.add(new JLabel(tr("Projection:"), SwingConstants.RIGHT), c);
+        panel.add(pCode, c);
+        c.weightx = 1.0; c.gridx = 2; panel.add(chooser, c);
         c.weightx = 0.0; c.gridy = 1; c.gridx = 0; c.gridwidth = 3; c.anchor = GridBagConstraints.LINE_END;
-        panel.add(pInfo,c);
+        panel.add(pInfo, c);
     }
 }

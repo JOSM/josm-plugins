@@ -298,7 +298,7 @@ public class LoadPdfDialog extends JFrame {
 		try {
 			placement.save(pdfFile);
 		} catch (IOException e) {
-			e.toString();
+			Logging.debug(e);
 		}
 		removeLayer();
 
@@ -313,7 +313,6 @@ public class LoadPdfDialog extends JFrame {
 				progressRenderer.finish();
 			}
 		}, new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// sync part

@@ -9,7 +9,7 @@ public class Preferences {
 
 	public enum GuiMode {
 		Auto, Expert, Simple
-	};
+	}
 
 	public static String getLoadDir() {
 		return Config.getPref().get(Preferences.prefix + "loadDir");
@@ -49,7 +49,7 @@ public class Preferences {
 	}
 
 	public static void setMergeNodes(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "mergeNodes",v);
+		Config.getPref().putBoolean(Preferences.prefix + "mergeNodes", v);
 	}
 
 	public static boolean isMergeNodes() {
@@ -69,7 +69,7 @@ public class Preferences {
 	}
 
 	public static void setRemoveSmall(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "removeSmall",v);
+		Config.getPref().putBoolean(Preferences.prefix + "removeSmall", v);
 	}
 
 	public static double getRemoveSmallValue() {
@@ -85,7 +85,7 @@ public class Preferences {
 	}
 
 	public static void setRemoveLarge(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "removeLarge",v);
+		Config.getPref().putBoolean(Preferences.prefix + "removeLarge", v);
 	}
 
 	public static double getRemoveLargeValue() {
@@ -101,7 +101,7 @@ public class Preferences {
 	}
 
 	public static void setRemoveParallel(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "removeParallel",v);
+		Config.getPref().putBoolean(Preferences.prefix + "removeParallel", v);
 	}
 
 	public static double getRemoveParallelValue() {
@@ -117,7 +117,7 @@ public class Preferences {
 	}
 
 	public static void setLimitPath(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "limitPath",v);
+		Config.getPref().putBoolean(Preferences.prefix + "limitPath", v);
 	}
 
 	public static int getLimitPathValue() {
@@ -133,7 +133,7 @@ public class Preferences {
 	}
 
 	public static void setLimitColor(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "limitColor",v);
+		Config.getPref().putBoolean(Preferences.prefix + "limitColor", v);
 	}
 
 	public static String getLimitColorValue() {
@@ -149,7 +149,7 @@ public class Preferences {
 	}
 
 	public static void setDebugTags(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "debugTags",v);
+		Config.getPref().putBoolean(Preferences.prefix + "debugTags", v);
 	}
 
 	public static boolean isLayerClosed() {
@@ -157,16 +157,15 @@ public class Preferences {
 	}
 
 	public static void setLayerClosed(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "layerClosed",v);
+		Config.getPref().putBoolean(Preferences.prefix + "layerClosed", v);
 	}
 
 	public static boolean isLayerSegment() {
-		boolean v =Config.getPref().getBoolean(Preferences.prefix + "layerSegment");
 		return Config.getPref().getBoolean(Preferences.prefix + "layerSegment");
 	}
 
 	public static void setLayerSegment(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "layerSegment",v);
+		Config.getPref().putBoolean(Preferences.prefix + "layerSegment", v);
 	}
 
 	public static boolean isLayerAttribChange() {
@@ -174,7 +173,7 @@ public class Preferences {
 	}
 
 	public static void setLayerAttribChange(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "layerAttribChanges",v);
+		Config.getPref().putBoolean(Preferences.prefix + "layerAttribChanges", v);
 	}
 
 	public static boolean isLayerOrtho() {
@@ -182,7 +181,7 @@ public class Preferences {
 	}
 
 	public static void setLayerOrtho(boolean v) {
-		Config.getPref().putBoolean(Preferences.prefix + "layerOrtho",v);
+		Config.getPref().putBoolean(Preferences.prefix + "layerOrtho", v);
 	}
 
 	protected static int GuiCode;
@@ -196,5 +195,4 @@ public class Preferences {
 	public Preferences(String p) {
 		prefix = p + ".";
 	}
-
 }

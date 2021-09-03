@@ -11,7 +11,6 @@ import org.openstreetmap.josm.gui.preferences.projection.SingleProjectionChoice;
 
 public final class ProjectionInfo {
     private static Map<String, ProjectionChoice> allCodesPC = new HashMap<>();
-    private static Map<String, Projection> allCodes = new HashMap<>();
 
     static {
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
@@ -33,15 +32,5 @@ public final class ProjectionInfo {
         } catch (Exception e) {
             throw new IllegalArgumentException();
         }
-
-//        Projection p = allCodes.get(code);
-//        if (p != null) return p;
-//        ProjectionChoice pc = allCodesPC.get(code);
-//        if (pc == null) return null;
-//        Collection<String> pref = pc.getPreferencesFromCode(code);
-//        pc.setPreferences(pref);
-//        p = pc.getProjection();
-//        allCodes.put(code, p);
-//        return p;
     }
 }

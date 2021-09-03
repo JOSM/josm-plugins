@@ -29,8 +29,8 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.tools.Logging;
 
 public class FilePlacement18 extends FilePlacement {
     /*
@@ -80,14 +80,16 @@ public class FilePlacement18 extends FilePlacement {
                     }
                 });
             }
+
             public void SetCoor(EastNorth en) {
                 x.requestFocusInWindow();        // make shure focus-lost events will be triggered later
                 x.setValue(en.getX());
                 y.requestFocusInWindow();
                 y.setValue(en.getY());
             }
+
             public EastNorth getCorr() {
-                return new EastNorth(x.getValue(),y.getValue());
+                return new EastNorth(x.getValue(), y.getValue());
             }
         }
 
@@ -112,20 +114,20 @@ public class FilePlacement18 extends FilePlacement {
         private JComponent dependsOnValid = null;
 
         public PlacementPanel(FilePlacement18 parrent) {
-            if (parrent==null) throw new IllegalArgumentException();
-            fc=parrent;
+            if (parrent == null) throw new IllegalArgumentException();
+            fc = parrent;
         }
 
-        private PlacementPanel () {
+        private PlacementPanel() {
 
         }
 
         private class Monitor implements FocusListener {
 
-            private PlacementPanel target=null;
+            private PlacementPanel target;
 
             public Monitor(PlacementPanel home) {
-                target=home;
+                target = home;
             }
 
             @Override
@@ -136,7 +138,8 @@ public class FilePlacement18 extends FilePlacement {
             public void focusLost(FocusEvent e) {
                 try {
                     target.Verify();
-                } catch (Exception ee) {
+                } catch (Exception ex) {
+                    Logging.trace(ex);
                 }
             }
         }
@@ -244,7 +247,6 @@ public class FilePlacement18 extends FilePlacement {
             cGetButton.gridwidth = GridBagConstraints.REMAINDER;
             cGetButton.fill = GridBagConstraints.NONE;
 
-            GridBagConstraints c = new GridBagConstraints();
             /*
              * Projection
              */
@@ -252,33 +254,33 @@ public class FilePlacement18 extends FilePlacement {
             /*
              * Max Corner
              */
-            panel.add(new JLabel(tr("Top right (max) corner:"),SwingConstants.CENTER), cCornerHeading);
-            c = (GridBagConstraints) cLine.clone();
-            c.weightx = 0.0; panel.add(new JLabel(tr("X:"),SwingConstants.RIGHT),c);
+            panel.add(new JLabel(tr("Top right (max) corner:"), SwingConstants.CENTER), cCornerHeading);
+            GridBagConstraints c = (GridBagConstraints) cLine.clone();
+            c.weightx = 0.0; panel.add(new JLabel(tr("X:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(maxXField, c);
-            c.weightx = 0.0; panel.add(new JLabel(tr("East:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("East:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(maxEastField, c);
 
             c.gridy = 4;
-            c.weightx = 0.0; panel.add(new JLabel(tr("Y:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("Y:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(maxYField, c);
-            c.weightx = 0.0; panel.add(new JLabel(tr("North:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("North:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(maxNorthField, c);
             panel.add(getMaxButton, cGetButton);
             /*
              * Min Corner
              */
-            panel.add(new JLabel(tr("Bottom left (min) corner:"),SwingConstants.CENTER), cCornerHeading);
+            panel.add(new JLabel(tr("Bottom left (min) corner:"), SwingConstants.CENTER), cCornerHeading);
             c = (GridBagConstraints) cLine.clone();
-            c.weightx = 0.0; panel.add(new JLabel(tr("X:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("X:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(minXField, c);
-            c.weightx = 0.0; panel.add(new JLabel(tr("East:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("East:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(minEastField, c);
 
             c.gridy = 8;
-            c.weightx = 0.0; panel.add(new JLabel(tr("Y:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("Y:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(minYField, c);
-            c.weightx = 0.0; panel.add(new JLabel(tr("North:"),SwingConstants.RIGHT),c);
+            c.weightx = 0.0; panel.add(new JLabel(tr("North:"), SwingConstants.RIGHT), c);
             c.weightx = 1.0; panel.add(minNorthField, c);
 
             panel.add(getMinButton, cGetButton);
@@ -305,8 +307,6 @@ public class FilePlacement18 extends FilePlacement {
             }
 
             LatLon ll = ((Node) selected.iterator().next()).getCoor();
-//            FilePlacement pl = new FilePlacement();
-//            return pl.reverseTransform(ll);
             return new EastNorth(ll.lon() * 1000, ll.lat() * 1000);
         }
 
@@ -351,13 +351,11 @@ public class FilePlacement18 extends FilePlacement {
             if (en != null) {
                 f.SetCoor(en);
             }
-
         }
-
     }
 
-    private PlacementPanel panel=null;
-    private boolean valid=false;    // the data is consistent and the object ready to use for transformation
+    private PlacementPanel panel;
+    private boolean valid;    // the data is consistent and the object ready to use for transformation
 
     public boolean isValid() {
         /*
@@ -365,27 +363,28 @@ public class FilePlacement18 extends FilePlacement {
          */
         return valid;
     }
+
     public void setDependsOnValid(JComponent c) {
         panel.setDependsOnValid(c);
     }
 
     public JPanel getGui() {
-        if (panel==null) panel = new PlacementPanel(this);
-        if (panel.panel==null) panel.build();
+        if (panel == null) panel = new PlacementPanel(this);
+        if (panel.panel == null) panel.build();
         return panel.panel;
     }
 
-    public FilePlacement18 () {
+    public FilePlacement18() {
         panel = new PlacementPanel(this);
     }
 
     public void load(File baseFile) throws IOException {
         File file = new File(baseFile + ".placement");
         Properties p = new Properties();
-        try (FileInputStream s = new FileInputStream(file)){
+        try (FileInputStream s = new FileInputStream(file)) {
             p.load(s);
             s.close();
-        };
+        }
         fromProperties(p);
     }
 
@@ -401,26 +400,9 @@ public class FilePlacement18 extends FilePlacement {
         s.close();
     }
 
-    private Projection getProjection(Properties p, String name) {
-        String projectionCode = p.getProperty("Projection", null);
-        if (projectionCode != null) {
-            return ProjectionInfo.getProjectionByCode(p.getProperty("Projection", null));
-        }
-        return null;
-    }
-
-    private double getDouble(Properties p, String name, double defaultValue) {
-        try {
-            return Double.parseDouble(p.getProperty(name));
-        } catch (Exception e) {
-            return defaultValue;
-        }
-    }
-
     @Override
     protected void fromProperties(Properties p) {
         super.fromProperties(p);
         panel.load();
     }
-
 }

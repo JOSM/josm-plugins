@@ -70,7 +70,6 @@ public class PageDrawer extends PDFStreamEngine {
      *
      * @param g The graphics context to draw onto.
      * @param p The page to draw.
-     * @param pageDimension The size of the page to draw.
      *
      * @throws IOException If there is an IO error while drawing the page.
      */
@@ -188,14 +187,9 @@ public class PageDrawer extends PDFStreamEngine {
         path.reset();
     }
 
-
     /**
      * Draw the AWT image. Called by Invoke.
      * Moved into PageDrawer so that Invoke doesn't have to reach in here for Graphics as that breaks extensibility.
-     *
-     * @param awtImage The image to draw.
-     * @param at The transformation to use when drawing.
-     *
      */
     public void drawImage() {
         graphics.setClip(getGraphicsState().getCurrentClippingPath());
