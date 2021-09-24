@@ -63,6 +63,8 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     private Color selectedColor = Color.red;
     private Point drawStartPos;
     private Point mousePos;
+    /** Force a reasonable dimension */
+    private static final double MIN_LEN_WIDTH = 1E-6;
 
     final transient Building building = new Building();
 
@@ -243,6 +245,8 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         EastNorth p = getEastNorth();
         if (isRectDrawing()) {
             building.setPlaceRect(p);
+            if (building.getLength() < MIN_LEN_WIDTH)
+                return Mode.Drawing;
             return shift ? Mode.DrawingAngFix : Mode.None;
         } else if (ToolSettings.Shape.CIRCLE == ToolSettings.getShape()) {
             if (ToolSettings.getWidth() != 0) {
@@ -250,21 +254,24 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             } else {
                 building.setPlace(p, ToolSettings.getWidth(), ToolSettings.getLenStep(), shift);
             }
+            if (building.getLength() < MIN_LEN_WIDTH)
+                return Mode.Drawing;
             MainApplication.getMap().statusLine.setDist(building.getLength());
-            this.nextMode = Mode.None;
-            return this.nextMode;
+            return Mode.None;
         } else {
             building.setPlace(p, ToolSettings.getWidth(), ToolSettings.getLenStep(), shift);
+            if (building.getLength() < MIN_LEN_WIDTH)
+                return Mode.Drawing;
             MainApplication.getMap().statusLine.setDist(building.getLength());
-            this.nextMode = ToolSettings.getWidth() == 0 ? Mode.DrawingWidth : Mode.None;
-            return this.nextMode;
+            return ToolSettings.getWidth() == 0 ? Mode.DrawingWidth : Mode.None;
         }
     }
 
     private Mode modeDrawingWidth() {
         building.setWidth(getEastNorth());
-        MainApplication.getMap().statusLine.setDist(Math.abs(building.getWidth()));
-        return Mode.None;
+        double width = Math.abs(building.getWidth());
+        MainApplication.getMap().statusLine.setDist(width);
+        return width < MIN_LEN_WIDTH ? Mode.DrawingWidth : Mode.None;
     }
 
     private Mode modeDrawingAngFix() {
