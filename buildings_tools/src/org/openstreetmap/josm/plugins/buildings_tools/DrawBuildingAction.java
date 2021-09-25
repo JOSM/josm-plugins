@@ -111,7 +111,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             EventQueue.invokeLater(() -> {
                 MapFrame map = MainApplication.getMap();
                 // Don't change cursor when mode has changed already
-                if (map != null && !(map.mapMode instanceof DrawBuildingAction))
+                if (map == null || !(map.mapMode instanceof DrawBuildingAction))
                     return;
                 map.mapView.setCursor(c);
             });
