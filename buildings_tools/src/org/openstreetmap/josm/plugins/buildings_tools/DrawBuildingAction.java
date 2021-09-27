@@ -245,7 +245,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         EastNorth p = getEastNorth();
         if (isRectDrawing()) {
             building.setPlaceRect(p);
-            if (building.getLength() < MIN_LEN_WIDTH)
+            if (Math.abs(building.getLength()) < MIN_LEN_WIDTH)
                 return Mode.Drawing;
             return shift ? Mode.DrawingAngFix : Mode.None;
         } else if (ToolSettings.Shape.CIRCLE == ToolSettings.getShape()) {
