@@ -102,7 +102,7 @@ public class PbfReader extends AbstractReader {
             }
             if (info.hasTimestamp()) {
                 checkTimestamp(info.getTimestamp());
-                osm.setTimestamp(getDate(info));
+                osm.setInstant(getDate(info).toInstant());
             }
         }
 
@@ -172,7 +172,7 @@ public class PbfReader extends AbstractReader {
                             if (info.getTimestampCount() > i) {
                                 timestamp += info.getTimestamp(i);
                                 checkTimestamp(timestamp);
-                                nd.setTimestamp(new Date(date_granularity * timestamp));
+                                nd.setInstant(new Date(date_granularity * timestamp).toInstant());
                             }
                         }
                         // A single table contains all keys/values of all nodes.
@@ -364,6 +364,7 @@ public class PbfReader extends AbstractReader {
         }
     }
 
+    @SuppressWarnings("resource")
     public void parse(InputStream source) throws IOException, IllegalDataException {
         new BlockInputStream(source, parser).process();
         if (parser.exception != null) {

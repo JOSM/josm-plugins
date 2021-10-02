@@ -3,12 +3,7 @@
   <settings defaultResolver="josm-nexus"/>
   <resolvers>
     <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
-    <url name="mkgmap">
-      <ivy pattern="http://ivy.mkgmap.org.uk/repo/[organisation]/[module]/[revision]/ivys/ivy.xml"/>
-      <artifact pattern="http://ivy.mkgmap.org.uk/repo/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]"/>
-    </url>
   </resolvers>
   <modules>
-    <module organisation="crosby" name="osmpbf" resolver="mkgmap"/>
   </modules>
 </ivysettings>

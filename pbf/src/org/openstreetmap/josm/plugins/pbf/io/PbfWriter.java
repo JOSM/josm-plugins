@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 import crosby.binary.BinarySerializer;
 import crosby.binary.Osmformat;
@@ -125,7 +126,7 @@ public class PbfWriter implements Closeable {
 
                     int uid = e.getUser() == null ? -1 : (int) e.getUser().getId();
                     int userSid = stable.getIndex(getUserId(e));
-                    int timestamp = (int) (e.getTimestamp().getTime() / date_granularity);
+                    int timestamp = (int) (e.getInstant().toEpochMilli() / date_granularity);
                     int version = e.getVersion();
                     long changeset = e.getChangesetId();
 
@@ -149,7 +150,7 @@ public class PbfWriter implements Closeable {
                         b.setUid((int) e.getUser().getId());
                         b.setUserSid(stable.getIndex(e.getUser().getName()));
                     }
-                    b.setTimestamp((int) (e.getTimestamp().getTime() / date_granularity));
+                    b.setTimestamp((int) (e.getInstant().toEpochMilli() / date_granularity));
                     b.setVersion(e.getVersion());
                     b.setChangeset(e.getChangesetId());
                 }
@@ -434,6 +435,7 @@ public class PbfWriter implements Closeable {
                 relations = null;
             } else {
                 // No data. Is this an empty file?
+                Logging.debug("No PBF data. Is this an empty file?");
             }
         }
 
