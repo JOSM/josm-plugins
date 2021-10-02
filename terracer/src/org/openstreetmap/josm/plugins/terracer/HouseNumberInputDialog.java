@@ -25,9 +25,10 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -68,9 +69,9 @@ public class HouseNumberInputDialog extends ExtendedDialog {
     private JLabel numbersLabel;
     JTextField numbers;
     private JLabel streetLabel;
-    AutoCompletingComboBox streetComboBox;
+    AutoCompComboBox<String> streetComboBox;
     private JLabel buildingLabel;
-    AutoCompletingComboBox buildingComboBox;
+    AutoCompComboBox<AutoCompletionItem> buildingComboBox;
     private JLabel segmentsLabel;
     JTextField segments;
     JTextArea messageLabel;
@@ -114,7 +115,8 @@ public class HouseNumberInputDialog extends ExtendedDialog {
         setupDialog();
         getRootPane().setDefaultButton(defaultButton);
         pack();
-        setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(MainApplication.getMainFrame(), getPreferredSize()));
+        setRememberWindowGeometry(getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), getPreferredSize()));
         lo.requestFocusInWindow();
     }
 
@@ -289,13 +291,10 @@ public class HouseNumberInputDialog extends ExtendedDialog {
      *
      * @return AutoCompletingComboBox
      */
-    private AutoCompletingComboBox getStreet() {
-
+    private AutoCompComboBox<String> getStreet() {
         if (streetComboBox == null) {
-            final TreeSet<String> names = createAutoCompletionInfo();
-
-            streetComboBox = new AutoCompletingComboBox();
-            streetComboBox.setPossibleItems(names);
+            streetComboBox = new AutoCompComboBox<>();
+            streetComboBox.getModel().addAllElements(createAutoCompletionInfo());
             streetComboBox.setEditable(true);
             streetComboBox.setSelectedItem(null);
         }
@@ -307,11 +306,11 @@ public class HouseNumberInputDialog extends ExtendedDialog {
      *
      * @return AutoCompletingComboBox
      */
-    private AutoCompletingComboBox getBuilding() {
-
+    private AutoCompComboBox<AutoCompletionItem> getBuilding() {
         if (buildingComboBox == null) {
-            buildingComboBox = new AutoCompletingComboBox();
-            buildingComboBox.setPossibleAcItems(AutoCompletionManager.of(OsmDataManager.getInstance().getEditDataSet()).getTagValues("building"));
+            buildingComboBox = new AutoCompComboBox<>();
+            buildingComboBox.getModel().addAllElements(
+                    AutoCompletionManager.of(OsmDataManager.getInstance().getEditDataSet()).getTagValues("building"));
             buildingComboBox.setEditable(true);
             if (buildingType != null && !buildingType.isEmpty()) {
                 buildingComboBox.setSelectedItem(buildingType);

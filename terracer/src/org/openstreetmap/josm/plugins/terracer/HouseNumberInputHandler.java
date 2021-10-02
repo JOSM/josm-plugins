@@ -23,10 +23,11 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The Class HouseNumberInputHandler contains all the logic
@@ -384,7 +385,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
         return getItemText(dialog.buildingComboBox);
     }
 
-    private static String getItemText(AutoCompletingComboBox box) {
+    private static String getItemText(AutoCompComboBox<?> box) {
         Object selected = box.getSelectedItem();
         if (selected == null) {
             return null;
@@ -396,11 +397,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
                name = selected.toString();
             }
 
-            if (name.length() == 0) {
-                return null;
-            } else {
-                return name;
-            }
+            return Utils.isEmpty(name) ? null : name;
         }
     }
 
