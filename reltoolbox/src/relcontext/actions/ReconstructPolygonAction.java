@@ -33,7 +33,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import relcontext.ChosenRelation;
@@ -51,7 +50,8 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
 
     public ReconstructPolygonAction(ChosenRelation rel) {
         super(tr("Reconstruct polygon"), "dialogs/filter", tr("Reconstruct polygon from multipolygon relation"),
-                Shortcut.registerShortcut("reltoolbox:reconstructpoly", tr("Relation Toolbox: {0}", tr("Reconstruct polygon from multipolygon relation")),
+                Shortcut.registerShortcut("reltoolbox:reconstructpoly", tr("Relation Toolbox: {0}",
+                        tr("Reconstruct polygon from multipolygon relation")),
                         KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false);
         this.rel = rel;
         rel.addChosenRelationListener(this);

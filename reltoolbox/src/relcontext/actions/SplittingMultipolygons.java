@@ -149,7 +149,8 @@ public final class SplittingMultipolygons {
     /**
      * Splits a way with regard to containing relations. This modifies the way and the relation, be prepared.
      * @param w The way.
-     * @param n The node to split at.
+     * @param n1 The first node to split at.
+     * @param n2 The second node to split at.
      * @param commands List of commands to add way/relation changing to. If null, never mind.
      * @return Newly created ways. <b>Warning:</b> if commands is no not, newWays contains {@code w}.
      */

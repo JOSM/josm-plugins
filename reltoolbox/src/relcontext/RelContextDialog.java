@@ -77,7 +77,7 @@ import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -480,8 +480,8 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
                 items.add(role);
             }
         }
-        final AutoCompletingComboBox role = new AutoCompletingComboBox();
-        role.setPossibleItems(items);
+        final AutoCompComboBox<String> role = new AutoCompComboBox<>();
+        role.getModel().addAllElements(items);
         role.setEditable(true);
 
         panel.add(new JLabel(tr("Role")), GBC.std());

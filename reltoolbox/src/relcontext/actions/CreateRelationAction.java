@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -102,8 +102,8 @@ public class CreateRelationAction extends JosmAction {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.add(new JLabel(tr("Choose a type for the relation:")), GBC.eol().insets(0, 0, 0, 5));
 
-        final AutoCompletingComboBox keys = new AutoCompletingComboBox();
-        keys.setPossibleItems(RELATION_TYPES);
+        final AutoCompComboBox<String> keys = new AutoCompComboBox<>();
+        keys.getModel().addAllElements(RELATION_TYPES);
         keys.setEditable(true);
         keys.getEditor().setItem(Config.getPref().get(PREF_LASTTYPE, "multipolygon"));
 
