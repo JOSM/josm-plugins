@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
@@ -26,7 +27,8 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
  */
 public final class CadastreAPI {
 
-    private static final String API_ENDPOINT = "https://sandbox.geo.api.gouv.fr/cadastre";
+    private static final StringProperty API_ENDPOINT = new StringProperty(
+            "cadastrefr.api.endpoint", "https://geo.api.gouv.fr/cadastre");
 
     private CadastreAPI() {
         // Hide public sontructor for utility classes
@@ -52,7 +54,7 @@ public final class CadastreAPI {
      * @throws IOException if any I/O error occurs
      */
     public static Set<String> getSheets(double minlon, double minlat, double maxlon, double maxlat) throws IOException {
-        URL url = new URL(API_ENDPOINT + "/feuilles?bbox=" + String.join(",",
+        URL url = new URL(API_ENDPOINT.get() + "/feuilles?bbox=" + String.join(",",
                 Double.toString(minlon), Double.toString(minlat), Double.toString(maxlon), Double.toString(maxlat)));
         try {
             Response response = HttpClient.create(url).connect();
