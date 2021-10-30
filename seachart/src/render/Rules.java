@@ -553,6 +553,7 @@ public class Rules {
 		case SBDARE:
 			if (Renderer.zoom >= 12) {
 				String str = "";
+				String sep = ".";
 				if (hasAttribute(feature.type, Att.NATSUR)) {
 					ArrayList<NatSUR> surs = (ArrayList<NatSUR>) getAttList(feature.type, Att.NATSUR);
 					ArrayList<NatQUA> quas = new ArrayList<NatQUA>();
@@ -561,7 +562,8 @@ public class Rules {
 					}
 					for (int i = 0; i < surs.size(); i++) {
 						if (!str.isEmpty()) {
-							str += ".";
+							str += sep;
+							sep = ".";
 						}
 						if (quas.size() > i) {
 							switch (quas.get(i)) {
@@ -640,6 +642,8 @@ public class Rules {
 							str += "Bo";
 							break;
 						default:
+							str = str.substring(0, str.length() - 1) + "/";
+							sep = "";
 							break;
 						}
 					}
