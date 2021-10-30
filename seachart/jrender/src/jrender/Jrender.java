@@ -86,6 +86,12 @@ public final class Jrender {
         public RuleSet ruleset() {
             return RuleSet.SEAMARK;
         }
+
+		@Override
+		public Chart chart() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     static void tile(int z, int s, int xn, int yn) throws IOException {

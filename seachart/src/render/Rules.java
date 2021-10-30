@@ -55,6 +55,8 @@ import s57.S57val.ColCOL;
 import s57.S57val.ColPAT;
 import s57.S57val.FncFNC;
 import s57.S57val.MarSYS;
+import s57.S57val.NatSUR;
+import s57.S57val.NatQUA;
 import s57.S57val.StsSTS;
 import s57.S57val.TecSOU;
 import s57.S57val.TopSHP;
@@ -307,6 +309,7 @@ public class Rules {
 				if (testObject(Obj.TSSLPT)) for (Feature f : objects) if (testFeature(f)) separation();
 				if (testObject(Obj.TSSBND)) for (Feature f : objects) if (testFeature(f)) separation();
 				if (testObject(Obj.ISTZNE)) for (Feature f : objects) if (testFeature(f)) separation();
+				if (testObject(Obj.SBDARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.SNDWAV)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.WEDKLP)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.OSPARE)) for (Feature f : objects) if (testFeature(f)) areas();
@@ -546,6 +549,105 @@ public class Rules {
 		case SNDWAV:
 			if (Renderer.zoom >= 12)
 				Renderer.fillPattern(Areas.Sandwaves);
+			break;
+		case SBDARE:
+			if (Renderer.zoom >= 12) {
+				String str = "";
+				if (hasAttribute(feature.type, Att.NATSUR)) {
+					ArrayList<NatSUR> surs = (ArrayList<NatSUR>) getAttList(feature.type, Att.NATSUR);
+					ArrayList<NatQUA> quas = new ArrayList<NatQUA>();
+					if (hasAttribute(feature.type, Att.NATQUA)) {
+						quas = (ArrayList<NatQUA>) getAttList(feature.type, Att.NATQUA);
+					}
+					for (int i = 0; i < surs.size(); i++) {
+						if (!str.isEmpty()) {
+							str += ".";
+						}
+						if (quas.size() > i) {
+							switch (quas.get(i)) {
+							case QUA_FINE:
+								str += "f";
+								break;
+							case QUA_MEDM:
+								str += "m";
+								break;
+							case QUA_CORS:
+								str += "c";
+								break;
+							case QUA_BRKN:
+								str += "bk";
+								break;
+							case QUA_STKY:
+								str += "sy";
+								break;
+							case QUA_SOFT:
+								str += "so";
+								break;
+							case QUA_STIF:
+								str += "sf";
+								break;
+							case QUA_VCNC:
+								str += "v";
+								break;
+							case QUA_CALC:
+								str += "ca";
+								break;
+							case QUA_HARD:
+								str += "h";
+								break;
+							default:
+								break;
+							}
+						}
+						switch (surs.get(i)) {
+						case SUR_MUD:
+							str += "M";
+							break;
+						case SUR_CLAY:
+							str += "Cy";
+							break;
+						case SUR_SILT:
+							str += "Si";
+							break;
+						case SUR_SAND:
+							str += "S";
+							break;
+						case SUR_STON:
+							str += "St";
+							break;
+						case SUR_GRVL:
+							str += "G";
+							break;
+						case SUR_PBBL:
+							str += "P";
+							break;
+						case SUR_CBBL:
+							str += "Cb";
+							break;
+						case SUR_ROCK:
+							str += "R";
+							break;
+						case SUR_LAVA:
+							str += "Lv";
+							break;
+						case SUR_CORL:
+							str += "Co";
+							break;
+						case SUR_SHEL:
+							str += "Sh";
+							break;
+						case SUR_BLDR:
+							str += "Bo";
+							break;
+						default:
+							break;
+						}
+					}
+					if (!str.isEmpty()) {
+						Renderer.labelText(str, new Font("Arial", Font.ITALIC, 60), Color.black, new Delta(Handle.CC));
+					}
+				}
+			}
 			break;
 		case WEDKLP:
 			if (Renderer.zoom >= 12) {

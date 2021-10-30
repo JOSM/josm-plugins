@@ -159,4 +159,10 @@ public class ChartImage extends ImageryLayer implements ZoomChangeListener, Char
     public RuleSet ruleset() {
         return RuleSet.ALL;
     }
+
+	@Override
+	public Chart chart() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

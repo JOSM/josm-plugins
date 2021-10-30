@@ -13,6 +13,21 @@ import s57.S57map.Snode;
  */
 public interface ChartContext {
     enum RuleSet { ALL, BASE, SEAMARK }
+    class Chart {
+    	public int zoom;
+    	public double scale;
+    	public int grid;
+    	public boolean rose;
+    	public double roseLat;
+    	public double roseLon;
+    	public Chart() {
+    		zoom = 15;
+    		scale = 1.0;
+    		grid = 0;
+    		rose = false;
+    		roseLat = roseLon = 0;
+    	}
+    }
 
     Point2D getPoint(Snode coord);
 
@@ -21,6 +36,8 @@ public interface ChartContext {
     boolean clip();
     
     int grid();
+    
+    Chart chart();
 
     Color background(S57map map);
 
