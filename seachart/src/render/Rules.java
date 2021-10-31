@@ -310,8 +310,10 @@ public class Rules {
 				if (testObject(Obj.TSSBND)) for (Feature f : objects) if (testFeature(f)) separation();
 				if (testObject(Obj.ISTZNE)) for (Feature f : objects) if (testFeature(f)) separation();
 				if (testObject(Obj.SBDARE)) for (Feature f : objects) if (testFeature(f)) areas();
+				if (testObject(Obj.SPRING)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.SNDWAV)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.WEDKLP)) for (Feature f : objects) if (testFeature(f)) areas();
+				if (testObject(Obj.SEGRAS)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.OSPARE)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.FAIRWY)) for (Feature f : objects) if (testFeature(f)) areas();
 				if (testObject(Obj.DRGARE)) for (Feature f : objects) if (testFeature(f)) areas();
@@ -385,6 +387,7 @@ public class Rules {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void areas() {
 		String name = getName();
 		switch (feature.type) {
@@ -551,7 +554,7 @@ public class Rules {
 				Renderer.fillPattern(Areas.Sandwaves);
 			break;
 		case SBDARE:
-			if (Renderer.zoom >= 12) {
+			if (Renderer.zoom >= 14) {
 				String str = "";
 				String sep = ".";
 				if (hasAttribute(feature.type, Att.NATSUR)) {
@@ -648,13 +651,13 @@ public class Rules {
 						}
 					}
 					if (!str.isEmpty()) {
-						Renderer.labelText(str, new Font("Arial", Font.ITALIC, 60), Color.black, new Delta(Handle.CC));
+						Renderer.labelText(str, new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
 					}
 				}
 			}
 			break;
 		case WEDKLP:
-			if (Renderer.zoom >= 12) {
+			if (Renderer.zoom >= 14) {
 				switch ((CatWED) getAttEnum(feature.type, Att.CATWED)) {
 				case WED_KELP:
 					if (feature.geom.prim == Pflag.AREA) {
@@ -663,10 +666,24 @@ public class Rules {
 						Renderer.symbol(Areas.KelpS);
 					}
 					break;
+				case WED_SWED:
+					Renderer.labelText("Wd", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
+					break;
+				case WED_SGRS:
+					Renderer.labelText("Sg", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
+					break;
+				case WED_SGSO:
+					break;
 				default:
 					break;
 				}
 			}
+			break;
+		case SEGRAS:
+			Renderer.labelText("Sg", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
+			break;
+		case SPRING:
+			Renderer.symbol(Areas.Spring);
 			break;
 		case SPLARE:
 			if (Renderer.zoom >= 12) {

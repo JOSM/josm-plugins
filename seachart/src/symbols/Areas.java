@@ -266,14 +266,36 @@ public final class Areas {
         g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.setBackground(new Color(0, true));
         g2.clearRect(0, 0, 100, 100);
-        g2.setPaint(new Color(0xffd400));
-        Path2D.Double p = new Path2D.Double(); p.moveTo(0.0, 34.5); p.lineTo(03.3, 30.8); p.lineTo(09.9, 19.3); p.lineTo(13.2, 16.0); p.lineTo(16.5, 16.1); p.lineTo(18.2, 19.5);
+        g2.setPaint(Color.black);
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(0.0, 34.5); p.lineTo(03.3, 30.8); p.lineTo(09.9, 19.3); p.lineTo(13.2, 16.0); p.lineTo(16.5, 16.1); p.lineTo(18.2, 19.5);
         p.lineTo(19.9, 25.0); p.lineTo(21.6, 30.3); p.lineTo(23.3, 33.4); p.lineTo(25.0, 33.3); p.lineTo(28.3, 30.1); p.lineTo(31.6, 25.0); p.lineTo(34.9, 20.1); p.lineTo(38.2, 17.2);
-        p.lineTo(41.5, 17.3); p.lineTo(43.2, 20.3); p.lineTo(44.9, 25); p.lineTo(46.6, 29.6); p.lineTo(48.3, 32.2); p.lineTo(50.0, 32.1);
+        p.lineTo(41.5, 17.3); p.lineTo(43.2, 20.3); p.lineTo(44.9, 25); p.lineTo(46.6, 29.6); p.lineTo(48.3, 32.2); p.lineTo(50.0, 32.1);        
         p.moveTo(50.0, 84.5); p.lineTo(53.3, 80.8); p.lineTo(56.6, 75.0); p.lineTo(59.9, 69.3); p.lineTo(63.2, 66.0); p.lineTo(66.5, 66.1); p.lineTo(68.2, 69.5); p.lineTo(69.9, 75.0);
         p.lineTo(71.6, 80.3); p.lineTo(73.3, 83.4); p.lineTo(75.0, 83.3); p.lineTo(78.3, 80.1); p.lineTo(81.6, 75.0); p.lineTo(84.9, 70.1); p.lineTo(88.2, 67.2); p.lineTo(91.5, 67.3);
         p.lineTo(93.2, 70.3); p.lineTo(94.9, 75.0); p.lineTo(96.6, 79.6); p.lineTo(98.3, 82.2); p.lineTo(100.0, 82.1);
         g2.draw(p);
+    }
+    
+    public static final Symbol Spring = new Symbol();
+    static {
+        Spring.add(new Instr(Form.FILL, Color.black));
+        Spring.add(new Instr(Form.STRK, new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, 0, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-20, 0, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-40, 0, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(20, 0, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(40, 0, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -20, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -40, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -60, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -80, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-15, -90, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(15, -90, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-35, -85, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(35, -85, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-50, -70, 7.5, 7.5)));
+        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(50, -70, 7.5, 7.5)));
     }
 
     public static final Symbol KelpS = new Symbol();
@@ -288,7 +310,7 @@ public final class Areas {
     public static final BufferedImage KelpA = new BufferedImage(240, 240, BufferedImage.TYPE_INT_ARGB);
     static {
         Graphics2D g2 = KelpA.createGraphics();
-        g2.setStroke(new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.setBackground(new Color(0, true));
         g2.clearRect(0, 0, 240, 240);
         g2.setPaint(Color.black);

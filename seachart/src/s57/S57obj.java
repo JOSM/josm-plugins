@@ -26,7 +26,7 @@ public final class S57obj { // S57 Object lookup tables & methods
         SOUNDG, SPRING, STSLNE, SUBTLN, SWPARE, TESARE, TS_PRH, TS_PNH, TS_PAD, TS_TIS, T_HMON, T_NHMN, T_TIMS, TIDEWY, TOPMAR, TSELNE,
         TSSBND, TSSCRS, TSSLPT, TSSRON, TSEZNE, TUNNEL, TWRTPT, UWTROC, UNSARE, VEGATN, WATTUR, WATFAL, WEDKLP, WRECKS, TS_FEB, NOTMRK,
         WTWAXS, WTWPRF, BUNSTA, COMARE, HRBBSN, LOKARE, LKBSPT, PRTARE, REFDMP, TERMNL, TRNBSN, WTWARE, WTWGAG, TISDGE, VEHTRF, EXCNST,
-        LG_SDM, LG_VSP, LITMIN, LITMAJ, VAATON
+        LG_SDM, LG_VSP, LITMIN, LITMAJ, VAATON, SEGRAS
     }
 
     private static final EnumMap<Obj, Integer> ObjS57 = new EnumMap<>(Obj.class);
@@ -64,7 +64,7 @@ public final class S57obj { // S57 Object lookup tables & methods
         ObjS57.put(Obj.TUNNEL, 151); ObjS57.put(Obj.TWRTPT, 152); ObjS57.put(Obj.UWTROC, 153); ObjS57.put(Obj.UNSARE, 154); ObjS57.put(Obj.VEGATN, 155);
         ObjS57.put(Obj.WATTUR, 156); ObjS57.put(Obj.WATFAL, 157); ObjS57.put(Obj.WEDKLP, 158); ObjS57.put(Obj.WRECKS, 159); ObjS57.put(Obj.TS_FEB, 160);
         ObjS57.put(Obj.MPAARE, 199); ObjS57.put(Obj.M_COVR, 302); ObjS57.put(Obj.M_NSYS, 306); ObjS57.put(Obj.LITMAJ, 74); ObjS57.put(Obj.LITMIN, 90);
-        ObjS57.put(Obj.VAATON, 900);
+        ObjS57.put(Obj.VAATON, 900); ObjS57.put(Obj.SEGRAS, 901);
     }
 
     private static final EnumMap<Obj, Integer> ObjIENC = new EnumMap<>(Obj.class);
@@ -114,7 +114,7 @@ public final class S57obj { // S57 Object lookup tables & methods
         ObjStr.put(Obj.RAPIDS, "rapids"); ObjStr.put(Obj.RCRTCL, "recommended_route_centreline"); ObjStr.put(Obj.RECTRC, "recommended_track");
         ObjStr.put(Obj.RCTLPT, "recommended_traffic_lane"); ObjStr.put(Obj.RSCSTA, "rescue_station"); ObjStr.put(Obj.RESARE, "restricted_area");
         ObjStr.put(Obj.RETRFL, "retro_reflector"); ObjStr.put(Obj.RIVERS, "river"); ObjStr.put(Obj.ROADWY, "road"); ObjStr.put(Obj.RUNWAY, "runway");
-        ObjStr.put(Obj.SNDWAV, "sand_waves"); ObjStr.put(Obj.SEAARE, "sea_area"); ObjStr.put(Obj.SPLARE, "seaplane_landing_area"); ObjStr.put(Obj.SBDARE, "seabed_area");
+        ObjStr.put(Obj.SNDWAV, "sandwaves"); ObjStr.put(Obj.SEAARE, "sea_area"); ObjStr.put(Obj.SPLARE, "seaplane_landing_area"); ObjStr.put(Obj.SBDARE, "seabed_area");
         ObjStr.put(Obj.SLCONS, "shoreline_construction"); ObjStr.put(Obj.SISTAT, "signal_station_traffic"); ObjStr.put(Obj.SISTAW, "signal_station_warning");
         ObjStr.put(Obj.SILTNK, "tank"); ObjStr.put(Obj.SLOTOP, "slope_topline"); ObjStr.put(Obj.SLOGRD, "sloping_ground"); ObjStr.put(Obj.SMCFAC, "small_craft_facility");
         ObjStr.put(Obj.SOUNDG, "sounding"); ObjStr.put(Obj.SPRING, "spring"); ObjStr.put(Obj.STSLNE, "territorial_baseline"); ObjStr.put(Obj.SUBTLN, "submarine_transit_lane");
@@ -129,7 +129,7 @@ public final class S57obj { // S57 Object lookup tables & methods
         ObjStr.put(Obj.TERMNL, "terminal"); ObjStr.put(Obj.TRNBSN, "turning_basin"); ObjStr.put(Obj.WTWARE, "waterway_area"); ObjStr.put(Obj.WTWGAG, "waterway_gauge");
         ObjStr.put(Obj.TISDGE, "time_schedule"); ObjStr.put(Obj.VEHTRF, "vehicle_transfer"); ObjStr.put(Obj.EXCNST, "exceptional_structure"); ObjStr.put(Obj.MPAARE, "protected_area");
         ObjStr.put(Obj.LITMAJ, "light_major"); ObjStr.put(Obj.LITMIN, "light_minor"); ObjStr.put(Obj.M_COVR, "coverage"); ObjStr.put(Obj.M_NSYS, "system");
-        ObjStr.put(Obj.VAATON, "virtual_aton");
+        ObjStr.put(Obj.VAATON, "virtual_aton"); ObjStr.put(Obj.SEGRAS, "seagrass");
     }
 
     private static final HashMap<String, Obj> StrObj = new HashMap<>();
