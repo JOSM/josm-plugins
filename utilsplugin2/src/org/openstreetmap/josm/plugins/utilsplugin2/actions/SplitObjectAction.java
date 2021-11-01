@@ -221,17 +221,20 @@ public class SplitObjectAction extends JosmAction {
             i++;
         }
         // both nodes aren't allowed to be consecutive
-		if ((splitWay == null || splitWay.getNodesCount() == 2)
-				&& (nodeIndex1 == nodeIndex2 + 1 || nodeIndex2 == nodeIndex1 + 1 ||
-				// minus 2 because we've a circular way where
-				// the penultimate node is the last unique one
-						(nodeIndex1 == 0 && nodeIndex2 == selectedWay.getNodesCount() - 2)
-						|| (nodeIndex2 == 0 && nodeIndex1 == selectedWay.getNodesCount() - 2))) {
+        if ((splitWay == null || splitWay.getNodesCount() == 2)
+                && (nodeIndex1 == nodeIndex2 + 1 || nodeIndex2 == nodeIndex1 + 1 ||
+                // minus 2 because we've a circular way where
+                // the penultimate node is the last unique one
+                        (nodeIndex1 == 0 && nodeIndex2 == selectedWay.getNodesCount() - 2)
+                        || (nodeIndex2 == 0 && nodeIndex1 == selectedWay.getNodesCount() - 2))) {
             showWarningNotification(
                     tr("The selected nodes can not be consecutive nodes in the object."));
             return;
         }
+        splitWayChecked(selectedNodes, selectedWay, splitWay);
+    }
 
+    private void splitWayChecked(List<Node> selectedNodes, Way selectedWay, Way splitWay) {
         List<List<Node>> wayChunks = SplitWayCommand.buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
             // close the chunks
@@ -415,7 +418,7 @@ public class SplitObjectAction extends JosmAction {
             if (outerRing.nodes.containsAll(Arrays.asList(firstNode, lastNode))) {
                 for (int i = 0; i < outerRing.ways.size() && (firstIndex == -1 || lastIndex == -1); i++) {
                     Way w = outerRing.ways.get(i);
-                    Boolean reversed = outerRing.reversed.get(i);
+                    boolean reversed = outerRing.reversed.get(i);
 
                     Node cStartNode = reversed ? w.lastNode() : w.firstNode();
                     Node cEndNode = reversed ? w.firstNode() : w.lastNode();
@@ -521,7 +524,8 @@ public class SplitObjectAction extends JosmAction {
 
         Set<Way> mpWays = mpRelation.getMembers().stream()
             .filter(RelationMember::isWay)
-            .collect(Collectors.mapping(RelationMember::getWay, Collectors.toSet()));
+            .map(RelationMember::getWay)
+            .collect(Collectors.toSet());
 
         List<SplitWayCommand> splitCmds = new ArrayList<>();
         for (Way way : mpWays) {
@@ -554,7 +558,7 @@ public class SplitObjectAction extends JosmAction {
      * @param selection the selection
      * @return true if the selection is usable
      */
-    private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
+    private static boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
         int node = 0;
         int ways = 0;
         int multipolygons = 0;
