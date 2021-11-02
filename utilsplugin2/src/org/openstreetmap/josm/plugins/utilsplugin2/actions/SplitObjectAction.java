@@ -89,7 +89,6 @@ public class SplitObjectAction extends JosmAction {
         List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
         List<Relation> selectedRelations = new ArrayList<>(ds.getSelectedRelations());
 
-        Relation selectedMultipolygon = null;
         Way selectedWay = null;
         Way splitWay = null;
 
@@ -118,10 +117,7 @@ public class SplitObjectAction extends JosmAction {
         }
 
         if ((selectedRelations.size() == 1) && selectedRelations.get(0).isMultipolygon()) {
-            selectedMultipolygon = selectedRelations.get(0);
-        }
-
-        if (selectedMultipolygon != null) {
+            Relation selectedMultipolygon = selectedRelations.get(0);
             if (splitWay == null) {
                 showWarningNotification(tr("Splitting multipolygons requires a split way to be selected"));
                 return;
@@ -260,11 +256,17 @@ public class SplitObjectAction extends JosmAction {
             }
             SplitWayCommand result = SplitWayCommand.splitWay(
                     selectedWay, wayChunks, Collections.<OsmPrimitive>emptyList());
-            UndoRedoHandler.getInstance().add(result);
-            if (splitWay != null)
-                UndoRedoHandler.getInstance().add(new DeleteCommand(splitWay));
+            if (splitWay != null) {
+                result.executeCommand();
+                DeleteCommand delCmd = new DeleteCommand(splitWay);
+                delCmd.executeCommand();
+                UndoRedoHandler.getInstance().add(new SplitObjectCommand(Arrays.asList(result, delCmd)), false);
+            } else {
+                UndoRedoHandler.getInstance().add(result);
+            }
             getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
         }
+
     }
 
     /**
@@ -325,10 +327,10 @@ public class SplitObjectAction extends JosmAction {
                     }
                 }
             }
-
-            for (Command mpSplitCommand : commands) {
-                UndoRedoHandler.getInstance().add(mpSplitCommand, false);
-            }
+            if (commands.size() > 1)
+                UndoRedoHandler.getInstance().add(new SplitObjectCommand(commands), false);
+            else
+                UndoRedoHandler.getInstance().add(commands.iterator().next(), false);
 
             mpRelation.getDataSet().setSelected(mpRelations);
             return splitResult;
@@ -500,10 +502,8 @@ public class SplitObjectAction extends JosmAction {
                 List<Command> mpCreationCommands = new ArrayList<>();
                 mpCreationCommands.add(new ChangeMembersCommand(mpRelation, mpMembers));
                 mpCreationCommands.add(new AddCommand(mpRelation.getDataSet(), newMpRelation));
-
-                SequenceCommand sequenceCommand = new SequenceCommand(mpRelation.getDataSet(), "Split Multipolygon", mpCreationCommands, false);
-                sequenceCommand.executeCommand();
-                commands.add(sequenceCommand);
+                mpCreationCommands.forEach(Command::executeCommand);
+                commands.addAll(mpCreationCommands);
 
                 mpRelations.add(newMpRelation);
             }
@@ -593,5 +593,12 @@ public class SplitObjectAction extends JosmAction {
     private static void showWarningNotification(String msg) {
         new Notification(msg)
         .setIcon(JOptionPane.WARNING_MESSAGE).show();
+    }
+
+    private static class SplitObjectCommand extends SequenceCommand {
+        SplitObjectCommand(Collection<Command> sequenz) {
+            super(tr("Split Object"), sequenz, true);
+            setSequenceComplete(true);
+        }
     }
 }
