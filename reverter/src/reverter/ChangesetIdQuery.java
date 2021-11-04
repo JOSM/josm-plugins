@@ -9,9 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -157,11 +154,7 @@ public class ChangesetIdQuery extends ExtendedDialog {
      * @param cbHistory history combobox
      */
     protected void restoreChangesetsHistory(HistoryComboBox cbHistory) {
-        List<String> cmtHistory = new LinkedList<>(
-                Config.getPref().getList(getClass().getName() + ".changesetsHistory", new LinkedList<String>()));
-        // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        Collections.reverse(cmtHistory);
-        cbHistory.setPossibleItems(cmtHistory);
+        cbHistory.getModel().prefs().load(getClass().getName() + ".changesetsHistory");
     }
 
     /**
@@ -170,7 +163,7 @@ public class ChangesetIdQuery extends ExtendedDialog {
      */
     protected void remindChangesetsHistory(HistoryComboBox cbHistory) {
         cbHistory.addCurrentItemToHistory();
-        Config.getPref().putList(getClass().getName() + ".changesetsHistory", cbHistory.getHistory());
+        cbHistory.getModel().prefs().save(getClass().getName() + ".changesetsHistory");
     }
 
     private class InternalWindowListener extends WindowAdapter {

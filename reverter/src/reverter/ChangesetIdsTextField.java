@@ -35,6 +35,7 @@ public class ChangesetIdsTextField extends AbstractIdTextField<ChangesetIdsTextF
     }
 
     /**
+     * Return sorted changeset IDs (highest ID first).
      * @return sorted changeset IDs (highest ID first)
      */
     public Collection<Integer> getIdsInReverseOrder() {
