@@ -244,7 +244,7 @@ public class O5mReader extends AbstractReader {
         // User id
         if (lastTs != 0) {
             checkTimestamp(lastTs);
-            pd.setTimestamp(new Date(lastTs * 1000));
+            pd.setInstant(new Date(lastTs * 1000).toInstant());
             if (osmUser != null)
                 pd.setUser(osmUser);
         }
