@@ -186,7 +186,7 @@ public class UndeleteAction extends JosmAction {
 
                             if (hPrimitive2 != null) {
                                 primitive.setChangesetId((int) hPrimitive1.getChangesetId());
-                                primitive.setTimestamp(hPrimitive1.getTimestamp());
+                                primitive.setInstant(hPrimitive1.getInstant());
                                 primitive.setUser(hPrimitive1.getUser());
                                 primitive.setVisible(hPrimitive1.isVisible());
                                 primitive.setKeys(hPrimitive2.getTags());
