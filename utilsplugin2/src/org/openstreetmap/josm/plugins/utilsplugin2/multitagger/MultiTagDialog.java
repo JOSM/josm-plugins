@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -142,11 +141,8 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
     }
 
     private void loadHistory() {
-        List<String> cmtHistory = new LinkedList<>(
-                Config.getPref().getList(HISTORY_KEY, Arrays.asList(defaultHistory)));
-        Collections.reverse(cmtHistory);
-        cbTagSet.setPossibleItems(cmtHistory);
-        String s = cmtHistory.get(cmtHistory.size()-1);
+        cbTagSet.getModel().prefs().load(HISTORY_KEY, Arrays.asList(defaultHistory));
+        String s = cbTagSet.getModel().getElementAt(0);
         cbTagSet.setText(s);
         specifyTagSet(s);
     }
@@ -282,7 +278,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         public void actionPerformed(ActionEvent e) {
             String txt = cbTagSet.getText();
             Logging.debug(txt);
-            List<String> history = cbTagSet.getHistory();
+            List<String> history = cbTagSet.getModel().asStringList();
             history.remove(txt);
             if (history.isEmpty()) {
                 history = Arrays.asList(defaultHistory);
@@ -320,7 +316,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
             if (s == null || s.isEmpty() || s.equals(oldTags)) return;
             oldTags = s;
             cbTagSet.addCurrentItemToHistory();
-            Config.getPref().putList(HISTORY_KEY, cbTagSet.getHistory());
+            cbTagSet.getModel().prefs().save(HISTORY_KEY);
             specifyTagSet(s);
         }
     }
