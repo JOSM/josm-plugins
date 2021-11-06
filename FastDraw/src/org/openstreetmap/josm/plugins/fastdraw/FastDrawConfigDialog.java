@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -23,7 +22,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.importers.TextTagPaster;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.TextTagParser;
@@ -68,9 +66,9 @@ public class FastDrawConfigDialog extends ExtendedDialog {
         });
         pasteButton.setToolTipText(tr("Try copying tags from properties table"));
 
-        ArrayList<String> history = new ArrayList<>(Config.getPref().getList("fastdraw.tags-history"));
-        while (history.remove("")) { };
-        addTags.setPossibleItems(history);
+        addTags.getModel().prefs().load("fastdraw.tags-history");
+        while (addTags.getModel().find("") != null)
+            addTags.getModel().removeElement("");
 
         all.add(label1, GBC.std().insets(10, 0, 0, 0));
         all.add(text1, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
@@ -133,7 +131,7 @@ public class FastDrawConfigDialog extends ExtendedDialog {
                 if (!settings.autoTags.isEmpty()) {
                     addTags.addCurrentItemToHistory();
                 }
-                Config.getPref().putList("fastdraw.tags-history", addTags.getHistory());
+                addTags.getModel().prefs().save("fastdraw.tags-history");
                 settings.savePrefs();
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
