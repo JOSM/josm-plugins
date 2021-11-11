@@ -39,7 +39,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -98,6 +97,8 @@ class FastDrawingMode extends MapMode implements MapViewPaintable, KeyPressRelea
 
     @Override
     public void enterMode() {
+        if (!isEnabled())
+            return;
         super.enterMode();
         lineWasSaved = false;
         settings = new FDSettings();
@@ -140,7 +141,7 @@ class FastDrawingMode extends MapMode implements MapViewPaintable, KeyPressRelea
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     @Override
