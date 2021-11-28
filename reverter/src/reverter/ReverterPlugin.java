@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package reverter;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.swing.JMenu;
 
 import org.openstreetmap.josm.actions.UploadAction;
@@ -14,7 +16,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  * The reverter plugin
  */
 public class ReverterPlugin extends Plugin {
-    static boolean reverterUsed;
+    static AtomicBoolean reverterUsed = new AtomicBoolean();
 
     /**
      * Constructs a new {@code ReverterPlugin}.

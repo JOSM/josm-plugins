@@ -22,7 +22,7 @@ public class RevertChangesetCommand extends SequenceCommand {
      */
     public RevertChangesetCommand(String name, Collection<Command> sequenz) {
         super(name, sequenz);
-        ReverterPlugin.reverterUsed = true;
+        ReverterPlugin.reverterUsed.set(true);
         setSequenceComplete(true);
     }
 
