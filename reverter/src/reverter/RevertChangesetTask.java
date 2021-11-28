@@ -97,11 +97,11 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
                 Logging.info("Reverted changeset {0}", Long.toString(changesetId));
                 newLayer = false; // reuse layer for subsequent reverts
             } catch (OsmTransferException e) {
-            	rollback(allcmds);
+                rollback(allcmds);
                 Logging.error(e);
                 throw e;
             } catch (UserCancelException e) {
-            	rollback(allcmds);
+                rollback(allcmds);
                 GuiHelper.executeByMainWorkerInEDT(() -> new Notification(tr("Revert was canceled")).show());
                 Logging.trace(e);
                 return;
@@ -139,7 +139,7 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
         }
         if (progressMonitor.isCanceled())
             throw new UserCancelException();
-
+        int numOldConflicts = oldDataSet == null ? 0 : oldDataSet.getConflicts().size();
         // Check missing objects
         rev.checkMissingCreated();
         rev.checkMissingUpdated();
@@ -152,6 +152,13 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
             // Don't ask user to download primitives going to be undeleted
             rev.checkMissingDeleted();
             rev.downloadMissingPrimitives(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+        }
+        int numConflicts = oldDataSet == null ? 0 : oldDataSet.getConflicts().size();
+        if (numConflicts > numOldConflicts) {
+            GuiHelper.runInEDT(() -> new Notification(tr("Please solve conflicts and maybe try again to revert."))
+            .setIcon(JOptionPane.ERROR_MESSAGE)
+            .show());
+            return null;
         }
 
         if (progressMonitor.isCanceled())
@@ -172,12 +179,12 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
             return null;
         }
         GuiHelper.runInEDT(() -> {
-        	for (Command c : cmds) {
-        		if (c instanceof ConflictAddCommand) {
-        			numberOfConflicts++;
-        		}
-        		c.executeCommand();
-        	}
+            for (Command c : cmds) {
+                if (c instanceof ConflictAddCommand) {
+                    numberOfConflicts++;
+                }
+                c.executeCommand();
+            }
         });
         final String desc;
         if (revertType == RevertType.FULL) {
@@ -188,16 +195,16 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
         return new RevertChangesetCommand(desc, cmds);
     }
 
-	@Override
-	protected void cancel() {
+    @Override
+    protected void cancel() {
         // nothing to do
-	}
+    }
 
-	@Override
-	protected void finish() {
+    @Override
+    protected void finish() {
         // nothing to do
 
-	}
+    }
 
     /**
      * Return number of conflicts for this changeset.
