@@ -761,4 +761,7 @@
         <ivy:resolve />
         <ivy:retrieve pattern="${plugin.lib.dir}/[artifact]-[revision](-[classifier]).[ext]" conf="default" />
     </target>
+    <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="fetch_dependencies">
+        <ivy:checkdepsupdate/>
+    </target>
 </project>
