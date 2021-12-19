@@ -4,9 +4,7 @@
     <info organisation="org.openstreetmap.josm.plugins" module="ejml"/>
     <dependencies>
         <!-- We included everything in 0.34, including experimental -->
-        <dependency org="org.ejml" name="ejml-all" rev="0.34"/>
-        <dependency org="org.ejml" name="ejml-experimental" rev="0.34"/>
-        <!-- junit is included as a test dependency in 0.34. It does not appear in 0.41, so can be removed on ejml update. -->
-        <exclude org="junit"/>
+        <dependency org="org.ejml" name="ejml-all" rev="0.41"/>
+        <dependency org="org.ejml" name="ejml-experimental" rev="0.41"/>
     </dependencies>
 </ivy-module>
