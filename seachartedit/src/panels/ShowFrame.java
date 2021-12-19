@@ -93,6 +93,12 @@ public class ShowFrame extends JFrame {
             // TODO Auto-generated method stub
             return 0;
         }
+
+		@Override
+		public Chart chart() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public ShowFrame(String title) {
