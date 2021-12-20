@@ -2,21 +2,13 @@
 <!-- License: GPL. For details, see LICENSE file. -->
 <ivy-module version="2.0">
     <info organisation="org.openstreetmap.josm.plugins" module="apache-http"/>
-    <configurations>
-        <conf name="ivy" description="Apache Ivy configuration for self-update"/>
-        <!--  configuration that should be used when specifying dependencies -->
-        <conf name="implementation" description="All libs JOSM uses that plugins should not use"/>
-        <conf name="api" description="All libs that JOSM uses and are available for plugins"/>
-        <conf name="runtimeOnly" description="The libs shipped with JOSM that we do not need during compilation"/>
-        <conf name="provided" description="The libs we need during compilation but not on application start"/>
-        <!--  Meta configuration used in build scripts -->
-        <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
-        <conf name="compile" description="Libraries needed only for compilation" extends="implementation,api,provided"/>
-        <conf name="test" description="Libraries only needed for testing" extends="compile,runtime"/>
-    </configurations>
     <dependencies>
-        <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.13" conf="api->default"/>
-        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.12" conf="api->default"/>
-        <dependency org="org.apache.httpcomponents" name="httpmime" rev="4.5.12" conf="api->default"/>
+        <!-- Leave these in until at least 2021-03-01 so plugins can migrate -->
+        <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.15" conf="default->default"/>
+        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.13" conf="default->default"/>
+        <dependency org="org.apache.httpcomponents" name="httpmime" rev="4.5.13" conf="default->default"/>
+        <!-- These are in a different namespace, so conflicts shouldn't occur. -->
+        <dependency org="org.apache.httpcomponents.client5" name="httpclient5" rev="5.1.2" conf="default->default"/>
+        <!-- We may want to add fluent, cache, and windows extensions in the future -->
     </dependencies>
 </ivy-module>
