@@ -256,8 +256,9 @@ public class AlignWaysCmdKeepLength extends Command {
 
         // Deny action if the nodes would end up outside world
         for (EastNorth en : calculatedNodes.values()) {
-            if (ProjectionRegistry.getProjection().eastNorth2latlon(en).isOutSideWorld())
+            if (new Node(en).isOutSideWorld()) {
                 return AlignableStatus.ALGN_INV_OUTSIDE_WORLD;
+            }
         }
 
         // In all other cases alignment is possible
