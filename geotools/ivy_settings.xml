@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ivysettings>
+  <!--<include file="../../core/ivysettings.xml"/>-->
+  <property name="gt.version" value="26.1"/> <!-- 26.1 -->
+  <settings defaultResolver="ordered-resolvers"/>
+  <resolvers>
+    <chain name="ordered-resolvers">
+      <ibiblio name="osgeo" m2compatible="true" root="https://repo.osgeo.org/repository/release/" />
+      <ibiblio name="central" m2compatible="true" root="https://repo1.maven.org/maven2/" />
+      <!--<ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />-->
+      <!--<resolver ref="josm-nexus"/>-->
+    </chain>
+  </resolvers>
+</ivysettings>
+

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="geotools" default="dist" basedir=".">
+  <project name="geotools" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="Commit message"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
@@ -10,16 +10,21 @@
     <property name="plugin.description" value="Provides parts of the GeoTools library for other JOSM plugins. Not meant to be installed directly by users, but rather as a dependency for other plugins."/>
     <property name="plugin.icon" value="images/compass.png"/>
     <property name="plugin.canloadatruntime" value="true"/>
-    <property name="plugin.requires" value="jts;ejml;apache-commons"/>
+    <property name="plugin.requires" value="ejml;apache-commons;jaxb;jts"/>
     <property name="plugin.stage" value="20"/>
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
 
+    <target name="pre-compile" depends="fetch_dependencies">
+        <!-- include fetch_dependencies task -->
+    </target>
+
 	<fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
-        <include name="jts.jar"/>
-        <include name="ejml.jar"/>
         <include name="apache-commons.jar"/>
+        <include name="ejml.jar"/>
+        <include name="jaxb.jar"/>
+        <include name="jts.jar"/>
     </fileset>
 
     <target name="merge-geotools-services">

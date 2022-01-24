@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: GPL. For details, see LICENSE file. -->
+<ivy-module version="2.0">
+    <info organisation="org.openstreetmap.josm.plugins" module="geotools"/>
+    <dependencies>
+        <dependency org="org.geotools" name="gt-coverage" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-coverage-api" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-epsg-extension" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-epsg-hsql" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-geotiff" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-main" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-metadata" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-opengis" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-referencing" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-shapefile" rev="${gt.version}" conf="default->default"/>
+        <!-- Dependencies that were not needed in 22.0 (according to lib in svn) -->
+        <exclude org="org.geotools" module="gt-imagemosaic"/>
+        <exclude org="net.sourceforge.hatbox" module="hatbox"/>
+        <exclude org="com.google.guava" module="guava"/>
+        <!-- unnecessary dependencies -->
+        <exclude org="com.github.spotbugs"/>
+        <exclude org="org.geotools.demo"/>
+        <!-- Large dependencies to avoid until someone needs them -->
+        <!-- Excluded due to depending upon ehcache, which is 1.6M -->
+        <exclude org="it.geosolutions.imageio-ext" module="imageio-ext-cog-reader" />
+        <!-- ecore is rather large (1.3M) -->
+        <exclude org="org.eclipse.emf"/>
+        <!-- from jaxb plugin (Eclipse JAXB 2.3.2, at time of writing) JAXB 3.0 uses jakarta.xml.bind/com.sun.xml.bind -->
+        <exclude org="javax.xml.bind" module="jaxb-api" />
+        <exclude org="org.glassfish.jaxb" module="jaxb-runtime" />
+        <!-- from ejml plugin -->
+        <exclude org="org.ejml"/>
+        <!-- from jts plugin -->
+        <exclude org="org.locationtech.jts" module="jts-core"/>
+        <exclude org="org.locationtech.jts.io" module="jts-io-common"/>
+        <!-- from apache-commons plugin -->
+        <exclude org="com.github.luben" module="zstd-jni"/>
+        <exclude org="org.apache.commons" module="commons-collections4"/>
+        <exclude org="org.apache.commons" module="commons-compress"/>
+        <exclude org="org.apache.commons" module="commons-imaging"/>
+        <exclude org="commons-io" module="commons-io"/>
+        <exclude org="commons-logging" module="commons-logging"/>
+        <exclude org="org.apache.commons" module="commons-lang3"/>
+        <exclude org="org.apache.commons" module="commons-math3"/>
+        <exclude org="org.apache.commons" module="commons-text"/>
+        <exclude org="org.brotli" module="dec"/>
+        <exclude org="org.tukaani" module="xz"/>
+    </dependencies>
+</ivy-module>
