@@ -15,11 +15,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.io.OverpassApi;
+import org.openstreetmap.josm.tools.ImageResource;
+import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider;
 
 public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
 
@@ -44,7 +46,8 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
         } else {
             tag = new Tag(relevantTag);
         }
-        setMenuIcon(MapPaintStyles.getNodeIcon(tag));
+        OsmPrimitiveImageProvider.getResource(tag.getKey(), tag.getValue(), OsmPrimitiveType.NODE)
+                .map(ImageResource::getImageIcon).ifPresent(this::setMenuIcon);
     }
 
     public SimpleDataSetHandler(boolean relevantUnion, String... relevantTags) {

@@ -1,10 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -22,6 +18,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Superclass of non-reg functional tests.
  */
@@ -36,21 +37,21 @@ public abstract class NonRegFunctionalTests {
         CheckParameterUtil.ensureParameterNotNull(ds, "ds");
         // Every dataset should at least contain a node
         Collection<Node> nodes = ds.getNodes();
-        assertFalse("No nodes in dataset for "+context, nodes.isEmpty());
+        assertFalse(nodes.isEmpty(), "No nodes in dataset for "+context);
         // Nodes should all have valid coordinates
         for (Node n : nodes) {
             LatLon latlon = n.getCoor();
-            assertTrue("Node without coordinate found for "+context, latlon != null);
-            assertTrue("Node with invalid coordinate ("+latlon+") found for "+context, latlon.isValid());
-            assertFalse("Node with outside world coordinate ("+latlon+") found for "+context, n.isOutSideWorld());
+            assertNotNull(latlon, "Node without coordinate found for " + context);
+            assertTrue(latlon.isValid(), "Node with invalid coordinate ("+latlon+") found for "+context);
+            assertFalse(n.isOutSideWorld(), "Node with outside world coordinate ("+latlon+") found for "+context);
         }
         // and no empty ways
         for (Way w : ds.getWays()) {
-            assertTrue("Empty way found for "+context, w.getNodesCount() > 0);
+            assertTrue(w.getNodesCount() > 0, "Empty way found for "+context);
         }
         // neither empty relations
         for (Relation r : ds.getRelations()) {
-            assertTrue("Empty relation found for "+context, r.getMembersCount() > 0);
+            assertTrue(r.getMembersCount() > 0, "Empty relation found for "+context);
         }
     }
 
@@ -76,7 +77,6 @@ public abstract class NonRegFunctionalTests {
      * Lists all datasets files matching given extension.
      * @param ext file extension to search for
      * @return all datasets files matching given extension
-     * @returns List of all datasets files matching given extension
      * @throws IOException in case of I/O error
      */
     public static Collection<Path> listDataFiles(String ext) throws IOException {

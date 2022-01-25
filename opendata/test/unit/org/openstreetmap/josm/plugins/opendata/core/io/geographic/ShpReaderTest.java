@@ -1,47 +1,51 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.io.geographic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Objects;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests of {@link ShpReader} class.
  */
-public class ShpReaderTest {
+@BasicPreferences
+class ShpReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection().timeout(60000);
+    @RegisterExtension
+    JOSMTestRules rules = new JOSMTestRules().projection().timeout(60000);
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/12714">#12714</a>
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket12714() throws Exception {
+    void testTicket12714() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(12714, "linhas.shp"));
         try (InputStream is = new FileInputStream(file)) {
             for (Node n : ShpReader.parseDataSet(is, file, null, null).getNodes()) {
-                assertNotNull(n.toString(), n.getCoor());
+                assertNotNull(n.getCoor(), n.toString());
             }
         }
     }
@@ -51,15 +55,15 @@ public class ShpReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    @Ignore("work in progress")
-    public void testTicket11761() throws Exception {
+    @Disabled("work in progress")
+    void testTicket11761() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(11761, "HAR.shp"));
         try (InputStream is = new FileInputStream(file)) {
             for (Node n : ShpReader.parseDataSet(is, file, null, null).getNodes()) {
-                assertNotNull(n.toString(), n.getCoor());
-                assertFalse(n.toString(), LatLon.ZERO.equals(n.getCoor()));
-                assertFalse(n.toString(), n.isOutSideWorld());
-                assertTrue(n.toString(), n.getCoor().isValid());
+                assertNotNull(n.getCoor(), n.toString());
+                assertNotEquals(LatLon.ZERO, n.getCoor(), n.toString());
+                assertFalse(n.isOutSideWorld(), n.toString());
+                assertTrue(Objects.requireNonNull(n.getCoor()).isValid(), n.toString());
             }
         }
     }
@@ -69,7 +73,7 @@ public class ShpReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket10214() throws Exception {
+    void testTicket10214() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(10214, "utf8_test.shp"));
         try (InputStream is = new FileInputStream(file)) {
             NonRegFunctionalTests.testTicket10214(ShpReader.parseDataSet(is, file, null, null));
@@ -81,7 +85,7 @@ public class ShpReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket8309() throws Exception {
+    void testTicket8309() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(8309, "new_ti_declarada.shp"));
         try (InputStream is = new FileInputStream(file)) {
             NonRegFunctionalTests.testGeneric("#8309", ShpReader.parseDataSet(is, file, null, null));
@@ -93,7 +97,7 @@ public class ShpReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket13843() throws Exception {
+    void testTicket13843() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(13843, "test.shp"));
         try (InputStream is = new FileInputStream(file)) {
             Collection<Way> ways = ShpReader.parseDataSet(is, file, null, null).getWays();
@@ -109,7 +113,7 @@ public class ShpReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket17529() throws Exception {
+    void testTicket17529() throws Exception {
         // There is only 1 feature in this data set.
         File file = new File(TestUtils.getRegressionDataFile(17529, "west_webmerc.shp"));
         try (InputStream is = new FileInputStream(file)) {

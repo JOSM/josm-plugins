@@ -7,30 +7,32 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map.Entry;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Unit tests of {@link ZipReader} class.
  */
-public class ZipReaderTest {
+@BasicPreferences
+class ZipReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection().noTimeout();
+    @RegisterExtension
+    public JOSMTestRules rules = new JOSMTestRules().projection().noTimeout();
 
     /**
      * Test for various zip files reading
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testReadZipFiles() throws Exception {
+    void testReadZipFiles() throws Exception {
         for (Path p : NonRegFunctionalTests.listDataFiles("zip")) {
             File zipfile = p.toFile();
             Logging.info("Testing reading file "+zipfile.getPath());

@@ -6,25 +6,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link MifReader} class.
  */
-public class MifReaderTest {
+@BasicPreferences
+class MifReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection();
+    @RegisterExtension
+    JOSMTestRules rules = new JOSMTestRules().projection();
 
     private static AbstractDataSetHandler newHandler(final String epsgCode) {
         AbstractDataSetHandler handler = new AbstractDataSetHandler() {

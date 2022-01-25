@@ -1,13 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.io.tabular;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.InputStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -17,17 +14,22 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests of {@link XlsReader} class.
  */
-public class XlsReaderTest {
+@BasicPreferences
+class XlsReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection();
+    @RegisterExtension
+    public JOSMTestRules rules = new JOSMTestRules().projection();
 
     private static AbstractDataSetHandler newHandler(final String epsgCode) {
         AbstractDataSetHandler handler = new AbstractDataSetHandler() {
@@ -59,7 +61,7 @@ public class XlsReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket15980() throws Exception {
+    void testTicket15980() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(15980, "qry_OSM_Import_Orte.xls")) {
             DataSet ds = XlsReader.parseDataSet(is, newHandler("EPSG:4326"), null);
             NonRegFunctionalTests.testGeneric("#15980", ds);
@@ -71,7 +73,7 @@ public class XlsReaderTest {
 
     private static void doTest15980(DataSet ds, String name, String addr, String fixme) {
         OsmPrimitive osm = ds.getPrimitives(o -> name.equals(o.get("name"))).iterator().next();
-        assertNotNull(name, osm);
+        assertNotNull(osm, name);
         assertEquals(addr, osm.get("addr:housenumber"));
         assertEquals(fixme, osm.get("fixme"));
     }

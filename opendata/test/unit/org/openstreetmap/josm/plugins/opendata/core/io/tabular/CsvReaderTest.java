@@ -3,8 +3,8 @@ package org.openstreetmap.josm.plugins.opendata.core.io.tabular;
 
 import java.io.InputStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -13,17 +13,19 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link CsvReader} class.
  */
-public class CsvReaderTest {
+@BasicPreferences
+class CsvReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection();
+    @RegisterExtension
+    JOSMTestRules rules = new JOSMTestRules().projection();
 
     private static AbstractDataSetHandler newHandler(final String epsgCode) {
         AbstractDataSetHandler handler = new AbstractDataSetHandler() {
@@ -55,7 +57,7 @@ public class CsvReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket18029() throws Exception {
+    void testTicket18029() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(18029, "gtfs_stops.broken.csv")) {
             NonRegFunctionalTests.testGeneric("#18029", CsvReader.parseDataSet(is, newHandler("EPSG:4326"), null));
         }
@@ -66,7 +68,7 @@ public class CsvReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket13508() throws Exception {
+    void testTicket13508() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(13508, "arrets-de-bus0.csv")) {
             NonRegFunctionalTests.testGeneric("#13508", CsvReader.parseDataSet(is, newHandler("EPSG:4326"), null));
         }
@@ -77,7 +79,7 @@ public class CsvReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket10214() throws Exception {
+    void testTicket10214() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(10214, "utf8_test.csv")) {
             NonRegFunctionalTests.testTicket10214(CsvReader.parseDataSet(is, newHandler("EPSG:4326"), null));
         }
@@ -88,7 +90,7 @@ public class CsvReaderTest {
      * @throws Exception if an error occurs during reading
      */
     @Test
-    public void testTicket8805() throws Exception {
+    void testTicket8805() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(8805, "XXX.csv")) {
             NonRegFunctionalTests.testGeneric("#8805", CsvReader.parseDataSet(is, newHandler("EPSG:4326"), null));
         }
