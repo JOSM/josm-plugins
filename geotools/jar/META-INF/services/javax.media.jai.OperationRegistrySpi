@@ -45,3 +45,4 @@
 # --- JAI-Image I/O operations registration ---
 #
 com.sun.media.jai.imageioimpl.ImageReadWriteSpi
+it.geosolutions.jaiext.crop.CropSpi

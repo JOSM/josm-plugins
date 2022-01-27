@@ -41,6 +41,7 @@ org.geotools.referencing.operation.projection.PolarStereographic$ProviderNorth
 org.geotools.referencing.operation.projection.PolarStereographic$ProviderSouth
 org.geotools.referencing.operation.projection.NewZealandMapGrid$Provider
 org.geotools.referencing.operation.projection.Krovak$Provider
+org.geotools.referencing.operation.projection.Krovak$NorthProvider
 org.geotools.referencing.operation.projection.CassiniSoldner$Provider
 org.geotools.referencing.operation.projection.EquidistantConic$Provider
 org.geotools.referencing.operation.projection.Polyconic$Provider
@@ -54,6 +55,7 @@ org.geotools.referencing.operation.projection.Mollweide$WagnerVProvider
 org.geotools.referencing.operation.projection.Gnomonic$Provider
 org.geotools.referencing.operation.projection.WorldVanDerGrintenI$Provider
 org.geotools.referencing.operation.projection.Sinusoidal$Provider
+org.geotools.referencing.operation.projection.Homolosine$Provider
 org.geotools.referencing.operation.projection.GeneralOblique$Provider
 org.geotools.referencing.operation.projection.MeteosatSG$Provider
 org.geotools.referencing.operation.projection.GeostationarySatellite$Provider
@@ -63,3 +65,4 @@ org.geotools.referencing.operation.projection.CylindricalEqualArea$Provider
 org.geotools.referencing.operation.projection.CylindricalEqualArea$BehrmannProvider
 org.geotools.referencing.operation.projection.CylindricalEqualArea$LambertCylindricalEqualAreaProvider
 org.geotools.referencing.operation.projection.EqualArea$Provider
+

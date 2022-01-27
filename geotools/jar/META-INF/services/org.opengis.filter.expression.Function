@@ -1,6 +1,7 @@
 org.geotools.coverage.util.FilterFunction_isCoverage
 org.geotools.filter.AreaFunction
 org.geotools.filter.LengthFunction
+org.geotools.filter.function.ArrayFunction
 org.geotools.filter.function.AttributeCountFunction
 org.geotools.filter.function.CategorizeFunction
 org.geotools.filter.function.ClassifyFunction
@@ -20,6 +21,7 @@ org.geotools.filter.function.Collection_SumFunction
 org.geotools.filter.function.Collection_UniqueFunction
 org.geotools.filter.function.EnvFunction
 org.geotools.filter.function.StringTemplateFunction
+org.geotools.filter.function.InArrayFunction
 org.geotools.filter.function.FilterFunction_contains
 org.geotools.filter.function.FilterFunction_isEmpty
 org.geotools.filter.function.FilterFunction_parseDouble
@@ -140,6 +142,7 @@ org.geotools.filter.function.FilterFunction_disjoint3D
 org.geotools.filter.function.GeometryFunction
 org.geotools.filter.function.IDFunction
 org.geotools.filter.function.InterpolateFunction
+org.geotools.filter.function.MapGetFunction
 org.geotools.filter.function.RecodeFunction
 org.geotools.filter.function.math.FilterFunction_IEEEremainder
 org.geotools.filter.function.math.FilterFunction_abs
@@ -198,5 +201,8 @@ org.geotools.filter.function.color.GrayscaleFunction
 org.geotools.filter.function.color.ConstrastFunction
 org.geotools.filter.function.BoundedByFunction
 org.geotools.filter.function.DateDifferenceFunction
-# Disabled for JOSM as it requires com.fasterxml.jackson.core.JsonFactory
-#org.geotools.filter.function.JsonPointerFunction
+org.geotools.filter.function.JsonPointerFunction
+org.geotools.filter.function.AndFunction
+org.geotools.filter.function.OrFunction
+org.geotools.filter.function.NowFunction
+org.geotools.filter.function.BandsFunction

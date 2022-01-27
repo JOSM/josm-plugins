@@ -3,4 +3,5 @@ README
 This plugin provides parts of the GeoTools library for JOSM plugins.
     * Licensed under GPL v3 (see LICENSE)
 
-The current embedded version of GeoTools is 19.2.
+The current embedded version of GeoTools is 26.2.
+
