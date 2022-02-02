@@ -1,4 +1,6 @@
-it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi#
+it.geosolutions.imageioimpl.plugins.cog.CogImageReaderSpi
+it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi
+#
 # $RCSfile: javax.imageio.spi.ImageReaderSpi,v $
 #
 # 

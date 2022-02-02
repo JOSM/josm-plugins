@@ -1,6 +1,8 @@
+it.geosolutions.imageioimpl.plugins.cog.CogImageInputStreamSpi
 it.geosolutions.imageio.stream.input.spi.FileImageInputStreamExtImplSpi
 it.geosolutions.imageio.stream.input.spi.URLImageInputStreamSpi
-it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi#
+it.geosolutions.imageio.stream.input.spi.StringImageInputStreamSpi
+#
 # $RCSfile: javax.imageio.spi.ImageInputStreamSpi,v $
 #
 # 
