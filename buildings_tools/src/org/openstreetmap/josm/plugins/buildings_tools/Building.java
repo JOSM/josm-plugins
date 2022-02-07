@@ -209,16 +209,22 @@ class Building {
     }
 
     public void paint(Graphics2D g, MapView mv) {
-        if (len == 0)
+        // Make a local copy to avoid other threads resetting what we are drawing.
+        // See JOSM #21833 for at least one instance where _something_ happens to cause
+        // an NPE here.
+        final EastNorth[] temporaryEnArray = Arrays.copyOf(en, en.length);
+        if (len == 0 || temporaryEnArray[0] == null || temporaryEnArray[1] == null) {
             return;
+        }
         GeneralPath b = new GeneralPath();
-        Point pp1 = mv.getPoint(eastNorth2latlon(en[0]));
-        Point pp2 = mv.getPoint(eastNorth2latlon(en[1]));
+        Point pp1 = mv.getPoint(eastNorth2latlon(temporaryEnArray[0]));
+        Point pp2 = mv.getPoint(eastNorth2latlon(temporaryEnArray[1]));
         b.moveTo(pp1.x, pp1.y);
         b.lineTo(pp2.x, pp2.y);
-        if (ToolSettings.Shape.RECTANGLE == ToolSettings.getShape()) {
-            Point pp3 = mv.getPoint(eastNorth2latlon(en[2]));
-            Point pp4 = mv.getPoint(eastNorth2latlon(en[3]));
+        if (ToolSettings.Shape.RECTANGLE == ToolSettings.getShape()
+                && temporaryEnArray[2] != null && temporaryEnArray[3] != null) {
+            Point pp3 = mv.getPoint(eastNorth2latlon(temporaryEnArray[2]));
+            Point pp4 = mv.getPoint(eastNorth2latlon(temporaryEnArray[3]));
             b.lineTo(pp3.x, pp3.y);
             b.lineTo(pp4.x, pp4.y);
         }
