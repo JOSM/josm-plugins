@@ -22,7 +22,7 @@ class KmlReaderTest {
     /**
      * Setup test.
      */
-    RegisterExtension
+    @RegisterExtension
     JOSMTestRules rules = new JOSMTestRules().projection();
 
     /**
