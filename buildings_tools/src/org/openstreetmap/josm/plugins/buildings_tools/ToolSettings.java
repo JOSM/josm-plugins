@@ -30,7 +30,6 @@ public final class ToolSettings {
     private static double lenstep;
     private static boolean useAddr;
     private static final Map<String, String> TAGS = new HashMap<>();
-    private static boolean autoSelect;
 
     public static Shape getShape() {
         loadShape();
@@ -119,11 +118,19 @@ public final class ToolSettings {
     }
 
     public static boolean isAutoSelect() {
-        return autoSelect;
+        return Config.getPref().getBoolean("buildings_tools.autoselect", false);
     }
 
     public static void setAutoSelect(boolean autoSelect) {
-        ToolSettings.autoSelect = autoSelect;
+        Config.getPref().putBoolean("buildings_tools.autoselect", autoSelect);
+    }
+
+    public static boolean isAutoSelectReplaceSelection() {
+        return Config.getPref().getBoolean("buildings_tools.autoselect_replace_selection", false);
+    }
+
+    public static void setAutoSelectReplaceSelection(boolean autoSelectReplace) {
+        Config.getPref().putBoolean("buildings_tools.autoselect_replace_selection", autoSelectReplace);
     }
 
     public static boolean isNoClickAndDrag() {

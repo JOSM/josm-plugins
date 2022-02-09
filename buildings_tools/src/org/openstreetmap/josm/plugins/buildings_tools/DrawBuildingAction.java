@@ -350,7 +350,8 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
                 if (ToolSettings.isUsingAddr())
                     showAddrDialog(w);
                 if (ToolSettings.isAutoSelect()
-                        && (getLayerManager().getEditDataSet().getSelected().isEmpty() || shift)) {
+                        && (getLayerManager().getEditDataSet().getSelected().isEmpty() || shift ||
+                            ToolSettings.isAutoSelectReplaceSelection())) {
                     getLayerManager().getEditDataSet().setSelected(w);
                 }
             }

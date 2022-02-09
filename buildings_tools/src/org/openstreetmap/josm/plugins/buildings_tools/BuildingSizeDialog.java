@@ -21,6 +21,7 @@ public class BuildingSizeDialog extends MyDialog {
     private final JFormattedTextField tlenstep = new JFormattedTextField(NumberFormat.getInstance());
     private final JCheckBox caddr = new JCheckBox(tr("Use Address dialog"));
     private final JCheckBox cAutoSelect = new JCheckBox(tr("Auto-select building"));
+    private final JCheckBox cAutoSelectReplaceSelection = new JCheckBox(tr("Auto-select replaces existing selection"));
     private final JCheckBox cAddrNode = new JCheckBox(tr("Use address nodes under buildings"));
     private final JRadioButton circleRadio = new JRadioButton(tr("Circle"));
     private final JRadioButton rectangleRadio = new JRadioButton(tr("Rectangle"));
@@ -41,12 +42,14 @@ public class BuildingSizeDialog extends MyDialog {
         addLabelled(tr("Length step:"), tlenstep);
         panel.add(caddr, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(cAutoSelect, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(cAutoSelectReplaceSelection, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(cAddrNode, GBC.eol().fill(GBC.HORIZONTAL));
 
         twidth.setValue(ToolSettings.getWidth());
         tlenstep.setValue(ToolSettings.getLenStep());
         caddr.setSelected(ToolSettings.isUsingAddr());
         cAutoSelect.setSelected(ToolSettings.isAutoSelect());
+        cAutoSelectReplaceSelection.setSelected(ToolSettings.isAutoSelectReplaceSelection());
         cAddrNode.setSelected(ToolSettings.PROP_USE_ADDR_NODE.get());
 
         JButton bAdv = new JButton(tr("Advanced..."));
@@ -94,6 +97,7 @@ public class BuildingSizeDialog extends MyDialog {
         ToolSettings.setSizes(width(), lenstep());
         ToolSettings.setAddrDialog(useAddr());
         ToolSettings.setAutoSelect(cAutoSelect.isSelected());
+        ToolSettings.setAutoSelectReplaceSelection(cAutoSelectReplaceSelection.isSelected());
         ToolSettings.PROP_USE_ADDR_NODE.put(cAddrNode.isSelected());
     }
 }
