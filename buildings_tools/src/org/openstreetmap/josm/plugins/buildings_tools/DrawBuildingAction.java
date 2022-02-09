@@ -54,7 +54,6 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
-    private Cursor currCursor;
     private Cursor customCursor;
 
     private Mode mode = Mode.None;
@@ -80,7 +79,6 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
                 // the actual cursor is drawn in enterMode()
                 ImageProvider.getCursor("crosshair", null));
 
-        currCursor = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
     }
@@ -104,21 +102,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
      * @param c One of the available cursors
      */
     private void setCursor(final Cursor c) {
-        if (currCursor.equals(c))
-            return;
-        try {
-            // We invoke this to prevent strange things from happening
-            EventQueue.invokeLater(() -> {
-                MapFrame map = MainApplication.getMap();
-                // Don't change cursor when mode has changed already
-                if (map == null || !(map.mapMode instanceof DrawBuildingAction))
-                    return;
-                map.mapView.setCursor(c);
-            });
-            currCursor = c;
-        } catch (Exception e) {
-            Logging.error(e);
-        }
+        MainApplication.getMap().mapView.setNewCursor(c, this);
     }
 
     private void showAddrDialog(Way w) {
