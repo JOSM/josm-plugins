@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.Utils;
 public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
 
     private static final Map<Duration, HttpClient> clientForConnectTimeout = new ConcurrentHashMap<>();
+    private static final String USER_AGENT_STRING = "User-Agent";
     private HttpRequest request;
     private HttpResponse<InputStream> response;
 
@@ -56,13 +57,14 @@ public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
 
     HttpRequest createRequest() throws IOException {
         HttpRequest.Builder requestBuilder;
+        Map<String, String> headers = getHeaders();
         try {
             requestBuilder = HttpRequest.newBuilder()
                       .uri(getURL().toURI())
                       .method(getRequestMethod(), hasRequestBody()
                               ? BodyPublishers.ofByteArray(getRequestBody())
                               : BodyPublishers.noBody())
-                      .header("User-Agent", Version.getInstance().getFullAgentString());
+                      .header(USER_AGENT_STRING, headers.getOrDefault(USER_AGENT_STRING, Version.getInstance().getFullAgentString()));
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
@@ -77,8 +79,8 @@ public final class Http2Client extends org.openstreetmap.josm.tools.HttpClient {
         if (!isUseCache()) {
             requestBuilder.header("Cache-Control", "no-cache");
         }
-        for (Map.Entry<String, String> header : getHeaders().entrySet()) {
-            if (header.getValue() != null) {
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            if (header.getValue() != null && !USER_AGENT_STRING.equals(header.getKey())) {
                 try {
                     requestBuilder.header(header.getKey(), header.getValue());
                 } catch (IllegalArgumentException e) {
