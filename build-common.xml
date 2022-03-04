@@ -428,7 +428,7 @@
                 <os family="mac"/>
             </and>
         </condition>
-        <condition property="josm.plugins.dir" value="${user.home}/.josm/plugins">
+        <condition property="josm.plugins.dir" value="${user.home}/.local/share/JOSM/plugins">
             <and>
                 <not><os family="windows"/></not>
                 <not><os family="mac"/></not>
