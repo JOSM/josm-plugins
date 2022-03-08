@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+** Usage
+** =====
+** Call "ant help" to get possible build targets.
+**
+-->
+<project xmlns:if="ant:if" xmlns:unless="ant:unless" name="lwjgl" default="dist" basedir=".">
+  <!-- enter the SVN commit message -->
+  <property name="commit.message" value="Commit message"/>
+  <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+  <property name="plugin.main.version" value="10580"/>
+  <property name="plugin.author" value="Taylor Smock"/>
+  <property name="plugin.class" value="org.openstreetmap.josm.plugins.lwjgl.LWJGLPlugin"/>
+  <property name="plugin.description" value="Provides the common LWJGL interfaces for other plugins"/>
+  <property name="plugin.canloadatruntime" value="true"/>
+  <property name="plugin.requires" value="lwjgl-natives"/>
+  <!--<property name="plugin.icon" value="..."/>-->
+  <!--<property name="plugin.link" value="..."/>-->
+
+  <property name="skip-javadoc" value="true"/>
+
+  <property name="plugin.jar" location="${plugin.dist.dir}/${ant.project.name}-windows.jar" if:set="isWindows"/>
+  <property name="plugin.jar" location="${plugin.dist.dir}/${ant.project.name}-osx.jar" if:set="isMac"/>
+  <property name="plugin.jar" location="${plugin.dist.dir}/${ant.project.name}-unixoid.jar" if:set="isUnix"/>
+  <!-- ** include targets that all plugins have in common ** -->
+  <property name="plugin.test.dir" location="src/test/java"/>
+  <property name="plugin.src.dir" location="src/main/java"/>
+  <property name="plugin.resources.dir" location="src/main/resources"/>
+  <import file="../build-common.xml"/>
+  <!-- include fetch_dependencies task -->
+  <target name="pre-compile" depends="fetch_dependencies"/>
+  <!-- Exists to avoid ant failure -->
+  <target name="pre-javadoc">
+    <mkdir dir="${plugin.doc.dir}"/>
+  </target>
+
+  <macrodef name="build-native-manifest">
+    <attribute name="manifest"/>
+    <attribute name="platform"/>
+    <sequential>
+      <copy file="MANIFEST" tofile="@{manifest}"/>
+      <manifest file="@{manifest}" mode="update">
+        <attribute name="Plugin-Platform" value="@{platform}"/>
+        <attribute name="Plugin-Provides" value="lwjgl-natives"/>
+        <attribute name="Plugin-Description" value="Provides LWJGL natives for @{platform}"/>
+        <attribute name="Plugin-Class" value="org.openstreetmap.josm.plugins.lwjgl.LWJGLNativesPlugin"/>
+        <attribute name="Plugin-Requires" value=""/>
+      </manifest>
+    </sequential>
+  </macrodef>
+
+  <target name="additional-manifest">
+    <build-native-manifest platform="Windows" manifest="${manifest.windows}"/>
+    <build-native-manifest platform="Unixoid" manifest="${manifest.unixoid}"/>
+    <build-native-manifest platform="Osx" manifest="${manifest.osx}"/>
+  </target>
+
+  <macrodef name="build-native-jar">
+    <attribute name="jar"/>
+    <attribute name="manifest"/>
+    <attribute name="qualifier"/>
+    <sequential>
+      <echo>Building @{qualifier} jar...</echo>
+      <local name="unix"/>
+      <local name="mac"/>
+      <local name="windows"/>
+      <condition property="unix"><equals arg1="@{qualifier}" arg2="linux"/></condition>
+      <condition property="mac"><equals arg1="@{qualifier}" arg2="mac"/></condition>
+      <condition property="windows"><equals arg1="@{qualifier}" arg2="win"/></condition>
+      <jar destfile="@{jar}" manifest="@{manifest}" manifestencoding="UTF-8" level="9" index="true">
+        <fileset dir="${plugin.build.dir}">
+          <include name="**/*Natives*.class"/>
+        </fileset>
+        <restrict>
+            <not><or>
+                <name name="META-INF/maven/*"/>
+                <name name="META-INF/DEPENDENCIES"/>
+                <name name="META-INF/*.RSA"/>
+                <name name="META-INF/*.SF"/>
+                <name name="META-INF/INDEX.LIST"/>
+                <name name="META-INF/versions/9/module-info.class"/>
+                <name name="module-info.class"/>
+            </or></not>
+            <archives>
+                <zips>
+                    <fileset dir="${plugin.lib.dir}" includes="*-natives-linux*.jar" excludes="*-sources.jar, *-javadoc.jar,*-natives-mac*.jar, *-natives-windows*.jar" erroronmissingdir="no" if:set="unix"/>
+                    <fileset dir="${plugin.lib.dir}" includes="*-natives-mac*.jar" excludes="*-sources.jar, *-javadoc.jar, *-natives-linux*.jar, *-natives-windows*.jar" erroronmissingdir="no" if:set="mac"/>
+                    <fileset dir="${plugin.lib.dir}" includes="*-natives-windows*.jar" excludes="*-sources.jar, *-javadoc.jar, *-natives-linux*.jar, *-natives-mac*.jar" erroronmissingdir="no" if:set="windows"/>
+                </zips>
+            </archives>
+        </restrict>
+      </jar>
+      <delete dir="${plugin.lib.dir}/@{qualifier}" failonerror="false"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="build-common-jar">
+    <attribute name="qualifier" default="common"/>
+    <attribute name="manifest" default="${manifest}"/>
+    <attribute name="jar" default="${plugin.jar}"/>
+    <sequential>
+      <echo>Building lwjgl @{qualifier} jar...</echo>
+      <jar destfile="@{jar}" manifest="@{manifest}" manifestencoding="UTF-8" level="9" index="true">
+        <fileset dir="${plugin.build.dir}">
+          <exclude name="**/*Natives*"/>
+        </fileset>
+        <restrict>
+            <not><or>
+                <name name="META-INF/maven/*"/>
+                <name name="META-INF/DEPENDENCIES"/>
+                <name name="META-INF/*.RSA"/>
+                <name name="META-INF/*.SF"/>
+                <name name="META-INF/INDEX.LIST"/>
+                <name name="META-INF/versions/9/module-info.class"/>
+                <name name="module-info.class"/>
+            </or></not>
+            <archives>
+                <zips>
+                    <fileset dir="${plugin.lib.dir}" includes="*.jar" excludes="*-sources.jar, *-javadoc.jar, *-natives*.jar" erroronmissingdir="no"/>
+                </zips>
+            </archives>
+        </restrict>
+      </jar>
+      <delete dir="${plugin.lib.dir}/@{qualifier}" failonerror="false"/>
+    </sequential>
+  </macrodef>
+
+  <target name="build-jar">
+    <build-common-jar/>
+    <build-native-jar jar="${plugin.unixoid.jar}" manifest="${manifest.unixoid}" qualifier="linux"/>
+    <build-native-jar jar="${plugin.windows.jar}" manifest="${manifest.windows}" qualifier="win"/>
+    <build-native-jar jar="${plugin.osx.jar}" manifest="${manifest.osx}" qualifier="mac"/>
+  </target>
+</project>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<ivy-module xmlns:m="http://ant.apache.org/ivy/maven" version="2.0">
+  <info organisation="org.openstreetmap.josm.plugins" module="lwjgl" revision="1.0"/>
+  <dependencies>
+    <!-- The actual dependencies -->
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl" rev="${lwjgl.version}">
+      <artifact name="lwjgl" type="jar"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-assimp" rev="${lwjgl.version}">
+      <artifact name="lwjgl-assimp" type="jar"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl-assimp" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-egl" rev="${lwjgl.version}"/>
+    <dependency org="org.lwjgl" name="lwjgl-opencl" rev="${lwjgl.version}"/>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-opengl" rev="${lwjgl.version}">
+      <artifact name="lwjgl-opengl" type="jar"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl-opengl" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-opengles" rev="${lwjgl.version}">
+      <artifact name="lwjgl-opengles" type="jar"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl-opengles" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-par" rev="${lwjgl.version}">
+      <artifact name="lwjgl-par" type="jar"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl-par" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-stb" rev="${lwjgl.version}">
+      <artifact name="lwjgl-stb" type="jar"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-linux"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-linux-arm32"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-linux-arm64"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-macos-arm64"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-windows"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-windows-x86"/>
+      <artifact name="lwjgl-stb" type="jar" m:classifier="natives-windows-arm64"/>
+    </dependency>
+    <dependency org="org.lwjgl" conf="default->default" name="lwjgl-vulkan" rev="${lwjgl.version}">
+      <artifact name="lwjgl-vulkan" type="jar"/>
+      <!-- Only mac needs natives - it is for MoltenVK -->
+      <artifact name="lwjgl-vulkan" type="jar" m:classifier="natives-macos"/>
+      <artifact name="lwjgl-vulkan" type="jar" m:classifier="natives-macos-arm64"/>
+    </dependency>
+    <dependency org="org.joml" conf="default->default" name="joml" rev="${joml.version}"/>
+    <dependency org="org.lwjglx" conf="default->default" name="lwjgl3-awt" rev="${lwjgl3-awt.version}"/>
+  </dependencies>
+</ivy-module>
