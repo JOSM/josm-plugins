@@ -48,6 +48,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class DrawBuildingAction extends MapMode implements MapViewPaintable, DataSelectionListener,
         KeyPressReleaseListener, ModifierExListener {
+    // We need to avoid opening many file descriptors on Linux under Wayland -- see JOSM #21929. This will probably also
+    // improve performance, since we aren't creating cursors all the time.
+    private static final Cursor CURSOR_SILO = ImageProvider.getCursor("crosshair", "silo");
+    private static final Cursor CURSOR_BUILDING = ImageProvider.getCursor("crosshair", "building");
+
     private enum Mode {
         None, Drawing, DrawingWidth, DrawingAngFix
     }
@@ -86,9 +91,9 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     private static Cursor getCursor() {
         try {
             if (ToolSettings.Shape.CIRCLE == ToolSettings.getShape()) {
-                return ImageProvider.getCursor("crosshair", "silo");
+                return CURSOR_SILO;
             } else {
-                return ImageProvider.getCursor("crosshair", "building");
+                return CURSOR_BUILDING;
             }
         } catch (Exception e) {
             Logging.error(e);
