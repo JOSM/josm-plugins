@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.plugins.editgpx.data;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class EditGpxWayPoint implements Comparable<EditGpxWayPoint> {
 
     public WayPoint createWayPoint() {
         WayPoint result = new WayPoint(getCoor());
-        result.setTime((long) time);
+        result.setInstant(Instant.ofEpochSecond((long) time));
         result.attr = attributes;
         return result;
     }
