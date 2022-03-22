@@ -2,32 +2,25 @@ package net.simon04.comfort0.level0l.parsergen;
 
 import static org.CustomMatchers.hasSize;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.StringReader;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class Level0LParserTest {
-
-    /**
-     * Setup rule
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class Level0LParserTest {
     @Test
-    public void testNode() throws Exception {
+    void testNode() throws Exception {
         final String level0l = "" +
                 "node 298884272: 54.0901447, 12.2516513\n" +
                 "  name = Neu Broderstorf\n" +
@@ -42,7 +35,7 @@ public class Level0LParserTest {
     }
 
     @Test
-    public void testWay() throws Exception {
+    void testWay() throws Exception {
         final String level0l = "" +
                 "way 26659127\n" +
                 "  nd 292403538\n" +
@@ -62,7 +55,7 @@ public class Level0LParserTest {
     }
 
     @Test
-    public void testRelation() throws Exception {
+    void testRelation() throws Exception {
         final String level0l = "" +
                 "relation 56688 # member types: nd, wy, rel; roles are put after ids\n" +
                 "  nd 294942404\n" +
@@ -89,7 +82,7 @@ public class Level0LParserTest {
     }
 
     @Test
-    public void testExampleFromDocs() throws Exception {
+    void testExampleFromDocs() throws Exception {
         // https://wiki.openstreetmap.org/wiki/Level0L#Examples
         final String level0l = "" +
                 "node 298884269: 54.0901746, 12.2482632 # made by user SvenHRO (46882) in changeset 676636 on 2008-09-21T21:37:45Z\n" +

@@ -10,8 +10,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.StringReader;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.PseudoCommand;
@@ -27,15 +27,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import net.simon04.comfort0.level0l.parsergen.Level0LParser;
 import net.simon04.comfort0.level0l.parsergen.ParseException;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class EditLevel0LActionTest {
+@BasicPreferences
+class EditLevel0LActionTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+    JOSMTestRules test = new JOSMTestRules().projection();
 
     private SequenceCommand buildChangeCommands(DataSet dataSet) throws ParseException {
         final String level0l = "node 1831881213: 54.0900666, 12.2539381 #Neu Broderstorf (54.0900666, 12.2539381)\n" +
@@ -54,7 +56,7 @@ public class EditLevel0LActionTest {
     }
 
     @Test
-    public void test() throws Exception {
+    void test() throws Exception {
         final Node node = new Node(1831881213, 42);
         node.setCoor(new LatLon(54.0900666, 12.2539381));
         final DataSet dataSet = new DataSet(node);

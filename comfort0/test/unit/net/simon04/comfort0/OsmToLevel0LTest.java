@@ -1,37 +1,29 @@
 package net.simon04.comfort0;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.InputStream;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.data.Preferences;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class OsmToLevel0LTest {
+import java.io.InputStream;
 
-    /**
-     * Setup rule
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-    @Before
-    public void setUp() throws Exception {
-        Preferences.main().putBoolean("osm-primitives.showcoor", true);
+@BasicPreferences
+class OsmToLevel0LTest {
+
+    @BeforeEach
+    public void setUp() {
+        Config.getPref().putBoolean("osm-primitives.showcoor", true);
     }
 
     @Test
-    public void testNode() throws Exception {
+    void testNode() {
         final Node node = new Node(1234L, 42);
         node.setCoor(new LatLon(123.45, 67.89));
         node.put("name", "Comfort0");
@@ -43,7 +35,7 @@ public class OsmToLevel0LTest {
     }
 
     @Test
-    public void testLargerExample() throws Exception {
+    void testLargerExample() throws Exception {
         // from https://wiki.openstreetmap.org/wiki/OSM_XML#OSM_XML_file_format
         // compare to https://wiki.openstreetmap.org/wiki/Level0L#Examples
         try (InputStream in = getClass().getClassLoader().getResource("example.osm").openStream()) {
