@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,7 +56,6 @@ import org.openstreetmap.josm.tools.Utils;
  */
 class GeotaggingAction extends AbstractAction implements LayerAction {
 
-    final static boolean debug = false;
     final static String KEEP_BACKUP = "plugins.photo_geotagging.keep_backup";
     final static String CHANGE_MTIME = "plugins.photo_geotagging.change-mtime";
     final static String MTIME_MODE = "plugins.photo_geotagging.mtime-mode";
@@ -168,9 +168,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         int result = new ExtendedDialog(
                 MainApplication.getMainFrame(),
-                tr("Photo Geotagging Plugin"),
-                new String[] {tr("OK"), tr("Cancel")})
-            .setButtonIcons(new String[] {"ok", "cancel"})
+                tr("Photo Geotagging Plugin"), tr("OK"), tr("Cancel"))
+            .setButtonIcons("ok", "cancel")
             .setContent(cont)
             .setCancelButton(2)
             .setDefaultButton(1)
@@ -284,9 +283,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                 if (canceled)
                     return exifFailedEntries;
                 ImageEntry e = entries.get(currentIndex);
-                if (debug) {
-                    System.err.print("i:" + currentIndex + " " + e.getFile().getName() + " ");
-                }
+                Logging.trace("photo_geotagging: GeotaggingAction: i: {0} {1} ", currentIndex, e.getFile().getName());
                 try {
                     processEntry(e, lossy);
                 } catch (final IOException ioe) {
@@ -335,9 +332,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
                 progressMonitor.subTask(tr("Writing position information to image files... Estimated time left: {0}", timeLeft));
 
-                if (debug) {
-                    System.err.println("finished " + e.getFile());
-                }
+                Logging.trace("photo_geotagging: GeotaggingAction: finished {0}", e.getFile());
                 currentIndex++;
             }
             return exifFailedEntries;
@@ -352,35 +347,31 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                 testMTimeReadAndWrite(e.getFile());
             }
 
-            Long mTime = null;
+            Instant mTime = null;
             if (mTimeMode == MTIME_MODE_GPS) {
                 // check GPS time fields, do nothing if all fails
-                Date time;
                 if (e.hasGpsTime()) {
-                    time = e.getGpsTime();
-                } else {
-                    time = e.getExifGpsTime();
-                }
-                if (time != null) {
-                    mTime = time.getTime();
+                    mTime = e.getGpsInstant();
+                } else if (e.hasExifGpsTime()) {
+                    mTime = e.getExifGpsInstant();
                 }
             }
             if ( mTimeMode == MTIME_MODE_PREVIOUS_VALUE
                  // this is also the fallback if one of the other
                  // modes failed to determine the modification time
                  || (mTimeMode != 0 && mTime == null)) {
-                mTime = e.getFile().lastModified();
-                if (mTime.equals(0L))
+                mTime = Instant.ofEpochMilli(e.getFile().lastModified());
+                if (Instant.EPOCH.equals(mTime))
                     throw new IOException(tr("Could not read mtime."));
             }
 
             chooseFiles(e.getFile());
             if (canceled) return;
             ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e.getPos().lat(), e.getPos().lon(),
-                    e.getGpsTime(), e.getSpeed(), e.getElevation(), e.getExifImgDir(), lossy);
+                    e.getGpsInstant(), e.getSpeed(), e.getElevation(), e.getExifImgDir(), lossy);
 
             if (mTime != null) {
-                if (!fileTo.setLastModified(mTime))
+                if (!fileTo.setLastModified(mTime.toEpochMilli()))
                     throw new IOException(tr("Could not write mtime."));
             }
 
@@ -389,9 +380,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         }
 
         private void chooseFiles(File file) throws IOException {
-            if (debug) {
-                System.err.println("f: "+file.getAbsolutePath());
-            }
+            Logging.trace("photo_geotagging: GeotaggingAction: f: "+file.getAbsolutePath());
 
             if (!keep_backup) {
                 chooseFilesNoBackup(file);
@@ -431,9 +420,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             do {
                 fileTmp = new File(file.getParentFile(), "img" + UUID.randomUUID() + ".tmp");
             } while (fileTmp.exists());
-            if (debug) {
-                System.err.println("TMP: "+fileTmp.getAbsolutePath());
-            }
+            Logging.trace("photo_geotagging: GeotaggingAction: TMP: {0}", fileTmp.getAbsolutePath());
             try {
                 Files.move(file.toPath(), fileTmp.toPath());
             } catch (IOException e) {
@@ -454,9 +441,9 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                     l.setIcon(UIManager.getIcon("OptionPane.warningIcon"));
                     int override = new ExtendedDialog(
                             progressMonitor.getWindowParent(),
-                            tr("Override old backup files?"),
-                            new String[] {tr("Cancel"), tr("Keep old backups and continue"), tr("Override")})
-                        .setButtonIcons(new String[] {"cancel", "ok", "dialogs/delete"})
+                            tr("Override old backup files?"), tr("Cancel"), tr("Keep old backups and continue"),
+                            tr("Override"))
+                        .setButtonIcons("cancel", "ok", "dialogs/delete")
                         .setContent(l)
                         .setCancelButton(1)
                         .setDefaultButton(2)
@@ -471,7 +458,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                     }
                 });
             } catch (Exception e) {
-                System.err.println(e);
+                Logging.error(e);
                 canceled = true;
             }
         }

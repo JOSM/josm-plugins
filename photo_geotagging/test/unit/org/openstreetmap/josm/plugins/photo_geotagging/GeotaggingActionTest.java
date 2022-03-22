@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.photo_geotagging;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,16 +8,19 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.plugins.photo_geotagging.GeotaggingAction.GeoTaggingRunnable;
 
-public class GeotaggingActionTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class GeotaggingActionTest {
 
     @Test
-    public void testProcessEntries() throws IOException {
+    void testProcessEntries() throws IOException {
         File original = new File(TestUtils.getTestDataRoot(), "_DSC1234.jpg");
         assertTrue(original.exists());
 

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,7 +43,7 @@ public class ExifGPSTagger {
      * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
      */
-    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir, boolean lossy) throws IOException {
+    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed, Double ele, Double imgDir, boolean lossy) throws IOException {
         try {
             setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir, lossy);
         } catch (ImageReadException ire) {
@@ -52,7 +53,7 @@ public class ExifGPSTagger {
         }
     }
 
-    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Date gpsTime, Double speed, Double ele, Double imgDir, boolean lossy)
+    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed, Double ele, Double imgDir, boolean lossy)
             throws IOException, ImageReadException, ImageWriteException {
 
         TiffOutputSet outputSet = null;
@@ -77,7 +78,7 @@ public class ExifGPSTagger {
 
         if (gpsTime != null) {
             Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-            calendar.setTime(gpsTime);
+            calendar.setTimeInMillis(gpsTime.toEpochMilli());
 
             final int year =   calendar.get(Calendar.YEAR);
             final int month =  calendar.get(Calendar.MONTH) + 1;
