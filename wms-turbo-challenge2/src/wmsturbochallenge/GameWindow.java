@@ -29,7 +29,7 @@ import javax.swing.Timer;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -132,8 +132,7 @@ public class GameWindow extends JFrame implements ActionListener {
                 return;
 
             GpxData data = new GpxData();
-            data.tracks.add(new ImmutableGpxTrack(trackSegs,
-                    new HashMap<String, Object>()));
+            data.tracks.add(new GpxTrack(trackSegs, new HashMap<>()));
 
             ground_view.parent.getLayerManager().addLayer(
                     new GpxLayer(data, "Car GPS trace"));
