@@ -151,7 +151,7 @@ public class LengthAction extends MapMode implements MapViewPaintable, AWTEventL
         parentPlugin.loadParameter(String.valueOf(startCoor.greatCircleDistance(endCoor)), true);
         drawStartPos = null;
         drawing = false;
-        exitMode();
+        // exitMode is called when we change to a different action. Do not call it here.
     }
 
     @Override

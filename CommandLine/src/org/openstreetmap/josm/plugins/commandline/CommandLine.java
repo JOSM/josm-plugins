@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -46,11 +45,13 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.io.GpxWriter;
 import org.openstreetmap.josm.io.OsmWriter;
@@ -496,11 +497,16 @@ public class CommandLine extends Plugin {
         try {
             tp.process = builder.start();
         } catch (final IOException e) {
+            final String errorText;
             synchronized (debugstr) {
-                Logging.error(
-                        tr("Error executing the script:") + ' ' +
-                        debugstr.toString() + e.getMessage() + '\n' + Arrays.toString(e.getStackTrace()));
+                errorText = tr("Error executing the script:") + ' ' + debugstr + e.getMessage();
             }
+            Logging.error(errorText);
+            Logging.error(e);
+            GuiHelper.runInEDT(() ->
+                new Notification(errorText).setIcon(JOptionPane.ERROR_MESSAGE).setDuration(Notification.TIME_LONG).show()
+            );
+            setMode(Mode.IDLE);
             return;
         }
         tp.running = true;
