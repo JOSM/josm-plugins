@@ -263,7 +263,7 @@ public class Spline {
                 for (int i = 1; i < detail; i++) {
                     Node n = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(
                             cubicBezier(a, ca, cb, b, (double) i / detail)));
-                    if (n.getCoor().isOutSideWorld()) {
+                    if (n.isOutSideWorld()) {
                         JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Spline goes outside of the world."));
                         return;
                     }

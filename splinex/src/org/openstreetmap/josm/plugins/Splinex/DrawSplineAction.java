@@ -28,7 +28,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
-import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -263,7 +262,7 @@ public class DrawSplineAction extends MapMode implements MapViewPaintable, KeyPr
         if (clickPos != null && clickPos.distanceSq(e.getPoint()) < initialMoveThreshold)
             return;
         EastNorth en = MainApplication.getMap().mapView.getEastNorth(e.getX(), e.getY());
-        if (ProjectionRegistry.getProjection().eastNorth2latlon(en).isOutSideWorld())
+        if (new Node(en).isOutSideWorld())
             return;
         if (dragSpline) {
             if (mc == null) {
