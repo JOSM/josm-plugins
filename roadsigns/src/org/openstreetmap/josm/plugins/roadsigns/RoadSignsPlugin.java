@@ -198,7 +198,8 @@ public class RoadSignsPlugin extends Plugin {
             if (Config.getPref().getBoolean("plugin.roadsigns.use_default_icon_source", true)) {
                 customIconDirs.add("resource://images/");
             }
-            presetsData.add(new PresetMetaData("custom", tr("custom"), customFile, Utils.join(",", customIconDirs)));
+            presetsData.add(new PresetMetaData("custom", tr("custom"), customFile,
+                    String.join(",", customIconDirs)));
         } else {
             Config.getPref().put("plugin.roadsigns.sources.last", null);
         }
