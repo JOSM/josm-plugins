@@ -329,7 +329,7 @@ final class OsmToCmd {
 
             String time = atts.getValue("timestamp");
             if (time != null && time.length() != 0) {
-                current.setTimestamp(DateUtils.fromString(time));
+                current.setInstant(DateUtils.parseInstant(time));
             }
 
             String user = atts.getValue("user");
