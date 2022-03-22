@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
@@ -56,8 +56,7 @@ public class TangoGPS extends FileImporter {
 
         try (
             InputStream source = new FileInputStream(file);
-            BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8));
-         ) {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
             String line;
             while ((line = rd.readLine()) != null) {
                 failure++;
@@ -78,7 +77,7 @@ public class TangoGPS extends FileImporter {
             failure = failure - imported;
             if (imported > 0) {
                 GpxData data = new GpxData();
-                data.tracks.add(new ImmutableGpxTrack(Collections.singleton(currentTrackSeg), Collections.<String, Object>emptyMap()));
+                data.tracks.add(new GpxTrack(Collections.singleton(currentTrackSeg), Collections.emptyMap()));
                 data.recalculateBounds();
                 data.storageFile = file;
                 GpxLayer gpxLayer = new GpxLayer(data, file.getName());

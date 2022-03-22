@@ -17,7 +17,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
@@ -159,7 +159,7 @@ public class Tcx extends FileImporter {
                                     }
                                 }
                             }
-                            gpxData.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
+                            gpxData.tracks.add(new GpxTrack(currentTrack, Collections.emptyMap()));
                         }
                     }
                 }
@@ -186,7 +186,7 @@ public class Tcx extends FileImporter {
                             }
                         }
                     }
-                    gpxData.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
+                    gpxData.tracks.add(new GpxTrack(currentTrack, Collections.emptyMap()));
                 }
             }
         }
