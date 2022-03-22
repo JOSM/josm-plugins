@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -108,7 +109,7 @@ class InfoPanel extends JPanel {
             label1.setText(tr("No timestamp"));
             but2.setVisible(false);
         } else {
-            label1.setText(DateUtils.formatDateTime(wp.getDate(), DateFormat.DEFAULT, DateFormat.DEFAULT));
+            label1.setText(DateUtils.getDateTimeFormat(DateFormat.DEFAULT, DateFormat.DEFAULT).format(Date.from(wp.getInstant())));
             but2.setVisible(true);
         }
         if (vel > 0) {
