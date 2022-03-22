@@ -104,13 +104,15 @@ public class DownloadDataGui extends ExtendedDialog {
         }
     }
 
-    public ArrayList<UserTrack> getSelectedUserTracks() {
-        ArrayList<UserTrack> DataArray = model.getDataArrayList();
+    public List<UserTrack> getSelectedUserTracks() {
+        List<UserTrack> dataArray = model.getDataArrayList();
         int[] selected = tblSearchResults.getSelectedRows();
-        ArrayList<UserTrack> selectedTracks = new ArrayList<>(selected.length);
-        for (int i = 0; i < selected.length; i++) {
-            selectedTracks.add(DataArray.get(selected[i]));
+        List<UserTrack> selectedTracks = new ArrayList<>(selected.length);
+
+        for (int i : selected) {
+            selectedTracks.add(dataArray.get(i));
         }
+
         return selectedTracks;
     }
 
@@ -120,7 +122,7 @@ public class DownloadDataGui extends ExtendedDialog {
 
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
         protected void createColumns() {
-            TableColumn col = null;
+            TableColumn col;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();
 
             // column 0 - DateTime
@@ -206,7 +208,7 @@ public class DownloadDataGui extends ExtendedDialog {
                 break;
 
             case 3:
-                setText(sr.tags);
+                setText(String.join(";", sr.tags));
                 break;
 
             }

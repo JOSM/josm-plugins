@@ -4,8 +4,10 @@ package org.openstreetmap.josm.plugins.directdownload;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -19,11 +21,9 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public class DirectDownload extends Plugin {
-
-    private DownloadAction openaction;
-
     /**
      * Will be invoked by JOSM to bootstrap the plugin
      *
@@ -32,14 +32,14 @@ public class DirectDownload extends Plugin {
     public DirectDownload(PluginInformation info) {
         super(info);
 
-        openaction = new DownloadAction();
-        MainMenu.add(MainApplication.getMenu().gpsMenu, openaction);
+        MainMenu.add(MainApplication.getMenu().gpsMenu, new DownloadAction());
     }
 
     static class DownloadAction extends JosmAction {
         DownloadAction() {
-            super(tr("Download Track ..."), "DownloadAction",
-                    tr("Download GPX track from openstreetmap.org"), null, false);
+            super(tr("Download Track ..."), "DownloadAction", tr("Download GPX track from openstreetmap.org"),
+                    Shortcut.registerShortcut("directdownload:downloadgpxaction", tr("DirectDownload: Download GPX Track"),
+                            KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false);
         }
 
         @Override
@@ -47,7 +47,7 @@ public class DirectDownload extends Plugin {
             DownloadDataGui go = new DownloadDataGui();
             go.setVisible(true);
 
-            ArrayList<UserTrack> tracks = go.getSelectedUserTracks();
+            List<UserTrack> tracks = go.getSelectedUserTracks();
 
             if (!((go.getValue() == 1) && (tracks != null))) {
                 return;
@@ -83,7 +83,7 @@ public class DirectDownload extends Plugin {
 
                 if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
                     MarkerLayer ml = new MarkerLayer(data, tr("Markers from {0}", track.filename), null, gpxLayer);
-                    if (ml.data.size() > 0) {
+                    if (!ml.data.isEmpty()) {
                         MainApplication.getLayerManager().addLayer(ml);
                     }
                 }

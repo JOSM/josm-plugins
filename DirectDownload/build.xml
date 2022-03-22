@@ -12,6 +12,7 @@
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.directdownload.DirectDownload"/>
     <property name="plugin.description" value="Download your GPX tracks from openstreetmap.org"/>
     <property name="plugin.icon" value="images/DownloadAction.svg"/>
+    <property name="plugin.canloadatruntime" value="true"/>
     <!-- <property name="plugin.link" value="..."/>-->
     <!--<property name="plugin.early" value="..."/>-->
     <!--<property name="plugin.requires" value="..."/>-->

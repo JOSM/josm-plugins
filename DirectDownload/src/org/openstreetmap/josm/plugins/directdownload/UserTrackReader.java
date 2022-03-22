@@ -65,7 +65,7 @@ public class UserTrackReader extends OsmConnection {
         private String cdata = "";
 
         @Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
             if (qName.equals("gpx_file")) {
                 UserTrack track = new UserTrack();
 
@@ -79,18 +79,17 @@ public class UserTrackReader extends OsmConnection {
         }
 
         @Override
-        public void characters(char[] ch, int start, int length)
-                throws SAXException {
+        public void characters(char[] ch, int start, int length) {
             cdata += new String(ch, start, length);
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if (qName.equals("description")) {
                 data.getFirst().description = cdata;
             } else if (qName.equals("tag")) {
-                data.getFirst().tags = cdata;
-                cdata = new String();
+                data.getFirst().tags.add(cdata);
+                cdata = "";
             }
 
         }
