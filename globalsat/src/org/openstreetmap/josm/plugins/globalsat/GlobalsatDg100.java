@@ -22,9 +22,10 @@ import org.kaintoch.gps.globalsat.dg100.GpsRec;
 import org.kaintoch.gps.globalsat.dg100.Response;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
@@ -66,29 +67,29 @@ public class GlobalsatDg100 {
       , (byte) 0x01, (byte) 0x00, (byte) 0xBD, (byte) 0xB0, (byte) 0xB3
     };*/
     /** delete file: A0 A2 00 03 BA FF FF 02 B8 B0 B3 */
-    private static byte[] dg100CmdDelFile =
+    private static final byte[] dg100CmdDelFile =
     {(byte) 0xA0, (byte) 0xA2, (byte) 0x00, (byte) 0x03, (byte) 0xBA,
      (byte) 0xFF, (byte) 0xFF, (byte) 0x02, (byte) 0xB8, (byte) 0xB0, (byte) 0xB3
     };
     /** get file info: A0 A2 00 03 BB 00 00 00 BB B0 B3 */
-    private static byte[] dg100CmdGetFileInfo =
+    private static final byte[] dg100CmdGetFileInfo =
     {(byte) 0xA0, (byte) 0xA2, (byte) 0x00, (byte) 0x03, (byte) 0xBB,
      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xBB, (byte) 0xB0, (byte) 0xB3
     };
     /** get gps recs: A0 A2 00 03 B5 00 02 00 B7 B0 B3 */
-    private static byte[] dg100CmdGetGpsRecs =
+    private static final byte[] dg100CmdGetGpsRecs =
     {(byte) 0xA0, (byte) 0xA2, (byte) 0x00, (byte) 0x03, (byte) 0xB5,
      (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0xB7, (byte) 0xB0, (byte) 0xB3
     };
     /** read config: A0 A2 00 01 B7 00 B7 B0 B3 */
-    private static byte[] dg100CmdGetConfig =
+    private static final byte[] dg100CmdGetConfig =
     {(byte) 0xA0, (byte) 0xA2, (byte) 0x00, (byte) 0x01, (byte) 0xB7,
      (byte) 0x00, (byte) 0xB7, (byte) 0xB0, (byte) 0xB3 };
     /** set config: A0 A2 00 2A B8 jj kk ll ll ll ll mm nn nn nn nn
         aa aa aa aa bb bb bb bb cc cc cc cc 00 00 gg hh
         ii dd dd dd dd ee ee ee ee ff ff ff ff 01 xx xx
         B0 B3 */
-    private static byte[] dg100CmdSetConfig =
+    private static final byte[] dg100CmdSetConfig =
     {(byte) 0xA0, (byte) 0xA2, (byte) 0x00, (byte) 0x2A, (byte) 0xB8,
      (byte) 0x02,
      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -115,9 +116,9 @@ public class GlobalsatDg100 {
       , (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
       , (byte) 0x00, (byte) 0xC0, (byte) 0xB0, (byte) 0xB3};*/
 
-    private byte[] response = new byte[65536];
+    private final byte[] response = new byte[65536];
 
-    private CommPortIdentifier portIdentifier;
+    private final CommPortIdentifier portIdentifier;
     private SerialPort port = null;
 
     private boolean canceled = false;
@@ -165,7 +166,7 @@ public class GlobalsatDg100 {
                     last = r;
                     progressMonitor.worked(1);
                 }
-                result.tracks.add(new ImmutableGpxTrack(Collections.singleton(seg), Collections.<String, Object>emptyMap()));
+                result.tracks.add(new GpxTrack(Collections.singleton(seg), Collections.emptyMap()));
             }
             return result;
         } finally {
@@ -245,7 +246,7 @@ public class GlobalsatDg100 {
     }
 
     private Response<?> sendCmdDelFiles() throws IOException, UnsupportedCommOperationException {
-        System.out.println("deleting data...");
+        Logging.info("GlobalSat: GlobalsatDg100: deleting data...");
         int len = sendCmd(dg100CmdDelFile, response, -1);
         return Response.parseResponse(response, len);
     }
