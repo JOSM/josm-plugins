@@ -19,10 +19,10 @@
                                             log4j/build.xml
                                             apache-commons/build.xml
                                             apache-http/build.xml
-											austriaaddresshelper/build.xml"/>
+                                            Mapillary/build.xml
+                                            austriaaddresshelper/build.xml"/>
     <property name="javafx_plugins" value="javafx/build.xml
-											Mapillary/build.xml
-											MicrosoftStreetside/build.xml"/>
+                                           MicrosoftStreetside/build.xml"/>
     <macrodef name="iterate">
         <attribute name="target"/>
         <sequential>
