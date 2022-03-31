@@ -27,3 +27,10 @@ assuming you've customized the JOSM build process to include the `lwjgl` core mo
 ```
 Replace `${lwjgl.version}` with the version in ivy\_settings.xml. This is due to the javaagent requiring
 `org.lwjgl.system.Configuration` to be available immediately, which it is not until JOSM loads the `lwjgl` plugin.
+
+
+You will most likely encounter issues where the application fails due to
+`No OpenGL context has been made current through recognized API methods (glfwMakeContextCurrent).`
+
+See [LWJGLX debug #29](https://github.com/LWJGLX/debug/issues/29#issuecomment-985176717) for a workaround.
+It pretty much comes down to manually setting the context.
