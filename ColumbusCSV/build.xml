@@ -14,7 +14,6 @@
     <property name="plugin.icon" value="images/colcsvicon.png"/>
     
     <!-- Plugin version info -->
-    <property name="plugin.version" value="${version.entry.commit.revision}"/>
     <property name="plugin.stage" value="60"/>
     
     <!-- ** include targets that all plugins have in common ** -->
