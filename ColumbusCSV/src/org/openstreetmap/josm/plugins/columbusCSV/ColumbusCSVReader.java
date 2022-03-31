@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.Logging;
@@ -73,7 +72,7 @@ public class ColumbusCSVReader {
     private static final String FIX_TAG = "fix";
     private static final String TYPE_TAG = "columbus:type";
 
-    private static String[] EMPTY_LINE = new String[] {};
+    private static final String[] EMPTY_LINE = new String[] {};
     private static final String SEPS = ",";
     /* Lines to read before deciding on Columbus file yes/no */
     private static final int MAX_SCAN_LINES = 20;
@@ -164,7 +163,7 @@ public class ColumbusCSVReader {
                 } catch (Exception ex) {
                     br.close();
                     throw new IllegalDataException(tr("Error in line " + line
-                        + ": " + ex.toString()), ex);
+                        + ": " + ex), ex);
                 }
                 ++line;
             }
@@ -182,8 +181,8 @@ public class ColumbusCSVReader {
     
         // compose the track
         allTrackPts.add(trackPts);
-        GpxTrack trk = new ImmutableGpxTrack(allTrackPts,
-            Collections.<String, Object> emptyMap());
+        GpxTrack trk = new GpxTrack(allTrackPts,
+            Collections.emptyMap());
         gpxData.tracks.add(trk);
     
         assert gpxData.routes.size() == 1;
