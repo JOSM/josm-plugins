@@ -2,10 +2,10 @@
     <version-matchers usedefaults="true">
         <maven-tsnap-vm/>
     </version-matchers>
-    <settings defaultResolver="central"/>
+    <settings defaultResolver="josm-nexus"/>
     <resolvers>
+        <ibiblio name="josm-nexus" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" m2compatible="true" />
         <ibiblio name="central" m2compatible="true"/>
-        <ibiblio name="josm-nexus" root="https://josm.openstreetmap.de/nexus/content/repositories/releases/" m2compatible="true" />
     </resolvers>
     <modules>
         <module organisation="org.openstreetmap.jmapviewer" resolver="josm-nexus"/>
