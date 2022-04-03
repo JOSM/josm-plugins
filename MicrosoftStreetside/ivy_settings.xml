@@ -11,7 +11,7 @@
     </resolvers>
     <modules>
         <module organisation="org.openjfx" resolver="sonatype_snapshots" />
-        <module organisation="org.openstreetmap.jmapviewer" resolver="josm"/>
-        <module organisation="org.openstreetmap.josm" resolver="josm"/>
+        <module organisation="org.openstreetmap.jmapviewer" resolver="josm-nexus"/>
+        <module organisation="org.openstreetmap.josm" resolver="josm-nexus"/>
     </modules>
 </ivysettings>
