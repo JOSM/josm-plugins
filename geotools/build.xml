@@ -25,7 +25,8 @@
         <include name="ejml.jar"/>
         <include name="jaxb.jar"/>
         <include name="jts.jar"/>
-        <include name="jackson.jar"/>
+        <!-- jackson causes issues if it is on the compile-time path. Since we don't actually use jackson in our code, we can just not have it in the requires.jars array. -->
+        <!--<include name="jackson.jar"/>-->
     </fileset>
 
     <target name="merge-geotools-services" depends="fetch_dependencies">
