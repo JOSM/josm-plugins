@@ -42,7 +42,9 @@
         <exclude org="org.apache.commons" module="commons-text"/>
         <exclude org="org.brotli" module="dec"/>
         <exclude org="org.tukaani" module="xz"/>
-	<!-- from jaxb plugin -->
-	<exclude org="javax.activation" module="javax.activation-api"/>
+        <!-- from jaxb plugin -->
+        <exclude org="javax.activation" module="javax.activation-api"/>
+        <!-- from jackson plugin -->
+        <exclude org="com.fasterxml.jackson.core" module="jackson-core"/>
     </dependencies>
 </ivy-module>

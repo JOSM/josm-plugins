@@ -10,7 +10,7 @@
     <property name="plugin.description" value="Provides parts of the GeoTools library for other JOSM plugins. Not meant to be installed directly by users, but rather as a dependency for other plugins."/>
     <property name="plugin.icon" value="images/compass.png"/>
     <property name="plugin.canloadatruntime" value="true"/>
-    <property name="plugin.requires" value="ejml;apache-commons;jaxb;jts"/>
+    <property name="plugin.requires" value="apache-commons;ejml;jackson;jaxb;jts"/>
     <property name="plugin.stage" value="20"/>
 
     <!-- ** include targets that all plugins have in common ** -->
@@ -20,27 +20,28 @@
         <!-- include fetch_dependencies task -->
     </target>
 
-	<fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
+    <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
         <include name="apache-commons.jar"/>
         <include name="ejml.jar"/>
         <include name="jaxb.jar"/>
         <include name="jts.jar"/>
+        <include name="jackson.jar"/>
     </fileset>
 
     <target name="merge-geotools-services" depends="fetch_dependencies">
         <taskdef resource="org/pescuma/mergeservices/antlib.xml" classpath="tools/merge-services.jar" />
-    	<delete dir="jar/META-INF/services"/>
-    	<merge-services dest="jar">
-    	    <fileset dir="lib">
-    	        <include name="**/*.jar" />
-    	        <exclude name="**/*-javadoc.jar" />
-    	        <exclude name="**/*-source.jar" />
-    	    </fileset>
-    	</merge-services>
-	<echo>Check the updated files in jar/META-INF/services for lines where two
-	services got merged. Example:
-	org.geotools.coverage.util.FilterFunction_isCoverageorg.geotools.filter.AreaFunction
-	</echo>
+        <delete dir="jar/META-INF/services"/>
+        <merge-services dest="jar">
+            <fileset dir="lib">
+                <include name="**/*.jar" />
+                <exclude name="**/*-javadoc.jar" />
+                <exclude name="**/*-source.jar" />
+            </fileset>
+        </merge-services>
+    <echo>Check the updated files in jar/META-INF/services for lines where two
+    services got merged. Example:
+    org.geotools.coverage.util.FilterFunction_isCoverageorg.geotools.filter.AreaFunction
+    </echo>
     </target>
 
     <!--
@@ -73,13 +74,13 @@
     -->
     <target name="additional-manifest">
         <manifest file="MANIFEST" mode="update">
-        	<!-- JAI requires a vendor name for some of its deep internals, 
-        	     see https://stackoverflow.com/a/18495658/2257172 -->
+            <!-- JAI requires a vendor name for some of its deep internals, 
+                 see https://stackoverflow.com/a/18495658/2257172 -->
             <attribute name="Specification-Title" value="JOSM GeoTools plugin"/>
-	    <attribute name="Specification-Version" value="${gt.version}"/>
+            <attribute name="Specification-Version" value="${gt.version}"/>
             <attribute name="Specification-Vendor" value="JOSM developers" />
             <attribute name="Implementation-Title" value="org.openstreetmap.josm.plugins.geotools" />
-	    <attribute name="Implementation-Version" value="${gt.version}" />
+            <attribute name="Implementation-Version" value="${gt.version}" />
             <attribute name="Implementation-Vendor" value="JOSM developers"/>
         </manifest>
     </target>
