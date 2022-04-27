@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.elevation.gpx;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -44,8 +44,8 @@ IGpxWaypointVisitor {
     private int maxHeight;
     private int avrgHeight;
     private double dist;
-    private Date start = new Date();
-    private Date end = new Date();
+    private Instant start;
+    private Instant end;
     private final WayPoint[] importantWayPoints = new WayPoint[4];
     private IElevationProfile parent;
     private int sumEle; // temp var for average height
@@ -120,8 +120,8 @@ IGpxWaypointVisitor {
         if (n == 0)
             return;
 
-        start = new Date(0L);
-        end = new Date();
+        start = Instant.EPOCH;
+        end = Instant.now();
         this.minHeight = Integer.MAX_VALUE;
         this.maxHeight = Integer.MIN_VALUE;
         sumEle = 0;
@@ -195,8 +195,8 @@ IGpxWaypointVisitor {
      */
     protected void setStart(WayPoint wp) {
         importantWayPoints[WAYPOINT_START] = wp;
-        if(wp.getDate() != null)
-            this.start = wp.getDate();
+        if(wp.getInstant() != null)
+            this.start = wp.getInstant();
     }
 
     /**
@@ -204,8 +204,8 @@ IGpxWaypointVisitor {
      */
     protected void setEnd(WayPoint wp) {
         importantWayPoints[WAYPOINT_END] = wp;
-        if(wp.getDate() != null)
-            this.end = wp.getDate();
+        if(wp.getInstant() != null)
+            this.end = wp.getInstant();
     }
 
     public void setParent(IElevationProfile parent) {
@@ -256,7 +256,7 @@ IGpxWaypointVisitor {
     }
 
     @Override
-    public Date getEnd() {
+    public Instant getEnd() {
         return end;
     }
 
@@ -307,10 +307,10 @@ IGpxWaypointVisitor {
         WayPoint wp2 = getEndWayPoint();
 
         if (wp1 != null && wp2 != null) {
-            Date wp1Date = wp1.getDate();
-            Date wp2Date = wp2.getDate();
+            Instant wp1Date = wp1.getInstant();
+            Instant wp2Date = wp2.getInstant();
             if (wp1Date != null && wp2Date != null) {
-                return wp2Date.getTime() - wp1Date.getTime();
+                return wp2Date.toEpochMilli() - wp1Date.toEpochMilli();
             } else {
                 Logging.warn("Waypoints without date: " + wp1 + " / " + wp2);
             }
@@ -325,7 +325,7 @@ IGpxWaypointVisitor {
     }
 
     @Override
-    public Date getStart() {
+    public Instant getStart() {
         return start;
     }
 
@@ -389,11 +389,11 @@ IGpxWaypointVisitor {
             return;
 
         if (wp.hasDate()) {
-            if (wp.getDate().after(end)) {
+            if (wp.getInstant().isAfter(this.end)) {
                 setEnd(wp);
             }
 
-            if (wp.getDate().before(start)) {
+            if (wp.getInstant().isBefore(start)) {
                 setStart(wp);
             }
         }

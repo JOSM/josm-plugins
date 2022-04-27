@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -54,7 +53,6 @@ public class ElevationGridTile extends Tile {
 
     /**
      * Paints the vertices of this tile.
-     *
      * @param g the graphics context
      * @param mv the map view
      * @param vertexRenderer the vertex renderer
@@ -66,7 +64,6 @@ public class ElevationGridTile extends Tile {
             Point p1 = mv.getPoint(eleVertex.get(1));
             Point p2 = mv.getPoint(eleVertex.get(2));
             Triangle shape = new Triangle(p0, p1, p2);
-
             // obtain vertex color
             g.setColor(vertexRenderer.getElevationColor(eleVertex));
             // TODO: Move to renderer
@@ -82,16 +79,13 @@ public class ElevationGridTile extends Tile {
 
         // We abuse the loadImage method to render the vertices...
         //
-        while (toDo.size() > 0) {
+        while (!toDo.isEmpty()) {
             EleVertex vertex = toDo.poll();
 
             if (vertex.isFinished()) {
                 vertices.add(vertex);
             } else {
-                List<EleVertex> newV = vertex.divide();
-                for (EleVertex eleVertex : newV) {
-                    toDo.add(eleVertex);
-                }
+                toDo.addAll(vertex.divide());
             }
         }
         setLoaded(true);

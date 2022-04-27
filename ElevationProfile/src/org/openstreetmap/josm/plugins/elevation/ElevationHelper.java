@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.plugins.elevation.gpx.GeoidCorrectionKind;
@@ -33,9 +35,6 @@ public final class ElevationHelper {
     public static final String HEIGHT_ATTRIBUTE = "ele";
 
     private static GeoidCorrectionKind geoidKind = GeoidCorrectionKind.None;
-
-    /** The HGT reader instance. */
-    private static final HgtReader hgt = new HgtReader();
 
     /**
      * Gets the current mode of GEOID correction.
@@ -165,17 +164,29 @@ public final class ElevationHelper {
      * @return The z coordinate or {@link Double#NaN}, if elevation value could not be obtained
      *         not height attribute.
      */
-    public static double getSrtmElevation(LatLon ll) {
+    public static double getSrtmElevation(ILatLon ll) {
         if (ll != null) {
             // Try to read data from SRTM file
             // TODO: Option to switch this off
-            double eleHgt = hgt.getElevationFromHgt(ll);
+            double eleHgt = HgtReader.getElevationFromHgt(ll);
 
             if (isValidElevation(eleHgt)) {
                 return eleHgt;
             }
         }
         return NO_ELEVATION;
+    }
+
+    /**
+     * Get the bounds for the pixel elevation for the latitude
+     * @param location The location to get
+     * @return The bounds for the elevation area
+     */
+    public static Optional<Bounds> getBounds(ILatLon location) {
+        if (location != null) {
+            return HgtReader.getBounds(location);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -251,7 +262,7 @@ public final class ElevationHelper {
         if (wpt == null) return -1;
 
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
-        calendar.setTime(wpt.getDate());   // assigns calendar to given date
+        calendar.setTimeInMillis(wpt.getTimeInMillis()); // assigns calendar to given date
         return calendar.get(Calendar.HOUR_OF_DAY);
     }
 
@@ -262,7 +273,7 @@ public final class ElevationHelper {
         if (wpt == null) return -1;
 
         Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
-        calendar.setTime(wpt.getDate());   // assigns calendar to given date
+        calendar.setTimeInMillis(wpt.getTimeInMillis()); // assigns calendar to given date
         return calendar.get(Calendar.MINUTE);
     }
 }

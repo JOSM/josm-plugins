@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.elevation;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -20,12 +20,12 @@ public interface IElevationProfile {
     /**
      * Gets the time stamp of first recorded track point.
      */
-    Date getStart();
+    Instant getStart();
 
     /**
      * Gets the time stamp of last recorded track point.
      */
-    Date getEnd();
+    Instant getEnd();
 
     /**
      * Gets the minimum elevation height of all tracks and routes.

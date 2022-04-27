@@ -27,6 +27,9 @@ public class AddElevationLayerAction extends JosmAction {
         if (currentLayer == null) {
             currentLayer = new ElevationGridLayer(tr("Elevation Grid")); // TODO: Better name
             MainApplication.getLayerManager().addLayer(currentLayer);
+        } else if (!MainApplication.getLayerManager().containsLayer(currentLayer)) {
+            currentLayer = null;
+            actionPerformed(arg0);
         }
     }
 }

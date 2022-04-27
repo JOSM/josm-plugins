@@ -7,10 +7,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 
+import org.apache.commons.jcs3.JCS;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileController;
@@ -18,11 +22,19 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.CoordinateConversion;
+import org.openstreetmap.josm.data.imagery.TileJobOptions;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.plugins.elevation.ElevationHelper;
+import org.openstreetmap.josm.plugins.elevation.HgtReader;
 import org.openstreetmap.josm.plugins.elevation.IVertexRenderer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -31,7 +43,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  *
  */
-public class ElevationGridLayer extends Layer implements TileLoaderListener {
+public class ElevationGridLayer extends Layer implements TileLoaderListener, MouseListener {
     private static final int ELE_ZOOM_LEVEL = 13;
     private final IVertexRenderer vertexRenderer;
     private final MemoryTileCache tileCache;
@@ -39,11 +51,15 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener {
     protected ElevationGridTileLoader tileLoader;
     protected TileController tileController;
 
+    private ILatLon clickLocation;
+
     private Bounds lastBounds;
     private TileSet tileSet;
 
     public ElevationGridLayer(String name) {
         super(name);
+        HgtReader.clearCache();
+        MainApplication.getMap().mapView.addMouseListener(this);
 
         setOpacity(0.8);
         setBackgroundLayer(true);
@@ -52,7 +68,7 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener {
         tileCache = new MemoryTileCache();
         tileCache.setCacheSize(500);
         tileSource = new ElevationGridTileSource(name);
-        tileLoader = new ElevationGridTileLoader(this);
+        tileLoader = new ElevationGridTileLoader(this, JCS.getInstance("elevationgridlayer"), new TileJobOptions(20, 20, null, 3600));
         tileController = new ElevationGridTileController(tileSource, tileCache, this, tileLoader);
     }
 
@@ -89,6 +105,16 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener {
                 }
             }
         }
+        // Paint the current point area
+        ElevationHelper.getBounds(this.clickLocation).ifPresent(bounds -> {
+            final BBox bbox = bounds.toBBox();
+            final Point upperLeft = mv.getPoint(bbox.getTopLeft());
+            final Point bottomRight = mv.getPoint(bbox.getBottomRight());
+            final Rectangle rectangle = new Rectangle(upperLeft.x, upperLeft.y,
+                    bottomRight.x - upperLeft.x, bottomRight.y - upperLeft.y);
+            g.setColor(Color.RED);
+            g.draw(rectangle);
+        });
     }
 
     @Override
@@ -149,6 +175,38 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener {
         g.drawString(text, x+1, y+1);
         g.setColor(oldColor);
         g.drawString(text, x, y);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            this.clickLocation = MainApplication.getMap().mapView.getLatLon(e.getX(), e.getY());
+            final double elevation = ElevationHelper.getSrtmElevation(clickLocation);
+            Notification notification = new Notification("Elevation is: " + elevation);
+            notification.setDuration(Notification.TIME_SHORT);
+            GuiHelper.runInEDT(notification::show);
+            GuiHelper.runInEDT(this::invalidate);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // Do nothing
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // Do nothing
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // Do nothing
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // Do nothing
     }
 
     private class TileSet {
@@ -222,5 +280,12 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener {
         boolean insane() {
             return this.tilesSpanned() > 200;
         }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        HgtReader.clearCache();
+        MainApplication.getMap().mapView.removeMouseListener(this);
     }
 }

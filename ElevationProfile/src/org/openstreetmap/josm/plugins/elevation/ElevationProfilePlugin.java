@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 
+import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.IconToggleButton;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -32,6 +33,7 @@ public class ElevationProfilePlugin extends Plugin {
         super(info);
 
         createColorMaps();
+        ExtensionFileFilter.addImporter(new HgtFileImporter());
 
         // TODO: Disable this view as long as it is not stable
         MainMenu.add(MainApplication.getMenu().imagerySubMenu, new AddElevationLayerAction(), false, 0);

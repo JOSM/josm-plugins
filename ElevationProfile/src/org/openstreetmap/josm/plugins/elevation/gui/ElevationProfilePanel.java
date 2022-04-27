@@ -15,8 +15,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -253,10 +253,9 @@ public class ElevationProfilePanel extends JPanel implements ComponentListener, 
     /**
      * Formats the date in a predefined manner: "21. Oct 2010, 12:10".
      */
-    private String formatDate(Date date) {
+    private String formatDate(Instant date) {
         Format formatter = new SimpleDateFormat("d MMM yy, HH:mm");
-
-        return formatter.format(date);
+        return formatter.format(date.toEpochMilli());
     }
 
     /**

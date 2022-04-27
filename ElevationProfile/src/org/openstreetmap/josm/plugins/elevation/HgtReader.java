@@ -2,16 +2,25 @@
 package org.openstreetmap.josm.plugins.elevation;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
-import java.nio.channels.FileChannel;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.compress.utils.IOUtils;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -22,18 +31,17 @@ import org.openstreetmap.josm.tools.Logging;
  *  @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  */
 public class HgtReader {
-    private static final int SECONDS_PER_MINUTE = 60;
+    private static final int SRTM_EXTENT = 1; // degree
+    private static final List<String> COMPRESSION_EXT = Arrays.asList("xz", "gzip", "zip", "bz", "bz2");
 
     public static final String HGT_EXT = ".hgt";
 
     // alter these values for different SRTM resolutions
-    public static final int HGT_RES = 3; // resolution in arc seconds
-    public static final int HGT_ROW_LENGTH = 1201; // number of elevation values per line
-    public static final int HGT_VOID = -32768; // magic number which indicates 'void data' in HGT file
+    public static final int HGT_VOID = Short.MIN_VALUE; // magic number which indicates 'void data' in HGT file
 
-    private final HashMap<String, ShortBuffer> cache = new HashMap<>();
+    private static final HashMap<String, short[][]> cache = new HashMap<>();
 
-    public double getElevationFromHgt(LatLon coor) {
+    public static double getElevationFromHgt(ILatLon coor) {
         try {
             String file = getHgtFileName(coor);
             // given area in cache?
@@ -47,18 +55,21 @@ public class HgtReader {
                 for (String location : Preferences.getAllPossiblePreferenceDirs()) {
                     String fullPath = new File(location + File.separator + "elevation", file).getPath();
                     File f = new File(fullPath);
+                    if (!f.exists()) {
+                        for (String ext : COMPRESSION_EXT) {
+                            f = new File(fullPath + "." + ext);
+                            if (f.exists()) break;
+                        }
+                    }
                     if (f.exists()) {
-                        // found something: read HGT file...
-                        ShortBuffer data = readHgtFile(fullPath);
-                        // ... and store result in cache
-                        cache.put(file, data);
+                        read(f);
                         break;
                     }
                 }
             }
 
             // read elevation value
-            return readElevation(coor);
+            return readElevation(coor, file);
         } catch (FileNotFoundException e) {
             Logging.error("Get elevation from HGT " + coor + " failed: => " + e.getMessage());
             // no problem... file not there
@@ -71,27 +82,49 @@ public class HgtReader {
         }
     }
 
-    @SuppressWarnings("resource")
-    private ShortBuffer readHgtFile(String file) throws Exception {
+    public static Bounds read(File file) throws FileNotFoundException, IOException {
+        String location = file.getName();
+        for (String ext : COMPRESSION_EXT) {
+            location = location.replaceAll("\\." + ext + "$", "");
+        }
+        short[][] sb = readHgtFile(file.getPath());
+        // Overwrite the cache file (assume that is desired)
+        cache.put(location, sb);
+        Pattern pattern = Pattern.compile("(N|S)([0-9]{2})(E|W)([0-9]{3})");
+        Matcher matcher = pattern.matcher(location);
+        if (matcher.lookingAt()) {
+            int lat = (matcher.group(1) == "S" ? -1 : 1) * Integer.parseInt(matcher.group(2));
+            int lon = (matcher.group(3) == "W" ? -1 : 1) * Integer.parseInt(matcher.group(4));
+            return new Bounds(lat, lon, lat + 1, lon + 1);
+        }
+        return null;
+    }
+
+    private static short[][] readHgtFile(String file) throws FileNotFoundException, IOException {
         CheckParameterUtil.ensureParameterNotNull(file);
 
-        FileChannel fc = null;
-        ShortBuffer sb = null;
-        try {
-            // Eclipse complains here about resource leak on 'fc' - even with 'finally' clause???
-            fc = new FileInputStream(file).getChannel();
+        short[][] data = null;
+
+        try (InputStream fis = Compression.getUncompressedFileInputStream(Paths.get(file))) {
             // choose the right endianness
-
-            ByteBuffer bb = ByteBuffer.allocateDirect((int) fc.size());
-            while (bb.remaining() > 0) fc.read(bb);
-
-            bb.flip();
-            sb = bb.order(ByteOrder.BIG_ENDIAN).asShortBuffer();
-        } finally {
-            if (fc != null) fc.close();
+            ByteBuffer bb = ByteBuffer.wrap(IOUtils.toByteArray(fis));
+            //System.out.println(Arrays.toString(bb.array()));
+            bb.order(ByteOrder.BIG_ENDIAN);
+            int size = (int) Math.sqrt(bb.array().length / 2);
+            data = new short[size][size];
+            int x = 0;
+            int y = 0;
+            while (x < size) {
+                while (y < size) {
+                    data[x][y] = bb.getShort(2 * (x * size + y));
+                    y++;
+                }
+                x++;
+                y = 0;
+            }
         }
 
-        return sb;
+        return data;
     }
 
     /**
@@ -101,38 +134,88 @@ public class HgtReader {
      * @param coor the coordinate to get the elevation data for
      * @return the elevation value or <code>Double.NaN</code>, if no value is present
      */
-    public double readElevation(LatLon coor) {
+    public static double readElevation(LatLon coor) {
         String tag = getHgtFileName(coor);
+        return readElevation(coor, tag);
+    }
 
-        ShortBuffer sb = cache.get(tag);
+    /**
+     * Reads the elevation value for the given coordinate.
+     *
+     * See also <a href="http://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file">stackexchange.com</a>
+     * @param coor the coordinate to get the elevation data for
+     * @param fileName The expected filename
+     * @return the elevation value or <code>Double.NaN</code>, if no value is present
+     */
+    public static double readElevation(ILatLon coor, String fileName) {
+
+        short[][] sb = cache.get(fileName);
 
         if (sb == null) {
             return ElevationHelper.NO_ELEVATION;
         }
 
-        // see http://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file
-        double fLat = frac(coor.lat()) * SECONDS_PER_MINUTE;
-        double fLon = frac(coor.lon()) * SECONDS_PER_MINUTE;
+        int[] index = getIndex(coor, sb.length);
+        short ele = sb[index[0]][index[1]];
 
-        // compute offset within HGT file
-        int row = (int) Math.round(fLat * SECONDS_PER_MINUTE / HGT_RES);
-        int col = (int) Math.round(fLon * SECONDS_PER_MINUTE / HGT_RES);
-
-        row = HGT_ROW_LENGTH - row;
-        int cell = (HGT_ROW_LENGTH * (row - 1)) + col;
-
-        // valid position in buffer?
-        if (cell < sb.limit()) {
-            short ele = sb.get(cell);
-            // check for data voids
-            if (ele == HGT_VOID) {
-                return ElevationHelper.NO_ELEVATION;
-            } else {
-                return ele;
-            }
-        } else {
+        if (ele == HGT_VOID) {
             return ElevationHelper.NO_ELEVATION;
         }
+        return ele;
+    }
+
+    public static Optional<Bounds> getBounds(ILatLon location) {
+        final String fileName = getHgtFileName(location);
+        final short[][] sb = cache.get(fileName);
+
+        if (sb == null) {
+            return Optional.empty();
+        }
+
+        final double latDegrees = location.lat();
+        final double lonDegrees = location.lon();
+
+        final float fraction = ((float) SRTM_EXTENT) / sb.length;
+        final int latitude = (int) Math.floor(latDegrees) + (latDegrees < 0 ? 1 : 0);
+        final int longitude = (int) Math.floor(lonDegrees) + (lonDegrees < 0 ? 1 : 0);
+
+        final int[] index = getIndex(location, sb.length);
+        final int latSign = latitude > 0 ? 1 : -1;
+        final int lonSign = longitude > 0 ? 1 : -1;
+        final double minLat = latitude + latSign * fraction * index[0];
+        final double maxLat = latitude + latSign * fraction * (index[0] + 1);
+        final double minLon = longitude + lonSign * fraction * index[1];
+        final double maxLon = longitude + lonSign * fraction * (index[1] + 1);
+        return Optional.of(new Bounds(Math.min(minLat, maxLat), Math.min(minLon, maxLon),
+                Math.max(minLat, maxLat), Math.max(minLon, maxLon)));
+    }
+
+    /**
+     * Get the index to use for a short[latitude][longitude] = height in meters array
+     *
+     * @param latLon
+     *            The location to get the index for
+     * @param mapSize
+     *            The size of the map
+     * @return A [latitude, longitude] = int (index) array.
+     */
+    private static int[] getIndex(ILatLon latLon, int mapSize)
+    {
+        double latDegrees = latLon.lat();
+        double lonDegrees = latLon.lon();
+
+        float fraction = ((float) SRTM_EXTENT) / mapSize;
+        int latitude = (int) Math.floor(Math.abs(latDegrees - (int) latDegrees) / fraction);
+        int longitude = (int) Math.floor(Math.abs(lonDegrees - (int) lonDegrees) / fraction);
+        if (latDegrees >= 0)
+        {
+            latitude = mapSize - 1 - latitude;
+        }
+        if (lonDegrees < 0)
+        {
+            longitude = mapSize - 1 - longitude;
+        }
+        return new int[] { latitude, longitude };
     }
 
     /**
@@ -143,19 +226,23 @@ public class HgtReader {
      * @param latLon the coordinate to get the filename for
      * @return the file name of the HGT file
      */
-    public String getHgtFileName(LatLon latLon) {
-        int lat = (int) latLon.lat();
-        int lon = (int) latLon.lon();
+    public static String getHgtFileName(ILatLon latLon) {
+        int lat = (int) Math.floor(latLon.lat());
+        int lon = (int) Math.floor(latLon.lon());
 
         String latPref = "N";
-        if (lat < 0) latPref = "S";
+        if (lat < 0) {
+            latPref = "S";
+            lat = Math.abs(lat);
+        }
 
         String lonPref = "E";
         if (lon < 0) {
             lonPref = "W";
+            lon = Math.abs(lon);
         }
 
-        return String.format("%s%02d%s%03d%s", latPref, lat, lonPref, lon, HGT_EXT);
+        return latPref + lat + lonPref + lon + HGT_EXT;
     }
 
     public static double frac(double d) {
@@ -166,5 +253,9 @@ public class HgtReader {
         iPart = (long) d;
         fPart = d - iPart;
         return fPart;
+    }
+
+    public static void clearCache() {
+        cache.clear();
     }
 }
