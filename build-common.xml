@@ -63,11 +63,11 @@
     <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]" /></condition>
     <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]" /></condition>
     <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]" /></condition>
-    <condition property="isJava18"><matches string="${ant.java.version}" pattern="1[8-9]" /></condition>
-    <!-- Disable jacoco on Java 18+, see https://github.com/jacoco/jacoco/pull/1132 -->
+    <condition property="isJava20"><matches string="${ant.java.version}" pattern="2[0-9]" /></condition>
+    <!-- Disable jacoco on Java 20+ (Jacoco does not yet support Java 20+) -->
     <condition property="coverageByDefault">
         <not>
-            <isset property="isJava18"/>
+            <isset property="isJava20"/>
         </not>
     </condition>
     <target name="-jaxb_windows" if="isWindows">
@@ -611,12 +611,12 @@
                 </classpath>
                 <testclasses outputDir="${plugin.test.dir}/report">
                     <fileset dir="${plugin.test.dir}/build/unit" includes="**/*Test.class"/>
-	                <fork>
+	                  <fork>
                         <jvmarg value="${jacocoagent}" if:set="jacocoagent" />
                         <jvmarg value="-Dfile.encoding=UTF-8"/>
                         <jvmarg value="-javaagent:${jmockit.jar}"/>
-	                    <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
-	                    <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
+                        <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
+                        <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
                         <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
                         <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
                         <jvmarg value="--add-opens" if:set="isJava9" />
@@ -630,10 +630,10 @@
                         <sysproperty key="josm.test.data" value="${plugin.test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="true"/>
                         <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.enabled" value="${junit.jupiter.execution.parallel.enabled}" if:set="junit.jupiter.execution.parallel.enabled"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
-	                    <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
-	                </fork>
+                        <sysproperty key="junit.jupiter.execution.parallel.enabled" value="${junit.jupiter.execution.parallel.enabled}" if:set="junit.jupiter.execution.parallel.enabled"/>
+                        <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
+                        <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
+                    </fork>
                     <listener type="legacy-plain" />
                     <listener type="legacy-xml" />
                 </testclasses>
