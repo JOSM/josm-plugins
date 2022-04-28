@@ -19,7 +19,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.ILatLon;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -82,7 +81,7 @@ public class HgtReader {
         }
     }
 
-    public static Bounds read(File file) throws FileNotFoundException, IOException {
+    public static Bounds read(File file) throws IOException {
         String location = file.getName();
         for (String ext : COMPRESSION_EXT) {
             location = location.replaceAll("\\." + ext + "$", "");
@@ -90,17 +89,17 @@ public class HgtReader {
         short[][] sb = readHgtFile(file.getPath());
         // Overwrite the cache file (assume that is desired)
         cache.put(location, sb);
-        Pattern pattern = Pattern.compile("(N|S)([0-9]{2})(E|W)([0-9]{3})");
+        Pattern pattern = Pattern.compile("([NS])(\\d{2})([EW])(\\d{3})");
         Matcher matcher = pattern.matcher(location);
         if (matcher.lookingAt()) {
-            int lat = (matcher.group(1) == "S" ? -1 : 1) * Integer.parseInt(matcher.group(2));
-            int lon = (matcher.group(3) == "W" ? -1 : 1) * Integer.parseInt(matcher.group(4));
+            int lat = ("S".equals(matcher.group(1)) ? -1 : 1) * Integer.parseInt(matcher.group(2));
+            int lon = ("W".equals(matcher.group(3)) ? -1 : 1) * Integer.parseInt(matcher.group(4));
             return new Bounds(lat, lon, lat + 1, lon + 1);
         }
         return null;
     }
 
-    private static short[][] readHgtFile(String file) throws FileNotFoundException, IOException {
+    private static short[][] readHgtFile(String file) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(file);
 
         short[][] data = null;
@@ -134,7 +133,7 @@ public class HgtReader {
      * @param coor the coordinate to get the elevation data for
      * @return the elevation value or <code>Double.NaN</code>, if no value is present
      */
-    public static double readElevation(LatLon coor) {
+    public static double readElevation(ILatLon coor) {
         String tag = getHgtFileName(coor);
         return readElevation(coor, tag);
     }
@@ -204,16 +203,16 @@ public class HgtReader {
         double latDegrees = latLon.lat();
         double lonDegrees = latLon.lon();
 
-        float fraction = ((float) SRTM_EXTENT) / mapSize;
-        int latitude = (int) Math.floor(Math.abs(latDegrees - (int) latDegrees) / fraction);
-        int longitude = (int) Math.floor(Math.abs(lonDegrees - (int) lonDegrees) / fraction);
+        float fraction = ((float) SRTM_EXTENT) / (mapSize - 1);
+        int latitude = (int) Math.round(frac(latDegrees) / fraction);
+        int longitude = (int) Math.round(frac(lonDegrees) / fraction);
         if (latDegrees >= 0)
         {
-            latitude = mapSize - 1 - latitude;
+            latitude = mapSize - latitude - 1;
         }
         if (lonDegrees < 0)
         {
-            longitude = mapSize - 1 - longitude;
+            longitude = mapSize - longitude - 1;
         }
         return new int[] { latitude, longitude };
     }
@@ -242,7 +241,7 @@ public class HgtReader {
             lon = Math.abs(lon);
         }
 
-        return latPref + lat + lonPref + lon + HGT_EXT;
+        return String.format("%s%2d%s%03d" + HGT_EXT, latPref, lat, lonPref, lon);
     }
 
     public static double frac(double d) {
