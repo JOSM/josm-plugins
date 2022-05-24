@@ -1,24 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.utilsplugin2.search;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 
 /**
+ * Matches objects with properties in a certain range.
  * TODO: remove this copied class and make it public in JOSM core
  */
-public abstract class RangeMatch extends SearchCompiler.Match {
+abstract class RangeMatch extends SearchCompiler.Match {
 
     private final long min;
     private final long max;
 
-    public RangeMatch(long min, long max) {
+    RangeMatch(long min, long max) {
         this.min = Math.min(min, max);
         this.max = Math.max(min, max);
     }
 
-    public RangeMatch(PushbackTokenizer.Range range) {
+    RangeMatch(PushbackTokenizer.Range range) {
         this(range.getStart(), range.getEnd());
     }
 
@@ -37,16 +40,12 @@ public abstract class RangeMatch extends SearchCompiler.Match {
 
     @Override
     public String toString() {
-        return getString() + "=" + min + "-" + max;
+        return getString() + '=' + min + '-' + max;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (max ^ (max >>> 32));
-        result = prime * result + (int) (min ^ (min >>> 32));
-        return result;
+        return Objects.hash(max, min);
     }
 
     @Override
@@ -56,11 +55,8 @@ public abstract class RangeMatch extends SearchCompiler.Match {
         if (obj == null || getClass() != obj.getClass())
             return false;
         RangeMatch other = (RangeMatch) obj;
-        if (max != other.max)
-            return false;
-        if (min != other.min)
-            return false;
-        return true;
+        return max == other.max
+                && min == other.min;
     }
 }
 
