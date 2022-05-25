@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package reverter;
 
+import java.util.Map;
+import java.util.Objects;
+
 import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -25,16 +27,15 @@ public class ReverterUploadHook implements UploadHook {
     }
 
     @Override
-    public boolean checkUpload(APIDataSet apiDataSet) {
+    public void modifyChangesetTags(Map<String, String> tags) {
         if (ReverterPlugin.reverterUsed.get()) {
             for (Command cmd : UndoRedoHandler.getInstance().getUndoCommands()) {
-                if (isReverterCmd(cmd)) {
-                    MainApplication.getLayerManager().getEditDataSet().addChangeSetTag("created_by", pluginString);
+                if (Objects.equals(MainApplication.getLayerManager().getEditDataSet(), cmd.getAffectedDataSet()) && isReverterCmd(cmd)) {
+                    tags.put("created_by", pluginString);
                     break;
                 }
             }
         }
-        return true;
     }
 
     private static boolean isReverterCmd(Command cmd) {
