@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -135,7 +136,7 @@ public class SvgImportTask extends PleaseWaitRunnable {
                         appendNode(coords[0], coords[1]);
                         break;
                     case PathIterator.SEG_CLOSE:
-                        if (currentway.firstNode().getCoor().equalsEpsilon(nodes.getLast().getCoor())) {
+                        if (currentway.firstNode().getCoor().equalsEpsilon(nodes.getLast().getCoor(), ILatLon.MAX_SERVER_PRECISION)) {
                             currentway.removeNode(nodes.removeLast());
                         }
                         currentway.addNode(currentway.firstNode());
@@ -204,5 +205,5 @@ public class SvgImportTask extends PleaseWaitRunnable {
             UndoRedoHandler.getInstance().add(new SequenceCommand("Import primitives", cmds));
         }
     }
-    
+
 }

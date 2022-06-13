@@ -31,6 +31,8 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -216,7 +218,7 @@ public final class TerracerAction extends JosmAction {
             // Special case of one outline and one address node.
             // Don't open the dialog
             try {
-                terraceBuilding(outline, init, street, associatedStreet, 0, null, null, 0, 
+                terraceBuilding(outline, init, street, associatedStreet, 0, null, null, 0,
                         housenumbers, streetname, associatedStreet != null, false, "yes");
             } catch (UserCancelException ex) {
                 Logging.trace(ex);
@@ -777,9 +779,10 @@ public final class TerracerAction extends JosmAction {
      */
     private Node interpolateNode(Node a, Node b, double f) {
         Node n = new Node(a.getEastNorth().interpolate(b.getEastNorth(), f));
-        if (n.getCoor().equalsEpsilon(a.getCoor()))
+        LatLon latLon = n.getCoor();
+		if (latLon.equalsEpsilon(a.getCoor(), ILatLon.MAX_SERVER_PRECISION))
             return a;
-        if (n.getCoor().equalsEpsilon(b.getCoor()))
+        if (latLon.equalsEpsilon(b.getCoor(), ILatLon.MAX_SERVER_PRECISION))
             return b;
         return n;
     }

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -23,6 +24,7 @@ import javax.json.JsonReader;
 import javax.json.spi.JsonProvider;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
+import javax.xml.crypto.dsig.TransformException;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.metadata.iso.citation.Citations;
@@ -34,7 +36,6 @@ import org.geotools.referencing.crs.AbstractDerivedCRS;
 import org.geotools.referencing.crs.AbstractSingleCRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
@@ -42,10 +43,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.referencing.operation.TransformException;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -111,7 +112,7 @@ public abstract class GeographicReader extends AbstractReader {
         if (n == null && handler != null && handler.checkNodeProximity()) {
             LatLon ll = new LatLon(p.getY(), p.getX());
             for (Node node : nodes.values()) {
-                if (node.getCoor().equalsEpsilon(ll)) {
+                if (node.getCoor().equalsEpsilon(ll, ILatLon.MAX_SERVER_PRECISION)) {
                     return node;
                 }
             }

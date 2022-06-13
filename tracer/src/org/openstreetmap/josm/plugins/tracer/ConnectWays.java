@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.Node;
@@ -206,7 +207,8 @@ public class ConnectWays {
                 double dist = TracerGeometry.distanceFromSegment(nn, n1, n2);
                 double angle = TracerGeometry.angleOfLines(n1, nn, nn, n2);
                 System.out.println("Angle: " + angle + " distance: " + dist + " Node: " + nod);
-                if (!n1.equalsEpsilon(nn) && !n2.equalsEpsilon(nn) && dist < minDistanceSq){ // && Math.abs(angle) < maxAngle) {
+                if (!n1.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION)
+                 && !n2.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION) && dist < minDistanceSq) { // && Math.abs(angle) < maxAngle) {
                     //maxAngle = angle;
                     nearestNode = nod;
                 }

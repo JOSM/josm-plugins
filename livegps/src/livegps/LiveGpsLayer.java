@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
@@ -63,7 +64,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
 
     void setCurrentPosition(double lat, double lon) {
         LatLon thisPos = new LatLon(lat, lon);
-        if ((lastPos != null) && (thisPos.equalsEpsilon(lastPos)))
+        if (lastPos != null && thisPos.equalsEpsilon(lastPos, ILatLon.MAX_SERVER_PRECISION))
             // no change in position
             // maybe show a "paused" cursor or some such
             return;
