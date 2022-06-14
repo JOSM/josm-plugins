@@ -55,7 +55,7 @@ public final class SimplifyAreaAction extends JosmAction {
 
     private static boolean isInBounds(final Node node, final List<Bounds> bounds) {
         for (final Bounds b : bounds) {
-            if (b.contains(node.getCoor())) {
+            if (b.contains(node)) {
                 return true;
             }
         }

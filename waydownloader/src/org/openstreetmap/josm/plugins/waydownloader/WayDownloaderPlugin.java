@@ -21,7 +21,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -110,7 +110,7 @@ public class WayDownloaderPlugin extends Plugin {
             double lonbuffer = Config.getPref().getDouble("waydownloader.latbuffer", 0.00002);
             DownloadOsmTask downloadTask = new DownloadOsmTask();
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor();
-            LatLon ll = selectedNode.getCoor();
+            ILatLon ll = selectedNode;
             final Future<?> future = downloadTask.download(
                     new DownloadParams(),
                     new Bounds(
@@ -307,7 +307,7 @@ public class WayDownloaderPlugin extends Plugin {
     private boolean isDownloaded(Node node) {
         for (DataSource datasource : MainApplication.getLayerManager().getEditDataSet().getDataSources()) {
             Bounds bounds = datasource.bounds;
-            if (bounds != null && bounds.contains(node.getCoor())) return true;
+            if (bounds != null && bounds.contains(node)) return true;
         }
         return false;
     }

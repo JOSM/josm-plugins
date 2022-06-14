@@ -2,7 +2,7 @@
 <project name="comfort0" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="9229"/>
+    <property name="plugin.main.version" value="12164"/>
     <property name="plugin.canloadatruntime" value="true"/>
 
     <property name="plugin.author" value="simon04"/>

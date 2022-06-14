@@ -757,10 +757,10 @@ public final class TerracerAction extends JosmAction {
      * for the segment b-c.
      */
     private double calculateSideness(Node a, Node b, Node c, Node d) {
-        final double ndx = b.getCoor().getX() - a.getCoor().getX();
-        final double pdx = d.getCoor().getX() - c.getCoor().getX();
-        final double ndy = b.getCoor().getY() - a.getCoor().getY();
-        final double pdy = d.getCoor().getY() - c.getCoor().getY();
+        final double ndx = b.lon() - a.lon();
+        final double pdx = d.lon() - c.lon();
+        final double ndy = b.lat() - a.lat();
+        final double pdy = d.lat() - c.lat();
 
         return (ndx * pdx + ndy * pdy)
                 / Math.sqrt((ndx * ndx + ndy * ndy) * (pdx * pdx + pdy * pdy));
@@ -779,10 +779,9 @@ public final class TerracerAction extends JosmAction {
      */
     private Node interpolateNode(Node a, Node b, double f) {
         Node n = new Node(a.getEastNorth().interpolate(b.getEastNorth(), f));
-        LatLon latLon = n.getCoor();
-		if (latLon.equalsEpsilon(a.getCoor(), ILatLon.MAX_SERVER_PRECISION))
+		if (n.equalsEpsilon(a, ILatLon.MAX_SERVER_PRECISION))
             return a;
-        if (latLon.equalsEpsilon(b.getCoor(), ILatLon.MAX_SERVER_PRECISION))
+        if (n.equalsEpsilon(b, ILatLon.MAX_SERVER_PRECISION))
             return b;
         return n;
     }

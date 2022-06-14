@@ -24,10 +24,9 @@ public class TrustNode extends TrustOsmPrimitive {
     }
 
     public static String generateNodeSigtext(Node node) {
-        LatLon point = node.getCoor();
         String sigtext = node.getUniqueId() + "(";
-        sigtext += DecimalDegreesCoordinateFormat.INSTANCE.latToString(point) + ",";
-        sigtext += DecimalDegreesCoordinateFormat.INSTANCE.lonToString(point) + ")";
+        sigtext += DecimalDegreesCoordinateFormat.INSTANCE.latToString(node) + ",";
+        sigtext += DecimalDegreesCoordinateFormat.INSTANCE.lonToString(node) + ")";
         return sigtext;
     }
 

@@ -63,8 +63,8 @@ public class TurnRestrictionBuilder {
         Node n0 = nodes.get(0);
         Node n1 = nodes.get(1);
 
-        double x = n1.getCoor().getX() - n0.getCoor().getX();
-        double y = n1.getCoor().getY() - n0.getCoor().getY();
+        double x = n1.lon() - n0.lon();
+        double y = n1.lat() - n0.lat();
         return Math.atan2(y, x);
     }
 

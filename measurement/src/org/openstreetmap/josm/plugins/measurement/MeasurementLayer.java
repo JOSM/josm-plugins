@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.measurement;
 /// @author Raphael Mack <ramack@raphael-mack.de>
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -27,6 +28,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
@@ -170,7 +172,7 @@ public class MeasurementLayer extends Layer {
         return angleBetween(p1.getCoor(), p2.getCoor());
     }
 
-    public static double angleBetween(LatLon p1, LatLon p2){
+    public static double angleBetween(ILatLon p1, ILatLon p2){
         double lat1, lon1, lat2, lon2;
         double dlon;
 

@@ -59,10 +59,10 @@ public final class NameManagerUtils {
                     continue ways;
                 }
                 pairs: for (Pair<Node, Node> pair : way.getNodePairs(false)) {
-                    double x1Pair = pair.a.getCoor().getX();
-                    double y1Pair = pair.a.getCoor().getY();
-                    double x2Pair = pair.b.getCoor().getX();
-                    double y2Pair = pair.b.getCoor().getY();
+                    double x1Pair = pair.a.lon();
+                    double y1Pair = pair.a.lat();
+                    double x2Pair = pair.b.lon();
+                    double y2Pair = pair.b.lat();
                     double aPair = 0.0;
                     double bPair = 0.0;
                     double cPair = 0.0;
@@ -76,10 +76,10 @@ public final class NameManagerUtils {
                     }
                     int crossCount = 0;
                     areaLine: for (Pair<Node, Node> areaLine : areaBorderLines) {
-                        double x1Line = areaLine.a.getCoor().getX();
-                        double y1Line = areaLine.a.getCoor().getY();
-                        double x2Line = areaLine.b.getCoor().getX();
-                        double y2Line = areaLine.b.getCoor().getY();
+                        double x1Line = areaLine.a.lon();
+                        double y1Line = areaLine.a.lat();
+                        double x2Line = areaLine.b.lon();
+                        double y2Line = areaLine.b.lat();
                         boolean areaLinePerpendicular = false;
                         double aLine = 0.0;
                         double bLine = 0.0;
@@ -177,8 +177,8 @@ public final class NameManagerUtils {
                             continue pairs;
                         }
                         if (raySource != null) {
-                            double rsX = raySource.getCoor().getX();
-                            double rsY = raySource.getCoor().getY();
+                            double rsX = raySource.lon();
+                            double rsY = raySource.lat();
                             if (areaLinePerpendicular) {
                                 if (x1Line == x2Line) {
                                     if ((x1Line - rsX) * (x1Line - tlcX) > 0.0) {
@@ -217,11 +217,11 @@ public final class NameManagerUtils {
         double y = Double.NEGATIVE_INFINITY;
         List<Node> nodes = way.getNodes();
         for (Node node : nodes) {
-            if (node.getCoor().getX() < x) {
-                x = node.getCoor().getX();
+            if (node.lon() < x) {
+                x = node.lon();
             }
-            if (node.getCoor().getY() > y) {
-                y = node.getCoor().getY();
+            if (node.lat() > y) {
+                y = node.lat();
             }
         }
         x--;

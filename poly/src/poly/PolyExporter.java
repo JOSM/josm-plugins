@@ -101,7 +101,7 @@ public class PolyExporter extends OsmExporter {
         writer.println(name);
 
         for (Node n : w.getNodes()) {
-            writer.println(String.format(Locale.ENGLISH, "   %f   %f", n.getCoor().lon(), n.getCoor().lat()));
+            writer.println(String.format(Locale.ENGLISH, "   %f   %f", n.lon(), n.lat()));
         }
         writer.println("END");
         return counter;

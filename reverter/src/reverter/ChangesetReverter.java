@@ -498,7 +498,7 @@ public class ChangesetReverter {
 
         try {
             for (Node n : nodes) {
-                if (!n.isDeleted() && n.getCoor() == null) {
+                if (!n.isDeleted() && !n.isLatLonKnown()) {
                     PrimitiveId id = n.getPrimitiveId();
                     OsmPrimitive p = ds.getPrimitiveById(id);
                     if (p instanceof Node && !((Node) p).isLatLonKnown()) {

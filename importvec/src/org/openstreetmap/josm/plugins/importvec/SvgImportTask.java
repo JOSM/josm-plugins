@@ -136,7 +136,7 @@ public class SvgImportTask extends PleaseWaitRunnable {
                         appendNode(coords[0], coords[1]);
                         break;
                     case PathIterator.SEG_CLOSE:
-                        if (currentway.firstNode().getCoor().equalsEpsilon(nodes.getLast().getCoor(), ILatLon.MAX_SERVER_PRECISION)) {
+                        if (currentway.firstNode().equalsEpsilon(nodes.getLast(), ILatLon.MAX_SERVER_PRECISION)) {
                             currentway.removeNode(nodes.removeLast());
                         }
                         currentway.addNode(currentway.firstNode());

@@ -70,7 +70,7 @@ public class JTSConverter {
         if (useEastNorth)
             return new Coordinate(node.getEastNorth().getX(), node.getEastNorth().getY());
         else
-            return new Coordinate(node.getCoor().getX(), node.getCoor().getY());
+            return new Coordinate(node.lon(), node.lat());
     }
 
     public CoordinateSequence convertNodesToCoordinateSequence(List<Node> nodes) {

@@ -28,12 +28,12 @@ public class JOSMDataSource implements DataSource<Node, Way, Relation, RelationM
 
     @Override
     public double getLat(Node node) {
-        return node.getCoor().lat();
+        return node.lat();
     }
 
     @Override
     public double getLon(Node node) {
-        return node.getCoor().lon();
+        return node.lon();
     }
 
     @Override

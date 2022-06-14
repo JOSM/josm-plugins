@@ -51,8 +51,7 @@ public final class SplittingMultipolygons {
             if (way.isDeleted())
                 return false;
             for (Node n : way.getNodes()) {
-                LatLon ll = n.getCoor();
-                if (n.isIncomplete() || (a != null && !a.contains(ll.getX(), ll.getY())))
+                if (n.isIncomplete() || (a != null && !a.contains(n.lon(), n.lat())))
                     return false;
             }
             if (way.isClosed()) {

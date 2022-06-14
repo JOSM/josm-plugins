@@ -26,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -306,7 +306,7 @@ public class FilePlacement18 extends FilePlacement {
                 return null;
             }
 
-            LatLon ll = ((Node) selected.iterator().next()).getCoor();
+            ILatLon ll = ((Node) selected.iterator().next());
             return new EastNorth(ll.lon() * 1000, ll.lat() * 1000);
         }
 

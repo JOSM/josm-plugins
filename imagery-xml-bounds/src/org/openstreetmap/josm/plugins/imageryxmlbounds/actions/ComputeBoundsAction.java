@@ -22,7 +22,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -341,30 +341,22 @@ public class ComputeBoundsAction extends AbstractAction implements XmlBoundsCons
         return areNodeListAndBboxEqual(way.getNodes(), bBox);
     }
 
-    protected static final boolean areNodeListAndBboxEqual(List<Node> nodes, BBox bBox) {
+    protected static boolean areNodeListAndBboxEqual(List<Node> nodes, BBox bBox) {
         if (nodes.size() == 5) {
             Map<Double, List<Integer>> latMap = new HashMap<>();
             Map<Double, List<Integer>> lonMap = new HashMap<>();
 
-            for (int i=0; i<4; i++) {
-                LatLon c = nodes.get(i).getCoor();
+            for (int i = 0; i < 4; i++) {
+                ILatLon c = nodes.get(i);
                 if (i > 1) {
-                    LatLon b = nodes.get(i-1).getCoor();
+                    ILatLon b = nodes.get(i - 1);
                     if (b.lat() != c.lat() && b.lon() != c.lon()) {
                         return false;
                     }
                 }
-                List<Integer> latList = latMap.get(c.lat());
-                if (latList == null) {
-                    latList = new ArrayList<>();
-                    latMap.put(c.lat(), latList);
-                }
+                List<Integer> latList = latMap.computeIfAbsent(c.lat(), lat -> new ArrayList<>(1));
                 latList.add(i);
-                List<Integer> lonList = lonMap.get(c.lon());
-                if (lonList == null) {
-                    lonList = new ArrayList<>();
-                    lonMap.put(c.lon(), lonList);
-                }
+                List<Integer> lonList = lonMap.computeIfAbsent(c.lon(), lon -> new ArrayList<>(1));
                 lonList.add(i);
             }
 
@@ -391,7 +383,7 @@ public class ComputeBoundsAction extends AbstractAction implements XmlBoundsCons
         return getNodeListShape(jw.getNodes());
     }
 
-    protected static final String getNodeListShape(List<Node> nodes) {
+    protected static String getNodeListShape(List<Node> nodes) {
         StringBuilder result = new StringBuilder("            <shape>\n");
         int size = nodes.size();
         for (int i=0; i<size; i++) {
@@ -401,7 +393,7 @@ public class ComputeBoundsAction extends AbstractAction implements XmlBoundsCons
             int j = i;
             if (j == size)
                 j = 0;
-            LatLon ll = nodes.get(i).getCoor();
+            ILatLon ll = nodes.get(i);
             result.append("<point lat='")
                   .append(DF.format(ll.lat())).append("' lon='")
                   .append(DF.format(ll.lon())).append("'/>");

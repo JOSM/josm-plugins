@@ -133,7 +133,7 @@ final class GuiUtil {
     }
 
     public static Point2D loc(Node node) {
-        final EastNorth loc = ProjectionRegistry.getProjection().latlon2eastNorth(node.getCoor());
+        final EastNorth loc = node.getEastNorth();
         return new Point2D.Double(loc.getX(), -loc.getY());
     }
 

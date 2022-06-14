@@ -208,7 +208,7 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
                             lastNode = n;
                         } else {
                             length += lastNode.getCoor().greatCircleDistance(n.getCoor());
-                            segAngle = MeasurementLayer.angleBetween(lastNode.getCoor(), n.getCoor());
+                            segAngle = MeasurementLayer.angleBetween(lastNode, n);
                             lastNode = n;
                         }
                     }
@@ -234,7 +234,7 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
                         //http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
                         wayArea += (MeasurementLayer.calcX(n.getCoor()) * MeasurementLayer.calcY(lastN.getCoor()))
                                 - (MeasurementLayer.calcY(n.getCoor()) * MeasurementLayer.calcX(lastN.getCoor()));
-                        segAngle = MeasurementLayer.angleBetween(lastN.getCoor(), n.getCoor());
+                        segAngle = MeasurementLayer.angleBetween(lastN, n);
                     }
                     lastN = n;
                 }

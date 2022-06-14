@@ -1867,19 +1867,19 @@ public class RoutePatternAction extends JosmAction {
                 if (!way.isIncomplete()) {
                     if ("backward".equals(itineraryData.getValueAt(i, 1))) {
                         for (int j = way.getNodesCount() - 2; j >= 0; --j) {
-                            SegmentMetric sm = new SegmentMetric(way.getNode(j + 1).getCoor().lat(),
-                                    way.getNode(j + 1).getCoor().lon(),
-                                    way.getNode(j).getCoor().lat(), way.getNode(j).getCoor().lon(),
+                            SegmentMetric sm = new SegmentMetric(way.getNode(j + 1).lat(),
+                                    way.getNode(j + 1).lon(),
+                                    way.getNode(j).lat(), way.getNode(j).lon(),
                                     distance);
                             segmentMetrics.add(sm);
                             distance += sm.length;
                         }
                     } else {
                         for (int j = 0; j < way.getNodesCount() - 1; ++j) {
-                            SegmentMetric sm = new SegmentMetric(way.getNode(j).getCoor().lat(),
-                                    way.getNode(j).getCoor().lon(),
-                                    way.getNode(j + 1).getCoor().lat(),
-                                    way.getNode(j + 1).getCoor().lon(), distance);
+                            SegmentMetric sm = new SegmentMetric(way.getNode(j).lat(),
+                                    way.getNode(j).lon(),
+                                    way.getNode(j + 1).lat(),
+                                    way.getNode(j + 1).lon(), distance);
                             segmentMetrics.add(sm);
                             distance += sm.length;
                         }
@@ -1893,14 +1893,14 @@ public class RoutePatternAction extends JosmAction {
 
     private StopReference detectMinDistance(Node node, Vector<SegmentMetric> segmentMetrics,
             boolean rhsPossible, boolean lhsPossible) {
-        if (node == null || node.getCoor() == null)
+        if (node == null || !node.isLatLonKnown())
             return null;
 
         int minIndex = -1;
         double position = -1.0;
         double distance = 180.0;
-        double lat = node.getCoor().lat();
-        double lon = node.getCoor().lon();
+        double lat = node.lat();
+        double lon = node.lon();
 
         int curIndex = -2;
         double angleLat = 100.0;

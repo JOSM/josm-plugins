@@ -6,9 +6,12 @@
 
 package org.openstreetmap.josm.plugins.tracer;
 
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 
-public class TracerGeometry {
+public final class TracerGeometry {
+    private TracerGeometry() {
+        // Hide constructor
+    }
 
     /**
      * Angle between line AB and CD
@@ -18,7 +21,7 @@ public class TracerGeometry {
      * @param d Point D.
      * @return Angle in degrees.
      */
-    static public double angleOfLines(LatLon a, LatLon b, LatLon c, LatLon d) {
+    public static double angleOfLines(ILatLon a, ILatLon b, ILatLon c, ILatLon d) {
         return (Math.abs(
                     Math.atan2(a.lat() - b.lat(), a.lon() - b.lon()) -
                     Math.atan2(c.lat() - d.lat(), c.lon() - d.lon())
@@ -32,15 +35,15 @@ public class TracerGeometry {
      * @param b Point B.
      * @return Distance.
      */
-    static public double distanceFromSegment(LatLon c, LatLon a, LatLon b) {
+    public static double distanceFromSegment(ILatLon c, ILatLon a, ILatLon b) {
         return distanceFromSegment(
-                c.getX(), c.getY(),
-                a.getX(), a.getY(),
-                b.getX(), b.getY()
+                c.lon(), c.lat(),
+                a.lon(), a.lat(),
+                b.lon(), b.lat()
         );
     }
 
-    static private double distanceFromSegment(double cx, double cy, double ax, double ay, double bx, double by) {
+    private static double distanceFromSegment(double cx, double cy, double ax, double ay, double bx, double by) {
         double r_numerator = (cx - ax) * (bx - ax) + (cy - ay) * (by - ay);
         double r_denomenator = (bx - ax) * (bx - ax) + (by - ay) * (by - ay);
         if(r_denomenator == 0)System.out.println("r_denomenator == 0    ------------");

@@ -81,10 +81,9 @@ public final class ConnectWays {
 		s_oNodes = MainApplication.getLayerManager().getEditDataSet().searchNodes(bbox);
 	}
 
-	private static double calcAlpha(LatLon oP1, Node n) {
-		LatLon oP2 = n.getCoor();
+	private static double calcAlpha(LatLon oP1, Node oP2) {
 
-		double dAlpha = Math.atan((oP2.getY() - oP1.getY()) / (oP2.getX() - oP1.getX())) * 180 / Math.PI + (oP1.getX() > oP2.getX() ? 180 : 0);
+		double dAlpha = Math.atan((oP2.lat() - oP1.lat()) / (oP2.lon() - oP1.lon())) * 180 / Math.PI + (oP1.lon() > oP2.lon() ? 180 : 0);
 		return checkAlpha(dAlpha);
 	}
 
@@ -332,7 +331,7 @@ public final class ConnectWays {
 
 		//List<Command> cmds = new LinkedList<Command>();
 
-		LatLon ll = node.getCoor();
+		//LatLon ll = node.getCoor();
 		//BBox bbox = new BBox(
 		//        ll.getX() - MIN_DISTANCE_TW,
 		//        ll.getY() - MIN_DISTANCE_TW,
@@ -357,7 +356,7 @@ public final class ConnectWays {
 
 			for (Pair<Node, Node> np : ww.getNodePairs(false)) {
 				//double dist1 = TracerGeometry.distanceFromSegment(ll, np.a.getCoor(), np.b.getCoor());
-				double dist = distanceFromSegment2(ll, np.a.getCoor(), np.b.getCoor());
+				double dist = distanceFromSegment2(node, np.a, np.b);
 				//System.out.println(" distance: " + dist1 + "  " + dist);
 
 				if (dist < minDist) {
@@ -380,25 +379,25 @@ public final class ConnectWays {
 		}
 	}
 
-	private static double distanceFromSegment2(LatLon c, LatLon a, LatLon b) {
+	private static double distanceFromSegment2(ILatLon c, ILatLon a, ILatLon b) {
 		double x;
 		double y;
 
 		StraightLine oStraightLine1 = new StraightLine(
-				new Point2D.Double(a.getX(), a.getY()),
-				new Point2D.Double(b.getX(), b.getY()));
+				new Point2D.Double(a.lon(), a.lat()),
+				new Point2D.Double(b.lon(), b.lat()));
 		StraightLine oStraightLine2 = new StraightLine(
-				new Point2D.Double(c.getX(), c.getY()),
-				new Point2D.Double(c.getX() + (a.getY()-b.getY()), c.getY() - (a.getX()-b.getX())));
+				new Point2D.Double(c.lon(), c.lat()),
+				new Point2D.Double(c.lon() + (a.lat()-b.lat()), c.lat() - (a.lon()-b.lon())));
 		Point2D.Double oPoint = oStraightLine1.GetIntersectionPoint(oStraightLine2);
 
-		if ((oPoint.x > a.getX() && oPoint.x > b.getX()) || (oPoint.x < a.getX() && oPoint.x < b.getX()) ||
-				(oPoint.y > a.getY() && oPoint.y > b.getY()) || (oPoint.y < a.getY() && oPoint.y < b.getY())) {
+		if ((oPoint.x > a.lon() && oPoint.x > b.lon()) || (oPoint.x < a.lon() && oPoint.x < b.lon()) ||
+				(oPoint.y > a.lat() && oPoint.y > b.lat()) || (oPoint.y < a.lat() && oPoint.y < b.lat())) {
 			return 100000;
 		}
 
-		x = c.getX()-oPoint.getX();
-		y = c.getY()-oPoint.getY();
+		x = c.lon()-oPoint.getX();
+		y = c.lat()-oPoint.getY();
 
 		return Math.sqrt((x*x)+(y*y));
 	}
@@ -420,8 +419,8 @@ public final class ConnectWays {
 		int i = 0;
 		while (i < way.getNodesCount()) {
 			// usecka n1, n2
-			LatLon n1 = way.getNodes().get(i).getCoor();
-			LatLon n2 = way.getNodes().get((i + 1) % way.getNodesCount()).getCoor();
+			ILatLon n1 = way.getNodes().get(i);
+			ILatLon n2 = way.getNodes().get((i + 1) % way.getNodesCount());
 			System.out.println(way.getNodes().get(i) + "-----" + way.getNodes().get((i + 1) % way.getNodesCount()));
 			double minDistanceSq = Double.MAX_VALUE;
 			//            double maxAngle = MAX_ANGLE;
@@ -437,13 +436,12 @@ public final class ConnectWays {
 				if (!nod.isUsable() || way.containsNode(nod) || !isInSameTag(nod)) {
 					continue;
 				}
-				LatLon nn = nod.getCoor();
-				//double dist = TracerGeometry.distanceFromSegment(nn, n1, n2);
-				double dist = distanceFromSegment2(nn, n1, n2);
-				//                double angle = TracerGeometry.angleOfLines(n1, nn, nn, n2);
+				//double dist = TracerGeometry.distanceFromSegment(nod, n1, n2);
+				double dist = distanceFromSegment2(nod, n1, n2);
+				//                double angle = TracerGeometry.angleOfLines(n1, nod, nod, n2);
 				//System.out.println("Angle: " + angle + " distance: " + dist + " Node: " + nod);
-				if (!n1.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION)
-				 && !n2.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION) && dist < minDistanceSq) { // && Math.abs(angle) < maxAngle) {
+				if (!n1.equalsEpsilon(nod, ILatLon.MAX_SERVER_PRECISION)
+				 && !n2.equalsEpsilon(nod, ILatLon.MAX_SERVER_PRECISION) && dist < minDistanceSq) { // && Math.abs(angle) < maxAngle) {
 					minDistanceSq = dist;
 					//                    maxAngle = angle;
 					nearestNode = nod;

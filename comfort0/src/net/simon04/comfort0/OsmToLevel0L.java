@@ -2,7 +2,7 @@ package net.simon04.comfort0;
 
 import java.util.Collection;
 
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
@@ -78,8 +78,8 @@ public class OsmToLevel0L implements OsmPrimitiveVisitor, KeyValueVisitor {
         sb.append("\n");
         sb.append(p.getType().getAPIName()).append(" ").append(p.getUniqueId());
         if (p instanceof Node) {
-            final LatLon latLon = ((Node) p).getCoor();
-            if (latLon != null) {
+            final ILatLon latLon = (Node) p;
+            if (latLon.isLatLonKnown()) {
                 sb.append(": ").append(latLon.lat()).append(", ").append(latLon.lon());
             }
         }

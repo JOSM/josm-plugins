@@ -48,10 +48,10 @@ public class ConnectWays {
             System.out.println("Node: " + n);
             LatLon ll = n.getCoor();
             BBox bbox = new BBox(
-                    ll.getX() - MIN_DISTANCE,
-                    ll.getY() - MIN_DISTANCE,
-                    ll.getX() + MIN_DISTANCE,
-                    ll.getY() + MIN_DISTANCE);
+                    n.lon() - MIN_DISTANCE,
+                    n.lat() - MIN_DISTANCE,
+                    n.lon() + MIN_DISTANCE,
+                    n.lat() + MIN_DISTANCE);
 
             // bude se node slucovat s jinym?
             double minDistanceSq = MIN_DISTANCE;
@@ -128,10 +128,10 @@ public class ConnectWays {
 
         LatLon ll = node.getCoor();
         BBox bbox = new BBox(
-                ll.getX() - MIN_DISTANCE_TW,
-                ll.getY() - MIN_DISTANCE_TW,
-                ll.getX() + MIN_DISTANCE_TW,
-                ll.getY() + MIN_DISTANCE_TW);
+                node.lon() - MIN_DISTANCE_TW,
+                node.lat() - MIN_DISTANCE_TW,
+                node.lon() + MIN_DISTANCE_TW,
+                node.lat() + MIN_DISTANCE_TW);
 
         // node nebyl slouceny s jinym
         // hledani pripadne blizke usecky, kam bod pridat
@@ -187,28 +187,27 @@ public class ConnectWays {
         int i = 0;
         while (i < way.getNodesCount()) {
             // usecka n1, n2
-            LatLon n1 = way.getNodes().get(i).getCoor();
-            LatLon n2 = way.getNodes().get((i + 1) % way.getNodesCount()).getCoor();
+            Node n1 = way.getNodes().get(i);
+            Node n2 = way.getNodes().get((i + 1) % way.getNodesCount());
             System.out.println(way.getNodes().get(i) + "-----" + way.getNodes().get((i + 1) % way.getNodesCount()));
             double minDistanceSq = MIN_DISTANCE_SQ;
             //double maxAngle = MAX_ANGLE;
             List<Node> nodes = MainApplication.getLayerManager().getEditDataSet().searchNodes(new BBox(
-                Math.min(n1.getX(), n2.getX()) - minDistanceSq,
-                Math.min(n1.getY(), n2.getY()) - minDistanceSq,
-                Math.max(n1.getX(), n2.getX()) + minDistanceSq,
-                Math.max(n1.getY(), n2.getY()) + minDistanceSq
+                Math.min(n1.lon(), n2.lon()) - minDistanceSq,
+                Math.min(n1.lat(), n2.lat()) - minDistanceSq,
+                Math.max(n1.lon(), n2.lon()) + minDistanceSq,
+                Math.max(n1.lat(), n2.lat()) + minDistanceSq
             ));
             Node nearestNode = null;
             for (Node nod : nodes) {
                 if (!nod.isUsable() || way.containsNode(nod) || !isInBuilding(nod)) {
                     continue;
                 }
-                LatLon nn = nod.getCoor();
-                double dist = TracerGeometry.distanceFromSegment(nn, n1, n2);
-                double angle = TracerGeometry.angleOfLines(n1, nn, nn, n2);
+                double dist = TracerGeometry.distanceFromSegment(nod, n1, n2);
+                double angle = TracerGeometry.angleOfLines(n1, nod, nod, n2);
                 System.out.println("Angle: " + angle + " distance: " + dist + " Node: " + nod);
-                if (!n1.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION)
-                 && !n2.equalsEpsilon(nn, ILatLon.MAX_SERVER_PRECISION) && dist < minDistanceSq) { // && Math.abs(angle) < maxAngle) {
+                if (!n1.equalsEpsilon(nod, ILatLon.MAX_SERVER_PRECISION)
+                 && !n2.equalsEpsilon(nod, ILatLon.MAX_SERVER_PRECISION) && dist < minDistanceSq) { // && Math.abs(angle) < maxAngle) {
                     //maxAngle = angle;
                     nearestNode = nod;
                 }

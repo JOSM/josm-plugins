@@ -449,8 +449,7 @@ public final class ReplaceGeometryUtils {
     }
 
     static boolean isInArea(Node node, Area area) {
-        LatLon ll = node.getCoor();
-        return node.isNewOrUndeleted() || area == null || ll == null || area.contains(ll.getX(), ll.getY());
+        return node.isNewOrUndeleted() || area == null || !node.isLatLonKnown() || area.contains(node.lon(), node.lat());
     }
 
     static boolean isInArea(Way way, Area area) {

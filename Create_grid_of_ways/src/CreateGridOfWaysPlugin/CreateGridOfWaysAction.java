@@ -15,6 +15,7 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -84,10 +85,10 @@ public final class CreateGridOfWaysAction extends JosmAction {
         Collection<Command> cmds = new LinkedList<>();
         int c1=0,c2;
         double latDif,lonDif;
-        LatLon llc = nodeCommon.getCoor();
+        ILatLon llc = nodeCommon;
         for (Node n1 : nodesWay1) {
-            LatLon ll1 = n1.getCoor();
-            if (ll1 == null || llc == null) {
+            ILatLon ll1 = n1;
+            if (!ll1.isLatLonKnown() || !llc.isLatLonKnown()) {
                 Logging.warn("Null coordinates: {0} / {1}", n1, nodeCommon);
                 continue;
             }
@@ -105,7 +106,7 @@ public final class CreateGridOfWaysAction extends JosmAction {
                     w2[c2++].addNode(n2);
                     continue;
                 }
-                LatLon ll2 = n2.getCoor();
+                ILatLon ll2 = n2;
                 Node nodeOfGrid = new Node(new LatLon(ll2.lat()+latDif, ll2.lon()+lonDif));
                 cmds.add(new AddCommand(ds, nodeOfGrid));
                 w1[c1].addNode(nodeOfGrid);

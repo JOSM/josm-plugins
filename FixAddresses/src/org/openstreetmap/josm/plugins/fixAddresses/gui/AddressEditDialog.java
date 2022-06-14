@@ -274,7 +274,7 @@ public class AddressEditDialog extends JDialog implements ActionListener, ListSe
                 //BBox bb = way.getBBox();
 
                 for (Node node : way.getNodes()) {
-                    mapViewer.addMapMarker(new MapMarkerDot(Color.GREEN, node.getCoor().lat(), node.getCoor().lon()));
+                    mapViewer.addMapMarker(new MapMarkerDot(Color.GREEN, node.lat(), node.lon()));
                 }
             }
 

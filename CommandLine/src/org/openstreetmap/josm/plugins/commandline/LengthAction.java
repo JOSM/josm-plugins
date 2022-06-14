@@ -136,7 +136,7 @@ public class LengthAction extends MapMode implements MapViewPaintable, AWTEventL
     private void drawingStart(MouseEvent e) {
         mousePos = e.getPoint();
         if (nearestNode != null) {
-            drawStartPos = MainApplication.getMap().mapView.getPoint(nearestNode.getCoor());
+            drawStartPos = MainApplication.getMap().mapView.getPoint(nearestNode);
         } else {
             drawStartPos = mousePos;
         }
@@ -185,7 +185,7 @@ public class LengthAction extends MapMode implements MapViewPaintable, AWTEventL
         updCursor();
         MapFrame map = MainApplication.getMap();
         if (nearestNode != null)
-            drawEndPos = map.mapView.getPoint(nearestNode.getCoor());
+            drawEndPos = map.mapView.getPoint(nearestNode);
         else
             drawEndPos = mousePos;
         endCoor = map.mapView.getLatLon(drawEndPos.x, drawEndPos.y);
