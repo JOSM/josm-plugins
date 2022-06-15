@@ -38,8 +38,8 @@ public class AppendableGpxTrackSegment extends WithAttributes implements IGpxTra
         }
 
         if (size > 0) {
-            Double distance = wayPoints[size - 1].getCoor().greatCircleDistance(p.getCoor());
-            if (!distance.isNaN() && !distance.isInfinite()) {
+            double distance = wayPoints[size - 1].greatCircleDistance(p);
+            if (!Double.isNaN(distance) && !Double.isInfinite(distance)) {
                 length += distance;
             }
         }

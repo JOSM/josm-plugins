@@ -3,6 +3,7 @@ package indoor_sweepline;
 
 import java.util.Vector;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -16,7 +17,7 @@ public class CorridorGeography {
 
     private static final double MIN_LENGTH = 10.;
 
-    private void setExtraElements(CorridorPart.ReachableSide side, LatLon from, LatLon to,
+    private void setExtraElements(CorridorPart.ReachableSide side, ILatLon from, ILatLon to,
             boolean extraWayUp, double minLength) {
         LatLon middleCoor = new LatLon((from.lat() + to.lat())/2.,
                 (from.lon() + to.lon())/2.);
@@ -26,7 +27,7 @@ public class CorridorGeography {
         } else
             middleNode.setCoor(middleCoor);
 
-        LatLon start = from;
+        ILatLon start = from;
         if (side == CorridorPart.ReachableSide.LEFT) {
             if (middleCoor.lat() < start.lat())
                 start = to;
@@ -70,7 +71,7 @@ public class CorridorGeography {
     }
 
     public void appendNodes(CorridorPart.Type type, CorridorPart.ReachableSide side, String level,
-            LatLon from, LatLon to, ModelGeography target) {
+            ILatLon from, ILatLon to, ModelGeography target) {
         if (type == CorridorPart.Type.STAIRS_UP || type == CorridorPart.Type.STAIRS_DOWN) {
             setExtraElements(side, from, to, type == CorridorPart.Type.STAIRS_UP, MIN_LENGTH);
             target.appendNode(middleNode);

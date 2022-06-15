@@ -18,6 +18,7 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -348,7 +349,7 @@ final class ChatServerConnection {
 
             final boolean needReset;
             final boolean needFullReset = lastUserId != userId;
-            if (needFullReset || (lastPosition != null && pos.greatCircleDistance(lastPosition) > MAX_JUMP)) {
+            if (needFullReset || (lastPosition != null && pos.greatCircleDistance((ILatLon) lastPosition) > MAX_JUMP)) {
                 // reset messages
                 lastId = 0;
                 //                Config.getPref().put("geochat.lastid", null);

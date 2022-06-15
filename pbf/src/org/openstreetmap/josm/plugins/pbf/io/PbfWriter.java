@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -199,10 +198,9 @@ public class PbfWriter implements Closeable {
                     long id = i.getUniqueId();
                     bi.addId(id - lastid);
                     lastid = id;
-                    LatLon coor = i.getCoor();
-                    if (coor != null) {
-                        int lat = mapDegrees(coor.lat());
-                        int lon = mapDegrees(coor.lon());
+                    if (i.isLatLonKnown()) {
+                        int lat = mapDegrees(i.lat());
+                        int lon = mapDegrees(i.lon());
                         bi.addLon(lon - lastlon);
                         lastlon = lon;
                         bi.addLat(lat - lastlat);
@@ -234,9 +232,8 @@ public class PbfWriter implements Closeable {
                 Osmformat.PrimitiveGroup.Builder builder = Osmformat.PrimitiveGroup.newBuilder();
                 for (Node i : contents) {
                     long id = i.getUniqueId();
-                    LatLon coor = i.getCoor();
-                    int lat = mapDegrees(coor.lat());
-                    int lon = mapDegrees(coor.lon());
+                    int lat = mapDegrees(i.lat());
+                    int lon = mapDegrees(i.lon());
                     Osmformat.Node.Builder bi = Osmformat.Node.newBuilder();
                     bi.setId(id);
                     bi.setLon(lon);
@@ -384,7 +381,7 @@ public class PbfWriter implements Closeable {
                     switchTypes();
                     nodes = new NodeGroup();
                 }
-                if (node.getCoor() != null) {
+                if (node.isLatLonKnown()) {
                     nodes.add(node);
                     checkLimit();
                 }

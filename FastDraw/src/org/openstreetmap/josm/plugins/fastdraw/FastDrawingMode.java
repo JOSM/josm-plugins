@@ -559,7 +559,7 @@ class FastDrawingMode extends MapMode implements MapViewPaintable, KeyPressRelea
             Node nd = MainApplication.getMap().mapView.getNearestNode(line.getPoint(p), OsmPrimitive::isSelectable);
             // there may be a node with the same coords!
 
-            if (nd != null && p.greatCircleDistance(nd.getCoor()) > 0.01) nd = null;
+            if (nd != null && p.greatCircleDistance(nd) > 0.01) nd = null;
             if (nd == null) {
                 if (i > 0 && p.equals(first)) {
                     nd = firstNode;

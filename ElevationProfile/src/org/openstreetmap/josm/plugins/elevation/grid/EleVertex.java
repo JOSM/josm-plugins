@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.plugins.elevation.ElevationHelper;
 
@@ -40,9 +41,9 @@ public class EleVertex {
         }
 
         // compute the (approx.!) area of the vertex using heron's formula
-        double a = p1.greatCircleDistance(p2);
-        double b = p2.greatCircleDistance(p3);
-        double c = p1.greatCircleDistance(p3);
+        double a = p1.greatCircleDistance((ILatLon) p2);
+        double b = p2.greatCircleDistance((ILatLon) p3);
+        double c = p1.greatCircleDistance((ILatLon) p3);
 
         double s = (a + b + c) / 2D;
         double sq = s * (s - a) * (s - b) * (s - c);
@@ -54,10 +55,10 @@ public class EleVertex {
 
         int k = 0;
         for (int i = 0; i < points.length; i++) {
-            EleCoordinate c1 = points[i];
+            ILatLon c1 = points[i];
 
             for (int j = i + 1; j < points.length; j++) {
-                EleCoordinate c2 = points[j];
+                ILatLon c2 = points[j];
                 edges[k++] = new TriangleEdge(i, j, c1.greatCircleDistance(c2));
             }
         }
@@ -118,7 +119,7 @@ public class EleVertex {
         double y = (c1.getY() + c2.getY()) / 2.0;
 
         double z = (c1.getEle() + c2.getEle()) / 2.0;
-        if (c1.greatCircleDistance(c2) > MIN_DIST) {
+        if (c1.greatCircleDistance((ILatLon) c2) > MIN_DIST) {
             double hgtZ = ElevationHelper.getSrtmElevation(new LatLon(y, x));
 
             if (ElevationHelper.isValidElevation(hgtZ)) {

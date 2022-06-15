@@ -51,7 +51,7 @@ public final class Route {
 
             Node last = nodes.get(0);
             for (Node n : nodes.subList(1, nodes.size())) {
-                length += last.getCoor().greatCircleDistance(n.getCoor());
+                length += last.greatCircleDistance(n);
                 last = n;
             }
 

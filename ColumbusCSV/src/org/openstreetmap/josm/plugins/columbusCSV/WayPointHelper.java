@@ -58,13 +58,13 @@ public class WayPointHelper {
     }
     
     public static double getLonDist(WayPoint w1, WayPoint w2) {
-        LatLon ll = new LatLon(w1.getCoor().lat(), w2.getCoor().lon());
-        return w1.getCoor().greatCircleDistance(ll);
+        LatLon ll = new LatLon(w1.lat(), w2.lon());
+        return w1.greatCircleDistance(ll);
     }
     
     public static double getLatDist(WayPoint w1, WayPoint w2) {
-        LatLon ll = new LatLon(w2.getCoor().lat(), w1.getCoor().lon());
-        return w1.getCoor().greatCircleDistance(ll);
+        LatLon ll = new LatLon(w2.lat(), w1.lon());
+        return w1.greatCircleDistance(ll);
     }
     
     /**

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -44,8 +45,8 @@ public final class OsmUtils {
         List<Pair<Node, Node>> x = w.getNodePairs(true);
 
         for (Pair<Node, Node> pair : x) {
-            LatLon ap = pair.a.getCoor();
-            LatLon bp = pair.b.getCoor();
+            ILatLon ap = pair.a;
+            ILatLon bp = pair.b;
 
             double dist = findMinimum(ap, bp, coor);
             if (dist < minDist) {
@@ -63,7 +64,7 @@ public final class OsmUtils {
      * @param c the c the node coordinate
      * @return the double the minimum distance in m of the way and the node
      */
-    private static double findMinimum(LatLon a, LatLon b, LatLon c) {
+    private static double findMinimum(ILatLon a, ILatLon b, ILatLon c) {
         CheckParameterUtil.ensureParameterNotNull(c, "c");
         CheckParameterUtil.ensureParameterNotNull(b, "b");
         CheckParameterUtil.ensureParameterNotNull(a, "a");

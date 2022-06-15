@@ -149,7 +149,7 @@ public class ConnectWays {
             }
 
             for (Pair<Node, Node> np : ww.getNodePairs(false)) {
-                double dist = TracerGeometry.distanceFromSegment(ll, np.a.getCoor(), np.b.getCoor());
+                double dist = TracerGeometry.distanceFromSegment(ll, np.a, np.b);
                 if (dist < minDist) {
                     minDist = dist;
                     nearestWay = ww;

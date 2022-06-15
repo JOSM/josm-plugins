@@ -40,7 +40,7 @@ public class OsmEdge extends DefaultWeightedEdge {
         this.way = way;
         this.from = from;
         this.to = to;
-        this.length = from.getCoor().greatCircleDistance(to.getCoor());
+        this.length = from.greatCircleDistance(to);
     }
 
     /**

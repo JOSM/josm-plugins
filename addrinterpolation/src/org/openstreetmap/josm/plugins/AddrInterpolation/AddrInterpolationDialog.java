@@ -825,7 +825,7 @@ public class AddrInterpolationDialog extends JDialog implements ActionListener {
         int nSegments = segmentLengths.length;
         for (int segment = 0; segment < nSegments; segment++) {
             Node toNode = addrInterpolationWay.getNode(startNodeIndex + 1 + segment);
-            segmentLengths[segment] = fromNode.getCoor().greatCircleDistance(toNode.getCoor());
+            segmentLengths[segment] = fromNode.greatCircleDistance(toNode);
             totalLength += segmentLengths[segment];
 
             fromNode = toNode;

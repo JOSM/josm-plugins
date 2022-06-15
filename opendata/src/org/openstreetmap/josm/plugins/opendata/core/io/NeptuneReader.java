@@ -22,6 +22,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -238,7 +239,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
         return findTridentObject(root.getChouetteLineDescription().getPtLink(), id);
     }
 
-    protected static final boolean isNullLatLon(LatLon ll) {
+    protected static boolean isNullLatLon(ILatLon ll) {
         return ll.lat() == 0.0 && ll.lon() == 0.0;
     }
 
@@ -361,7 +362,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
         } else {
             for (RelationMember member : stopArea.getMembers()) {
                 // Fix stop coordinates if needed
-                if (member.getRole().equals(OSM_PLATFORM) && isNullLatLon(member.getNode().getCoor())) {
+                if (member.getRole().equals(OSM_PLATFORM) && isNullLatLon(member.getNode())) {
                     member.getNode().setCoor(createLatLon(areaCentroid));
                 }
             }

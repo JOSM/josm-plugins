@@ -108,7 +108,7 @@ public final class ElevationHelper {
         if (w1.equals(w2)) return 0;
 
         // get distance in meters and divide it by 100 in advance
-        double distInMeter = w1.greatCircleDistance(w2) / 100.0;
+        double distInMeter = w1.greatCircleDistance((ILatLon) w2) / 100.0;
 
         // get elevation (difference)
         int ele1 = (int) ElevationHelper.getElevation(w1);

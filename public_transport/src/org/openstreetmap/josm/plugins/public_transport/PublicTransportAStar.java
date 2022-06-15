@@ -69,7 +69,7 @@ public class PublicTransportAStar extends AStarAlgorithm {
 
             double totalDistance = 0;
             for (int i = min; i < max; ++i) {
-                totalDistance += way.getNode(i).getCoor().greatCircleDistance(way.getNode(i + 1).getCoor());
+                totalDistance += way.getNode(i).greatCircleDistance(way.getNode(i + 1));
             }
             return totalDistance;
         }
@@ -137,7 +137,7 @@ public class PublicTransportAStar extends AStarAlgorithm {
     @Override
     public double estimateDistance(AStarAlgorithm.Vertex vertex) {
         NodeVertex nodeVertex = (NodeVertex) vertex;
-        return ((NodeVertex) super.end).node.getCoor()
-                .greatCircleDistance(nodeVertex.node.getCoor());
+        return ((NodeVertex) super.end).node
+                .greatCircleDistance(nodeVertex.node);
     }
 }

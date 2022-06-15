@@ -4,6 +4,7 @@ package org.openstreetmap.josm.plugins.buildings_tools;
 import javax.swing.JMenu;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 public class BuildingsToolsPlugin extends Plugin {
     public static final Projection MERCATOR = Projections.getProjectionByCode("EPSG:3857"); // Mercator
 
-    public static EastNorth latlon2eastNorth(LatLon p) {
+    public static EastNorth latlon2eastNorth(ILatLon p) {
         return MERCATOR.latlon2eastNorth(p);
     }
 

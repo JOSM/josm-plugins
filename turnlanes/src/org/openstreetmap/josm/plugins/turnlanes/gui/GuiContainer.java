@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.plugins.turnlanes.model.Junction;
 import org.openstreetmap.josm.plugins.turnlanes.model.Lane;
@@ -52,8 +52,8 @@ class GuiContainer {
     GuiContainer(ModelContainer mc) {
         final Point2D origin = avgOrigin(locs(mc.getPrimaryJunctions()));
 
-        final LatLon originCoor = ProjectionRegistry.getProjection().eastNorth2latlon(new EastNorth(origin.getX(), origin.getY()));
-        final LatLon relCoor = ProjectionRegistry.getProjection().eastNorth2latlon(
+        final ILatLon originCoor = ProjectionRegistry.getProjection().eastNorth2latlon(new EastNorth(origin.getX(), origin.getY()));
+        final ILatLon relCoor = ProjectionRegistry.getProjection().eastNorth2latlon(
                 new EastNorth(origin.getX() + 1, origin.getY() + 1));
 
         // meters per source unit

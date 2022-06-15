@@ -209,12 +209,12 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         if (!ctrl) {
             Node n = MainApplication.getMap().mapView.getNearestNode(mousePos, OsmPrimitive::isUsable);
             if (n != null)
-                return latlon2eastNorth(n.getCoor());
+                return latlon2eastNorth(n);
             IWaySegment<Node, Way> ws = MainApplication.getMap().mapView.getNearestWaySegment(mousePos,
                     OsmPrimitive::isSelectable);
             if (ws != null && ws.getWay().get("building") != null) {
-                EastNorth p1 = latlon2eastNorth(ws.getFirstNode().getCoor());
-                EastNorth p2 = latlon2eastNorth(ws.getSecondNode().getCoor());
+                EastNorth p1 = latlon2eastNorth(ws.getFirstNode());
+                EastNorth p2 = latlon2eastNorth(ws.getSecondNode());
                 EastNorth enX = Geometry.closestPointToSegment(p1, p2,
                         latlon2eastNorth(MainApplication.getMap().mapView.getLatLon(mousePos.x, mousePos.y)));
                 if (enX != null) {

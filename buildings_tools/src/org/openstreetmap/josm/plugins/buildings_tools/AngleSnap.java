@@ -24,8 +24,8 @@ public class AngleSnap {
 
     public final Double addSnap(Node[] nodes) {
         if (nodes.length == 2) {
-            EastNorth p1 = latlon2eastNorth(nodes[0].getCoor());
-            EastNorth p2 = latlon2eastNorth(nodes[1].getCoor());
+            EastNorth p1 = latlon2eastNorth(nodes[0]);
+            EastNorth p2 = latlon2eastNorth(nodes[1]);
             double heading = p1.heading(p2);
             addSnap(heading);
             addSnap(heading + Math.PI / 4);
@@ -37,8 +37,8 @@ public class AngleSnap {
 
     public final void addSnap(Way way) {
         for (Pair<Node, Node> pair : way.getNodePairs(false)) {
-            EastNorth a = latlon2eastNorth(pair.a.getCoor());
-            EastNorth b = latlon2eastNorth(pair.b.getCoor());
+            EastNorth a = latlon2eastNorth(pair.a);
+            EastNorth b = latlon2eastNorth(pair.b);
             double heading = a.heading(b);
             addSnap(heading);
         }

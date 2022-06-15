@@ -97,7 +97,7 @@ public final class ToolSettings {
             return Shape.CIRCLE;
         } else {
             ToolSettings.shape = Shape.RECTANGLE;
-            return (Shape.RECTANGLE);
+            return Shape.RECTANGLE;
         }
     }
 

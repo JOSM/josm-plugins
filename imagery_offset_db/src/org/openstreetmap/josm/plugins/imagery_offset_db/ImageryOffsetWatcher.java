@@ -10,6 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -150,7 +151,7 @@ public final class ImageryOffsetWatcher implements ZoomChangeListener, LayerChan
                 storeLayerOffset(layer);
                 setOffsetGood(true);
             } else {
-                setOffsetGood(data.lastChecked != null && center.greatCircleDistance(data.lastChecked) <= maxDistance * 1000);
+                setOffsetGood(data.lastChecked != null && center.greatCircleDistance((ILatLon) data.lastChecked) <= maxDistance * 1000);
             }
         }
     }
@@ -263,7 +264,7 @@ public final class ImageryOffsetWatcher implements ZoomChangeListener, LayerChan
                 } catch (NumberFormatException e) {
                     continue;
                 }
-                LatLon lastPos = new LatLon(dparts[0], dparts[1]);
+                ILatLon lastPos = new LatLon(dparts[0], dparts[1]);
                 if (lastPos.greatCircleDistance(ImageryOffsetTools.getMapCenter()) < Math.max(maxDistance, 3.0) * 1000) {
                     // apply offset
                     OffsetBookmark bookmark = new OffsetBookmark(ProjectionRegistry.getProjection().toCode(),

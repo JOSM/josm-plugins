@@ -94,7 +94,7 @@ public final class TrustAnalyzer {
         /** Rating is valid if Node from signed plaintext is inside Tolerance given in Signature */
         Node signedNode = TrustNode.generateNodeFromSigtext(signedPlaintext);
         Node currentNode = (Node) trust.getOsmPrimitive();
-        double dist = signedNode.getCoor().greatCircleDistance(currentNode.getCoor());
+        double dist = signedNode.greatCircleDistance(currentNode);
 
         /** is distance between signed Node and current Node inside tolerance? */
         return dist <= TrustGPG.searchTolerance(sig);
@@ -156,7 +156,7 @@ public final class TrustAnalyzer {
         for (int i = 0; i < 2; i++) {
             Node signedNode = signedSegment.get(i);
             Node currentNode = nodes.get(i);
-            double dist = signedNode.getCoor().greatCircleDistance(currentNode.getCoor());
+            double dist = signedNode.greatCircleDistance(currentNode);
             if (dist > tolerance) return false;
         }
         return true;

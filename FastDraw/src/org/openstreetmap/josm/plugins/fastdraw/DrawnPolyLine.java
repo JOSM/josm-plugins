@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MapView;
 
@@ -37,7 +38,7 @@ public class DrawnPolyLine {
     double getLength() {
         List<LatLon> pts = getPoints();
         Iterator<LatLon> it1, it2;
-        LatLon pp1, pp2;
+        ILatLon pp1, pp2;
         if (pts.size() < 2) return 0;
         it1 = pts.listIterator(0);
         it2 = pts.listIterator(1);
@@ -367,7 +368,7 @@ public class DrawnPolyLine {
         if (k < 2) k = 2;
         if (k > n) k = n;
 
-        LatLon pp1, pp2 = null;
+        ILatLon pp1, pp2 = null;
         Iterator<LatLon> it1, it2;
         it1 = pts.listIterator(0);
         it2 = pts.listIterator(1);

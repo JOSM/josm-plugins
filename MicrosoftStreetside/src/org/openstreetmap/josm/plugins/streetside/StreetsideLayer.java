@@ -22,6 +22,7 @@ import javax.swing.Icon;
 
 import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
@@ -461,7 +462,7 @@ ActiveLayerChangeListener, StreetsideDataListener {
       })
       .filter(img -> // Filters out images too far away from target
         img != null &&
-        img.getMovingLatLon().greatCircleDistance(target.getMovingLatLon())
+        img.getMovingLatLon().greatCircleDistance((ILatLon) target.getMovingLatLon())
           < StreetsideProperties.SEQUENCE_MAX_JUMP_DISTANCE.get()
        )
       .sorted(new NearestImgToTargetComparator(target))
@@ -500,8 +501,8 @@ ActiveLayerChangeListener, StreetsideDataListener {
     @Override
     public int compare(StreetsideAbstractImage img1, StreetsideAbstractImage img2) {
       return (int) Math.signum(
-        img1.getMovingLatLon().greatCircleDistance(target.getMovingLatLon()) -
-        img2.getMovingLatLon().greatCircleDistance(target.getMovingLatLon())
+        img1.getMovingLatLon().greatCircleDistance((ILatLon) target.getMovingLatLon()) -
+        img2.getMovingLatLon().greatCircleDistance((ILatLon) target.getMovingLatLon())
       );
     }
   }

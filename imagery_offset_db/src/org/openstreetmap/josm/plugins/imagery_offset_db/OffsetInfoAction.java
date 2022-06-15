@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -79,7 +80,7 @@ public class OffsetInfoAction extends AbstractAction {
     public static Object getInformationObject(ImageryOffsetBase offset) {
         StringBuilder sb = new StringBuilder();
         if (offset instanceof ImageryOffset) {
-            double odist = ((ImageryOffset) offset).getImageryPos().greatCircleDistance(offset.getPosition());
+            double odist = ((ImageryOffset) offset).getImageryPos().greatCircleDistance((ILatLon) offset.getPosition());
             if (odist < 1e-2) odist = 0.0;
             sb.append(tr("An imagery offset of {0}", ImageryOffsetTools.formatDistance(odist))).append('\n');
             sb.append(tr("Imagery ID")).append(": ").append(((ImageryOffset) offset).getImagery()).append('\n');
@@ -87,7 +88,7 @@ public class OffsetInfoAction extends AbstractAction {
             sb.append(tr("A calibration geometry of {0} nodes", ((CalibrationObject) offset).getGeometry().length)).append('\n');
         }
 
-        double dist = ImageryOffsetTools.getMapCenter().greatCircleDistance(offset.getPosition());
+        double dist = ImageryOffsetTools.getMapCenter().greatCircleDistance((ILatLon) offset.getPosition());
         sb.append(dist < 50 ? tr("Determined right here") : tr("Determined {0} away",
                 ImageryOffsetTools.formatDistance(dist)));
 

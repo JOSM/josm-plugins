@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -67,7 +68,7 @@ public class OffsetDialogButton extends JButton {
      * Update arrow for the offset location.
      */
     public void updateLocation() {
-        LatLon center = ImageryOffsetTools.getMapCenter();
+        ILatLon center = ImageryOffsetTools.getMapCenter();
         directionArrow.updateIcon(center);
         double distance = center.greatCircleDistance(offset.getPosition());
         distanceLabel.setText(ImageryOffsetTools.formatDistance(distance));
@@ -150,7 +151,7 @@ public class OffsetDialogButton extends JButton {
     public static double[] getLengthAndDirection(ImageryOffset offset, double dx, double dy) {
         Projection proj = ProjectionRegistry.getProjection();
         EastNorth pos = proj.latlon2eastNorth(offset.getPosition());
-        LatLon correctedCenterLL = proj.eastNorth2latlon(pos.add(-dx, -dy));
+        ILatLon correctedCenterLL = proj.eastNorth2latlon(pos.add(-dx, -dy));
         double length = correctedCenterLL.greatCircleDistance(offset.getImageryPos());
         double direction = length < 1e-2 ? 0.0 : -correctedCenterLL.bearing(offset.getImageryPos());
         if (direction < 0)
@@ -260,7 +261,7 @@ public class OffsetDialogButton extends JButton {
             this.to = to;
         }
 
-        public void updateIcon(LatLon from) {
+        public void updateIcon(ILatLon from) {
             distance = from.greatCircleDistance(to);
             direction = -to.bearing(from);
         }

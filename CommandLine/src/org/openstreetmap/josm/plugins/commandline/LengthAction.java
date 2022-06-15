@@ -19,6 +19,7 @@ import java.awt.geom.GeneralPath;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -148,7 +149,7 @@ public class LengthAction extends MapMode implements MapViewPaintable, AWTEventL
     }
 
     private void drawingFinish() {
-        parentPlugin.loadParameter(String.valueOf(startCoor.greatCircleDistance(endCoor)), true);
+        parentPlugin.loadParameter(String.valueOf(startCoor.greatCircleDistance((ILatLon) endCoor)), true);
         drawStartPos = null;
         drawing = false;
         // exitMode is called when we change to a different action. Do not call it here.
@@ -190,7 +191,7 @@ public class LengthAction extends MapMode implements MapViewPaintable, AWTEventL
             drawEndPos = mousePos;
         endCoor = map.mapView.getLatLon(drawEndPos.x, drawEndPos.y);
         if (drawing) {
-            map.statusLine.setDist(startCoor.greatCircleDistance(endCoor));
+            map.statusLine.setDist(startCoor.greatCircleDistance((ILatLon) endCoor));
             map.mapView.repaint();
         }
     }

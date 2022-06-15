@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -120,9 +121,9 @@ public class TrackSuggestStopsCommand extends Command {
 
             if (j < k) {
                 double dist = 0;
-                LatLon latLonI = wayPoints.elementAt(i).getCoor();
+                ILatLon latLonI = wayPoints.elementAt(i).getCoor();
                 for (int l = j; l < k; ++l) {
-                    double distL = latLonI.greatCircleDistance(wayPoints.elementAt(l).getCoor());
+                    double distL = latLonI.greatCircleDistance(wayPoints.elementAt(l));
                     if (distL > dist)
                         dist = distL;
                 }
@@ -147,7 +148,7 @@ public class TrackSuggestStopsCommand extends Command {
                 continue;
 
             LatLon latLon = wayPoints.elementAt(i).getCoor();
-            if ((lastStopCoor != null) && (lastStopCoor.greatCircleDistance(latLon) < threshold))
+            if ((lastStopCoor != null) && (lastStopCoor.greatCircleDistance((ILatLon) latLon) < threshold))
                 continue;
 
             if (wayPoints.elementAt(i).getString("time") != null) {

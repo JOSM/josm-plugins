@@ -203,11 +203,11 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
                 }
             } else {
                 for (Node n : nodes) {
-                    if (n.getCoor() != null) {
+                    if (n.isLatLonKnown()) {
                         if (lastNode == null) {
                             lastNode = n;
                         } else {
-                            length += lastNode.getCoor().greatCircleDistance(n.getCoor());
+                            length += lastNode.greatCircleDistance(n);
                             segAngle = MeasurementLayer.angleBetween(lastNode, n);
                             lastNode = n;
                         }
@@ -222,8 +222,8 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
                 Double firstSegLength = null;
                 boolean isCircle = true;
                 for (Node n: w.getNodes()) {
-                    if (lastN != null && lastN.getCoor() != null && n.getCoor() != null) {
-                        final double segLength = lastN.getCoor().greatCircleDistance(n.getCoor());
+                    if (lastN != null && lastN.isLatLonKnown() && n.isLatLonKnown()) {
+                        final double segLength = lastN.greatCircleDistance(n);
                         if (firstSegLength == null) {
                             firstSegLength = segLength;
                         }
@@ -232,8 +232,8 @@ public class MeasurementDialog extends ToggleDialog implements DataSelectionList
                         }
                         length += segLength;
                         //http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
-                        wayArea += (MeasurementLayer.calcX(n.getCoor()) * MeasurementLayer.calcY(lastN.getCoor()))
-                                - (MeasurementLayer.calcY(n.getCoor()) * MeasurementLayer.calcX(lastN.getCoor()));
+                        wayArea += (MeasurementLayer.calcX(n) * MeasurementLayer.calcY(lastN))
+                                - (MeasurementLayer.calcY(n) * MeasurementLayer.calcX(lastN));
                         segAngle = MeasurementLayer.angleBetween(lastN, n);
                     }
                     lastN = n;

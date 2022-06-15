@@ -84,10 +84,10 @@ public class ModelGeography {
     }
 
     public void finishWay(Strip strip, int partIndex, boolean isOuter, String level) {
-        if (nodes.size() > 0) {
+        if (!nodes.isEmpty()) {
             CorridorPart part = strip.partAt(partIndex);
             strip.geographyAt(partIndex).appendNodes(part.getType(), part.getSide(), level,
-                    nodes.elementAt(nodes.size()-1).getCoor(), nodes.elementAt(0).getCoor(), this);
+                    nodes.elementAt(nodes.size()-1), nodes.elementAt(0), this);
             nodes.add(nodes.elementAt(0));
         }
         assignNds(nodes);
@@ -97,9 +97,9 @@ public class ModelGeography {
 
     public void appendCorridorPart(CorridorPart part, CorridorGeography partGeography, int beamIndex, int partIndex,
             String level) {
-        if (nodes.size() > 0)
+        if (!nodes.isEmpty())
             partGeography.appendNodes(part.getType(), part.getSide(), level,
-                    nodes.elementAt(nodes.size()-1).getCoor(),
+                    nodes.elementAt(nodes.size()-1),
                     beamsGeography.elementAt(beamIndex).coorAt(partIndex), this);
     }
 
@@ -112,10 +112,10 @@ public class ModelGeography {
             assignCoor(addMeterOffset(beamsGeography.elementAt(stripIndex).coorAt(beamNodeIndex),
                     0, strip.width / 2.));
 
-        if (nodes.size() > 0) {
+        if (!nodes.isEmpty()) {
             CorridorPart part = strip.partAt(partIndex);
             strip.geographyAt(partIndex).appendNodes(part.getType(), part.getSide(), level,
-                    nodes.elementAt(nodes.size()-1).getCoor(), nodePool.elementAt(nodePoolCount).getCoor(), this);
+                    nodes.elementAt(nodes.size()-1), nodePool.elementAt(nodePoolCount), this);
         }
         nodes.add(nodePool.elementAt(nodePoolCount));
         ++nodePoolCount;
@@ -182,7 +182,7 @@ public class ModelGeography {
 
     private void adjustMultipolygonRelation(IndoorSweeplineModel.Type type, String level) {
         if (members.size() > 1) {
-            if (wayPool.size() > 0)
+            if (!wayPool.isEmpty())
                 wayPool.elementAt(0).removeAll();
 
             if (multipolygon == null) {

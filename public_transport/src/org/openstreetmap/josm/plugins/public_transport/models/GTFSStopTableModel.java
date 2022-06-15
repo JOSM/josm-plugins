@@ -179,7 +179,7 @@ public class GTFSStopTableModel extends DefaultTableModel {
         Iterator<Node> iter = existingStops.iterator();
         while (iter.hasNext()) {
             Node node = iter.next();
-            if (coor.greatCircleDistance(node.getCoor()) < 1000) {
+            if (coor.greatCircleDistance(node) < 1000) {
                 nearBusStop = true;
                 break;
             }

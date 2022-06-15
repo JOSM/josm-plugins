@@ -28,6 +28,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -256,8 +257,8 @@ public final class SimplifyAreaAction extends JosmAction {
                         continue;
                     }
 
-                    final LatLon a = coordMap.get(n1);
-                    final LatLon b = coordMap.get(n2);
+                    final ILatLon a = coordMap.get(n1);
+                    final ILatLon b = coordMap.get(n2);
                     
                     if (a != null && b != null) {
                         final double dist = a.greatCircleDistance(b);
@@ -418,12 +419,12 @@ public final class SimplifyAreaAction extends JosmAction {
         nodesToDelete.addAll(delNodes);
     }
 
-    public static double computeConvectAngle(final LatLon coord1, final LatLon coord2, final LatLon coord3) {
+    public static double computeConvectAngle(final ILatLon coord1, final ILatLon coord2, final ILatLon coord3) {
         final double angle =  Math.abs(heading(coord2, coord3) - heading(coord1, coord2));
         return Math.toDegrees(angle < Math.PI ? angle : 2 * Math.PI - angle);
     }
 
-    public static double computeArea(final LatLon coord1, final LatLon coord2, final LatLon coord3) {
+    public static double computeArea(final ILatLon coord1, final ILatLon coord2, final ILatLon coord3) {
         final double a = coord1.greatCircleDistance(coord2);
         final double b = coord2.greatCircleDistance(coord3);
         final double c = coord3.greatCircleDistance(coord1);
@@ -436,11 +437,11 @@ public final class SimplifyAreaAction extends JosmAction {
 
     public static double R = 6378135;
 
-    public static double crossTrackError(final LatLon l1, final LatLon l2, final LatLon l3) {
+    public static double crossTrackError(final ILatLon l1, final ILatLon l2, final ILatLon l3) {
         return R * Math.asin(sin(l1.greatCircleDistance(l2) / R) * sin(heading(l1, l2) - heading(l1, l3)));
     }
 
-    public static double heading(final LatLon a, final LatLon b) {
+    public static double heading(final ILatLon a, final ILatLon b) {
         double hd = Math.atan2(sin(toRadians(a.lon() - b.lon())) * cos(toRadians(b.lat())),
                 cos(toRadians(a.lat())) * sin(toRadians(b.lat())) -
                 sin(toRadians(a.lat())) * cos(toRadians(b.lat())) * cos(toRadians(a.lon() - b.lon())));

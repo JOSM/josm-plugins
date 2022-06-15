@@ -252,7 +252,7 @@ public abstract class SpreadSheetReader extends AbstractReader {
                     if (firstNode == null) {
                         firstNode = n;
                     }
-                    if (n == firstNode || n.getCoor().greatCircleDistance(firstNode.getCoor())
+                    if (n == firstNode || n.greatCircleDistance(firstNode)
                             > Config.getPref().getDouble(OdConstants.PREF_TOLERANCE, OdConstants.DEFAULT_TOLERANCE)) {
                         ds.addPrimitive(n);
                     } else {

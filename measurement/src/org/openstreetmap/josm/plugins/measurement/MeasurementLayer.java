@@ -156,16 +156,16 @@ public class MeasurementLayer extends Layer {
      * Use an equal area sinusoidal projection to improve accuracy and so we can still use normal polygon area calculation
      * https://stackoverflow.com/questions/4681737/how-to-calculate-the-area-of-a-polygon-on-the-earths-surface-using-python
      */
-    public static double calcX(LatLon p1){
+    public static double calcX(ILatLon p1){
         return p1.lat() * Math.PI * 6367000 / 180;
     }
 
-    public static double calcY(LatLon p1){
+    public static double calcY(ILatLon p1){
         return p1.lon() * ( Math.PI * 6367000 / 180) * Math.cos(p1.lat() * Math.PI / 180);
     }
 
     public static double calcDistance(WayPoint p1, WayPoint p2){
-        return p1.getCoor().greatCircleDistance(p2.getCoor());
+        return p1.greatCircleDistance(p2);
     }
 
     public static double angleBetween(WayPoint p1, WayPoint p2){

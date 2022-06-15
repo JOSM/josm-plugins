@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -225,7 +226,7 @@ public class PhotoAdjustWorker {
      */
     private void changeDirection(ImageEntry photo, ImageData data,
             MouseEvent evt) {
-        final LatLon photoLL = photo.getPos();
+        final ILatLon photoLL = photo.getPos();
         if (photoLL == null) {
             // Direction cannot be set if image doesn't have a position.
             return;

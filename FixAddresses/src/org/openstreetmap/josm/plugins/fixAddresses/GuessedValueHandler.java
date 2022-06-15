@@ -161,7 +161,7 @@ public class GuessedValueHandler implements OsmPrimitiveVisitor {
         assert aNode != null;
 
         if (n.hasKey(tag)) {
-            double dist = n.getCoor().greatCircleDistance(aNode.getCoor());
+            double dist = n.greatCircleDistance(aNode.getCoor());
             if (dist < minDist && dist < maxDist) {
                 minDist = dist;
                 currentValue = n.get(tag);
