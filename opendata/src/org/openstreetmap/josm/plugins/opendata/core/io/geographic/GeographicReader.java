@@ -180,14 +180,16 @@ public abstract class GeographicReader extends AbstractReader {
         Way w = null;
         Way tempWay = new Way();
         if (ls != null) {
+            final List<Node> nodes = new ArrayList<>(ls.getNumPoints());
             // Build list of nodes
             for (int i = 0; i < ls.getNumPoints(); i++) {
                 try {
-                    tempWay.addNode(createOrGetNode(ls.getPointN(i)));
+                    nodes.add(createOrGetNode(ls.getPointN(i)));
                 } catch (TransformException | IllegalArgumentException e) {
                     Logging.error("Exception for " + ls + ": " + e.getClass().getName() + ": " + e.getMessage());
                 }
             }
+            tempWay.setNodes(nodes);
             // Find possible duplicated ways
             if (tempWay.getNodesCount() > 0) {
                 Collection<Way> candidates = Utils.filteredCollection(tempWay.firstNode().getReferrers(), Way.class);
