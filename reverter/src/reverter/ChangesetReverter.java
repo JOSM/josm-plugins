@@ -141,15 +141,15 @@ public class ChangesetReverter {
             throws OsmTransferException, RevertRedactedChangesetException {
         this.changesetId = changesetId;
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
+        newLayer = newLayer || editLayer == null;
         if (newLayer) {
             this.ds = new DataSet();
             this.layer = new OsmDataLayer(this.ds, tr("Reverted changeset") + tr(" [id: {0}]", String.valueOf(changesetId)), null);
-            this.ods = ods;
         } else {
             this.layer = editLayer;
             this.ds = editLayer.data;
-            this.ods = ods;
         }
+        this.ods = ods;
         this.revertType = revertType;
         if ((revertType == RevertType.SELECTION || revertType == RevertType.SELECTION_WITH_UNDELETE)
                 && (ods == null || ods.getAllSelected().isEmpty())) {
