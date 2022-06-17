@@ -21,7 +21,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.PolarCoor;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -107,8 +107,8 @@ public final class CircleArcMaker {
         double radius = center.distance(p1);
 
         // see #10777: calculate reasonable number of nodes for full circle (copy from CreateCircleAction)
-        ILatLon ll1 = ProjectionRegistry.getProjection().eastNorth2latlon(p1);
-        ILatLon ll2 = ProjectionRegistry.getProjection().eastNorth2latlon(center);
+        LatLon ll1 = ProjectionRegistry.getProjection().eastNorth2latlon(p1);
+        LatLon ll2 = ProjectionRegistry.getProjection().eastNorth2latlon(center);
 
         double radiusInMeters = ll1.greatCircleDistance(ll2);
         if (radiusInMeters < 0.01)
