@@ -16,7 +16,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -29,7 +28,6 @@ import org.openstreetmap.josm.tools.Shortcut;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -131,10 +129,6 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         super.enterMode();
 
         MapFrame map = MainApplication.getMap();
-        if (getLayerManager().getEditDataSet() == null) {
-            map.selectSelectTool(false);
-            return;
-        }
         selectedColor = new NamedColorProperty(marktr("selected"), selectedColor).get();
         map.mapView.addMouseListener(this);
         map.mapView.addMouseMotionListener(this);
@@ -439,7 +433,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return l instanceof OsmDataLayer;
+        return isEditableDataLayer(l);
     }
 
     public final void updateSnap(Collection<? extends OsmPrimitive> newSelection) {
