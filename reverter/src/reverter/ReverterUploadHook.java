@@ -31,7 +31,7 @@ public class ReverterUploadHook implements UploadHook {
         if (ReverterPlugin.reverterUsed.get()) {
             for (Command cmd : UndoRedoHandler.getInstance().getUndoCommands()) {
                 if (Objects.equals(MainApplication.getLayerManager().getEditDataSet(), cmd.getAffectedDataSet()) && isReverterCmd(cmd)) {
-                    tags.put("created_by", pluginString);
+                    tags.merge("created_by", pluginString, (oldValue, value) -> String.join(";", value, oldValue));
                     break;
                 }
             }
