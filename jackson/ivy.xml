@@ -3,6 +3,6 @@
 <ivy-module version="2.0">
     <info organisation="org.openstreetmap.josm.plugins" module="geotools"/>
     <dependencies>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.13.2" conf="default->default"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.13.3" conf="default->default"/>
     </dependencies>
 </ivy-module>
