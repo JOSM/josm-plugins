@@ -3,8 +3,8 @@
 <ivy-module version="2.0">
     <info organisation="org.openstreetmap.josm.plugins" module="jts"/>
     <dependencies>
-        <dependency org="org.locationtech.jts" name="jts-core" rev="1.18.2" />
-        <dependency org="org.locationtech.jts.io" name="jts-io-common" rev="1.18.2" />
+        <dependency org="org.locationtech.jts" name="jts-core" rev="1.19.0" />
+        <dependency org="org.locationtech.jts.io" name="jts-io-common" rev="1.19.0" />
         <!-- jts-io-common has junit as a test dependency -->
         <exclude org="junit" />
     </dependencies>
