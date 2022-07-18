@@ -269,7 +269,7 @@ public class TurnRestrictionsListDialog extends ToggleDialog {
         }
 
         protected void deleteRelation(Relation toDelete) {
-            if (toDelete == null)
+            if (toDelete == null || toDelete.getDataSet() == null || toDelete.isDeleted())
                 return;
             org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
             		MainApplication.getLayerManager().getEditLayer(),

@@ -768,7 +768,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
         @Override
         public void actionPerformed(ActionEvent e) {
             Relation tr = getTurnRestriction();
-            if (tr == null || tr.getDataSet() == null) return;
+            if (tr == null || tr.getDataSet() == null || tr.isDeleted()) return;
             org.openstreetmap.josm.actions.mapmode.DeleteAction.deleteRelation(
                     getLayer(),
                     tr
