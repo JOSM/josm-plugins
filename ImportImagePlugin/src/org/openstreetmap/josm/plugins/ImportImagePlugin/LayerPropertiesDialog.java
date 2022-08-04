@@ -9,11 +9,11 @@ import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Vector;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,61 +37,37 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * UI-Dialog which provides:
  * - general and spatial information about the georeferenced image
- * - a possiblitly to change the source reference system of the image
- *
+ * - a possibility to change the source reference system of the image
  *
  * @author Christoph Beekmans, Fabian Kowitz, Anna Robaszkiewicz, Oliver Kuhn, Martin Ulitzny
  *
  */
 public class LayerPropertiesDialog extends JFrame {
 
-    private Vector<String> supportedCRS;
+    private final List<String> supportedCRS;
     private ImageLayer imageLayer;
 
-    private JPanel mainPanel = null;
-    private JPanel jPanel = null;
-    private JPanel buttonPanel = null;
-    private JTabbedPane jTabbedPane = null;
-    private JPanel infoPanel = null;
-    private JPanel crsPanel = null;
-    private JButton okButton = null;
-    private JLabel layerNameLabel = null;
-    private JLabel layerNameValueLabel = null;
-    private JLabel imageFileLabel = null;
-    private JLabel imageFileValueLabel = null;
-    private JLabel sizeLabel = null;
-    private JLabel sizeValueLabel = null;
-    private JLabel crsLabel = null;
-    private JLabel crsValueLabel = null;
-    private JLabel extentLabel = null;
-    private JLabel defaultCRSDescriptorLabel = null;
-    private JLabel defaultCRSLabel = null;
-    private JTextField searchField = null;
-    private JScrollPane crsListScrollPane = null;
-    private JList<String> crsJList = null;
-    private JButton useDefaultCRSButton = null;
-    private JButton applySelectedCRSButton = null;
-    private JButton setSelectedCRSAsDefaultButton = null;
-    private JLabel searchFieldLabel = null;
-    private JCheckBox eastingFirstCheckBox = null;
-    private JLabel eastingFirstLabel = null;
-    private JLabel tabDescriptionLabel = null;
-    private JLabel upperLeftLabel = null;
-    private JLabel lowerLeftLabel = null;
-    private JLabel upperRightLabel = null;
-    private JLabel lowerRightLabel = null;
-    private JLabel upperLeftValueLabel = null;
-    private JLabel upperRightValueLabel = null;
-    private JLabel lowerLeftValueLabel = null;
-    private JLabel lowerRightValueLabel = null;
-    private JLabel currentCRSLabel = null;
-    private JLabel currentCRSValueLabel = null;
+    private JPanel mainPanel;
+    private JPanel jPanel;
+    private JPanel buttonPanel;
+    private JTabbedPane jTabbedPane;
+    private JPanel infoPanel;
+    private JPanel crsPanel;
+    private JButton okButton;
+    private JLabel defaultCRSLabel;
+    private JTextField searchField;
+    private JScrollPane crsListScrollPane;
+    private JList<String> crsJList;
+    private JButton useDefaultCRSButton;
+    private JButton applySelectedCRSButton;
+    private JButton setSelectedCRSAsDefaultButton;
+    private JCheckBox eastingFirstCheckBox;
 
     /**
      * This method initializes
      *
      */
-    public LayerPropertiesDialog(ImageLayer imageLayer, Vector<String> supportedCRS) {
+    public LayerPropertiesDialog(ImageLayer imageLayer, List<String> supportedCRS) {
         super(imageLayer.getName());
         this.supportedCRS = supportedCRS;
         this.imageLayer = imageLayer;
@@ -102,7 +78,7 @@ public class LayerPropertiesDialog extends JFrame {
      * This method initializes
      *
      */
-    public LayerPropertiesDialog(Vector<String> supportedCRS) {
+    public LayerPropertiesDialog(List<String> supportedCRS) {
         super();
         this.supportedCRS = supportedCRS;
         initialize();
@@ -190,41 +166,41 @@ public class LayerPropertiesDialog extends JFrame {
      */
     private JPanel getInfoPanel() {
         if (infoPanel == null) {
-            lowerRightValueLabel = new JLabel();
+            JLabel lowerRightValueLabel = new JLabel();
             lowerRightValueLabel.setBounds(new Rectangle(210, 315, 134, 16));
             lowerRightValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             lowerRightValueLabel.setText((float) imageLayer.getBbox().getMinX() + ", " + (float) imageLayer.getBbox().getMaxY());
-            lowerLeftValueLabel = new JLabel();
+            JLabel lowerLeftValueLabel = new JLabel();
             lowerLeftValueLabel.setBounds(new Rectangle(30, 315, 133, 16));
             lowerLeftValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
             lowerLeftValueLabel.setText((float) imageLayer.getBbox().getMinX() + ", " + (float) imageLayer.getBbox().getMinY());
-            upperRightValueLabel = new JLabel();
+            JLabel upperRightValueLabel = new JLabel();
             upperRightValueLabel.setBounds(new Rectangle(210, 255, 138, 16));
             upperRightValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
             upperRightValueLabel.setText((float) imageLayer.getBbox().getMaxX() + ", " + (float) imageLayer.getBbox().getMaxY());
-            upperLeftValueLabel = new JLabel();
+            JLabel upperLeftValueLabel = new JLabel();
             upperLeftValueLabel.setBounds(new Rectangle(30, 255, 133, 16));
             upperLeftValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
             upperLeftValueLabel.setText((float) imageLayer.getBbox().getMaxX() + ", " + (float) imageLayer.getBbox().getMinY());
-            lowerRightLabel = new JLabel();
+            JLabel lowerRightLabel = new JLabel();
             lowerRightLabel.setBounds(new Rectangle(287, 344, 74, 16));
             lowerRightLabel.setText("Lower Right");
-            upperRightLabel = new JLabel();
+            JLabel upperRightLabel = new JLabel();
             upperRightLabel.setBounds(new Rectangle(285, 225, 91, 16));
             upperRightLabel.setText("Upper Right");
-            lowerLeftLabel = new JLabel();
+            JLabel lowerLeftLabel = new JLabel();
             lowerLeftLabel.setBounds(new Rectangle(15, 345, 92, 16));
             lowerLeftLabel.setText("Lower Left");
-            upperLeftLabel = new JLabel();
+            JLabel upperLeftLabel = new JLabel();
             upperLeftLabel.setBounds(new Rectangle(15, 224, 91, 16));
             upperLeftLabel.setText("Upper Left");
-            extentLabel = new JLabel();
+            JLabel extentLabel = new JLabel();
             extentLabel.setBounds(new Rectangle(120, 195, 136, 16));
             extentLabel.setEnabled(false);
             extentLabel.setHorizontalAlignment(SwingConstants.CENTER);
             extentLabel.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
             extentLabel.setText("Extent");
-            crsValueLabel = new JLabel();
+            JLabel crsValueLabel = new JLabel();
             crsValueLabel.setBounds(new Rectangle(150, 150, 226, 16));
 
             String crsDescription = "";
@@ -235,26 +211,26 @@ public class LayerPropertiesDialog extends JFrame {
             }
             crsValueLabel.setText(crsDescription + "(" + imageLayer.getBbox().getCoordinateReferenceSystem().getName().toString() + ")");
 
-            crsLabel = new JLabel();
+            JLabel crsLabel = new JLabel();
             crsLabel.setBounds(new Rectangle(15, 150, 118, 16));
             crsLabel.setText("Reference System");
-            sizeValueLabel = new JLabel();
+            JLabel sizeValueLabel = new JLabel();
             sizeValueLabel.setBounds(new Rectangle(150, 105, 226, 16));
             sizeValueLabel.setText(imageLayer.getImage().getHeight() + " x " + imageLayer.getImage().getWidth());
-            sizeLabel = new JLabel();
+            JLabel sizeLabel = new JLabel();
             sizeLabel.setBounds(new Rectangle(15, 105, 121, 16));
             sizeLabel.setText("Image size");
-            imageFileValueLabel = new JLabel();
+            JLabel imageFileValueLabel = new JLabel();
             imageFileValueLabel.setBounds(new Rectangle(150, 60, 226, 16));
             imageFileValueLabel.setText(imageLayer.getImageFile().getAbsolutePath());
             imageFileValueLabel.setToolTipText(imageLayer.getImageFile().getAbsolutePath());
-            imageFileLabel = new JLabel();
+            JLabel imageFileLabel = new JLabel();
             imageFileLabel.setBounds(new Rectangle(15, 60, 121, 16));
             imageFileLabel.setText("Image file");
-            layerNameValueLabel = new JLabel();
+            JLabel layerNameValueLabel = new JLabel();
             layerNameValueLabel.setBounds(new Rectangle(150, 15, 226, 16));
             layerNameValueLabel.setText(imageLayer.getName());
-            layerNameLabel = new JLabel();
+            JLabel layerNameLabel = new JLabel();
             layerNameLabel.setBounds(new Rectangle(15, 15, 121, 16));
             layerNameLabel.setText("Layer name");
             infoPanel = new JPanel();
@@ -288,7 +264,7 @@ public class LayerPropertiesDialog extends JFrame {
      */
     private JPanel getCrsPanel() {
         if (crsPanel == null) {
-            currentCRSValueLabel = new JLabel();
+            JLabel currentCRSValueLabel = new JLabel();
             currentCRSValueLabel.setBounds(new Rectangle(78, 33, 297, 16));
             String crsDescription = "unknown";
             try {
@@ -298,18 +274,18 @@ public class LayerPropertiesDialog extends JFrame {
             }
             currentCRSValueLabel.setText(crsDescription);
 
-            currentCRSLabel = new JLabel();
+            JLabel currentCRSLabel = new JLabel();
             currentCRSLabel.setBounds(new Rectangle(15, 33, 52, 16));
             currentCRSLabel.setText("Current:");
-            tabDescriptionLabel = new JLabel();
+            JLabel tabDescriptionLabel = new JLabel();
             tabDescriptionLabel.setBounds(new Rectangle(15, 9, 361, 16));
             tabDescriptionLabel.setText("Set here the source reference system of the image");
-            eastingFirstLabel = new JLabel();
+            JLabel eastingFirstLabel = new JLabel();
             eastingFirstLabel.setBounds(new Rectangle(315, 210, 76, 46));
             eastingFirstLabel.setHorizontalTextPosition(SwingConstants.TRAILING);
             eastingFirstLabel.setHorizontalAlignment(SwingConstants.CENTER);
             eastingFirstLabel.setText("<html>Easting<br>first</html>");
-            searchFieldLabel = new JLabel();
+            JLabel searchFieldLabel = new JLabel();
             searchFieldLabel.setBounds(new Rectangle(298, 114, 84, 16));
             searchFieldLabel.setDisplayedMnemonic(KeyEvent.VK_UNDEFINED);
             searchFieldLabel.setHorizontalTextPosition(SwingConstants.TRAILING);
@@ -318,7 +294,7 @@ public class LayerPropertiesDialog extends JFrame {
             defaultCRSLabel = new JLabel();
             defaultCRSLabel.setBounds(new Rectangle(15, 89, 361, 16));
             defaultCRSLabel.setText(PluginOperations.defaultSourceCRSDescription);
-            defaultCRSDescriptorLabel = new JLabel();
+            JLabel defaultCRSDescriptorLabel = new JLabel();
             defaultCRSDescriptorLabel.setBounds(new Rectangle(15, 63, 226, 16));
             defaultCRSDescriptorLabel.setText("Default Reference System:");
             crsPanel = new JPanel();
@@ -372,8 +348,7 @@ public class LayerPropertiesDialog extends JFrame {
                 @Override
                 public void keyTyped(KeyEvent e) {
 
-                    for (Iterator<String> iterator = supportedCRS.iterator(); iterator.hasNext();) {
-                        String type = iterator.next();
+                    for (String type : supportedCRS) {
                         if (type.contains(searchField.getText())) {
                             crsJList.setSelectedIndex(supportedCRS.indexOf(type));
                             crsJList.ensureIndexIsVisible(supportedCRS.indexOf(type));
@@ -408,7 +383,7 @@ public class LayerPropertiesDialog extends JFrame {
      */
     private JList<String> getCrsJList() {
         if (crsJList == null) {
-            crsJList = new JList<>(supportedCRS);
+            crsJList = new JList<>(supportedCRS.toArray(new String[0]));
             crsJList.addListSelectionListener(new ListSelectionHandler());
         }
         return crsJList;
@@ -496,7 +471,7 @@ public class LayerPropertiesDialog extends JFrame {
                                 ImportImagePlugin.pluginProps.setProperty("default_crs_eastingfirst", 
                                         "" + eastingFirstCheckBox.isSelected());
                                 ImportImagePlugin.pluginProps.setProperty("default_crs_srid", code);
-                                try (FileWriter fileWriter = new FileWriter(new File(ImportImagePlugin.PLUGINPROPERTIES_PATH))) {
+                                try (BufferedWriter fileWriter = Files.newBufferedWriter(Paths.get(ImportImagePlugin.PLUGINPROPERTIES_PATH))) {
                                     ImportImagePlugin.pluginProps.store(fileWriter, null);
                                 }
 

@@ -18,13 +18,11 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.image.ImageWorker;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -48,24 +46,22 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class ImageLayer extends Layer {
 
-    private Logger logger = Logger.getLogger(ImageLayer.class);
+    private final File imageFile;
 
-    private File imageFile;
-
-    private BufferedImage image = null;
+    private BufferedImage image;
 
     // coordinates of upper left corner
     private EastNorth upperLeft;
     // Angle of rotation of the image
-    private double angle = 0.0;
+    private double angle;
 
     // current bbox
     private Envelope2D bbox;
 
     // Layer icon
-    private Icon layericon = null;
+    private Icon layericon;
 
-    // reference system of the oringinal image
+    // reference system of the original image
     private CoordinateReferenceSystem sourceRefSys;
 
     /**
@@ -88,7 +84,7 @@ public class ImageLayer extends Layer {
     private BufferedImage createImage() throws IOException {
 
         // geotools type for images and value coverages
-        GridCoverage2D coverage = null;
+        GridCoverage2D coverage;
         try {
             // create a grid coverage from the image
             coverage = PluginOperations.createGridFromFile(imageFile, null, true);
@@ -98,14 +94,15 @@ public class ImageLayer extends Layer {
             coverage = PluginOperations.reprojectCoverage(coverage, CRS.decode(ProjectionRegistry.getProjection().toCode()));
 
         } catch (FactoryException e) {
-            logger.error("Error while creating GridCoverage:", e);
+            Logging.error("ImportImagePlugin ImageLayer: Error while creating GridCoverage: {0}", e);
+            Logging.error(e);
             throw new IOException(e.getMessage());
         } catch (Exception e) {
             if (e.getMessage().contains("No projection file found")) {
                 int val = 2;
                 if (!GraphicsEnvironment.isHeadless()) {
-                    ExtendedDialog ex = new ExtendedDialog(MainApplication.getMainFrame(), tr("Warning"), 
-                        new String[] {tr("Default image projection"), tr("JOSM''s current projection"), tr("Cancel")});
+                    ExtendedDialog ex = new ExtendedDialog(MainApplication.getMainFrame(), tr("Warning"),
+                            tr("Default image projection"), tr("JOSM''s current projection"), tr("Cancel"));
                     // CHECKSTYLE.OFF: LineLength
                     ex.setContent(tr("No projection file (.prj) found.<br>"
                         + "You can choose the default image projection ({0}) or JOSM''s current editor projection ({1}) as original image projection.<br>"
@@ -114,16 +111,16 @@ public class ImageLayer extends Layer {
                     // CHECKSTYLE.ON: LineLength
                     val = ex.showDialog().getValue();
                     if (val == 3) {
-                        logger.debug("No projection and user declined un-projected use");
+                        Logging.debug("ImportImagePlugin ImageLayer: No projection and user declined un-projected use");
                         throw new LayerCreationCanceledException();
                     }
                 }
-                CoordinateReferenceSystem src = null;
+                CoordinateReferenceSystem src;
                 try {
                     if (val == 1) {
                         src = PluginOperations.defaultSourceCRS;
                     } else {
-                        logger.debug("Passing through image un-projected.");
+                        Logging.debug("ImportImagePlugin ImageLayer: Passing through image un-projected.");
                         src = CRS.decode(ProjectionRegistry.getProjection().toCode());
                     }
                     // create a grid coverage from the image
@@ -133,16 +130,18 @@ public class ImageLayer extends Layer {
                         coverage = PluginOperations.reprojectCoverage(coverage, CRS.decode(ProjectionRegistry.getProjection().toCode()));
                     }
                 } catch (Exception e1) {
-                    logger.error("Error while creating GridCoverage:", e1);
+                    Logging.error("ImportImagePlugin ImageLayer: Error while creating GridCoverage:");
+                    Logging.error(e1);
                     throw new IOException(e1);
                 }
             } else {
-                logger.error("Error while creating GridCoverage:", e);
+                Logging.error("ImportImagePlugin ImageLayer: Error while creating GridCoverage:");
+                Logging.error(e);
                 throw new IOException(e);
             }
 
         }
-        logger.debug("Coverage created: " + coverage);
+        Logging.debug("ImportImagePlugin ImageLayer: Coverage created: {0}", coverage);
 
         upperLeft = new EastNorth(coverage.getEnvelope2D().x,
                 coverage.getEnvelope2D().y + coverage.getEnvelope2D().height);
@@ -212,7 +211,7 @@ public class ImageLayer extends Layer {
             double scaley = pixels4bbox_height / image.getHeight();
 
             if ((scalex > 10) || (scaley > 10)) {
-                logger.warn("Not drawing image - scale too big");
+                Logging.warn("ImportImagePlugin ImageLayer: Not drawing image - scale too big");
                 return;
             }
             g.scale(scalex, scaley);
@@ -226,7 +225,7 @@ public class ImageLayer extends Layer {
             }
 
         } else {
-            logger.error("Error while dawing image: image == null or Graphics == null");
+            Logging.error("ImportImagePlugin ImageLayer: Error while drawing image: image == null or Graphics == null");
         }
     }
 
@@ -294,8 +293,8 @@ public class ImageLayer extends Layer {
      * loads the image and reprojects it using a transformation
      * calculated by the new reference system.
      */
-    void resample(CoordinateReferenceSystem refSys) throws IOException, NoSuchAuthorityCodeException, FactoryException {
-        logger.debug("resample");
+    void resample(CoordinateReferenceSystem refSys) throws IOException, FactoryException {
+        Logging.debug("ImportImagePlugin ImageLayer: resample");
         GridCoverage2D coverage = PluginOperations.createGridFromFile(this.imageFile, refSys, true);
         coverage = PluginOperations.reprojectCoverage(coverage, CRS.decode(ProjectionRegistry.getProjection().toCode()));
         this.bbox = coverage.getEnvelope2D();

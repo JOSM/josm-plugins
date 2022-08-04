@@ -10,7 +10,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/JOSM"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JOSM-GeoTools"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JOSM-jts"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/JOSM-log4j"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JOSM-ejml"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -6,17 +6,16 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.processing.CoverageProcessor;
@@ -28,10 +27,10 @@ import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class provides methods for resampling operations, IO and stores important data.
@@ -41,10 +40,8 @@ import org.opengis.util.InternationalString;
  */
 public final class PluginOperations {
 
-    private static final Logger logger = Logger.getLogger(PluginOperations.class);
-
     // contains descriptions of all available CRS
-    static Vector<String> crsDescriptions;
+    static List<String> crsDescriptions;
 
     // the standard native CRS of user images
     static CoordinateReferenceSystem defaultSourceCRS;
@@ -67,11 +64,11 @@ public final class PluginOperations {
      * Reprojects a GridCoverage to a given CRS.
      */
     public static GridCoverage2D reprojectCoverage(GridCoverage2D coverage,
-            CoordinateReferenceSystem targetCrs) throws NoSuchAuthorityCodeException, FactoryException {
+            CoordinateReferenceSystem targetCrs) {
 
         // TODO: add category for NO_DATA values in coverage (transparency in image)
 
-        GridCoverage2D destination = null;
+        GridCoverage2D destination;
 
         CoverageProcessor processor = new CoverageProcessor();
         ParameterValueGroup resampleParams = processor.getOperation("Resample").getParameters();
@@ -87,22 +84,27 @@ public final class PluginOperations {
     }
 
     /**
-     * Creates a org.geotools.coverage.grid.GridCoverage2D from a given file.
+     * Creates a {@link GridCoverage2D} from a given file.
+     * @param file The file to read from
+     * @param refSys The reference system to use
+     * @param failIfNoPrjFile {@code true} if we need to fail if no projection file is found
+     * @throws IOException if the file could not be read
+     * @return The 2d grid coverage of the file
      */
     public static GridCoverage2D createGridFromFile(File file, CoordinateReferenceSystem refSys, boolean failIfNoPrjFile) throws IOException {
 
-        GridCoverage2D coverage = null;
+        GridCoverage2D coverage;
 
         if (!file.exists()) throw new FileNotFoundException("File not found.");
 
-        String extension = null;
-        String fileNameWithoutExt = null;
+        String extension;
+        String fileNameWithoutExt;
         int dotPos = file.getAbsolutePath().lastIndexOf(".");
         extension = file.getAbsolutePath().substring(dotPos);
         fileNameWithoutExt = file.getAbsolutePath().substring(0, dotPos);
 
         /*------- switch for file type -----------*/
-        if (extension.equalsIgnoreCase(".tif") || extension.equalsIgnoreCase(".tiff")) {
+        if (".tif".equalsIgnoreCase(extension) || ".tiff".equalsIgnoreCase(extension)) {
 
             // try to read GeoTIFF:
             try {
@@ -110,19 +112,18 @@ public final class PluginOperations {
                 return coverage;
             } catch (DataSourceException dse) {
                 if (!dse.getMessage().contains("Coordinate Reference System is not available")) {
-                    dse.printStackTrace();
+                    Logging.error(dse);
+                } else {
+                    Logging.trace(dse);
                 }
-            } catch (FactoryException facte) {
-                logger.fatal("Error while reading from GeoTIFF:", facte);
-                throw new IOException(facte);
             }
 
             // file is no GeoTiff, searching for Worldfile and projection file:
             String[] postfixes = {"wld", "tfw", "tifw"};
             // try to read Worldfile:
             WorldFileReader tfwReader = null;
-            for (int i = 0; i < postfixes.length; i++) {
-                File prjFile = new File(fileNameWithoutExt + "." + postfixes[i]);
+            for (String postfix : postfixes) {
+                File prjFile = new File(fileNameWithoutExt + "." + postfix);
                 if (prjFile.exists()) {
                     tfwReader = new WorldFileReader(prjFile);
                 }
@@ -137,7 +138,7 @@ public final class PluginOperations {
                 refSys = readPrjFile(file);
                 if (refSys == null) {
                     if (failIfNoPrjFile) throw new IOException("No projection file found.");
-                    logger.debug("no projection given, no projection file found; using unprojected file.");
+                    Logging.debug("no projection given, no projection file found; using unprojected file.");
                 }
             }
 
@@ -154,13 +155,13 @@ public final class PluginOperations {
             Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
             coverage = createGridCoverage(img, bbox, refSys);
 
-        } else if (extension.equalsIgnoreCase(".jpg")
-                || extension.equalsIgnoreCase(".jpeg")) {
+        } else if (".jpg".equalsIgnoreCase(extension)
+                || ".jpeg".equalsIgnoreCase(extension)) {
             String[] postfixes = {"wld", "jgw", "jpgw"};
             // try to read Worldfile:
             WorldFileReader tfwReader = null;
-            for (int i = 0; i < postfixes.length; i++) {
-                File prjFile = new File(fileNameWithoutExt + "." + postfixes[i]);
+            for (String postfix : postfixes) {
+                File prjFile = new File(fileNameWithoutExt + "." + postfix);
                 if (prjFile.exists()) {
                     tfwReader = new WorldFileReader(prjFile);
                 }
@@ -172,7 +173,7 @@ public final class PluginOperations {
                 refSys = readPrjFile(file);
                 if (refSys == null) {
                     if (failIfNoPrjFile) throw new IOException("No projection file found.");
-                    logger.debug("no projection given, no projection file found; using unprojected file.");
+                    Logging.debug("no projection given, no projection file found; using unprojected file.");
                 }
             }
 
@@ -186,12 +187,12 @@ public final class PluginOperations {
             Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
             coverage = createGridCoverage(img, bbox, refSys);
 
-        } else if (extension.equalsIgnoreCase(".bmp")) {
+        } else if (".bmp".equalsIgnoreCase(extension)) {
             String[] postfixes = {"wld", "bmpw", "bpw"};
             // try to read Worldfile:
             WorldFileReader tfwReader = null;
-            for (int i = 0; i < postfixes.length; i++) {
-                File prjFile = new File(fileNameWithoutExt + "." + postfixes[i]);
+            for (String postfix : postfixes) {
+                File prjFile = new File(fileNameWithoutExt + "." + postfix);
                 if (prjFile.exists()) {
                     tfwReader = new WorldFileReader(prjFile);
                 }
@@ -203,7 +204,7 @@ public final class PluginOperations {
                 refSys = readPrjFile(file);
                 if (refSys == null) {
                     if (failIfNoPrjFile) throw new IOException("No projection file found.");
-                    logger.debug("no projection given, no projection file found; using unprojected file.");
+                    Logging.debug("no projection given, no projection file found; using unprojected file.");
                 }
             }
 
@@ -217,13 +218,13 @@ public final class PluginOperations {
             Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
             coverage = createGridCoverage(img, bbox, refSys);
 
-        } else if (extension.equalsIgnoreCase(".png")) {
+        } else if (".png".equalsIgnoreCase(extension)) {
 
             String[] postfixes = {"wld", "pgw", "pngw"};
             // try to read Worldfile:
             WorldFileReader tfwReader = null;
-            for (int i = 0; i < postfixes.length; i++) {
-                File prjFile = new File(fileNameWithoutExt + "." + postfixes[i]);
+            for (String postfix : postfixes) {
+                File prjFile = new File(fileNameWithoutExt + "." + postfix);
                 if (prjFile.exists()) {
                     tfwReader = new WorldFileReader(prjFile);
                 }
@@ -235,7 +236,7 @@ public final class PluginOperations {
                 refSys = readPrjFile(file);
                 if (refSys == null) {
                     if (failIfNoPrjFile) throw new IOException("No projection file found.");
-                    logger.debug("no projection given, no projection file found; using unprojected file.");
+                    Logging.debug("no projection given, no projection file found; using unprojected file.");
                 }
             }
 
@@ -264,25 +265,25 @@ public final class PluginOperations {
      * @param file image file, not the real world file (will be searched)
      */
     public static CoordinateReferenceSystem readPrjFile(File file) throws IOException {
-        CoordinateReferenceSystem refSys = null;
+        CoordinateReferenceSystem refSys;
 
-        String prjFilename = null;
+        String prjFilename;
         int dotPos = file.getAbsolutePath().lastIndexOf(".");
         prjFilename = file.getAbsolutePath().substring(0, dotPos) + ".prj";
 
         File prjFile = new File(prjFilename);
         if (!prjFile.exists()) return null;
-        logger.debug("Loading .prj file: " + prjFile.getAbsolutePath());
+        Logging.debug("Loading .prj file: " + prjFile.getAbsolutePath());
 
-        try (BufferedReader br = new BufferedReader(new FileReader(prjFile))) {
+        try (BufferedReader br = Files.newBufferedReader(prjFile.toPath())) {
             StringBuilder sb = new StringBuilder();
-            String content = null;
+            String content;
             while ((content = br.readLine()) != null) {
                 sb.append(content);
             }
             refSys = CRS.parseWKT(sb.toString().trim());
         } catch (FactoryException e) {
-            throw new IOException("Unable to parse prj-file: '" + prjFile.getName() + "'");
+            throw new IOException("Unable to parse prj-file: '" + prjFile.getName() + "'", e);
         }
 
         return refSys;
@@ -301,8 +302,8 @@ public final class PluginOperations {
      *
      * @param refSys if delivered, the coverage will be forced to use this crs
      */
-    public static GridCoverage2D readGeoTiff(File file, CoordinateReferenceSystem refSys) throws IOException, FactoryException {
-        GridCoverage2D coverage = null;
+    public static GridCoverage2D readGeoTiff(File file, CoordinateReferenceSystem refSys) throws IOException {
+        GridCoverage2D coverage;
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, true);
         if (refSys != null) {
             hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, refSys);
@@ -327,8 +328,7 @@ public final class PluginOperations {
         Set<String> supportedCodes = CRS.getSupportedCodes("EPSG");
         CRSAuthorityFactory fac = CRS.getAuthorityFactory(false);
 
-        for (Iterator<String> iterator = supportedCodes.iterator(); iterator.hasNext();) {
-            String string = iterator.next();
+        for (String string : supportedCodes) {
             try {
                 if ("WGS84(DD)".equals(string)) {
                     continue;
@@ -337,13 +337,14 @@ public final class PluginOperations {
                 String description = desc.toString() + " [-EPSG:" + string + "-]";
                 crsDescriptions.add(description);
                 if (defaultcrsString != null && defaultcrsString.equalsIgnoreCase("EPSG:" + string)) {
-                    boolean isEastingFirst = Boolean.valueOf(pluginProps.getProperty("default_crs_eastingfirst"));
+                    boolean isEastingFirst = Boolean.parseBoolean(pluginProps.getProperty("default_crs_eastingfirst"));
                     defaultSourceCRS = CRS.decode("EPSG:" + string, isEastingFirst);
                     defaultSourceCRSDescription = description;
                 }
 
             } catch (FactoryException e) {
-                logger.error("Error while loading EPSG data: " + e.getMessage());
+                Logging.error("Error while loading EPSG data: " + e.getMessage());
+                Logging.error(e);
             }
         }
     }

@@ -9,12 +9,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.ImportImagePlugin.ImageLayer.LayerCreationCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class extends JosmAction and creates a new image layer.
@@ -23,8 +23,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
  *
  */
 public class LoadImageAction extends JosmAction {
-
-    private Logger logger = Logger.getLogger(LoadImageAction.class);
 
     /**
      * Constructor...
@@ -41,17 +39,18 @@ public class LoadImageAction extends JosmAction {
         fc.setAcceptAllFileFilterUsed(false);
         int result = fc.showOpenDialog(MainApplication.getMainFrame());
 
-        ImageLayer layer = null;
+        ImageLayer layer;
         if (result == JFileChooser.APPROVE_OPTION) {
             Config.getPref().put("plugins.importimage.importpath", fc.getCurrentDirectory().getAbsolutePath());
-            logger.info("File chosen:" + fc.getSelectedFile());
+            Logging.info("ImportImagePlugin LoadImageAction: File chosen: {0}", fc.getSelectedFile());
             try {
                 layer = new ImageLayer(fc.getSelectedFile());
             } catch (LayerCreationCanceledException e) {
+                Logging.trace(e);
                 // if user decides that layer should not be created just return.
                 return;
             } catch (Exception e) {
-                logger.error("Error while creating image layer: \n" + e.getMessage());
+                Logging.error("ImportImagePlugin LoadImageAction: Error while creating image layer: \n{0}", e.getMessage());
                 JOptionPane.showMessageDialog(null, marktr("Error while creating image layer: " + e.getCause()));
                 return;
             }

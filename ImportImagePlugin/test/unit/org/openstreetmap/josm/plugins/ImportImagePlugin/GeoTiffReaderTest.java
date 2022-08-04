@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.ImportImagePlugin;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,26 +14,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Test that some geotiff sample files can be read.
  * Data downloaded from <a href="ftp://ftp.remotesensing.org/pub/geotiff/samples">remotesensing.org</a>.
  */
-public class GeoTiffReaderTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences().timeout(20000);
-
+@BasicPreferences
+@Timeout(20)
+class GeoTiffReaderTest {
     @Test
-    public void testReadGeoTiffFiles() throws IOException {
+    void testReadGeoTiffFiles() throws IOException {
         for (Path p : listDataFiles("tif")) {
             File file = p.toFile();
             Logging.info("Testing reading file "+file.getPath());
@@ -45,7 +40,7 @@ public class GeoTiffReaderTest {
     /**
      * Lists all datasets files matching given extension.
      * @param ext file extension to search for
-     * @returns List of all datasets files matching given extension
+     * @return List of all datasets files matching given extension
      * @throws IOException in case of I/O error
      */
     public static Collection<Path> listDataFiles(String ext) throws IOException {
