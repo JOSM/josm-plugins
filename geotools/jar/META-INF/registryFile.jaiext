@@ -1,15 +1,305 @@
 #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.affine.AffineDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.affine.AffineCRIF  it.geosolutions.jaiext  Affine Affine#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.algebra.AlgebraDescriptor
+descriptor  it.geosolutions.jaiext.algebra.constant.OperationConstDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.algebra.AlgebraCRIF  it.geosolutions.jaiext  algebric algebric 
+rendered  it.geosolutions.jaiext.algebra.constant.OperationConstCRIF  it.geosolutions.jaiext  operationConst operationConst #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.bandcombine.BandCombineDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.bandcombine.BandCombineCRIF  it.geosolutions.jaiext  BandCombine BandCombine #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.bandmerge.BandMergeDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.bandmerge.BandMergeCRIF  it.geosolutions.jaiext  BandMerge BandMerge #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.bandselect.BandSelectDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.bandselect.BandSelectCRIF  it.geosolutions.jaiext  BandSelect BandSelect #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.binarize.BinarizeDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.binarize.BinarizeCRIF  it.geosolutions.jaiext  Binarize Binarize #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.border.BorderDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.border.BorderRIF  it.geosolutions.jaiext  Border Border #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.buffer.BufferDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.buffer.BufferRIF it.geosolutions.jaiext  Buffer Buffer #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.classifier.RasterClassifierDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.classifier.RasterClassifierCRIF  it.geosolutions.jaiext  RasterClassifier RasterClassifier#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.colorconvert.ColorConvertDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.colorconvert.ColorConvertCRIF  it.geosolutions.jaiext  ColorConvert ColorConvert#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.colorindexer.ColorIndexerDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.colorindexer.ColorIndexerCRIF it.geosolutions.jaiext  ColorIndexer ColorIndexer #
 # Image operation descriptors :
 #
-descriptor  it.geosolutions.jaiext.colorconvert.ColorConvertDescriptor
-descriptor  it.geosolutions.jaiext.warp.WarpDescriptor
-descriptor  it.geosolutions.jaiext.stats.StatisticsDescriptor
-descriptor  it.geosolutions.jaiext.zonal.ZonalStatsDescriptor
+
+descriptor  it.geosolutions.jaiext.crop.CropDescriptor
+
 
 #
 # "rendered" factory objects
 #
-rendered  it.geosolutions.jaiext.colorconvert.ColorConvertCRIF  it.geosolutions.jaiext  ColorConvert ColorConvert
-rendered  it.geosolutions.jaiext.warp.WarpRIF  it.geosolutions.jaiext  Warp Warp 
-rendered  it.geosolutions.jaiext.stats.StatisticsRIF  it.geosolutions.jaiext  Stats Stats
-rendered  it.geosolutions.jaiext.zonal.ZonalStatsRIF  it.geosolutions.jaiext  Zonal Zonal
+rendered  it.geosolutions.jaiext.crop.CropCRIF     it.geosolutions.jaiext  Crop   Crop
+#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.errordiffusion.ErrorDiffusionDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.errordiffusion.ErrorDiffusionRIF  it.geosolutions.jaiext  ErrorDiffusion ErrorDiffusion#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.format.FormatDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.format.FormatCRIF  it.geosolutions.jaiext  Format Format #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.imagefunction.ImageFunctionDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.imagefunction.ImageFunctionRIF  it.geosolutions.jaiext  ImageFunction ImageFunction#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.lookup.LookupDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.lookup.LookupCRIF  it.geosolutions.jaiext  Lookup Lookup #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.mosaic.MosaicDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.mosaic.MosaicRIF  it.geosolutions.jaiext  Mosaic Mosaic #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.nullop.NullDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.nullop.NullCRIF  it.geosolutions.jaiext  Null Null #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.orderdither.OrderedDitherDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.orderdither.OrderedDitherRIF  it.geosolutions.jaiext  OrderedDither OrderedDither#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.piecewise.GenericPiecewiseDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.piecewise.GenericPiecewiseCRIF  it.geosolutions.jaiext  GenericPiecewise GenericPiecewise#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.rescale.RescaleDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.rescale.RescaleCRIF  it.geosolutions.jaiext  Rescale Rescale #
+# Image operation descriptors :
+#
+descriptor  it.geosolutions.jaiext.rlookup.RangeLookupDescriptor
+
+
+#
+# "rendered" factory objects
+#
+rendered  it.geosolutions.jaiext.rlookup.RangeLookupRIF  it.geosolutions.jaiext  RLookup  RLookup
+#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.scale.ScaleDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.scale.ScaleCRIF  it.geosolutions.jaiext  Scale Scale #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.scale.Scale2Descriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.scale.Scale2CRIF  it.geosolutions.jaiext  Scale2 Scale2 #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.shadedrelief.ShadedReliefDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.shadedrelief.ShadedReliefRIF  it.geosolutions.jaiext  ShadedRelief ShadedRelief
+#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.stats.StatisticsDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.stats.StatisticsRIF  it.geosolutions.jaiext  Stats Stats #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.translate.TranslateDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.translate.TranslateCRIF  it.geosolutions.jaiext  Translate Translate #
+# Image operation descriptors :
+#
+descriptor  it.geosolutions.jaiext.vectorbin.VectorBinarizeDescriptor
+
+
+#
+# "rendered" factory objects
+#
+rendered  it.geosolutions.jaiext.vectorbin.VectorBinarizeRIF  it.geosolutions.jaiext  VectorBinarize  VectorBinarize
+#
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.warp.WarpDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.warp.WarpRIF  it.geosolutions.jaiext  Warp Warp #
+# Image descriptors
+#
+
+descriptor  it.geosolutions.jaiext.zonal.ZonalStatsDescriptor
+
+#
+# RenderedImageFactories
+#
+
+rendered  it.geosolutions.jaiext.zonal.ZonalStatsRIF  it.geosolutions.jaiext  Zonal Zonal 

@@ -11,6 +11,7 @@ import javax.imageio.spi.IIOServiceProvider;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
 
+import it.geosolutions.imageio.compression.CompressionRegistry;
 import org.geotools.image.ImageWorker;
 import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
@@ -37,7 +38,7 @@ public class GeoToolsPlugin extends Plugin {
         checkEPSG();
     }
 
-    private void initJAI() {
+    private static void initJAI() {
         // Disable mediaLib searching that produces unwanted errors
         // See https://www.java.net/node/666373
         System.setProperty("com.sun.media.jai.disableMediaLib", "true");
@@ -49,7 +50,7 @@ public class GeoToolsPlugin extends Plugin {
 
         // As the JAI jars are bundled in the geotools plugin, JAI initialization does not work,
         // so we need to perform the tasks described here ("Initialization and automatic loading of registry objects"):
-        // https://docs.oracle.com//cd/E17802_01/products/products/java-media/jai/forDevelopers/jai-apidocs/javax/media/jai/OperationRegistry.html
+        // https://docs.oracle.com/cd/E17802_01/products/products/java-media/jai/forDevelopers/jai-apidocs/javax/media/jai/OperationRegistry.html
         OperationRegistry registry = JAI.getDefaultInstance().getOperationRegistry();
         if (registry == null) {
             Logging.error("geotools: error in JAI initialization. Cannot access default operation registry");
@@ -91,13 +92,15 @@ public class GeoToolsPlugin extends Plugin {
         }
     }
 
-    private void initGeoTools() {
+    private static void initGeoTools() {
         // Force Axis order. Fix #8248
         // See http://docs.geotools.org/stable/userguide/library/referencing/order.html
         System.setProperty("org.geotools.referencing.forceXY", "true");
+        // Force registration of compression. Fix #22303.
+        CompressionRegistry.getDefaultInstance().registerApplicationClasspathSpis();
     }
 
-    private void checkEPSG() {
+    private static void checkEPSG() {
         try {
             CRS.decode("EPSG:4326");
         } catch (NoSuchAuthorityCodeException e) {

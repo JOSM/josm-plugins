@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <project name="geotools" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+  <project name="geotools" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="Commit message"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
@@ -28,6 +28,22 @@
         <!-- jackson causes issues if it is on the compile-time path. Since we don't actually use jackson in our code, we can just not have it in the requires.jars array. -->
         <!--<include name="jackson.jar"/>-->
     </fileset>
+    <macrodef name="merge-text-files">
+      <attribute name="mergefile"/>
+      <attribute name="targetdir"/>
+      <sequential>
+        <concat destfile="@{targetdir}/@{mergefile}">
+          <restrict>
+            <rsel:name name="@{mergefile}"/>
+            <archives>
+                <zips>
+                    <fileset dir="${plugin.lib.dir}" includes="*.jar" excludes="*-sources.jar, *-javadoc.jar" erroronmissingdir="no"/>
+                </zips>
+            </archives>
+          </restrict>
+        </concat>
+      </sequential>
+    </macrodef>
 
     <target name="merge-geotools-services" depends="fetch_dependencies">
         <taskdef resource="org/pescuma/mergeservices/antlib.xml" classpath="tools/merge-services.jar" />
@@ -39,10 +55,14 @@
                 <exclude name="**/*-source.jar" />
             </fileset>
         </merge-services>
-    <echo>Check the updated files in jar/META-INF/services for lines where two
-    services got merged. Example:
-    org.geotools.coverage.util.FilterFunction_isCoverageorg.geotools.filter.AreaFunction
-    </echo>
+        <echo>Check the updated files in jar/META-INF/services for lines where two
+        services got merged. Example:
+        org.geotools.coverage.util.FilterFunction_isCoverageorg.geotools.filter.AreaFunction
+        </echo>
+
+        <merge-text-files mergefile="META-INF/javax.media.jai.registryFile.jai" targetdir="jar"/>
+        <merge-text-files mergefile="META-INF/registryFile.jai"                 targetdir="jar"/>
+        <merge-text-files mergefile="META-INF/registryFile.jaiext"              targetdir="jar"/>
     </target>
 
     <!--
