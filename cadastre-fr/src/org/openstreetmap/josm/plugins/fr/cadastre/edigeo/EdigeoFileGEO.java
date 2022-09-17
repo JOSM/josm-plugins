@@ -165,8 +165,11 @@ public class EdigeoFileGEO extends EdigeoLotFile<GeoBlock> {
             GUAD48UTM20("EPSG:2970"),
             CSG67UTM21("EPSG:3312"),
             CSG67UTM22("EPSG:2971"),
+            RGFG95UTM22("EPSG:2972"),
+            RGR92UTM("EPSG:2975"),
             MAYO50UTM38S("EPSG:2980"),
-            STPM50UTM21("EPSG:2987");
+            STPM50UTM21("EPSG:2987"),
+            RGM04("EPSG:4471");
 
             final String epsg;
             ProjectedReference(String epsg) {
