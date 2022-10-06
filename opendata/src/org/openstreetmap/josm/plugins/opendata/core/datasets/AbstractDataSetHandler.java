@@ -28,6 +28,8 @@ import org.openstreetmap.josm.plugins.opendata.core.io.geographic.DefaultShpHand
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.GmlHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.MifHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.ShpHandler;
+import org.openstreetmap.josm.plugins.opendata.core.io.geographic.geopackage.DefaultGeoPackageHandler;
+import org.openstreetmap.josm.plugins.opendata.core.io.geographic.geopackage.GeoPackageHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.tabular.CsvHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.tabular.DefaultCsvHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.tabular.SpreadSheetHandler;
@@ -82,6 +84,7 @@ public abstract class AbstractDataSetHandler {
         setArchiveHandler(new DefaultArchiveHandler());
         setCsvHandler(new DefaultCsvHandler());
         setGmlHandler(new DefaultGmlHandler());
+        setGeoPackageHandler(new DefaultGeoPackageHandler());
     }
 
     private boolean acceptsFilename(String filename, String[] expected, String ... extensions) {
@@ -160,6 +163,10 @@ public abstract class AbstractDataSetHandler {
 
     protected final boolean acceptsCsvXlsFilename(String filename, String ... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.XLS_EXT);
+    }
+
+    protected final boolean acceptsGpkgFilename(String filename, String... expected) {
+        return acceptsFilename(filename, expected, OdConstants.GEOPACKAGE_EXT);
     }
 
     // -------------------- License --------------------
@@ -477,6 +484,18 @@ public abstract class AbstractDataSetHandler {
 
     public final GmlHandler getGmlHandler() {
         return gmlHandler;
+    }
+
+    // ------------ GeoPackage handling ------------
+
+    private GeoPackageHandler geoPackageHandler;
+
+    public final void setGeoPackageHandler(GeoPackageHandler handler) {
+        this.geoPackageHandler = handler;
+    }
+
+    public final GeoPackageHandler getGeoPackageHandler() {
+        return this.geoPackageHandler;
     }
 
     // ------------ Archive handling ------------

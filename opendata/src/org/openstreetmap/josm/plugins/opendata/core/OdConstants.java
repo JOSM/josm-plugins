@@ -91,6 +91,7 @@ public abstract class OdConstants {
     public static final String XML_EXT = "xml";
     public static final String JSON_EXT = "json";
     public static final String GEOJSON_EXT = "geojson";
+    public static final String GEOPACKAGE_EXT = "gpkg";
 
     /**
      * Protocols

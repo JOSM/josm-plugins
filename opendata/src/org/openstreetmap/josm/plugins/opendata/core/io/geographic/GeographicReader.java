@@ -71,7 +71,7 @@ import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Superclass of geographic format readers (currently GML and SHP).
+ * Superclass of geographic format readers (currently GML, GPKG, and SHP).
  */
 public abstract class GeographicReader extends AbstractReader {
 
@@ -105,6 +105,10 @@ public abstract class GeographicReader extends AbstractReader {
     @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         return null;
+    }
+
+    public GeographicHandler getHandler() {
+        return this.handler;
     }
 
     protected Node getNode(Point p, LatLon key) {
@@ -343,6 +347,14 @@ public abstract class GeographicReader extends AbstractReader {
         return esriWkid.get(wkid);
     }
 
+    /**
+     * Find the math transform for the CRS used by this reader
+     * @param parent The parent component, used for showing dialogs
+     * @param findSimiliarCrs {@code true} if we don't need to find the exact CRS
+     * @throws FactoryException See {@link CRS#findMathTransform}, {@link org.opengis.referencing.AuthorityFactory#getAuthorityCodes}
+     * @throws UserCancelException If the user cancelled in one of the message dialogs
+     * @throws GeoMathTransformException If no transform could be found
+     */
     protected void findMathTransform(Component parent, boolean findSimiliarCrs)
             throws FactoryException, UserCancelException, GeoMathTransformException {
         try {

@@ -13,6 +13,7 @@
         <dependency org="org.geotools" name="gt-opengis" rev="${gt.version}" conf="default->default"/>
         <dependency org="org.geotools" name="gt-referencing" rev="${gt.version}" conf="default->default"/>
         <dependency org="org.geotools" name="gt-shapefile" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-geopkg" rev="${gt.version}" conf="default->default"/>
         <!-- Dependencies that were not needed in 22.0 (according to lib in svn) -->
         <exclude org="org.geotools" module="gt-imagemosaic"/>
         <exclude org="net.sourceforge.hatbox" module="hatbox"/>

@@ -40,6 +40,7 @@ import org.openstreetmap.josm.plugins.opendata.core.io.geographic.GmlImporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.KmlKmzImporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.MifTabImporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.ShpImporter;
+import org.openstreetmap.josm.plugins.opendata.core.io.geographic.geopackage.GeoPackageImporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.session.OpenDataSessionExporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.session.OpenDataSessionImporter;
 import org.openstreetmap.josm.plugins.opendata.core.io.tabular.CsvImporter;
@@ -66,13 +67,21 @@ public final class OdPlugin extends Plugin {
 
     private OdDialog dialog;
 
-    public final List<AbstractImporter> importers = Arrays.asList(new AbstractImporter[] {
-            new CsvImporter(), new OdsImporter(), new XlsImporter(), // Tabular file formats
-            new KmlKmzImporter(), new ShpImporter(), new MifTabImporter(), new GmlImporter(), // Geographic file formats
-            new ZipImporter(), // Zip archive containing any of the others
-            new SevenZipImporter(), // 7Zip archive containing any of the others
-            xmlImporter // Generic importer for XML files (currently used for Neptune files)
-    });
+    /**
+     * The importers that will get registered for use by file import
+     */
+    public final List<AbstractImporter> importers = Arrays.asList(
+            // Tabular file formats
+            new CsvImporter(), new OdsImporter(), new XlsImporter(),
+            // Geographic file formats
+            new KmlKmzImporter(), new ShpImporter(), new MifTabImporter(), new GeoPackageImporter(), new GmlImporter(),
+            // Zip archive containing any of the others
+            new ZipImporter(),
+            // 7Zip archive containing any of the others
+            new SevenZipImporter(),
+            // Generic importer for XML files (currently used for Neptune files)
+            xmlImporter
+    );
 
     public OdPlugin(PluginInformation info) {
         super(info);
