@@ -47,7 +47,8 @@
 
     <target name="merge-geotools-services" depends="fetch_dependencies">
         <taskdef resource="org/pescuma/mergeservices/antlib.xml" classpath="tools/merge-services.jar" />
-        <delete dir="jar/META-INF/services"/>
+        <delete dir="jar/"/>
+        <mkdir dir="jar"/>
         <merge-services dest="jar">
             <fileset dir="lib">
                 <include name="**/*.jar" />
@@ -55,10 +56,18 @@
                 <exclude name="**/*-source.jar" />
             </fileset>
         </merge-services>
-        <echo>Check the updated files in jar/META-INF/services for lines where two
-        services got merged. Example:
-        org.geotools.coverage.util.FilterFunction_isCoverageorg.geotools.filter.AreaFunction
-        </echo>
+        <!-- We currently don't like shipping maven pom files or other "useless" files (see #21667) -->
+        <delete includeEmptyDirs="true">
+            <fileset dir="jar">
+                <include name="META-INF/maven/**/*"/>
+                <include name="META-INF/maven"/>
+                <include name="META-INF/ECLIPSE*"/>
+                <include name="META-INF/eclipse*"/>
+                <include name="META-INF/INDEX.LIST"/>
+                <include name="META-INF/MANIFEST.MF"/>
+                <include name="META-INF/**/module-info.class"/>
+            </fileset>
+        </delete>
 
         <merge-text-files mergefile="META-INF/javax.media.jai.registryFile.jai" targetdir="jar"/>
         <merge-text-files mergefile="META-INF/registryFile.jai"                 targetdir="jar"/>
@@ -70,7 +79,7 @@
     ** post-dist - replaces files from the generated jar
     **********************************************************
     -->
-    <target name="post-dist">
+    <target name="post-dist" depends="merge-geotools-services">
         <move file="${plugin.jar}" todir="${plugin.build.dir}" />
         <jar destfile="${plugin.jar}" filesetmanifest="merge" manifestencoding="UTF-8">
             <fileset dir="jar"/>
@@ -86,6 +95,7 @@
             </zipfileset>
         </jar>
         <delete file="${plugin.build.dir}/${ant.project.name}.jar" />
+        <delete dir="jar" />
     </target>
 
     <!--
