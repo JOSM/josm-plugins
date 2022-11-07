@@ -45,7 +45,7 @@
     <property name="ivy.home"               location="${user.home}/.ant"/>
     <property name="ivy.jar.dir"            location="${ivy.home}/lib"/>
     <property name="ivy.jar.file"           location="${ivy.jar.dir}/ivy.jar"/>
-    <property name="ivy.version"            value="2.5.0"/>
+    <property name="ivy.version"            value="2.5.1"/>
     <property name="jacoco.inclbootstrapclasses"  value="false" />
     <property name="jacoco.inclnolocationclasses" value="false" />
     <property name="junit.printsummary"     value="on" />
