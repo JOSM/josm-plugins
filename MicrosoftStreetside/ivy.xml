@@ -1,13 +1,45 @@
-<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-	<info organisation="org.openstreetmap.josm.plugins" module="MicrosoftStreetside" revision="0.0.1" />
-	<configurations defaultconf="default" defaultconfmapping="default->default">
-			<conf name="default" />
-	</configurations>
-	<dependencies>
-		<dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.12.4"/>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.12.4"/>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.12.4"/>
-        <dependency org="us.monoid.web" name="resty" rev="0.3.2"/>
-        <dependency org="log4j" name="log4j" rev="1.2.17"/>
-	</dependencies>
+<?xml version="1.0"?>
+<ivy-module xmlns:m="http://ant.apache.org/ivy/maven" version="2.0">
+  <info organisation="org.openstreetmap.josm.plugins" module="MicrosoftStreetside" revision="0.0.1"/>
+  <configurations defaultconf="default" defaultconfmapping="default-&gt;default">
+    <conf name="default"/>
+    <conf name="provided" description="Needed for compile, but will be present at runtime"/>
+  </configurations>
+  <dependencies>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.12.4" conf="default-&gt;default"/>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.12.4" conf="default-&gt;default"/>
+    <dependency org="us.monoid.web" name="resty" rev="0.3.2" conf="default-&gt;default"/>
+    <dependency org="org.openjfx" name="javafx-swing" rev="19" conf="provided">
+      <artifact name="javafx-swing" type="jar" m:classifier="linux"/>
+      <artifact name="javafx-swing" type="jar" m:classifier="mac"/>
+      <artifact name="javafx-swing" type="jar" m:classifier="win"/>
+      <artifact name="javafx-swing" type="jar" m:classifier="sources"/>
+      <artifact name="javafx-swing" type="jar" m:classifier="javadoc"/>
+    </dependency>
+    <dependency org="org.openjfx" name="javafx-controls" rev="19" conf="provided">
+      <artifact name="javafx-controls" type="jar" m:classifier="linux"/>
+      <artifact name="javafx-controls" type="jar" m:classifier="mac"/>
+      <artifact name="javafx-controls" type="jar" m:classifier="win"/>
+      <artifact name="javafx-controls" type="jar" m:classifier="sources"/>
+      <artifact name="javafx-controls" type="jar" m:classifier="javadoc"/>
+    </dependency>
+    <dependency org="org.openjfx" name="javafx-base" rev="19" conf="provided">
+      <artifact name="javafx-base" type="jar" m:classifier="linux"/>
+      <artifact name="javafx-base" type="jar" m:classifier="mac"/>
+      <artifact name="javafx-base" type="jar" m:classifier="win"/>
+      <artifact name="javafx-base" type="jar" m:classifier="sources"/>
+      <artifact name="javafx-base" type="jar" m:classifier="javadoc"/>
+    </dependency>
+    <dependency org="org.openjfx" name="javafx-graphics" rev="19" conf="provided">
+      <artifact name="javafx-graphics" type="jar" m:classifier="linux"/>
+      <artifact name="javafx-graphics" type="jar" m:classifier="mac"/>
+      <artifact name="javafx-graphics" type="jar" m:classifier="win"/>
+      <artifact name="javafx-graphics" type="jar" m:classifier="sources"/>
+      <artifact name="javafx-graphics" type="jar" m:classifier="javadoc"/>
+    </dependency>
+    <!-- from jackson plugin -->
+    <exclude org="com.fasterxml.jackson.core" module="jackson-core"/>
+    <!-- not needed at runtime -->
+    <exclude org="net.java.dev.javacc" module="javacc"/>
+  </dependencies>
 </ivy-module>

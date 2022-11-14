@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ivysettings>
-  <property name="joml.version" value="1.10.3"/>
+  <property name="joml.version" value="1.10.5"/>
   <property name="lwjgl.version" value="3.3.1"/>
   <property name="lwjgl3-awt.version" value="0.1.8"/>
   <settings defaultResolver="chained-resolver"/>

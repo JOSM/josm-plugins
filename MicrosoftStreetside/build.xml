@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="MicrosoftStreetside" default="dist" basedir="." xmlns:if="ant:if">
-
-    <!-- Configure these properties (replace "..." accordingly).
+<project xmlns:if="ant:if" xmlns:ivy="antlib:org.apache.ivy.ant" name="MicrosoftStreetside" default="dist" basedir=".">
+  <!-- Configure these properties (replace "..." accordingly).
              See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
          -->
-    <!-- enter the SVN commit message -->
-    <property name="commit.message" value="Commit message" />
-
-    <!-- edit the properties of this plugin in the file `gradle.properties` -->
-    <property file="${basedir}/gradle.properties"/>
-
-    <property name="josm" location="../../core/dist/josm-custom.jar"/>
-    <property name="plugin.dist.dir" value="../../dist"/>
-
-    <!--** include targets that all plugins have in common **-->
-    <import file="../build-common.xml"/>
-
-    <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
-        <include name="apache-commons.jar"/>
-        <include name="apache-http.jar"/>
-        <include name="utilsplugin2.jar"/>
-        <include name="javafx-windows.jar" if:set="isWindows"/>
-        <include name="javafx-unixoid.jar" if:set="isUnix"/>
-        <include name="javafx-osx.jar" if:set="isMac"/>
-    </fileset>
-
-    <target name="pre-compile" depends="fetch_dependencies">
-        <!-- include fetch_dependencies task -->
-    </target>
-
-    <target name="install-plugin" depends="clean, dist, install">
-        <echo>Installed Microsoft Streetside plugin</echo>
-    </target>
-
-    <target name="test-run" depends="install-plugin, runjosm">
-    </target>
+  <!-- enter the SVN commit message -->
+  <property name="commit.message" value="Commit message"/>
+  <!-- edit the properties of this plugin in the file `gradle.properties` -->
+  <property file="${basedir}/gradle.properties"/>
+  <property name="josm" location="../../core/dist/josm-custom.jar"/>
+  <property name="plugin.dist.dir" value="../../dist"/>
+  <!--** include targets that all plugins have in common **-->
+  <import file="../build-common.xml"/>
+  <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
+    <include name="apache-commons.jar"/>
+    <include name="apache-http.jar"/>
+    <include name="jackson.jar"/>
+    <include name="javafx-osx.jar" if:set="isMac"/>
+    <include name="javafx-unixoid.jar" if:set="isUnix"/>
+    <include name="javafx-windows.jar" if:set="isWindows"/>
+    <include name="log4j.jar"/>
+    <include name="utilsplugin2.jar"/>
+  </fileset>
+  <target name="pre-compile" depends="fetch_dependencies">
+    <!-- include fetch_dependencies task -->
+    <ivy:retrieve conf="provided,default"/>
+    <!--<ivy:cachepath pathid="compile.path" conf="default,provided"/>-->
+  </target>
+  <target name="build-jar">
+    <ivy:resolve/>
+    <ivy:cachefileset setid="ivy.default.path" conf="default"/>
+    <jar destfile="${basedir}/dependencies.jar" duplicate="preserve" level="0">
+      <zipgroupfileset refid="ivy.default.path"/>
+    </jar>
+    <jar destfile="${plugin.jar}" basedir="${plugin.build.dir}" manifest="${manifest}" manifestencoding="UTF-8" duplicate="preserve" level="9" excludes="${basedir}/dependencies.jar">
+      <zipfileset src="${basedir}/dependencies.jar" excludes="META-INF/maven/* META-INF/DEPENDENCIES META-INF/LICENSE META-INF/NOTICE META-INF/*.RSA META-INF/*.SF module-info.class"/>
+    </jar>
+    <delete file="${basedir}/dependencies.jar"/>
+  </target>
 </project>
