@@ -201,7 +201,7 @@ public class SigReader {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         SigReader reader = new SigReader();
         try {
-            progressMonitor.beginTask(tr("Prepare stuff...", 2));
+            progressMonitor.beginTask(tr("Prepare stuff..."), 2);
             progressMonitor.indeterminateSubTask(tr("Parsing Signature data..."));
 
             InputSource inputSource = new InputSource(UTFInputStreamReader.create(source, "UTF-8"));

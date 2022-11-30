@@ -30,7 +30,7 @@ public class JosmServerLocationReader extends OsmServerReader {
     public DataSet parseOsm(ProgressMonitor progressMonitor)
             throws OsmTransferException {
         try {
-            progressMonitor.beginTask(tr("Contacting Server...", 10));
+            progressMonitor.beginTask(tr("Contacting Server..."), 10);
             return new XmlBoundsImporter().parseDataSet(url);
         } catch (IOException | SAXException e) {
             throw new OsmTransferException(e);

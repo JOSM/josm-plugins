@@ -32,7 +32,7 @@ public class CadastreServerReader extends OsmServerReader {
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         try {
-            progressMonitor.beginTask(tr("Contacting Server...", 10));
+            progressMonitor.beginTask(tr("Contacting Server..."), 10);
             return new EdigeoPciImporter().parseDataSet(url, data);
         } catch (Exception e) {
             throw new OsmTransferException(e);

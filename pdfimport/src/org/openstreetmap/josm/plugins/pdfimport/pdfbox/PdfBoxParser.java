@@ -23,7 +23,7 @@ public class PdfBoxParser extends PDFStreamEngine {
     }
 
     public void parse(File file, int maxPaths, ProgressMonitor monitor) throws IOException {
-        monitor.beginTask(tr("Parsing PDF", 1));
+        monitor.beginTask(tr("Parsing PDF"), 1);
 
         try (PDDocument document = PDDocument.load(file)) {
 
