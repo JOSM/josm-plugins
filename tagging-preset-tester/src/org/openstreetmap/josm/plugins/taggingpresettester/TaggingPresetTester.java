@@ -53,6 +53,9 @@ public class TaggingPresetTester extends JFrame {
             x = ds.getSelected();
         } else {
             x = makeFakeSuitablePrimitive(preset);
+            // See #21829: DataIntegrityProblemException: Primitive must be part of the dataset
+            DataSet tmp = new DataSet();
+            x.forEach(tmp::addPrimitiveRecursive);
         }
         JPanel p = preset.createPanel(x);
         if (p != null) {
