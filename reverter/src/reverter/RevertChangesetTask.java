@@ -52,7 +52,19 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
     }
 
     public RevertChangesetTask(Collection<Integer> changesetIds, RevertType revertType, boolean autoConfirmDownload, boolean newLayer) {
-        super(tr("Reverting..."));
+        this(null, changesetIds, revertType, autoConfirmDownload, newLayer);
+    }
+
+    /**
+     * Create a new task for reverting a changeset
+     * @param progressMonitor The {@link ProgressMonitor} to use. May be {@code null}
+     * @param changesetIds The changeset ids to revert
+     * @param revertType The type of revert to do
+     * @param autoConfirmDownload {@code true} if the user has already indicated that they want to download missing data
+     * @param newLayer {@code true} if the user wants the reversion to be on a new layer
+     */
+    public RevertChangesetTask(ProgressMonitor progressMonitor, Collection<Integer> changesetIds, RevertType revertType, boolean autoConfirmDownload, boolean newLayer) {
+        super(tr("Reverting..."), progressMonitor, false);
         this.changesetIds = new ArrayList<>(changesetIds);
         this.revertType = revertType;
         this.downloadConfirmed = autoConfirmDownload;

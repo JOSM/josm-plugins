@@ -423,6 +423,14 @@ public class ChangesetReverter {
         for (Iterator<ChangesetDataSetEntry> it = cds.iterator(); it.hasNext();) {
             ChangesetDataSetEntry entry = it.next();
             if (!checkOsmChangeEntry(entry)) continue;
+            if (entry.getModificationType() == ChangesetModificationType.DELETED
+                    && revertType == RevertType.SELECTION_WITH_UNDELETE) {
+                // see #22520: missing merge target when object is first created and then
+                // deleted in the same changeset
+                ChangesetDataSetEntry first = cds.getFirstEntry(entry.getPrimitive().getPrimitiveId());
+                if (first.getModificationType() == ChangesetModificationType.CREATED)
+                    continue;
+            }
             HistoryOsmPrimitive hp = entry.getPrimitive();
             OsmPrimitive dp = ds.getPrimitiveById(hp.getPrimitiveId());
             if (dp == null || dp.isIncomplete()) {
