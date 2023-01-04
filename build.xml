@@ -9,7 +9,8 @@
     <!-- For Java specific stuff by version -->
     <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]" /></condition>
     <!-- Specific plugins -->
-    <property name="ordered_plugins" value="jaxb/build.xml
+    <property name="ordered_plugins" value="jackson/build.xml
+                                            jaxb/build.xml
                                             jna/build.xml
                                             jts/build.xml
                                             gson/build.xml
