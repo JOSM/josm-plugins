@@ -6,18 +6,26 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.netbeans.spi.keyring.KeyringProvider;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuth20Exception;
+import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
+import org.openstreetmap.josm.data.oauth.OAuth20Token;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
@@ -25,23 +33,30 @@ import org.openstreetmap.josm.io.auth.AbstractCredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.spi.preferences.Config;
 
+/**
+ * The native password manager credentials agent
+ */
 public class NPMCredentialsAgent extends AbstractCredentialsAgent {
 
     private KeyringProvider provider;
-    private NPMType type;
+    private final NPMType type;
     
     /**
-     * Cache the results since there might be pop ups and password prompts from
+     * Cache the results since there might be pop-ups and password prompts from
      * the native manager. This can get annoying, if it shows too often.
-     * 
+     * <br>
      * Yes, there is another cache in AbstractCredentialsAgent. It is used
      * to avoid prompting the user for login multiple times in one session,
      * when they decide not to save the credentials.
      * In contrast, this cache avoids read request the backend in general.
      */
-    private Map<RequestorType, PasswordAuthentication> credentialsCache = new HashMap<>();
+    private final Map<RequestorType, PasswordAuthentication> credentialsCache = new EnumMap<>(RequestorType.class);
     private OAuthToken oauthCache;
-    
+
+    /**
+     * Create a new {@link NPMCredentialsAgent}
+     * @param type The backend storage type
+     */
     public NPMCredentialsAgent(NPMType type) {
         this.type = type;
     }
@@ -95,7 +110,7 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     }
     
     @Override
-    public PasswordAuthentication lookup(RequestorType rt, String host) throws CredentialsAgentException {
+    public PasswordAuthentication lookup(RequestorType rt, String host) {
         PasswordAuthentication cache = credentialsCache.get(rt);
         if (cache != null) 
             return cache;
@@ -125,7 +140,7 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     }
 
     @Override
-    public void store(RequestorType rt, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
+    public void store(RequestorType rt, String host, PasswordAuthentication credentials) {
         char[] username, password;
         if (credentials == null) {
             username = null;
@@ -169,12 +184,12 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
             } else {
                 getProvider().save(prefix+".password", password, passwordDescription);
             }
-            credentialsCache.put(rt, new PasswordAuthentication(stringNotNull(username), password));
+            credentialsCache.put(rt, new PasswordAuthentication(stringNotNull(username), password != null ? password : new char[0]));
         }
     }
 
     @Override
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
+    public OAuthToken lookupOAuthAccessToken() {
         if (oauthCache != null)
             return oauthCache;
         String prolog = getOAuthDescriptor();
@@ -184,13 +199,35 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     }
 
     @Override
-    public void storeOAuthAccessToken(OAuthToken oat) throws CredentialsAgentException {
+    public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
+        String prolog = getOAuthDescriptor();
+        OAuthVersion[] versions = OAuthVersion.values();
+        // Prefer newer OAuth protocols
+        for (int i = versions.length - 1; i >= 0; i--) {
+            OAuthVersion version = versions[i];
+            char[] tokenObject = getProvider().read(prolog + ".object." + version + "." + host);
+            char[] parametersObject = getProvider().read(prolog + ".parameters." + version + "." + host);
+            if (version == OAuthVersion.OAuth20 // There is currently only an OAuth 2.0 path
+                    && tokenObject != null && tokenObject.length > 0
+                    && parametersObject != null && parametersObject.length > 0) {
+                OAuth20Parameters oAuth20Parameters = new OAuth20Parameters(stringNotNull(parametersObject));
+                try {
+                    return new OAuth20Token(oAuth20Parameters, stringNotNull(tokenObject));
+                } catch (OAuth20Exception e) {
+                    throw new CredentialsAgentException(e);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void storeOAuthAccessToken(OAuthToken oat) {
         String key, secret;
         if (oat == null) {
             key = null;
             secret = null;
-        }
-        else {
+        } else {
             key = oat.getKey();
             secret = oat.getSecret();
         }
@@ -206,6 +243,26 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
         }
     }
 
+    @Override
+    public void storeOAuthAccessToken(String host, IOAuthToken accessToken) {
+        String prolog = getOAuthDescriptor();
+        if (accessToken == null) {
+            // Assume all oauth tokens must be removed
+            for (OAuthVersion version : OAuthVersion.values()) {
+                getProvider().delete(prolog + ".object." + version + "." + host);
+                getProvider().delete(prolog + ".parameters." + version + "." + host);
+            }
+        } else {
+            OAuthVersion oauthType = accessToken.getOAuthType();
+            getProvider().save(prolog + ".object." + oauthType + "." + host,
+                    accessToken.toPreferencesString().toCharArray(),
+                    tr("JOSM/OAuth/{0}/Token", URI.create(host).getHost()));
+            getProvider().save(prolog + ".parameters." + oauthType + "." + host,
+                    accessToken.getParameters().toPreferencesString().toCharArray(),
+                    tr("JOSM/OAuth/{0}/Parameters", URI.create(host).getHost()));
+        }
+    }
+
     private static String stringNotNull(char[] charData) {
         if (charData == null)
             return "";
@@ -216,13 +273,13 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     public Component getPreferencesDecorationPanel() {
         HtmlPanel pnlMessage = new HtmlPanel();
         HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
-        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
+        kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt;" +
+                "border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         StringBuilder text = new StringBuilder();
-        text.append("<html><body>"
-                    + "<p class=\"warning-body\">"
-                    + "<strong>"+tr("Native Password Manager Plugin")+"</strong><br>"
-                    + tr("The username and password is protected by {0}.", type.getName())
-        );
+        text.append("<html><body><p class=\"warning-body\"><strong>")
+                .append(tr("Native Password Manager Plugin"))
+                .append("</strong><br>")
+                .append(tr("The username and password is protected by {0}.", type.getName()));
         List<String> sensitive = new ArrayList<>();
         if (Config.getPref().get("osm-server.username", null) != null) {
             sensitive.add(tr("username"));
@@ -242,8 +299,15 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
         if (Config.getPref().get("oauth.access-token.secret", null) != null) {
             sensitive.add(tr("oauth secret"));
         }
+        List<String> otherKeys = Config.getPref().getSensitive().stream().sorted().collect(Collectors.toList());
+        // Remove keys for which we have specific translated texts
+        otherKeys.removeAll(Arrays.asList("osm-server.username", "osm-server.password",
+                DefaultProxySelector.PROXY_USER, DefaultProxySelector.PROXY_PASS,
+                "oauth.access-token.key", "oauth.access-token.secret"));
+        sensitive.addAll(otherKeys);
         if (!sensitive.isEmpty()) {
-            text.append(tr("<br><strong>Warning:</strong> There may be sensitive data left in your preference file. ({0})", String.join(", ", sensitive)));
+            text.append(tr("<br><strong>Warning:</strong> There may be sensitive data left in your preference file. ({0})",
+                    String.join(", ", sensitive)));
         }
         pnlMessage.setText(text.toString());
         return pnlMessage;
