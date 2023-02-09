@@ -6,11 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import javax.swing.text.html.HTMLEditorKit;
 
+import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -26,13 +27,13 @@ import org.openstreetmap.josm.spi.preferences.Config;
  */
 public class SdsCredentialAgent extends AbstractCredentialsAgent {
 
-    Map<RequestorType, PasswordAuthentication> sdsMemoryCredentialsCache = new HashMap<>();
+    private final Map<RequestorType, PasswordAuthentication> sdsMemoryCredentialsCache = new EnumMap<>(RequestorType.class);
 
     /**
-     * @see CredentialsAgent#lookup(RequestorType)
+     * @see CredentialsAgent#lookup(RequestorType, String)
      */
     @Override
-    public PasswordAuthentication lookup(RequestorType requestorType, String host) throws CredentialsAgentException {
+    public PasswordAuthentication lookup(RequestorType requestorType, String host) {
         if (requestorType == null)
             return null;
         String user;
@@ -55,7 +56,7 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
     }
 
     /**
-     * @see CredentialsAgent#store(RequestorType, PasswordAuthentication)
+     * @see CredentialsAgent#store(RequestorType, String, PasswordAuthentication)
      */
     @Override
     public void store(RequestorType requestorType, String host, PasswordAuthentication credentials) throws CredentialsAgentException {
@@ -86,15 +87,19 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
      * Access Token is currently managed by this CredentialManager.
      *
      * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsAgentException thrown if something goes wrong
      */
     @Override
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
+    public OAuthToken lookupOAuthAccessToken() {
         String accessTokenKey = Config.getPref().get("oauth.access-token.key", null);
         String accessTokenSecret = Config.getPref().get("oauth.access-token.secret", null);
         if (accessTokenKey == null && accessTokenSecret == null)
             return null;
         return new OAuthToken(accessTokenKey, accessTokenSecret);
+    }
+
+    @Override
+    public IOAuthToken lookupOAuthAccessToken(String host) {
+        throw new UnsupportedOperationException("SDS does not support OAuth tokens");
     }
 
     @Override
@@ -122,10 +127,13 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
     }
 
     @Override
-    public void storeOAuthAccessToken(OAuthToken accessToken)
-            throws CredentialsAgentException {
+    public void storeOAuthAccessToken(OAuthToken accessToken) {
         // no-op
+    }
 
+    @Override
+    public void storeOAuthAccessToken(String host, IOAuthToken accessToken) {
+        throw new UnsupportedOperationException("SDS does not support OAuth tokens");
     }
 
     @Override
@@ -157,8 +165,8 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
          * file (username=="") and each time after authentication failed
          * (noSuccessWithLastResponse == true).
          */
-        } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
-            CredentialDialog dialog = null;
+        } else if (noSuccessWithLastResponse || "".equals(username) || "".equals(password)) {
+            CredentialDialog dialog;
             switch(requestorType) {
             case SERVER:
                 dialog = SdsCredentialDialog.getSdsApiCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
@@ -166,6 +174,8 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
             case PROXY:
                 dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password, host, getSaveUsernameAndPasswordCheckboxText());
                 break;
+            default:
+                return null;
             }
             dialog.setVisible(true);
             response.setCanceled(dialog.isCanceled());
