@@ -7,8 +7,10 @@
         <ant dir="../core" target="test-compile"/>
     </target>
     <!-- For Java specific stuff by version -->
-    <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]" /></condition>
+    <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
+    <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
     <!-- Specific plugins -->
+    <property name="java17_plugins" value="MapRoulette/build.xml"/>
     <property name="ordered_plugins" value="jackson/build.xml
                                             jaxb/build.xml
                                             jna/build.xml
@@ -31,7 +33,8 @@
                 <filelist dir="." files="${ordered_plugins}"/>
                 <!-- Build JavaFX plugins only with Java 11+ -->
                 <filelist dir="." files="${javafx_plugins}" if:set="isJava11"/>
-                <fileset  dir="." includes="*/build.xml" excludes="00_*/build.xml *.wip/build.xml ${javafx_plugins} ${ordered_plugins}"/>
+               <filelist dir="." files="${java17_plugins}" if:set="isJava17"/>
+               <fileset  dir="." includes="*/build.xml" excludes="00_*/build.xml *.wip/build.xml ${javafx_plugins} ${ordered_plugins} ${java17_plugins}"/>
             </subant>
         </sequential>
     </macrodef>
