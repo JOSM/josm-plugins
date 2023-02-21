@@ -8,13 +8,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -33,11 +31,15 @@ import org.openstreetmap.josm.plugins.editgpx.data.EditGpxTrackSegment;
 import org.openstreetmap.josm.plugins.editgpx.data.EditGpxWayPoint;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * The layer for editing GPX data
+ */
 public class EditGpxLayer extends Layer {
 
-    private static Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(EditGpxPlugin.class.getResource("/images/editgpx_layer.png")));
+    private static final Icon icon = new ImageProvider("editgpx_layer").get();
+    /** The data that is being edited */
     public final EditGpxData data;
-    private GPXLayerImportAction layerImport;
+    private final GPXLayerImportAction layerImport;
 
     /**
      * Constructs a new {@code EditGpxLayer}.

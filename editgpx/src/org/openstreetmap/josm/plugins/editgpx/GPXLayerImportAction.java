@@ -30,12 +30,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Import GPX data from available layers.
- *
  */
 class GPXLayerImportAction extends AbstractAction {
 
-    private EditGpxData data;
-    public Object importing = new Object(); //used for synchronization
+    private final EditGpxData data;
+    public final Object importing = new Object(); //used for synchronization
 
     public GPXLayerImportAction(EditGpxData data) {
         //TODO what is icon at the end?
@@ -102,7 +101,6 @@ class GPXLayerImportAction extends AbstractAction {
                     this.data.load(gpx.data);
                 }
             }
-            MainApplication.getMap().mapView.repaint();
 
         } else {
             // no gps layer

@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -28,7 +29,11 @@ import org.openstreetmap.josm.plugins.editgpx.data.EditGpxData;
 import org.openstreetmap.josm.plugins.editgpx.data.EditGpxTrack;
 import org.openstreetmap.josm.plugins.editgpx.data.EditGpxTrackSegment;
 import org.openstreetmap.josm.plugins.editgpx.data.EditGpxWayPoint;
+import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Enter the mode for editing GPX data
+ */
 public class EditGpxMode extends MapMode implements LayerChangeListener {
 
     private static final long serialVersionUID = 7940589057093872411L;
@@ -42,7 +47,9 @@ public class EditGpxMode extends MapMode implements LayerChangeListener {
      * @param mapFrame map frame
      */
     public EditGpxMode(MapFrame mapFrame) {
-        super("editgpx", "editgpx_mode.png", tr("edit gpx tracks"), Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        super("editgpx", "editgpx_mode", tr("edit gpx tracks"),
+                Shortcut.registerShortcut("editgpx:editgpx_mode", tr("EditGPX Mode"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+                Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         this.mapFrame = mapFrame;
     }
 
@@ -99,9 +106,9 @@ public class EditGpxMode extends MapMode implements LayerChangeListener {
                     }
                 }
             }
+            currentEditLayer.invalidate();
         }
         oldRect = null;
-        MainApplication.getMap().mapView.repaint();
     }
 
     /**
@@ -175,7 +182,7 @@ public class EditGpxMode extends MapMode implements LayerChangeListener {
             MainApplication.getLayerManager().addLayer(currentEditLayer);
             currentEditLayer.initializeImport();
         }
-        MainApplication.getMap().mapView.repaint();
+        currentEditLayer.invalidate();
     }
 
     @Override

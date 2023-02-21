@@ -3,8 +3,6 @@
  */
 package org.openstreetmap.josm.plugins.editgpx;
 
-import javax.swing.ImageIcon;
-
 import org.openstreetmap.josm.gui.IconToggleButton;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -42,9 +40,5 @@ public class EditGpxPlugin extends Plugin {
             if (MainApplication.getMap() != null)
                 MainApplication.getMap().addMapMode(new IconToggleButton(mode));
         }
-    }
-
-    public static ImageIcon loadIcon(String name) {
-        return new ImageIcon(EditGpxPlugin.class.getResource("/images/editgpx.png"));
     }
 }
