@@ -26,13 +26,12 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.TextTagParser;
 
+/**
+ * A configuration dialog
+ */
 public class FastDrawConfigDialog extends ExtendedDialog {
 
-    private final JLabel label1 = new JLabel(tr("Epsilon multiplier"));
-    private final JLabel label2 = new JLabel(tr("Starting Epsilon"));
-    private final JLabel label3 = new JLabel(tr("Max points count per 1 km"));
-    private final JLabel label4 = new JLabel(/* I18n: Combobox to select what a press to return key does */ tr("Enter key mode"));
-    private final JLabel label5 = new JLabel(tr("Auto add tags"));
+    private static final long serialVersionUID = -4894608522010226092L;
     private final JFormattedTextField text1 = new JFormattedTextField(NumberFormat.getInstance());
     private final JFormattedTextField text2 = new JFormattedTextField(NumberFormat.getInstance());
     private final JFormattedTextField text3 = new JFormattedTextField(NumberFormat.getInstance());
@@ -46,39 +45,49 @@ public class FastDrawConfigDialog extends ExtendedDialog {
     private final HistoryComboBox addTags = new HistoryComboBox();
     private final FDSettings settings;
 
+    /**
+     * Create anew configuration dialog
+     * @param settings The settings to use
+     */
     public FastDrawConfigDialog(FDSettings settings) {
-        super(MainApplication.getMainFrame(), tr("FastDraw configuration"), new String[] {tr("Ok"), tr("Cancel")});
+        super(MainApplication.getMainFrame(), tr("FastDraw configuration"), tr("Ok"), tr("Cancel"));
         this.settings = settings;
 
         JPanel all = new JPanel();
         GridBagLayout layout = new GridBagLayout();
         all.setLayout(layout);
         JButton pasteButton = new JButton(new AbstractAction(tr("Paste"), ImageProvider.get("apply")) {
+            private static final long serialVersionUID = -8597276971260620654L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 String s = ClipboardUtils.getClipboardStringContent();
-                if (s != null) {
-                    if (TextTagParser.getValidatedTagsFromText(s, TextTagPaster::warning) != null) {
-                        addTags.setText(s);
-                    }
+                if (s != null && TextTagParser.getValidatedTagsFromText(s, TextTagPaster::warning) != null) {
+                    addTags.setText(s);
                 }
             }
         });
         pasteButton.setToolTipText(tr("Try copying tags from properties table"));
 
         addTags.getModel().prefs().load("fastdraw.tags-history");
-        while (addTags.getModel().find("") != null)
+        while (addTags.getModel().find("") != null) {
             addTags.getModel().removeElement("");
+        }
 
+        JLabel label1 = new JLabel(tr("Epsilon multiplier"));
         all.add(label1, GBC.std().insets(10, 0, 0, 0));
         all.add(text1, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        JLabel label2 = new JLabel(tr("Starting Epsilon"));
         all.add(label2, GBC.std().insets(10, 0, 0, 0));
         all.add(text2, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        JLabel label3 = new JLabel(tr("Max points count per 1 km"));
         all.add(label3, GBC.std().insets(10, 0, 0, 0));
         all.add(text3, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        JLabel label4 = new JLabel(/* I18n: Combobox to select what a press to return key does */ tr("Enter key mode"));
         all.add(label4, GBC.std().insets(10, 0, 0, 0));
         all.add(combo1, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
+        JLabel label5 = new JLabel(tr("Auto add tags"));
         all.add(label5, GBC.std().insets(10, 0, 0, 0));
         all.add(pasteButton, GBC.eop().insets(0, 0, 0, 5));
 
@@ -104,13 +113,10 @@ public class FastDrawConfigDialog extends ExtendedDialog {
         combo1.setSelectedIndex(settings.simplifyMode);
 
         setContent(all, false);
-        setButtonIcons(new String[] {"ok", "cancel"});
-        setToolTipTexts(new String[] {
-                tr("Save settings"),
-                tr("Cancel")
-        });
+        setButtonIcons("ok", "cancel");
+        setToolTipTexts(tr("Save settings"),
+                tr("Cancel"));
         setDefaultButton(1);
-        //configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
     }
 
     @Override

@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.fastdraw;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

@@ -7,6 +7,9 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
+/**
+ * The plugin entry point
+ */
 public class FastDrawingPlugin extends Plugin {
 
     public FastDrawingPlugin(PluginInformation info) {
@@ -16,7 +19,7 @@ public class FastDrawingPlugin extends Plugin {
     @Override
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
         if (oldFrame == null && newFrame != null) {
-            MainApplication.getMap().addMapMode(new IconToggleButton(new FastDrawingMode(MainApplication.getMap())));
+            MainApplication.getMap().addMapMode(new IconToggleButton(new FastDrawingMode()));
         }
     }
 }

@@ -8,6 +8,9 @@ import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 
+/**
+ * A holder for plugin settings
+ */
 public class FDSettings {
     public NamedColorProperty COLOR_FIXED = new NamedColorProperty("fastdraw.color.delete", Color.red);
     public NamedColorProperty COLOR_NORMAL = new NamedColorProperty("fastdraw.color.edit", Color.orange);
