@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.annotations.LayerManager;
 import org.openstreetmap.josm.testutils.mockers.WindowlessMapViewStateMocker;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMo
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
+@BasicPreferences
 @HTTP
 @LayerManager
 @ExtendWith(Main.MainExtension.class)
