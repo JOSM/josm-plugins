@@ -14,20 +14,24 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * An action for opening the {@link TagDialog} editor
+ */
 public class LaunchAction extends JosmAction implements DataSelectionListener {
 
-    private OsmPrimitive selection = null;
+    private static final long serialVersionUID = -2017126466206457986L;
+    private OsmPrimitive selection;
 
-    private File pluginDir;
+    private final File pluginDir;
 
     /**
      * Constructs a new {@code LaunchAction}.
      * @param pluginDir plugin directory
      */
     public LaunchAction(File pluginDir) {
-        super("HouseNumberTaggingTool", 
+        super(tr("HouseNumberTaggingTool"),
               "home-icon32", 
-              "Launches the HouseNumberTaggingTool dialog", 
+              tr("Launches the HouseNumberTaggingTool dialog"),
               Shortcut.registerShortcut("edit:housenumbertaggingtool", tr("Data: {0}", "HouseNumberTaggingTool"),
                 KeyEvent.VK_K, Shortcut.DIRECT),
               true);
@@ -59,7 +63,7 @@ public class LaunchAction extends JosmAction implements DataSelectionListener {
         Set<OsmPrimitive> newSelection = event.getSelection();
         if (newSelection != null && newSelection.size() == 1) {
             setEnabled(true);
-            selection  =  newSelection.iterator().next();
+            selection = newSelection.iterator().next();
         } else {
             setEnabled(false);
             selection = null;

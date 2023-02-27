@@ -4,6 +4,7 @@ package org.openstreetmap.josm.plugins.housenumbertool;
 import java.io.Serializable;
 
 /**
+ * An object for the current dialog settings
  * @author Oliver Raupach 18.01.2012
  */
 public class Dto implements Serializable {

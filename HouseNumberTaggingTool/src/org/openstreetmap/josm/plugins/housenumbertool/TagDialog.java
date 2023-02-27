@@ -8,13 +8,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -23,8 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -47,12 +46,19 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
+ * The dialog to show users the tags that will be applied to an object
+ *
  * @author Oliver Raupach 09.01.2012
  * @author Victor Kropp 10.03.2012
  */
 public class TagDialog extends ExtendedDialog {
+    private static final long serialVersionUID = -4781477945608720136L;
     private static final String APPLY_CHANGES = tr("Apply Changes");
     private static final String TAG_STREET_OR_PLACE = tr("Use tag ''addr:street'' or ''addr:place''");
 
@@ -69,29 +75,27 @@ public class TagDialog extends ExtendedDialog {
 
     private static final String[] BUILDING_STRINGS = {
         "yes", "apartments", "chapel", "church", "commercial", "dormitory", "hotel", "house", "residential", "terrace",
-        "industrial", "retail", "warehouse", "cathedral",  "civic", "hospital", "school", "train_station", "transportation",
+        "industrial", "retail", "warehouse", "cathedral", "civic", "hospital", "school", "train_station", "transportation",
         "university", "public", "bridge", "bunker", "cabin", "construction", "farm_auxiliary", "garage", "garages",
         "greenhouse", "hangar", "hut", "roof", "shed", "stable"};
 
     private static final int FPS_MIN = -10;
-    private static final int FPS_MAX =  10;
+    private static final int FPS_MAX = 10;
 
-    private static final Logger LOGGER = Logger.getLogger(TagDialog.class.getName());
-
-    private File pluginDir;
+    private final File pluginDir;
     private AutoCompletionManager acm;
-    private OsmPrimitive selection;
+    private final OsmPrimitive selection;
 
     private static final String TEMPLATE_DATA = "/template.data";
 
     private AutoCompComboBox<AutoCompletionItem> source;
     private AutoCompComboBox<AutoCompletionItem> country;
-    private AutoCompComboBox<AutoCompletionItem> state;
+    private AutoCompComboBox<AutoCompletionItem> stateTag;
     private AutoCompComboBox<AutoCompletionItem> suburb;
     private AutoCompComboBox<AutoCompletionItem> city;
     private AutoCompComboBox<AutoCompletionItem> postcode;
     private AutoCompComboBox<AutoCompletionItem> street;
-    private JTextField housnumber;
+    private JTextField housenumber;
     private JCheckBox buildingEnabled;
     private JCheckBox sourceEnabled;
     private JCheckBox countryEnabled;
@@ -112,7 +116,7 @@ public class TagDialog extends ExtendedDialog {
      * @param selection selected primitive
      */
     public TagDialog(File pluginDir, OsmPrimitive selection) {
-        super(MainApplication.getMainFrame(), tr("House Number Editor"), new String[] { tr("OK"), tr("Cancel") }, true);
+        super(MainApplication.getMainFrame(), tr("House Number Editor"), new String[] {tr("OK"), tr("Cancel")}, true);
         this.pluginDir = pluginDir;
         this.selection = selection;
 
@@ -131,8 +135,8 @@ public class TagDialog extends ExtendedDialog {
         setLocationRelativeTo(null);
 
         SwingUtilities.invokeLater(() -> {
-            housnumber.requestFocus();
-            housnumber.selectAll();
+            housenumber.requestFocus();
+            housenumber.selectAll();
         });
     }
 
@@ -142,550 +146,153 @@ public class TagDialog extends ExtendedDialog {
         Dto dto = loadDto();
 
         JPanel editPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
 
         JLabel labelNewValues = new JLabel();
         Font newLabelFont = new Font(labelNewValues.getFont().getName(), Font.BOLD, labelNewValues.getFont().getSize());
         labelNewValues.setFont(newLabelFont);
         labelNewValues.setText(tr("New values:"));
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 0;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 5, 10, 5);
-        editPanel.add(labelNewValues, c);
+        editPanel.add(labelNewValues, GBC.std().grid(3, 0).insets(0, 5, 10, 5));
 
         JLabel labelExistingValues = new JLabel();
         labelExistingValues.setFont(newLabelFont);
         labelExistingValues.setText(tr("Existing values:"));
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 0;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 5, 10, 5);
-        editPanel.add(labelExistingValues, c);
+        editPanel.add(labelExistingValues, GBC.std().span(3).weight(0, 0).grid(5, 0).insets(0, 5, 10, 5));
 
         JButton getAllButton = new JButton("<<");
         getAllButton.setPreferredSize(new Dimension(60, 24));
         getAllButton.setToolTipText(tr("Accept all existing values"));
         getAllButton.addActionListener(actionEvent -> acceptAllExistingValues());
-        GridBagConstraints buttonContstraints = new GridBagConstraints();
-        buttonContstraints.fill = GridBagConstraints.NONE;
-        buttonContstraints.gridx = 6;
-        buttonContstraints.gridy = 0;
-        buttonContstraints.weightx = 0;
-        buttonContstraints.gridwidth = 1;
-        buttonContstraints.anchor = GridBagConstraints.EAST;
-        buttonContstraints.insets = new Insets(0, 5, 10, 5);
-        editPanel.add(getAllButton, buttonContstraints);
+        editPanel.add(getAllButton, GBC.eol().grid(7, 0).anchor(GridBagConstraints.EAST).insets(0, 5, 10, 5));
+
+        GBC columnOne = GBC.std().span(3).insets(5, 5, 0, 5);
+        GBC columnTwo = GBC.std().span(1).weight(1, 0).fill(GBC.HORIZONTAL).insets(5, 5, 0, 5);
+        GBC columnThree = GBC.std().insets(5, 5, 0, 5);
+        GBC columnFour = GBC.eol().weight(1, 0).fill(GBC.HORIZONTAL).insets(5, 5, 0, 5);
 
         // building
-        buildingEnabled = new JCheckBox(TAG_BUILDING);
-        buildingEnabled.setFocusable(false);
-        buildingEnabled.setSelected(dto.isSaveBuilding());
-        buildingEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(buildingEnabled, c);
+        buildingEnabled = generateCheckbox(TAG_BUILDING, dto.isSaveBuilding());
+        editPanel.add(buildingEnabled, columnOne);
 
         Arrays.sort(BUILDING_STRINGS);
-        building = new JComboBox<>(BUILDING_STRINGS);
+        building = new JosmComboBox<>(BUILDING_STRINGS);
         building.setSelectedItem(dto.getBuilding());
         building.setMaximumRowCount(50);
-        c.gridx = 3;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(building, c);
+        editPanel.add(building, columnTwo);
 
-        JButton getBuildingButton = new JButton("<");
-        getBuildingButton.setPreferredSize(new Dimension(45, 24));
-        getBuildingButton.setToolTipText(tr("Accept existing value"));
-        getBuildingButton.addActionListener(actionEvent -> building.setSelectedItem(selection.get(TAG_BUILDING)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 1;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getBuildingButton, c);
-
-        JTextField existingBuilding = new JTextField();
-        existingBuilding.setText(selection.get(TAG_BUILDING));
-        existingBuilding.setPreferredSize(new Dimension(200, 24));
-        existingBuilding.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingBuilding, c);
+        editPanel.add(generateAcceptButton(actionEvent -> building.setSelectedItem(selection.get(TAG_BUILDING))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_BUILDING)), columnFour);
 
         // source
-        sourceEnabled = new JCheckBox(TAG_SOURCE);
-        sourceEnabled.setFocusable(false);
-        sourceEnabled.setSelected(dto.isSaveBuilding());
-        sourceEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 2;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(sourceEnabled, c);
+        sourceEnabled = generateCheckbox(TAG_SOURCE, dto.isSaveSource());
+        editPanel.add(sourceEnabled, columnOne);
 
-        source = new AutoCompComboBox<>();
-        source.getModel().addAllElements(acm.getTagValues(TAG_SOURCE));
-        source.setPreferredSize(new Dimension(200, 24));
-        source.setEditable(true);
-        source.setSelectedItem(dto.getSource());
-        c.gridx = 3;
-        c.gridy = 2;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(source, c);
+        source = generateAutoCompTextField(acm.getTagValues(TAG_SOURCE), dto.getSource());
+        editPanel.add(source, columnTwo);
 
-        JButton getSourceButton = new JButton("<");
-        getSourceButton.setPreferredSize(new Dimension(45, 24));
-        getSourceButton.setToolTipText(tr("Accept existing value"));
-        getSourceButton.addActionListener(actionEvent -> source.setSelectedItem(selection.get(TAG_SOURCE)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 2;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getSourceButton, c);
-
-        JTextField existingSource = new JTextField();
-        existingSource.setText(selection.get(TAG_SOURCE));
-        existingSource.setPreferredSize(new Dimension(200, 24));
-        existingSource.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 2;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingSource, c);
+        editPanel.add(generateAcceptButton(actionEvent -> source.setSelectedItem(selection.get(TAG_SOURCE))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_SOURCE)), columnFour);
 
         // country
-        countryEnabled = new JCheckBox(TAG_ADDR_COUNTRY);
-        countryEnabled.setFocusable(false);
-        countryEnabled.setSelected(dto.isSaveCountry());
-        countryEnabled.setToolTipText(APPLY_CHANGES);
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 3;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(countryEnabled, c);
+        countryEnabled = generateCheckbox(TAG_ADDR_COUNTRY, dto.isSaveCountry());
+        editPanel.add(countryEnabled, columnOne);
 
-        country = new AutoCompComboBox<>();
-        country.getModel().addAllElements(acm.getTagValues(TAG_ADDR_COUNTRY));
-        country.setPreferredSize(new Dimension(200, 24));
-        country.setEditable(true);
-        country.setSelectedItem(dto.getCountry());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 3;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(country, c);
+        country = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_COUNTRY), dto.getCountry());
+        editPanel.add(country, columnTwo);
 
-        JButton getCountryButton = new JButton("<");
-        getCountryButton.setPreferredSize(new Dimension(45, 24));
-        getCountryButton.setToolTipText(tr("Accept existing value"));
-        getCountryButton.addActionListener(actionEvent -> country.setSelectedItem(selection.get(TAG_ADDR_COUNTRY)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 3;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getCountryButton, c);
-
-        JTextField existingCountry = new JTextField();
-        existingCountry.setText(selection.get(TAG_ADDR_COUNTRY));
-        existingCountry.setPreferredSize(new Dimension(200, 24));
-        existingCountry.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 3;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingCountry, c);
+        editPanel.add(generateAcceptButton(actionEvent -> country.setSelectedItem(selection.get(TAG_ADDR_COUNTRY))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_COUNTRY)), columnFour);
 
         // state
-        stateEnabled = new JCheckBox(TAG_ADDR_STATE);
-        stateEnabled.setFocusable(false);
-        stateEnabled.setSelected(dto.isSaveState());
-        stateEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 4;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(stateEnabled, c);
+        stateEnabled = generateCheckbox(TAG_ADDR_STATE, dto.isSaveState());
+        editPanel.add(stateEnabled, columnOne);
 
-        state = new AutoCompComboBox<>();
-        state.getModel().addAllElements(acm.getTagValues(TAG_ADDR_STATE));
-        state.setPreferredSize(new Dimension(200, 24));
-        state.setEditable(true);
-        state.setSelectedItem(dto.getState());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 4;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(state, c);
+        stateTag = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_STATE), dto.getState());
+        editPanel.add(stateTag, columnTwo);
 
-        JButton getStateButton = new JButton("<");
-        getStateButton.setPreferredSize(new Dimension(45, 24));
-        getStateButton.setToolTipText(tr("Accept existing value"));
-        getStateButton.addActionListener(actionEvent -> state.setSelectedItem(selection.get(TAG_ADDR_STATE)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 4;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getStateButton, c);
-
-        JTextField existingState= new JTextField();
-        existingState.setText(selection.get(TAG_ADDR_STATE));
-        existingState.setPreferredSize(new Dimension(200, 24));
-        existingState.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 4;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingState, c);
+        editPanel.add(generateAcceptButton(actionEvent -> stateTag.setSelectedItem(selection.get(TAG_ADDR_STATE))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_STATE)), columnFour);
 
         // suburb
-        suburbEnabled = new JCheckBox(TAG_ADDR_SUBURB);
-        suburbEnabled.setFocusable(false);
-        suburbEnabled.setSelected(dto.isSaveSuburb());
-        suburbEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 5;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(suburbEnabled, c);
+        suburbEnabled = generateCheckbox(TAG_ADDR_SUBURB, dto.isSaveSuburb());
+        editPanel.add(suburbEnabled, columnOne);
 
-        suburb = new AutoCompComboBox<>();
-        suburb.getModel().addAllElements(acm.getTagValues(TAG_ADDR_SUBURB));
-        suburb.setPreferredSize(new Dimension(200, 24));
-        suburb.setEditable(true);
-        suburb.setSelectedItem(dto.getSuburb());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 5;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(suburb, c);
+        suburb = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_SUBURB), dto.getSuburb());
+        editPanel.add(suburb, columnTwo);
 
-        JButton getSuburbButton = new JButton("<");
-        getSuburbButton.setPreferredSize(new Dimension(45, 24));
-        getSuburbButton.setToolTipText(tr("Accept existing value"));
-        getSuburbButton.addActionListener(actionEvent -> suburb.setSelectedItem(selection.get(TAG_ADDR_SUBURB)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 5;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getSuburbButton, c);
-
-        JTextField existingSuburb = new JTextField();
-        existingSuburb.setText(selection.get(TAG_ADDR_SUBURB));
-        existingSuburb.setPreferredSize(new Dimension(200, 24));
-        existingSuburb.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 5;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingSuburb, c);
+        editPanel.add(generateAcceptButton(actionEvent -> suburb.setSelectedItem(selection.get(TAG_ADDR_SUBURB))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_SUBURB)), columnFour);
 
         // city
-        cityEnabled = new JCheckBox(TAG_ADDR_CITY);
-        cityEnabled.setFocusable(false);
-        cityEnabled.setSelected(dto.isSaveCity());
-        cityEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 6;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(cityEnabled, c);
+        cityEnabled = generateCheckbox(TAG_ADDR_CITY, dto.isSaveCity());
+        editPanel.add(cityEnabled, columnOne);
 
-        city = new AutoCompComboBox<>();
-        city.getModel().addAllElements(acm.getTagValues(TAG_ADDR_CITY));
-        city.setPreferredSize(new Dimension(200, 24));
-        city.setEditable(true);
-        city.setSelectedItem(dto.getCity());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 6;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(city, c);
+        city = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_CITY), dto.getCity());
+        editPanel.add(city, columnTwo);
 
-        JButton getCityButton = new JButton("<");
-        getCityButton.setPreferredSize(new Dimension(45, 24));
-        getCityButton.setToolTipText(tr("Accept existing value"));
-        getCityButton.addActionListener(actionEvent -> city.setSelectedItem(selection.get(TAG_ADDR_CITY)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 6;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getCityButton, c);
-
-        JTextField existingCity = new JTextField();
-        existingCity.setText(selection.get(TAG_ADDR_CITY));
-        existingCity.setPreferredSize(new Dimension(200, 24));
-        existingCity.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 6;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingCity, c);
+        editPanel.add(generateAcceptButton(actionEvent -> city.setSelectedItem(selection.get(TAG_ADDR_CITY))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_CITY)), columnFour);
 
         // postcode
-        zipEnabled = new JCheckBox(TAG_ADDR_POSTCODE);
-        zipEnabled.setFocusable(false);
-        zipEnabled.setSelected(dto.isSavePostcode());
-        zipEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 7;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(zipEnabled, c);
+        zipEnabled = generateCheckbox(TAG_ADDR_POSTCODE, dto.isSavePostcode());
+        editPanel.add(zipEnabled, columnOne);
 
-        postcode = new AutoCompComboBox<>();
-        postcode.getModel().addAllElements(acm.getTagValues(TAG_ADDR_POSTCODE));
-        postcode.setPreferredSize(new Dimension(200, 24));
-        postcode.setEditable(true);
-        postcode.setSelectedItem(dto.getPostcode());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 7;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(postcode, c);
+        postcode = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_POSTCODE), dto.getPostcode());
+        editPanel.add(postcode, columnTwo);
 
-        JButton getPostcodeButton = new JButton("<");
-        getPostcodeButton.setPreferredSize(new Dimension(45, 24));
-        getPostcodeButton.setToolTipText(tr("Accept existing value"));
-        getPostcodeButton.addActionListener(actionEvent -> postcode.setSelectedItem(selection.get(TAG_ADDR_POSTCODE)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 7;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getPostcodeButton, c);
-
-        JTextField existingPostcode = new JTextField();
-        existingPostcode.setText(selection.get(TAG_ADDR_POSTCODE));
-        existingPostcode.setPreferredSize(new Dimension(200, 24));
-        existingPostcode.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 7;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingPostcode, c);
+        editPanel.add(generateAcceptButton(actionEvent -> postcode.setSelectedItem(selection.get(TAG_ADDR_POSTCODE))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_POSTCODE)), columnFour);
 
         // street
-        streetEnabled = new JCheckBox();
-        streetEnabled.setFocusable(false);
-        streetEnabled.setSelected(dto.isSaveStreet());
-        streetEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 8;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(streetEnabled, c);
+        streetEnabled = generateCheckbox(null, dto.isSaveStreet());
+        editPanel.add(streetEnabled, GBC.std().insets(5, 5, 0, 5));
 
         streetRadio = new JRadioButton(TAG_ADDR_STREET);
         streetRadio.setToolTipText(TAG_STREET_OR_PLACE);
         streetRadio.setSelected(dto.isTagStreet());
         streetRadio.addItemListener(new RadioChangeListener());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridy = 8;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(streetRadio, c);
+        editPanel.add(streetRadio, GBC.std().weight(0, 0).insets(5, 5, 0, 5));
 
         placeRadio = new JRadioButton("addr:place");
         placeRadio.setToolTipText(TAG_STREET_OR_PLACE);
         placeRadio.setSelected(!dto.isTagStreet());
         placeRadio.addItemListener(new RadioChangeListener());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 2;
-        c.gridy = 8;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(placeRadio, c);
+        editPanel.add(placeRadio, GBC.std().insets(5, 5, 0, 5));
 
         ButtonGroup g = new ButtonGroup();
         g.add(streetRadio);
         g.add(placeRadio);
 
-        street = new AutoCompComboBox<>();
         if (dto.isTagStreet()) {
-            street.getModel().addAllElements(getPossibleStreets());
+            street = generateAutoCompTextField(getPossibleStreets(), dto.getStreet());
         } else {
-            street.getModel().addAllElements(acm.getTagValues(TAG_ADDR_PLACE));
+            street = generateAutoCompTextField(acm.getTagValues(TAG_ADDR_PLACE), dto.getStreet());
         }
-        street.setPreferredSize(new Dimension(200, 24));
-        street.setEditable(true);
-        street.setSelectedItem(dto.getStreet());
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 8;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(street, c);
+        editPanel.add(street, columnTwo);
 
-        JButton getStreetButton = new JButton("<");
-        getStreetButton.setPreferredSize(new Dimension(45, 24));
-        getStreetButton.setToolTipText(tr("Accept existing value"));
-        getStreetButton.addActionListener(actionEvent -> updateStreetOrPlaceValues());
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 8;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getStreetButton, c);
+        editPanel.add(generateAcceptButton(actionEvent -> updateStreetOrPlaceValues()), columnThree);
 
-        JTextField streetOrPlace = new JTextField();
-        streetOrPlace.setText(getStreetOrPlaceTag());
+        JTextField streetOrPlace = generateTextField(getStreetOrPlaceTag());
         streetOrPlace.setPreferredSize(new Dimension(50, 24));
-        streetOrPlace.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 8;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(streetOrPlace, c);
+        editPanel.add(streetOrPlace, GBC.std().weight(0, 0).fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 0, 5));
 
-        JTextField existingStreet = new JTextField();
-        existingStreet.setText(getStreetOrPlaceValue());
+        JTextField existingStreet = generateTextField(getStreetOrPlaceValue());
         existingStreet.setPreferredSize(new Dimension(100, 24));
-        existingStreet.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 6;
-        c.gridy = 8;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingStreet, c);
-
-
+        editPanel.add(existingStreet, GBC.eol().weight(1, 0).insets(5, 5, 0, 5).fill(GridBagConstraints.HORIZONTAL));
         // housenumber
-        housenumberEnabled = new JCheckBox(TAG_ADDR_HOUSENUMBER);
-        housenumberEnabled.setFocusable(false);
-        housenumberEnabled.setSelected(dto.isSaveHousenumber());
-        housenumberEnabled.setToolTipText(APPLY_CHANGES);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 9;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(housenumberEnabled, c);
+        housenumberEnabled = generateCheckbox(TAG_ADDR_HOUSENUMBER, dto.isSaveHousenumber());
+        editPanel.add(housenumberEnabled, columnOne);
 
-        housnumber = new JTextField();
-        housnumber.setPreferredSize(new Dimension(200, 24));
+        housenumber = generateTextField(HouseNumberHelper.incrementHouseNumber(dto.getHousenumber(), dto.getHousenumberChangeValue()));
+        housenumber.setEditable(true);
 
-        String number = HouseNumberHelper.incrementHouseNumber(dto.getHousenumber(), dto.getHousenumberChangeValue());
-        if (number != null) {
-            housnumber.setText(number);
-        }
+        editPanel.add(housenumber, columnTwo);
 
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 3;
-        c.gridy = 9;
-        c.weightx = 1;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(housnumber, c);
-
-        JButton getHousenumberButton = new JButton("<");
-        getHousenumberButton.setPreferredSize(new Dimension(45, 24));
-        getHousenumberButton.setToolTipText(tr("Accept existing value"));
-        getHousenumberButton.addActionListener(actionEvent -> housnumber.setText(selection.get(TAG_ADDR_HOUSENUMBER)));
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 4;
-        c.gridy = 9;
-        c.weightx = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(getHousenumberButton, c);
-
-        JTextField existingHousenumber = new JTextField();
-        existingHousenumber.setText(selection.get(TAG_ADDR_HOUSENUMBER));
-        existingHousenumber.setPreferredSize(new Dimension(200, 24));
-        existingHousenumber.setEditable(false);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 5;
-        c.gridy = 9;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(existingHousenumber, c);
+        editPanel.add(generateAcceptButton(actionEvent -> housenumber.setText(selection.get(TAG_ADDR_HOUSENUMBER))), columnThree);
+        editPanel.add(generateTextField(selection.get(TAG_ADDR_HOUSENUMBER)), columnFour);
 
         // increment
         JLabel seqLabel = new JLabel(tr("House number increment:"));
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 10;
-        c.weightx = 0;
-        c.gridwidth = 3;
-        c.insets = new Insets(5, 5, 0, 5);
-        editPanel.add(seqLabel, c);
+        editPanel.add(seqLabel, columnOne);
 
         housenumberChangeSequence = new JSlider(JSlider.HORIZONTAL, FPS_MIN, FPS_MAX, dto.getHousenumberChangeValue());
         housenumberChangeSequence.setPaintTicks(true);
@@ -693,14 +300,57 @@ public class TagDialog extends ExtendedDialog {
         housenumberChangeSequence.setMinorTickSpacing(1);
         housenumberChangeSequence.setPaintLabels(true);
         housenumberChangeSequence.setSnapToTicks(true);
-        c.gridx = 3;
-        c.gridy = 10;
-        c.weightx = 1;
-        c.gridwidth = 4;
-        c.insets = new Insets(20, 5, 10, 5);
-        editPanel.add(housenumberChangeSequence, c);
+        editPanel.add(housenumberChangeSequence, GBC.eol().weight(1, 0).insets(20, 5, 10, 5).fill(GridBagConstraints.HORIZONTAL));
 
         return editPanel;
+    }
+
+    /**
+     * Generate a checkbox for applying changes
+     * @param text The text to show
+     * @param enabled Whether or not the checkbox is enabled
+     * @return The checkbox to add
+     */
+    private static JCheckBox generateCheckbox(String text, boolean enabled) {
+        JCheckBox checkBox = new JCheckBox(text, enabled);
+        checkBox.setFocusable(false);
+        checkBox.setToolTipText(APPLY_CHANGES);
+        return checkBox;
+    }
+
+    /**
+     * Generate an accept button
+     * @param listener The listener to call when the user "accepts" a value
+     * @return The button to add
+     */
+    private static JButton generateAcceptButton(ActionListener listener) {
+        JButton button = new JButton("<");
+        button.setPreferredSize(new Dimension(45, 24));
+        button.setToolTipText(tr("Accept existing value"));
+        button.addActionListener(listener);
+        return button;
+    }
+
+    private static AutoCompComboBox<AutoCompletionItem> generateAutoCompTextField(Collection<AutoCompletionItem> tagValues, String selected) {
+        AutoCompComboBox<AutoCompletionItem> comboBox = new AutoCompComboBox<>();
+        comboBox.getModel().addAllElements(tagValues);
+        comboBox.setPreferredSize(new Dimension(200, 24));
+        comboBox.setEditable(true);
+        comboBox.setSelectedItem(selected);
+        return comboBox;
+    }
+
+    /**
+     * Generate a non-editable text field
+     * @param startingText The text to show
+     * @return The text field (200x24)
+     */
+    private static JosmTextField generateTextField(String startingText) {
+        JosmTextField textField = new JosmTextField();
+        textField.setText(startingText);
+        textField.setPreferredSize(new Dimension(200, 24));
+        textField.setEditable(false);
+        return textField;
     }
 
     private void acceptAllExistingValues() {
@@ -708,18 +358,18 @@ public class TagDialog extends ExtendedDialog {
         building.setSelectedItem(selection.get(TAG_BUILDING));
         source.setSelectedItem(selection.get(TAG_SOURCE));
         country.setSelectedItem(selection.get(TAG_ADDR_COUNTRY));
-        state.setSelectedItem(selection.get(TAG_ADDR_STATE));
+        stateTag.setSelectedItem(selection.get(TAG_ADDR_STATE));
         suburb.setSelectedItem(selection.get(TAG_ADDR_SUBURB));
         city.setSelectedItem(selection.get(TAG_ADDR_CITY));
         postcode.setSelectedItem(selection.get(TAG_ADDR_POSTCODE));
-        housnumber.setText(selection.get(TAG_ADDR_HOUSENUMBER));
+        housenumber.setText(selection.get(TAG_ADDR_HOUSENUMBER));
     }
 
     private void updateStreetOrPlaceValues() {
         if (selection.hasTag(TAG_ADDR_PLACE)) {
             placeRadio.setSelected(true);
             street.setSelectedItem(selection.get(TAG_ADDR_PLACE));
-        }else {
+        } else {
             streetRadio.setSelected(true);
             street.setSelectedItem(selection.get(TAG_ADDR_STREET));
         }
@@ -764,10 +414,10 @@ public class TagDialog extends ExtendedDialog {
             dto.setSource(getAutoCompletingComboBoxValue(source));
             dto.setCity(getAutoCompletingComboBoxValue(city));
             dto.setCountry(getAutoCompletingComboBoxValue(country));
-            dto.setHousenumber(housnumber.getText());
+            dto.setHousenumber(housenumber.getText());
             dto.setPostcode(getAutoCompletingComboBoxValue(postcode));
             dto.setStreet(getAutoCompletingComboBoxValue(street));
-            dto.setState(getAutoCompletingComboBoxValue(state));
+            dto.setState(getAutoCompletingComboBoxValue(stateTag));
             dto.setSuburb(getAutoCompletingComboBoxValue(suburb));
             dto.setHousenumberChangeValue(housenumberChangeSequence.getValue());
 
@@ -777,7 +427,7 @@ public class TagDialog extends ExtendedDialog {
         setVisible(false);
     }
 
-    private String getAutoCompletingComboBoxValue(AutoCompComboBox<AutoCompletionItem> box) {
+    private static String getAutoCompletingComboBoxValue(AutoCompComboBox<AutoCompletionItem> box) {
         Object item = box.getSelectedItem();
         if (item != null) {
             if (item instanceof String) {
@@ -793,20 +443,22 @@ public class TagDialog extends ExtendedDialog {
     }
 
     protected void saveDto(Dto dto) {
-        File path = pluginDir;
         File fileName = new File(pluginDir + TagDialog.TEMPLATE_DATA);
 
         try {
-            path.mkdirs();
-            try (
-                FileOutputStream file = new FileOutputStream(fileName);
-                ObjectOutputStream o = new ObjectOutputStream(file)
-            ) {
-                o.writeObject(dto);
+            if (pluginDir.mkdirs()) {
+                try (
+                        FileOutputStream file = new FileOutputStream(fileName);
+                        ObjectOutputStream o = new ObjectOutputStream(file)
+                ) {
+                    o.writeObject(dto);
+                }
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
-            fileName.delete();
+        } catch (IOException ex) {
+            Logging.error(ex);
+            if (!fileName.delete()) {
+                Logging.trace("TagDialog: {0} not deleted", fileName);
+            }
         }
     }
 
@@ -815,7 +467,7 @@ public class TagDialog extends ExtendedDialog {
 
         if (dto.isSaveBuilding()) {
             String value = selection.get(TagDialog.TAG_BUILDING);
-            if (value == null || (value != null && !value.equals(dto.getBuilding()))) {
+            if (value == null || !value.equals(dto.getBuilding())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_BUILDING, dto.getBuilding());
                 commands.add(command);
             }
@@ -823,7 +475,7 @@ public class TagDialog extends ExtendedDialog {
 
         if (dto.isSaveSource()) {
             String value = selection.get(TagDialog.TAG_SOURCE);
-            if (value == null || (value != null && !value.equals(dto.getSource()))) {
+            if (value == null || !value.equals(dto.getSource())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_SOURCE, dto.getSource());
                 commands.add(command);
             }
@@ -831,31 +483,31 @@ public class TagDialog extends ExtendedDialog {
 
         if (dto.isSaveCity()) {
             String value = selection.get(TagDialog.TAG_ADDR_CITY);
-            if (value == null || (value != null && !value.equals(dto.getCity()))) {
+            if (value == null || !value.equals(dto.getCity())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_CITY, dto.getCity());
                 commands.add(command);
             }
         }
 
-        if (dto.isSaveCountry())  {
+        if (dto.isSaveCountry()) {
             String value = selection.get(TagDialog.TAG_ADDR_COUNTRY);
-            if (value == null || (value != null && !value.equals(dto.getCountry()))) {
+            if (value == null || !value.equals(dto.getCountry())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_COUNTRY, dto.getCountry());
                 commands.add(command);
             }
         }
 
-        if (dto.isSaveSuburb())  {
+        if (dto.isSaveSuburb()) {
             String value = selection.get(TagDialog.TAG_ADDR_SUBURB);
-            if (value == null || (value != null && !value.equals(dto.getSuburb()))) {
+            if (value == null || !value.equals(dto.getSuburb())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_SUBURB, dto.getSuburb());
                 commands.add(command);
             }
         }
 
-        if (dto.isSaveHousenumber())  {
+        if (dto.isSaveHousenumber()) {
             String value = selection.get(TagDialog.TAG_ADDR_HOUSENUMBER);
-            if (value == null || (value != null && !value.equals(dto.getHousenumber()))) {
+            if (value == null || !value.equals(dto.getHousenumber())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_HOUSENUMBER, dto.getHousenumber());
                 commands.add(command);
             }
@@ -863,7 +515,7 @@ public class TagDialog extends ExtendedDialog {
 
         if (dto.isSavePostcode()) {
             String value = selection.get(TagDialog.TAG_ADDR_POSTCODE);
-            if (value == null || (value != null && !value.equals(dto.getPostcode()))) {
+            if (value == null || !value.equals(dto.getPostcode())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_POSTCODE, dto.getPostcode());
                 commands.add(command);
             }
@@ -872,7 +524,7 @@ public class TagDialog extends ExtendedDialog {
         if (dto.isSaveStreet()) {
             if (dto.isTagStreet()) {
                 String value = selection.get(TagDialog.TAG_ADDR_STREET);
-                if (value == null || (value != null && !value.equals(dto.getStreet()))) {
+                if (value == null || !value.equals(dto.getStreet())) {
                     ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_STREET, dto.getStreet());
                     commands.add(command);
 
@@ -884,7 +536,7 @@ public class TagDialog extends ExtendedDialog {
                 }
             } else {
                 String value = selection.get(TagDialog.TAG_ADDR_PLACE);
-                if (value == null || (value != null && !value.equals(dto.getStreet()))) {
+                if (value == null || !value.equals(dto.getStreet())) {
                     ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_PLACE, dto.getStreet());
                     commands.add(command);
 
@@ -899,7 +551,7 @@ public class TagDialog extends ExtendedDialog {
 
         if (dto.isSaveState()) {
             String value = selection.get(TagDialog.TAG_ADDR_STATE);
-            if (value == null || (value != null && !value.equals(dto.getState())))  {
+            if (value == null || !value.equals(dto.getState())) {
                 ChangePropertyCommand command = new ChangePropertyCommand(selection, TagDialog.TAG_ADDR_STATE, dto.getState());
                 commands.add(command);
             }
@@ -917,8 +569,9 @@ public class TagDialog extends ExtendedDialog {
 
     /**
      * Generates a list of all visible names of highways in order to do autocompletion on the road name.
+     * @return The possible streets for the current edit dataset
      */
-    private Collection<AutoCompletionItem> getPossibleStreets() {
+    private static Collection<AutoCompletionItem> getPossibleStreets() {
         Set<AutoCompletionItem> names = new TreeSet<>();
         for (OsmPrimitive osm : MainApplication.getLayerManager().getEditDataSet().allNonDeletedPrimitives()) {
             if (osm.getKeys() != null && osm.keySet().contains("highway") && osm.keySet().contains("name")) {
@@ -936,16 +589,18 @@ public class TagDialog extends ExtendedDialog {
             if (fileName.exists()) {
                 try (
                         FileInputStream file = new FileInputStream(fileName);
-                        ObjectInputStream o = new ObjectInputStream(file);
+                        ObjectInputStream o = new ObjectInputStream(file)
                 ) {
                     dto = (Dto) o.readObject();
                 }
             } else {
                 loadExistingValuesToDto(dto);
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, ex.getMessage());
-            fileName.delete();
+        } catch (ClassNotFoundException | IOException ex) {
+            Logging.error(ex);
+            if (!fileName.delete()) {
+                Logging.trace("TagDialog: {0} not deleted", fileName);
+            }
             loadExistingValuesToDto(dto);
         }
         return dto;
