@@ -16,12 +16,10 @@
 
 package org.openstreetmap.josm.eventbus;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.openstreetmap.josm.eventbus.Subscribe;
 
 /**
  * A simple EventSubscriber mock that records Strings.
@@ -32,7 +30,7 @@ import org.openstreetmap.josm.eventbus.Subscribe;
  * @author Cliff Biffle
  */
 public class StringCatcher {
-  private List<String> events = new ArrayList<>();
+  private final List<String> events = new ArrayList<>();
 
   @Subscribe
   public void hereHaveAString(String string) {

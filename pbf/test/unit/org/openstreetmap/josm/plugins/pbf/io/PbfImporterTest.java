@@ -1,39 +1,32 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.pbf.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for {@link PbfImporter}.
  */
-public class PbfImporterTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class PbfImporterTest {
     private static void checkUserNull(OsmPrimitive osm, boolean hasToBeNull) {
         User usr = osm.getUser();
         if (hasToBeNull) {
-            assertNull(osm + " -> " + usr, usr);
+            assertNull(usr, osm + " -> " + usr);
         } else {
-            assertNotNull(osm + " -> " + usr, usr);
+            assertNotNull(usr, osm + " -> " + usr);
         }
     }
 
@@ -54,7 +47,7 @@ public class PbfImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testParseDataSet() throws Exception {
+    void testParseDataSet() throws Exception {
         doTestMonaco(TestUtils.getTestDataRoot() + "/monaco-latest.osm.pbf", false);
     }
 
@@ -63,7 +56,7 @@ public class PbfImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket10132() throws Exception {
+    void testTicket10132() throws Exception {
         doTestMonaco(TestUtils.getRegressionDataFile(10132, "Monaco-SP.osm.pbf"), true);
     }
 
@@ -72,7 +65,7 @@ public class PbfImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket12567() throws Exception {
+    void testTicket12567() throws Exception {
         DataSet ds = new PbfImporter().parseDataSet(TestUtils.getRegressionDataFile(12567, "12390008.osm.pbf"));
         assertNotNull(ds);
         assertEquals(103210, ds.getNodes().size());
@@ -85,7 +78,7 @@ public class PbfImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket14545() throws Exception {
+    void testTicket14545() throws Exception {
         DataSet ds = new PbfImporter().parseDataSet(TestUtils.getRegressionDataFile(14545, "reg14545.osm.pbf"));
         assertNotNull(ds);
         assertEquals(12, ds.getNodes().size());

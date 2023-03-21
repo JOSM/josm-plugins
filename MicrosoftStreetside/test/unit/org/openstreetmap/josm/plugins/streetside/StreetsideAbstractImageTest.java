@@ -1,19 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
-public class StreetsideAbstractImageTest {
-
-  /*@Rule
-  public JOSMTestRules rules = new StreetsideTestRules().platform();*/
-
+class StreetsideAbstractImageTest {
   @Test
-  public void testIsModified() {
+  void testIsModified() {
     StreetsideImage img = new StreetsideImage("key___________________", new LatLon(0, 0), 0);
     assertFalse(img.isModified());
     img.turn(1e-4);

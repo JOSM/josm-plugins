@@ -1,7 +1,6 @@
 package org.openstreetmap.josm.plugins.streetside.gui;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openstreetmap.josm.plugins.streetside.utils.TestUtil.getPrivateFieldValue;
 
 import java.awt.GraphicsEnvironment;
@@ -10,25 +9,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.SpinnerNumberModel;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.plugins.streetside.io.download.StreetsideDownloader.DOWNLOAD_MODE;
-import org.openstreetmap.josm.plugins.streetside.utils.TestUtil.StreetsideTestRules;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
 
-public class StreetsidePreferenceSettingTest {
-
-  @Rule
-  public JOSMTestRules rules = new StreetsideTestRules().main();
-
+@Main
+@Disabled
+class StreetsidePreferenceSettingTest {
   // TODO: repair broken unit test from Mapillary
-  @Ignore
   @Test
-  public void testAddGui() {
+  void testAddGui() {
     if (GraphicsEnvironment.isHeadless()) {
       return;
     }
@@ -41,16 +36,14 @@ public class StreetsidePreferenceSettingTest {
     assertEquals(tabs.getDisplayPreference(), setting.getTabPreferenceSetting(tabs));
   }
 
-  @Ignore
   @Test
-  public void testIsExpert() {
-    assertFalse(new StreetsidePreferenceSetting().isExpert());
+  void testIsExpert() {
+    Assertions.assertFalse(new StreetsidePreferenceSetting().isExpert());
   }
 
   @SuppressWarnings("unchecked")
-  @Ignore
   @Test
-  public void testOk() {
+  void testOk() {
     StreetsidePreferenceSetting settings = new StreetsidePreferenceSetting();
 
     // Initialize the properties with some arbitrary value to make sure they are not unset

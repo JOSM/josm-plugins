@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.history;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
 import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
@@ -21,18 +21,18 @@ import org.openstreetmap.josm.plugins.streetside.history.commands.CommandMove;
 import org.openstreetmap.josm.plugins.streetside.history.commands.CommandTurn;
 import org.openstreetmap.josm.plugins.streetside.history.commands.CommandUnjoin;
 import org.openstreetmap.josm.plugins.streetside.history.commands.StreetsideCommand;
-import org.openstreetmap.josm.plugins.streetside.utils.TestUtil.StreetsideTestRules;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Tests the command record system.
  *
  * @author nokutu
  */
-public class StreetsideRecordTest {
-
-  @Rule
-  public JOSMTestRules rules = new StreetsideTestRules().main().projection();
+@Main
+@Projection
+@Disabled
+class StreetsideRecordTest {
 
   private StreetsideRecord record;
   private StreetsideImage img1;
@@ -43,7 +43,7 @@ public class StreetsideRecordTest {
    * Creates a new {@link StreetsideRecord} object and 3 {@link StreetsideImage}
    * objects.
    */
-  @Before
+  @BeforeEach
   public void setUp() {
     record = new StreetsideRecord();
     img1 = new StreetsideImage("key1__________________", new LatLon(0.1, 0.1), 0.1);
@@ -57,9 +57,8 @@ public class StreetsideRecordTest {
   /**
    * Test commands in general.
    */
-  @Ignore
   @Test
-  public void commandTest() {
+  void testCommand() {
     StreetsideCommand cmd12 = new CommandMove(
             new ConcurrentSkipListSet<>(Arrays.asList(img1, img2)),
             0.1, 0.1);
@@ -114,9 +113,8 @@ public class StreetsideRecordTest {
   /**
    * Tests {@link CommandMove} class.
    */
-  @Ignore
   @Test
-  public void commandMoveTest() {
+  void testCommandMove() {
     CommandMove cmd1 = new CommandMove(
             new ConcurrentSkipListSet<>(Arrays.asList(img1, img2)),
             0.1, 0.1);
@@ -149,9 +147,8 @@ public class StreetsideRecordTest {
   /**
    * Tests {@link CommandTurn} class.
    */
-  @Ignore
   @Test
-  public void commandTurnTest() {
+  void testCommandTurn() {
     CommandTurn cmd1 = new CommandTurn(
             new ConcurrentSkipListSet<>(Arrays.asList(img1, img2)),
             0.2);
@@ -181,9 +178,8 @@ public class StreetsideRecordTest {
   /**
    * Tests {@link CommandJoin} class.
    */
-  @Ignore
   @Test
-  public void commandJoinClass() {
+  void testCommandJoinClass() {
     CommandJoin cmd1 = new CommandJoin(img1, img2);
     CommandJoin cmd2 = new CommandJoin(img2, img3);
 
@@ -198,24 +194,21 @@ public class StreetsideRecordTest {
     assertEquals(img3, img1.next().next());
   }
 
-  @Ignore
-  @Test(expected=NullPointerException.class)
-  public void commandJoinNull1() {
-    new CommandJoin(img1, null);
+  @Test
+  void testCommandJoinNull1() {
+    assertThrows(NullPointerException.class, () -> new CommandJoin(img1, null));
   }
 
-  @Ignore
-  @Test(expected=NullPointerException.class)
-  public void commandJoinNull2() {
-    new CommandJoin(null, img1);
+  @Test
+  void commandJoinNull2() {
+    assertThrows(NullPointerException.class, () -> new CommandJoin(null, img1));
   }
 
   /**
    * Tests {@link CommandUnjoin} class.
    */
-  @Ignore
   @Test
-  public void commandUnjoinClass() {
+  void testCommandUnjoinClass() {
     CommandJoin join1 = new CommandJoin(img1, img2);
     CommandJoin join2 = new CommandJoin(img2, img3);
 
@@ -236,11 +229,7 @@ public class StreetsideRecordTest {
     assertEquals(1, img1.getSequence().getImages().size());
     assertEquals(1, img2.getSequence().getImages().size());
 
-    try {
-      record.addCommand(new CommandUnjoin(Arrays.asList(new StreetsideAbstractImage[]{img1, img2, img3})));
-      fail();
-    } catch (IllegalArgumentException e) {
-      // Expected output.
-    }
+    CommandUnjoin command = new CommandUnjoin(Arrays.asList(new StreetsideAbstractImage[]{img1, img2, img3}));
+    assertThrows(IllegalArgumentException.class, () -> record.addCommand(command));
   }
 }

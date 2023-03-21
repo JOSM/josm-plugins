@@ -1,35 +1,25 @@
 package org.openstreetmap.josm.plugins.imageryxmlbounds.actions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ComputeBoundsAction}
  */
-public class ComputeBoundsActionTest {
-
-    /**
-     * Setup rule
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
+@BasicPreferences
+class ComputeBoundsActionTest {
     /**
      * Unit test of {@link ComputeBoundsAction#getBounds}
      */
     @Test
-    public void testGetBounds() {
+    void testGetBounds() {
         assertEquals("        <bounds min-lat='0' min-lon='0' max-lat='0' max-lon='0'>\n",
                 ComputeBoundsAction.getBounds(new Node(LatLon.ZERO), false));
         assertEquals("        <bounds min-lat='0' min-lon='0' max-lat='0' max-lon='0' />",

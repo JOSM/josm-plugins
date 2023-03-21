@@ -1,17 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core;
 
-import static org.junit.Assert.assertSame;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.graphview.core.TestDataSource.TestNode;
 import org.openstreetmap.josm.plugins.graphview.core.TestDataSource.TestRelation;
 import org.openstreetmap.josm.plugins.graphview.core.TestDataSource.TestRelationMember;
@@ -32,7 +34,7 @@ import org.openstreetmap.josm.plugins.graphview.core.transition.TransitionStruct
 import org.openstreetmap.josm.plugins.graphview.plugin.preferences.PreferenceAccessParameters;
 import org.openstreetmap.josm.plugins.graphview.plugin.preferences.VehiclePropertyStringParser.PropertyValueSyntaxException;
 
-public class FullGraphCreationTest {
+class FullGraphCreationTest {
 
     private static final AccessParameters ACCESS_PARAMS;
     static {
@@ -43,7 +45,7 @@ public class FullGraphCreationTest {
         try {
             ACCESS_PARAMS = new PreferenceAccessParameters(
                     "test_vehicle",
-                    Arrays.asList(AccessType.UNDEFINED),
+                    Collections.singletonList(AccessType.UNDEFINED),
                     vehiclePropertyValues);
         } catch (PropertyValueSyntaxException e) {
             throw new Error(e);
@@ -53,12 +55,12 @@ public class FullGraphCreationTest {
     private static final AccessRuleset TEST_RULESET = new AccessRuleset() {
         @Override
         public java.util.List<String> getAccessHierarchyAncestors(String transportMode) {
-            return Arrays.asList(transportMode);
+            return Collections.singletonList(transportMode);
         }
 
         @Override
         public Collection<Tag> getBaseTags() {
-            return Arrays.asList(new Tag("highway", "test"));
+            return Collections.singletonList(new Tag("highway", "test"));
         }
 
         @Override
@@ -68,7 +70,7 @@ public class FullGraphCreationTest {
     };
 
     @Test
-    public void testTJunction() {
+    void testTJunction() {
 
         TestDataSource ds = new TestDataSource();
 
@@ -124,7 +126,7 @@ public class FullGraphCreationTest {
     }
 
     @Test
-    public void testBarrier() {
+    void testBarrier() {
 
         TestDataSource ds = new TestDataSource();
 

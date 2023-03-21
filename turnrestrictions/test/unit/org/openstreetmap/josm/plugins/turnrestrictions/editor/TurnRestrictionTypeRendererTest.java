@@ -1,23 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import javax.swing.JLabel;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class TurnRestrictionTypeRendererTest {
-
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class TurnRestrictionTypeRendererTest {
     @Test
-    public void test_Constructor() {
+    void testConstructor() {
         TurnRestrictionTypeRenderer renderer = new TurnRestrictionTypeRenderer();
 
         assertNotNull(renderer.icons);
@@ -25,7 +21,7 @@ public class TurnRestrictionTypeRendererTest {
     }
 
     @Test
-    public void test_getListCellRendererComponent_1() {
+    void testGetListCellRendererComponent1() {
         TurnRestrictionTypeRenderer renderer = new TurnRestrictionTypeRenderer();
 
         JLabel c = (JLabel) renderer.getListCellRendererComponent(null, null, 0, false, false);

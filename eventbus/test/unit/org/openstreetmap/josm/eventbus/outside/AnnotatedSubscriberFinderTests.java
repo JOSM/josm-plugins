@@ -16,14 +16,15 @@
 
 package org.openstreetmap.josm.eventbus.outside;
 
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.eventbus.EventBus;
 import org.openstreetmap.josm.eventbus.Subscribe;
 
@@ -47,16 +48,16 @@ public class AnnotatedSubscriberFinderTests {
       return subscriber;
     }
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() {
       subscriber = createSubscriber();
       EventBus bus = new EventBus();
       bus.register(subscriber);
       bus.post(EVENT);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
       subscriber = null;
     }
   }
@@ -64,7 +65,7 @@ public class AnnotatedSubscriberFinderTests {
   /*
    * We break the tests up based on whether they are annotated or abstract in the superclass.
    */
-  public static class BaseSubscriberFinderTest
+  static class BaseSubscriberFinderTest
       extends AbstractEventBusTestParent<BaseSubscriberFinderTest.Subscriber> {
     static class Subscriber {
       final List<Object> nonSubscriberEvents = new ArrayList<>();
@@ -81,12 +82,12 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testNonSubscriber() {
+    void testNonSubscriber() {
       assertTrue(getSubscriber().nonSubscriberEvents.isEmpty());
     }
 
     @Test
-    public void testSubscriber() {
+    void testSubscriber() {
       assertTrue(getSubscriber().subscriberEvents.contains(EVENT));
     }
 
@@ -96,7 +97,7 @@ public class AnnotatedSubscriberFinderTests {
     }
   }
 
-  public static class AnnotatedAndAbstractInSuperclassTest
+  static class AnnotatedAndAbstractInSuperclassTest
       extends AbstractEventBusTestParent<AnnotatedAndAbstractInSuperclassTest.SubClass> {
     abstract static class SuperClass {
       @Subscribe
@@ -123,12 +124,12 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testOverriddenAndAnnotatedInSubclass() {
+    void testOverriddenAndAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenAndAnnotatedInSubclassEvents.contains(EVENT));
     }
 
     @Test
-    public void testOverriddenNotAnnotatedInSubclass() {
+    void testOverriddenNotAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenInSubclassEvents.contains(EVENT));
     }
 
@@ -138,7 +139,7 @@ public class AnnotatedSubscriberFinderTests {
     }
   }
 
-  public static class AnnotatedNotAbstractInSuperclassTest
+  static class AnnotatedNotAbstractInSuperclassTest
       extends AbstractEventBusTestParent<AnnotatedNotAbstractInSuperclassTest.SubClass> {
     static class SuperClass {
       final List<Object> notOverriddenInSubclassEvents = new ArrayList<>();
@@ -205,29 +206,29 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testNotOverriddenInSubclass() {
+    void testNotOverriddenInSubclass() {
       assertTrue(getSubscriber().notOverriddenInSubclassEvents.contains(EVENT));
     }
 
     @Test
-    public void testOverriddenNotAnnotatedInSubclass() {
+    void testOverriddenNotAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenNotAnnotatedInSubclassEvents.contains(EVENT));
     }
 
     @Test
-    public void testDifferentlyOverriddenNotAnnotatedInSubclass() {
+    void testDifferentlyOverriddenNotAnnotatedInSubclass() {
       assertTrue(getSubscriber().differentlyOverriddenNotAnnotatedInSubclassGoodEvents
           .contains(EVENT));
       assertTrue(getSubscriber().differentlyOverriddenNotAnnotatedInSubclassBadEvents.isEmpty());
     }
 
     @Test
-    public void testOverriddenAndAnnotatedInSubclass() {
+    void testOverriddenAndAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenAndAnnotatedInSubclassEvents.contains(EVENT));
     }
 
     @Test
-    public void testDifferentlyOverriddenAndAnnotatedInSubclass() {
+    void testDifferentlyOverriddenAndAnnotatedInSubclass() {
       assertTrue(getSubscriber().differentlyOverriddenAnnotatedInSubclassGoodEvents
           .contains(EVENT));
       assertTrue(getSubscriber().differentlyOverriddenAnnotatedInSubclassBadEvents.isEmpty());
@@ -239,7 +240,7 @@ public class AnnotatedSubscriberFinderTests {
     }
   }
 
-  public static class AbstractNotAnnotatedInSuperclassTest
+  static class AbstractNotAnnotatedInSuperclassTest
       extends AbstractEventBusTestParent<AbstractNotAnnotatedInSuperclassTest.SubClass> {
     abstract static class SuperClass {
       public abstract void overriddenInSubclassNowhereAnnotated(Object o);
@@ -264,12 +265,12 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testOverriddenAndAnnotatedInSubclass() {
+    void testOverriddenAndAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenAndAnnotatedInSubclassEvents.contains(EVENT));
     }
 
     @Test
-    public void testOverriddenInSubclassNowhereAnnotated() {
+    void testOverriddenInSubclassNowhereAnnotated() {
       assertTrue(getSubscriber().overriddenInSubclassNowhereAnnotatedEvents.isEmpty());
     }
 
@@ -279,7 +280,7 @@ public class AnnotatedSubscriberFinderTests {
     }
   }
 
-  public static class NeitherAbstractNorAnnotatedInSuperclassTest
+  static class NeitherAbstractNorAnnotatedInSuperclassTest
       extends AbstractEventBusTestParent<NeitherAbstractNorAnnotatedInSuperclassTest.SubClass> {
     static class SuperClass {
       final List<Object> neitherOverriddenNorAnnotatedEvents = new ArrayList<>();
@@ -313,17 +314,17 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testNeitherOverriddenNorAnnotated() {
+    void testNeitherOverriddenNorAnnotated() {
       assertTrue(getSubscriber().neitherOverriddenNorAnnotatedEvents.isEmpty());
     }
 
     @Test
-    public void testOverriddenInSubclassNowhereAnnotated() {
+    void testOverriddenInSubclassNowhereAnnotated() {
       assertTrue(getSubscriber().overriddenInSubclassNowhereAnnotatedEvents.isEmpty());
     }
 
     @Test
-    public void testOverriddenAndAnnotatedInSubclass() {
+    void testOverriddenAndAnnotatedInSubclass() {
       assertTrue(getSubscriber().overriddenAndAnnotatedInSubclassEvents.contains(EVENT));
     }
 
@@ -333,7 +334,7 @@ public class AnnotatedSubscriberFinderTests {
     }
   }
 
-  public static class DeepInterfaceTest
+  static class DeepInterfaceTest
       extends AbstractEventBusTestParent<DeepInterfaceTest.SubscriberClass> {
     interface Interface1 {
       @Subscribe
@@ -426,42 +427,42 @@ public class AnnotatedSubscriberFinderTests {
     }
 
     @Test
-    public void testAnnotatedIn1() {
+    void testAnnotatedIn1() {
       assertTrue(getSubscriber().annotatedIn1Events.contains(EVENT));
     }
 
     @Test
-    public void testAnnotatedIn2() {
+    void testAnnotatedIn2() {
       assertTrue(getSubscriber().annotatedIn2Events.contains(EVENT));
     }
 
     @Test
-    public void testAnnotatedIn1And2() {
+    void testAnnotatedIn1And2() {
       assertTrue(getSubscriber().annotatedIn1And2Events.contains(EVENT));
     }
 
     @Test
-    public void testAnnotatedIn1And2AndClass() {
+    void testAnnotatedIn1And2AndClass() {
       assertTrue(getSubscriber().annotatedIn1And2AndClassEvents.contains(EVENT));
     }
 
     @Test
-    public void testDeclaredIn1AnnotatedIn2() {
+    void testDeclaredIn1AnnotatedIn2() {
       assertTrue(getSubscriber().declaredIn1AnnotatedIn2Events.contains(EVENT));
     }
 
     @Test
-    public void testDeclaredIn1AnnotatedInClass() {
+    void testDeclaredIn1AnnotatedInClass() {
       assertTrue(getSubscriber().declaredIn1AnnotatedInClassEvents.contains(EVENT));
     }
 
     @Test
-    public void testDeclaredIn2AnnotatedInClass() {
+    void testDeclaredIn2AnnotatedInClass() {
       assertTrue(getSubscriber().declaredIn2AnnotatedInClassEvents.contains(EVENT));
     }
 
     @Test
-    public void testNowhereAnnotated() {
+    void testNowhereAnnotated() {
       assertTrue(getSubscriber().nowhereAnnotatedEvents.isEmpty());
     }
 

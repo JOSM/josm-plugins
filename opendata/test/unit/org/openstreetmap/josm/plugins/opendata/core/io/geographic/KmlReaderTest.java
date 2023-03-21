@@ -7,24 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link KmlReader} class.
  */
 @BasicPreferences
+@Projection
 class KmlReaderTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules().projection();
-
     /**
      * Unit test of {@link KmlReader#COLOR_PATTERN}
      */

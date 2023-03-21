@@ -16,23 +16,22 @@
 
 package org.openstreetmap.josm.eventbus;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.openstreetmap.josm.eventbus.AsyncEventBus;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for {@link AsyncEventBus}.
  *
  * @author Cliff Biffle
  */
-public class AsyncEventBusTest {
+class AsyncEventBusTest {
   private static final String EVENT = "Hello";
 
   /** The executor we use to fake asynchronicity. */
@@ -40,14 +39,14 @@ public class AsyncEventBusTest {
 
   private AsyncEventBus bus;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  void setUp() {
     executor = new FakeExecutor();
     bus = new AsyncEventBus(executor);
   }
 
   @Test
-  public void testBasicDistribution() {
+  void testBasicDistribution() {
     StringCatcher catcher = new StringCatcher();
     bus.register(catcher);
 
@@ -55,16 +54,16 @@ public class AsyncEventBusTest {
     bus.post(EVENT);
 
     List<String> events = catcher.getEvents();
-    assertTrue("No events should be delivered synchronously.", events.isEmpty());
+    assertTrue(events.isEmpty(), "No events should be delivered synchronously.");
 
     // Now we find the task in our Executor and explicitly activate it.
     List<Runnable> tasks = executor.getTasks();
-    assertEquals("One event dispatch task should be queued.", 1, tasks.size());
+    assertEquals(1, tasks.size(), "One event dispatch task should be queued.");
 
     tasks.get(0).run();
 
-    assertEquals("One event should be delivered.", 1, events.size());
-    assertEquals("Correct string should be delivered.", EVENT, events.get(0));
+    assertEquals(1, events.size(), "One event should be delivered.");
+    assertEquals(EVENT, events.get(0), "Correct string should be delivered.");
   }
 
   /**

@@ -1,25 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.cache;
-//License: GPL. For details, see LICENSE file.
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Rule;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.streetside.cache.StreetsideCache.Type;
-import org.openstreetmap.josm.plugins.streetside.utils.TestUtil.StreetsideTestRules;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class StreetsideCacheTest {
-
-  @Rule
-  public JOSMTestRules rules = new StreetsideTestRules().preferences();
+@BasicPreferences
+class StreetsideCacheTest {
 
   @Test
-  public void test() {
+  void testCache() {
     StreetsideCache cache = new StreetsideCache("00000", Type.FULL_IMAGE);
     assertNotNull(cache.getUrl());
     assertNotNull(cache.getCacheKey());

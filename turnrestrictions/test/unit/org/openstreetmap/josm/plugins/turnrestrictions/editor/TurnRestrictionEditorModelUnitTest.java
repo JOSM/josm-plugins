@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openstreetmap.josm.plugins.turnrestrictions.editor.TurnRestrictionLegRole.FROM;
 import static org.openstreetmap.josm.plugins.turnrestrictions.editor.TurnRestrictionLegRole.TO;
 
@@ -12,28 +13,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * This is a unit test for {@link TurnRestrictionEditorModel}
  */
-public class TurnRestrictionEditorModelUnitTest {
-
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
+@BasicPreferences
+class TurnRestrictionEditorModelUnitTest {
 
     private final NavigationControler navigationControlerMock = new NavigationControler() {
         @Override
@@ -113,7 +112,7 @@ public class TurnRestrictionEditorModelUnitTest {
         ds.addPrimitive(r);
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ds = new DataSet();
         layer = new OsmDataLayer(ds, "test", null);
@@ -123,21 +122,21 @@ public class TurnRestrictionEditorModelUnitTest {
     /**
      * Test the constructor
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor1() {
-        new TurnRestrictionEditorModel(null, navigationControlerMock);
+    @Test
+    void testConstructor1() {
+        assertThrows(IllegalArgumentException.class, () -> new TurnRestrictionEditorModel(null, navigationControlerMock));
     }
 
     /**
      * Test the constructor
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor2() {
-        new TurnRestrictionEditorModel(layer, null);
+    @Test
+    void testConstructor2() {
+        assertThrows(IllegalArgumentException.class, () -> new TurnRestrictionEditorModel(layer, null));
     }
 
     @Test
-    public void testPopulateEmptyTurnRestriction() {
+    void testPopulateEmptyTurnRestriction() {
         // an "empty" turn restriction with a public id
         Relation r = new Relation(1);
         ds.addPrimitive(r);
@@ -155,19 +154,19 @@ public class TurnRestrictionEditorModelUnitTest {
      *
      */
     @Test
-    public void test_populate_SimpleStandardTurnRestriction() {
+    void testPopulateSimpleStandardTurnRestriction() {
         buildDataSet1();
         model.populate(rel(1));
 
         assertEquals(Collections.singleton(way(2)), model.getTurnRestrictionLeg(FROM));
         assertEquals(Collections.singleton(way(3)), model.getTurnRestrictionLeg(TO));
-        assertEquals(Arrays.asList(node(22)), model.getVias());
+        assertEquals(Collections.singletonList(node(22)), model.getVias());
         assertEquals("no_left_turn", model.getRestrictionTagValue());
         assertEquals("", model.getExcept().getValue());
     }
 
     @Test
-    public void setFrom() {
+    void testSetFrom() {
         buildDataSet1();
         model.populate(rel(1));
 
@@ -177,33 +176,24 @@ public class TurnRestrictionEditorModelUnitTest {
 
         // set another way as from
         model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, way(4).getPrimitiveId());
-        assertEquals(Collections.singleton(way(4)), model.getTurnRestrictionLeg(TurnRestrictionLegRole.FROM));
+        assertEquals(Collections.singleton(way(4)), model.getTurnRestrictionLeg(FROM));
 
         // delete the/all members with role 'from'
         model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, null);
-        assertTrue(model.getTurnRestrictionLeg(TurnRestrictionLegRole.FROM).isEmpty());
+        assertTrue(model.getTurnRestrictionLeg(FROM).isEmpty());
 
-        try {
-            // can't add a node as 'from'
-            model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, node(21).getPrimitiveId());
-            fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-            System.out.println(e.getMessage());
-        }
+        // can't add a node as 'from'
+        PrimitiveId node = node(21).getPrimitiveId();
+        assertThrows(IllegalArgumentException.class,
+                () -> model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, node));
 
-        try {
-            // can't set a way as 'from' if it isn't part of the dataset
-            model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, new Way().getPrimitiveId());
-            fail();
-        } catch (IllegalStateException e) {
-            // OK
-            System.out.println(e.getMessage());
-        }
+        // can't set a way as 'from' if it isn't part of the dataset
+        PrimitiveId way = new Way().getPrimitiveId();
+        assertThrows(IllegalStateException.class, () -> model.setTurnRestrictionLeg(TurnRestrictionLegRole.FROM, way));
     }
 
     @Test
-    public void setTo() {
+    void setTo() {
         buildDataSet1();
         model.populate(rel(1));
 
@@ -213,29 +203,17 @@ public class TurnRestrictionEditorModelUnitTest {
 
         // set another way as from
         model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, way(4).getPrimitiveId());
-        assertEquals(Collections.singleton(way(4)), model.getTurnRestrictionLeg(TurnRestrictionLegRole.TO));
+        assertEquals(Collections.singleton(way(4)), model.getTurnRestrictionLeg(TO));
 
         // delete the/all members with role 'from'
         model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, null);
-        assertTrue(model.getTurnRestrictionLeg(TurnRestrictionLegRole.TO).isEmpty());
+        assertTrue(model.getTurnRestrictionLeg(TO).isEmpty());
 
-        try {
-            // can't add a node as 'from'
-            model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, node(21).getPrimitiveId());
-            fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-            System.out.println(e.getMessage());
-        }
+        PrimitiveId node = node(21).getPrimitiveId();
+        assertThrows(IllegalArgumentException.class, () -> model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, node));
 
-        try {
-            // can't set a way as 'from' if it isn't part of the dataset
-            model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, new Way().getPrimitiveId());
-            fail();
-        } catch (IllegalStateException e) {
-            // OK
-            System.out.println(e.getMessage());
-        }
+        PrimitiveId way = new Way().getPrimitiveId();
+        assertThrows(IllegalStateException.class, () -> model.setTurnRestrictionLeg(TurnRestrictionLegRole.TO, way));
     }
 
     /**
@@ -268,8 +246,8 @@ public class TurnRestrictionEditorModelUnitTest {
         model.populate(rel(1));
 
         // one node as via - OK
-        model.setVias(Arrays.asList(node(22)));
-        assertEquals(Arrays.asList(node(22)), model.getVias());
+        model.setVias(Collections.singletonList(node(22)));
+        assertEquals(Collections.singletonList(node(22)), model.getVias());
 
         // pass in null as vias -> remove all vias
         model.setVias(null);
@@ -290,11 +268,11 @@ public class TurnRestrictionEditorModelUnitTest {
 
         // null values in the list of vias are skipped
         model.setVias(Arrays.asList(null, node(22)));
-        assertEquals(Arrays.asList(node(22)), model.getVias());
+        assertEquals(Collections.singletonList(node(22)), model.getVias());
 
         try {
             // an object which doesn't belong to the same dataset can't be a via
-            model.setVias(Arrays.asList(new Node(LatLon.ZERO)));
+            model.setVias(Collections.singletonList(new Node(LatLon.ZERO)));
             fail();
         } catch (IllegalArgumentException e) {
             // OK

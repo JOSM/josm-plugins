@@ -1,34 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package poly;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for {@link PolyImporter}.
  * @author Gerd Petermann
  */
-public class PolyImporterTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class PolyImporterTest {
     /**
      * @throws Exception if an error occurs
      */
     @Test
-    public void testSimple() throws Exception {
+    void testSimple() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/simple.poly");
         assertNotNull(ds);
         assertEquals(4, ds.getNodes().size());
@@ -41,7 +34,7 @@ public class PolyImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testSimple2() throws Exception {
+    void testSimple2() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/splitter.poly");
         assertNotNull(ds);
         assertEquals(14, ds.getNodes().size());
@@ -53,7 +46,7 @@ public class PolyImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testHoles() throws Exception {
+    void testHoles() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/holes.poly");
         assertNotNull(ds);
         assertEquals(76, ds.getNodes().size());
@@ -65,7 +58,7 @@ public class PolyImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTwoOuter() throws Exception {
+    void testTwoOuter() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/australia_v.poly");
         assertNotNull(ds);
         assertEquals(18, ds.getNodes().size());
@@ -77,7 +70,7 @@ public class PolyImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testDoubleEnd() throws Exception {
+    void testDoubleEnd() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/bremen-double-end.poly");
         assertNotNull(ds);
         assertEquals(337, ds.getNodes().size());
@@ -89,7 +82,7 @@ public class PolyImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testMultipleFile() throws Exception {
+    void testMultipleFile() throws Exception {
         DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/multi-concat.poly");
         assertNotNull(ds);
         assertEquals(40, ds.getNodes().size());
@@ -99,12 +92,11 @@ public class PolyImporterTest {
 
     /**
      * Should throw an IllegalDataException
-     * @throws Exception if an error occurs
      */
-    @Test (expected = IllegalDataException.class)
-    public void testNameMissing() throws Exception {
-        DataSet ds = new PolyImporter().parseDataSet(TestUtils.getTestDataRoot() + "/name-missing.poly");
-        assertNull(ds);
+    @Test
+    void testNameMissing() {
+        final PolyImporter importer = new PolyImporter();
+        assertThrows(IllegalDataException.class, () -> importer.parseDataSet(TestUtils.getTestDataRoot() + "/name-missing.poly"));
     }
 
 }

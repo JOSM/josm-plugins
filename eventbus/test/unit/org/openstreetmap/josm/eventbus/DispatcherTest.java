@@ -26,12 +26,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openstreetmap.josm.eventbus.Dispatcher;
-import org.openstreetmap.josm.eventbus.EventBus;
-import org.openstreetmap.josm.eventbus.Subscribe;
-import org.openstreetmap.josm.eventbus.Subscriber;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Dispatcher} implementations.
@@ -39,7 +35,7 @@ import org.openstreetmap.josm.eventbus.Subscriber;
  * @author Colin Decker
  */
 
-public class DispatcherTest {
+class DispatcherTest {
 
   private final EventBus bus = new EventBus();
 
@@ -65,8 +61,8 @@ public class DispatcherTest {
   private Dispatcher dispatcher;
 
   @Test
-  @Ignore("FIXME")
-  public void testPerThreadQueuedDispatcher() {
+  @Disabled("FIXME")
+  void testPerThreadQueuedDispatcher() {
     dispatcher = Dispatcher.perThreadDispatchQueue();
     dispatcher.dispatch(1, integerSubscribers.iterator());
 /*
@@ -86,42 +82,36 @@ public class DispatcherTest {
   }
 
   @Test
-  @Ignore("FIXME")
-  public void testLegacyAsyncDispatcher() {
+  @Disabled("FIXME")
+  void testLegacyAsyncDispatcher() {
     dispatcher = Dispatcher.legacyAsync();
 
     final CyclicBarrier barrier = new CyclicBarrier(2);
     final CountDownLatch latch = new CountDownLatch(2);
 
     new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  barrier.await();
-                } catch (Exception e) {
-                  throw new AssertionError(e);
-                }
-
-                dispatcher.dispatch(2, integerSubscribers.iterator());
-                latch.countDown();
+            () -> {
+              try {
+                barrier.await();
+              } catch (Exception e) {
+                throw new AssertionError(e);
               }
+
+              dispatcher.dispatch(2, integerSubscribers.iterator());
+              latch.countDown();
             })
         .start();
 
     new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  barrier.await();
-                } catch (Exception e) {
-                  throw new AssertionError(e);
-                }
-
-                dispatcher.dispatch("foo", stringSubscribers.iterator());
-                latch.countDown();
+            () -> {
+              try {
+                barrier.await();
+              } catch (Exception e) {
+                throw new AssertionError(e);
               }
+
+              dispatcher.dispatch("foo", stringSubscribers.iterator());
+              latch.countDown();
             })
         .start();
 /*
@@ -134,8 +124,8 @@ public class DispatcherTest {
   }
 
   @Test
-  @Ignore("FIXME")
-  public void testImmediateDispatcher() {
+  @Disabled("FIXME")
+  void testImmediateDispatcher() {
     dispatcher = Dispatcher.immediate();
     dispatcher.dispatch(1, integerSubscribers.iterator());
 /*

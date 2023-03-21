@@ -10,7 +10,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Simple test application to test the via list editor
  *
  */
-@Ignore("no test")
+@Disabled("no test")
 public class ViaListTest extends JFrame {
 
     private TurnRestrictionEditorModel model;

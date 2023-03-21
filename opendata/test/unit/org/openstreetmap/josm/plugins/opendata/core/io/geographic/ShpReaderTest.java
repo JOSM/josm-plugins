@@ -1,41 +1,38 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.io.geographic;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Objects;
-
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.plugins.opendata.core.io.NonRegFunctionalTests;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+
 /**
  * Unit tests of {@link ShpReader} class.
  */
 @BasicPreferences
+@Projection
+@Timeout(value = 1, unit = TimeUnit.MINUTES)
 class ShpReaderTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules().projection().timeout(60000);
-
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/12714">#12714</a>
      * @throws Exception if an error occurs during reading
@@ -43,7 +40,7 @@ class ShpReaderTest {
     @Test
     void testTicket12714() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(12714, "linhas.shp"));
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             for (Node n : ShpReader.parseDataSet(is, file, null, null).getNodes()) {
                 assertNotNull(n.getCoor(), n.toString());
             }

@@ -1,25 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.util;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.graphview.core.data.MapBasedTagGroup;
 import org.openstreetmap.josm.plugins.graphview.core.data.Tag;
 import org.openstreetmap.josm.plugins.graphview.core.data.TagGroup;
 
-public class TagConditionLogicTest {
+class TagConditionLogicTest {
 
     TagGroup groupA;
     TagGroup groupB;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         Map<String, String> mapA = new HashMap<>();
         mapA.put("key1", "value1");
         mapA.put("key2", "value2");
@@ -33,24 +35,24 @@ public class TagConditionLogicTest {
     }
 
     @Test
-    public void testTag() {
+    void testTag() {
         TagCondition condition = TagConditionLogic.tag(new Tag("key3", "value1"));
         assertTrue(condition.matches(groupA));
         assertFalse(condition.matches(groupB));
     }
 
     @Test
-    public void testKey() {
+    void testKey() {
         TagCondition condition = TagConditionLogic.key("key3");
         assertTrue(condition.matches(groupA));
         assertFalse(condition.matches(groupB));
     }
 
     @Test
-    public void testAnd() {
+    void testAnd() {
         TagCondition condition1 = TagConditionLogic.tag(new Tag("key2", "value2"));
         TagCondition conditionAnd1a = TagConditionLogic.and(condition1);
-        TagCondition conditionAnd1b = TagConditionLogic.and(Arrays.asList(condition1));
+        TagCondition conditionAnd1b = TagConditionLogic.and(Collections.singletonList(condition1));
 
         assertTrue(conditionAnd1a.matches(groupA));
         assertTrue(conditionAnd1b.matches(groupA));
@@ -77,10 +79,10 @@ public class TagConditionLogicTest {
     }
 
     @Test
-    public void testOr() {
+    void testOr() {
         TagCondition condition1 = TagConditionLogic.tag(new Tag("key42", "value42"));
         TagCondition conditionOr1a = TagConditionLogic.or(condition1);
-        TagCondition conditionOr1b = TagConditionLogic.or(Arrays.asList(condition1));
+        TagCondition conditionOr1b = TagConditionLogic.or(Collections.singletonList(condition1));
 
         assertFalse(conditionOr1a.matches(groupA));
         assertFalse(conditionOr1b.matches(groupA));
@@ -107,7 +109,7 @@ public class TagConditionLogicTest {
     }
 
     @Test
-    public void testNot() {
+    void testNot() {
         TagCondition condition = TagConditionLogic.not(TagConditionLogic.key("key3"));
         assertFalse(condition.matches(groupA));
         assertTrue(condition.matches(groupB));

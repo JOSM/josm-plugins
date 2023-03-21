@@ -6,7 +6,7 @@ import java.awt.Container;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Simple functional test for the layout / basic functionality of {@see BasicEditorPanel}
  *
  */
-@Ignore("no test")
+@Disabled("no test")
 public class BasicEditorPanelTest extends JFrame {
 
     private TurnRestrictionEditorModel model;

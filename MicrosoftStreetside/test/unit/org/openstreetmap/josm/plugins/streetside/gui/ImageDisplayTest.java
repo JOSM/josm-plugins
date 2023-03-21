@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.gui;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.event.MouseEvent;
@@ -10,23 +10,19 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.plugins.streetside.utils.TestUtil.StreetsideTestRules;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Tests {@link StreetsideImageDisplay}
  */
-public class ImageDisplayTest {
-
-  @Rule
-  public JOSMTestRules rules = new StreetsideTestRules().preferences();
+@BasicPreferences
+class ImageDisplayTest {
 
   private static final BufferedImage DUMMY_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
   @Test
-  public void testImagePersistence() {
+  void testImagePersistence() {
     StreetsideImageDisplay display = new StreetsideImageDisplay();
     display.setImage(DUMMY_IMAGE, null);
     assertEquals(DUMMY_IMAGE, display.getImage());
@@ -38,7 +34,7 @@ public class ImageDisplayTest {
    */
 
   @Test
-  public void testMouseWheelMoved() {
+  void testMouseWheelMoved() {
     if (GraphicsEnvironment.isHeadless()) {
       return;
     }
@@ -64,7 +60,7 @@ public class ImageDisplayTest {
    * it only checks if the tested method runs through.
    */
   @Test
-  public void testMouseClicked() {
+  void testMouseClicked() {
     if (GraphicsEnvironment.isHeadless()) {
       return;
     }

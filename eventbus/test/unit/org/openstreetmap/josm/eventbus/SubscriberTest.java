@@ -17,17 +17,18 @@
 package org.openstreetmap.josm.eventbus;
 
 //import com.google.common.testing.EqualsTester;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openstreetmap.josm.eventbus.AllowConcurrentEvents;
-import org.openstreetmap.josm.eventbus.EventBus;
-import org.openstreetmap.josm.eventbus.Subscribe;
-import org.openstreetmap.josm.eventbus.Subscriber;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Subscriber}.
@@ -35,7 +36,7 @@ import junit.framework.TestCase;
  * @author Cliff Biffle
  * @author Colin Decker
  */
-public class SubscriberTest extends TestCase {
+class SubscriberTest {
 
   private static final Object FIXTURE_ARGUMENT = new Object();
 
@@ -43,64 +44,56 @@ public class SubscriberTest extends TestCase {
   private boolean methodCalled;
   private Object methodArgument;
 
-  @Override
-  protected void setUp() throws Exception {
+  @BeforeEach
+  protected void setUp() {
     bus = new EventBus();
     methodCalled = false;
     methodArgument = null;
   }
 
   @Test
-  public void testCreate() {
+  void testCreate() {
     Subscriber s1 = Subscriber.create(bus, this, getTestSubscriberMethod("recordingMethod"));
     assertTrue(s1 instanceof Subscriber.SynchronizedSubscriber);
 
     // a thread-safe method should not create a synchronized subscriber
     Subscriber s2 = Subscriber.create(bus, this, getTestSubscriberMethod("threadSafeMethod"));
-    assertFalse(s2 instanceof Subscriber.SynchronizedSubscriber);
+    Assertions.assertFalse(s2 instanceof Subscriber.SynchronizedSubscriber);
   }
 
   @Test
-  public void testInvokeSubscriberMethod_basicMethodCall() throws Throwable {
+  void testInvokeSubscriberMethodBasicMethodCall() throws Throwable {
     Method method = getTestSubscriberMethod("recordingMethod");
     Subscriber subscriber = Subscriber.create(bus, this, method);
 
     subscriber.invokeSubscriberMethod(FIXTURE_ARGUMENT);
 
-    assertTrue("Subscriber must call provided method", methodCalled);
-    assertTrue(
-        "Subscriber argument must be exactly the provided object.",
-        methodArgument == FIXTURE_ARGUMENT);
+    assertTrue(methodCalled, "Subscriber must call provided method");
+    assertSame(methodArgument, FIXTURE_ARGUMENT, "Subscriber argument must be exactly the provided object.");
   }
 
   @Test
-  public void testInvokeSubscriberMethod_exceptionWrapping() throws Throwable {
+  void testInvokeSubscriberMethodExceptionWrapping() {
     Method method = getTestSubscriberMethod("exceptionThrowingMethod");
     Subscriber subscriber = Subscriber.create(bus, this, method);
 
-    try {
-      subscriber.invokeSubscriberMethod(FIXTURE_ARGUMENT);
-      fail("Subscribers whose methods throw must throw InvocationTargetException");
-    } catch (InvocationTargetException expected) {
-      assertTrue(expected.getCause() instanceof IntentionalException);
-    }
+    InvocationTargetException ite = assertThrows(InvocationTargetException.class, () -> subscriber.invokeSubscriberMethod(FIXTURE_ARGUMENT),
+            "Subscribers whose methods throw must throw InvocationTargetException");
+    assertTrue(ite.getCause() instanceof IntentionalException);
   }
 
   @Test
-  public void testInvokeSubscriberMethod_errorPassthrough() throws Throwable {
+  void testInvokeSubscriberMethodErrorPassthrough() {
     Method method = getTestSubscriberMethod("errorThrowingMethod");
     Subscriber subscriber = Subscriber.create(bus, this, method);
 
-    try {
-      subscriber.invokeSubscriberMethod(FIXTURE_ARGUMENT);
-      fail("Subscribers whose methods throw Errors must rethrow them");
-    } catch (JudgmentError expected) {
-    }
+    assertThrows(JudgmentError.class, () -> subscriber.invokeSubscriberMethod(FIXTURE_ARGUMENT),
+      "Subscribers whose methods throw Errors must rethrow them");
   }
 
   @Test
-  @Ignore("FIXME")
-  public void testEquals() throws Exception {
+  @Disabled("FIXME")
+  void testEquals() {
     /*Method charAt = String.class.getMethod("charAt", int.class);
     Method concat = String.class.getMethod("concat", String.class);
     new EqualsTester()
@@ -127,7 +120,7 @@ public class SubscriberTest extends TestCase {
    */
   @Subscribe
   public void recordingMethod(Object arg) {
-    assertFalse(methodCalled);
+    Assertions.assertFalse(methodCalled);
     methodCalled = true;
     methodArgument = arg;
   }
@@ -138,7 +131,7 @@ public class SubscriberTest extends TestCase {
   }
 
   /** Local exception subclass to check variety of exception thrown. */
-  class IntentionalException extends Exception {
+  static class IntentionalException extends Exception {
 
     private static final long serialVersionUID = -2500191180248181379L;
   }

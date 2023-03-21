@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,16 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.plugins.graphview.core.data.MapBasedTagGroup;
 import org.openstreetmap.josm.plugins.graphview.core.data.Tag;
 import org.openstreetmap.josm.plugins.graphview.core.data.TagGroup;
 
-public class AccessRulesetReaderTest {
+class AccessRulesetReaderTest {
 
     @Test
-    public void testReadAccessRuleset_valid_classes() throws IOException {
+    void testReadAccessRulesetValidClasses() throws IOException {
 
         InputStream is = new FileInputStream(TestUtils.getTestDataRoot()+"accessRuleset_valid.xml");
         AccessRuleset ruleset = AccessRulesetReader.readAccessRuleset(is);
@@ -49,7 +49,7 @@ public class AccessRulesetReaderTest {
     }
 
     @Test
-    public void testReadAccessRuleset_valid_basetags() throws IOException {
+    void testReadAccessRulesetValidBasetags() throws IOException {
 
         InputStream is = new FileInputStream(TestUtils.getTestDataRoot()+"accessRuleset_valid.xml");
         AccessRuleset ruleset = AccessRulesetReader.readAccessRuleset(is);
@@ -65,7 +65,7 @@ public class AccessRulesetReaderTest {
     }
 
     @Test
-    public void testReadAccessRuleset_valid_implications() throws IOException {
+    void testReadAccessRulesetValidImplications() throws IOException {
 
         InputStream is = new FileInputStream(TestUtils.getTestDataRoot()+"accessRuleset_valid.xml");
         AccessRuleset ruleset = AccessRulesetReader.readAccessRuleset(is);

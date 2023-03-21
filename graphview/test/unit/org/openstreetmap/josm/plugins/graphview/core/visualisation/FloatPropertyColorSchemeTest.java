@@ -1,21 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.visualisation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.graphview.core.property.RoadMaxweight;
 
-public class FloatPropertyColorSchemeTest {
+class FloatPropertyColorSchemeTest {
 
     private FloatPropertyColorScheme subject;
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         Map<Float, Color> colorMap = new HashMap<>();
@@ -27,23 +27,23 @@ public class FloatPropertyColorSchemeTest {
     }
 
     @Test
-    public void testGetColorForValue_below() {
+    void testGetColorForValueBelow() {
         assertEquals(new Color(42, 42, 42), subject.getColorForValue(1f));
         assertEquals(new Color(42, 42, 42), subject.getColorForValue(5f));
     }
 
     @Test
-    public void testGetColorForValue_above() {
+    void testGetColorForValueAbove() {
         assertEquals(new Color(200, 200, 200), subject.getColorForValue(25f));
     }
 
     @Test
-    public void testGetColorForValue_value() {
+    void testGetColorForValueValue() {
         assertEquals(new Color(100, 100, 100), subject.getColorForValue(10f));
     }
 
     @Test
-    public void testGetColorForValue_interpolate() {
+    void testGetColorForValueInterpolate() {
         assertEquals(new Color(150, 150, 150), subject.getColorForValue(15f));
     }
 

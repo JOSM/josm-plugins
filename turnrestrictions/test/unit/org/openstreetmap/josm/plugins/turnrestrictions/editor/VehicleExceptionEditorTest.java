@@ -6,7 +6,7 @@ import java.awt.Container;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagModel;
@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.tagging.TagModel;
  * Simple test application to test the vehicle exception editor
  *
  */
-@Ignore("no test")
+@Disabled("no test")
 public class VehicleExceptionEditorTest extends JFrame {
     TurnRestrictionEditorModel model;
     OsmDataLayer layer;

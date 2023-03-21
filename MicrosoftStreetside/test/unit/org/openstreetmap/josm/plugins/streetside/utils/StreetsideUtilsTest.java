@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the static methods of the class {@link StreetsideUtils}
@@ -14,10 +14,10 @@ import org.junit.Test;
  * @author nokutu
  *
  */
-public class StreetsideUtilsTest {
+class StreetsideUtilsTest {
 
   @Test
-  public void testUtilityClass() {
+  void testUtilityClass() {
     TestUtil.testUtilityClass(StreetsideUtils.class);
   }
 
@@ -26,7 +26,7 @@ public class StreetsideUtilsTest {
    * method.
    */
   @Test
-  public void degMinSecToDoubleTest() {
+  void testDegMinSecToDouble() {
     RationalNumber[] num = new RationalNumber[3];
     num[0] = new RationalNumber(1, 1);
     num[1] = new RationalNumber(0, 1);

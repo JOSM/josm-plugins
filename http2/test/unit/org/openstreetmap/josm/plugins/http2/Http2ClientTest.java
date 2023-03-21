@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.http2;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -62,12 +63,12 @@ class Http2ClientTest {
     }
 
     @Test
-    void testCreateRequest_invalidURI() throws Exception {
+    void testCreateRequestInvalidURI() {
         // From https://josm.openstreetmap.de/ticket/21126
         // URISyntaxException for URL not formatted strictly according to RFC2396
         // See chapter "2.4.3. Excluded US-ASCII Characters"
-        assertTrue(assertThrows(IOException.class, () -> new Http2Client(
-                new URL("https://commons.wikimedia.org/w/api.php?format=xml&action=query&list=geosearch&gsnamespace=6&gslimit=500&gsprop=type|name&gsbbox=52.2804692|38.1772755|52.269721|38.2045051"), "GET")
+        final URL url = assertDoesNotThrow(() -> new URL("https://commons.wikimedia.org/w/api.php?format=xml&action=query&list=geosearch&gsnamespace=6&gslimit=500&gsprop=type|name&gsbbox=52.2804692|38.1772755|52.269721|38.2045051"));
+        assertTrue(assertThrows(IOException.class, () -> new Http2Client(url, "GET")
                 .createRequest()).getCause().getMessage().startsWith("Illegal character in query at index 116:"));
     }
 }

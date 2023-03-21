@@ -3,14 +3,14 @@ package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 /**
  * Simple application to test functionality and layout of the turn restriction editor.
  *
  */
-@Ignore("no test")
+@Disabled("no test")
 public class TurnRestrictionEditorTest extends JFrame {
 
     public TurnRestrictionEditorTest() {

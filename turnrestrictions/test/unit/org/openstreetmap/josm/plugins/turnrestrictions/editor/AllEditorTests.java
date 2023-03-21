@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 import junit.framework.TestCase;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@Suite
+@SelectClasses({
     JosmSelectionListModelTest.class,
     TurnRestrictionEditorModelUnitTest.class,
     TurnRestrictionLegEditorUnitTest.class,

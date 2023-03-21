@@ -1,15 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TurnRestrictionTypeTest {
+
+class TurnRestrictionTypeTest {
 
     @Test
-    public void test_fromTagValue() {
+    void testFromTagValue() {
 
         TurnRestrictionType type = TurnRestrictionType.fromTagValue("no_left_turn");
         assertEquals(TurnRestrictionType.NO_LEFT_TURN, type);

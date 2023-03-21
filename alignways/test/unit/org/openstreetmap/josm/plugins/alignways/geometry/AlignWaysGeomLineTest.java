@@ -1,24 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.alignways.geometry;
 
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.plugins.alignways.geometry.AlignWaysGeomLine.IntersectionStatus;
 
 /**
  * Tests of {@link AlignWaysGeomLine}
  */
-public class AlignWaysGeomLineTest {
+class AlignWaysGeomLineTest {
     private AlignWaysGeomLine line_x1y1x2y2, line_par_x1y1x2y2;
     private AlignWaysGeomLine line_abc;
     private AlignWaysGeomLine line_mb;
     private AlignWaysGeomLine line_line;
     private AlignWaysGeomLine line_horiz, line_vert;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         line_x1y1x2y2 = new AlignWaysGeomLine(-2.0, -1.0, 4.0, 3.0);
         line_abc = new AlignWaysGeomLine(2.0/3, -1.0, 1.0/3);
         line_mb = new AlignWaysGeomLine(2.0/3, 1.0/3);
@@ -29,64 +32,63 @@ public class AlignWaysGeomLineTest {
     }
 
     @Test
-    public void LineLineEquiv() {
-        assertTrue(line_x1y1x2y2.equals(line_line));
+    void testLineLineEquiv() {
+        assertEquals(line_x1y1x2y2, line_line);
     }
 
     @Test
-    public void LineAbcLineEquiv() {
-        assertTrue(line_x1y1x2y2.equals(line_abc));
+    void testLineAbcLineEquiv() {
+        assertEquals(line_x1y1x2y2, line_abc);
     }
 
     @Test
-    public void LineMbLineEquiv() {
-        assertTrue(line_x1y1x2y2.equals(line_mb));
+    void testLineMbLineEquiv() {
+        assertEquals(line_x1y1x2y2, line_mb);
     }
 
     @Test
-    public void LineAbcMbEquiv() {
-        assertTrue(line_abc.equals(line_mb));
+    void testLineAbcMbEquiv() {
+        assertEquals(line_abc, line_mb);
     }
 
     @Test
-    public void LineLineParallel() {
+    void testLineLineParallel() {
         line_x1y1x2y2.getIntersection(line_par_x1y1x2y2);
-        assertTrue(line_x1y1x2y2.getIntersectionStatus() == IntersectionStatus.LINES_PARALLEL);
+        assertSame(line_x1y1x2y2.getIntersectionStatus(), IntersectionStatus.LINES_PARALLEL);
     }
 
     @Test
-    public void LineAbcOverlap() {
+    void testLineAbcOverlap() {
         line_x1y1x2y2.getIntersection(line_abc);
-        assertTrue(line_x1y1x2y2.getIntersectionStatus() == IntersectionStatus.LINES_OVERLAP);
+        assertSame(line_x1y1x2y2.getIntersectionStatus(), IntersectionStatus.LINES_OVERLAP);
     }
 
     @Test
-    public void LineMbOverlap() {
+    void testLineMbOverlap() {
         line_x1y1x2y2.getIntersection(line_mb);
-        assertTrue(line_x1y1x2y2.getIntersectionStatus() == IntersectionStatus.LINES_OVERLAP);
+        assertSame(line_x1y1x2y2.getIntersectionStatus(), IntersectionStatus.LINES_OVERLAP);
     }
 
     @Test
-    public void AbcMbOverlap() {
+    void testAbcMbOverlap() {
         line_abc.getIntersection(line_mb);
-        assertTrue(line_abc.getIntersectionStatus() == IntersectionStatus.LINES_OVERLAP);
+        assertSame(line_abc.getIntersectionStatus(), IntersectionStatus.LINES_OVERLAP);
     }
 
     @Test
-    public void GetXOnHoriz() {
+    void testGetXOnHoriz() {
         assertTrue(line_horiz.getXonLine(2.0).isNaN());
     }
 
     @Test
-    public void GetYOnVert() {
+    void testGetYOnVert() {
         assertTrue(line_vert.getYonLine(2.0).isNaN());
     }
 
     @Test
-    public void StatusUndefAfterConstruct() throws Exception {
+    void testStatusUndefAfterConstruct() {
         AlignWaysGeomLine newLine = new AlignWaysGeomLine(1.0, 2.0);
-        assertTrue(newLine.getIntersectionStatus() == IntersectionStatus.UNDEFINED);
-
+        assertSame(newLine.getIntersectionStatus(), IntersectionStatus.UNDEFINED);
     }
 
 }

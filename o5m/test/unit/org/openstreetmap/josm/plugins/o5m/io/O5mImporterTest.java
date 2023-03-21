@@ -1,39 +1,33 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.o5m.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for {@link O5mImporter}.
  */
-public class O5mImporterTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class O5mImporterTest {
     private static void checkUserNull(OsmPrimitive osm, boolean hasToBeNull) {
         User usr = osm.getUser();
         if (hasToBeNull) {
-            assertNull(osm + " -> " + usr, usr);
+            assertNull(usr, osm + " -> " + usr);
         } else {
-            assertNotNull(osm + " -> " + usr, usr);
+            assertNotNull(usr, osm + " -> " + usr);
         }
     }
 
@@ -55,7 +49,7 @@ public class O5mImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testParseDataSet() throws Exception {
+    void testParseDataSet() throws Exception {
         doTestMonaco(TestUtils.getTestDataRoot() + "/monaco-latest.o5m", false);
     }
 
@@ -65,7 +59,7 @@ public class O5mImporterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testParseDataSetDropVersion() throws Exception {
+    void testParseDataSetDropVersion() throws Exception {
         doTestMonaco(TestUtils.getTestDataRoot() + "/monaco-drop-version.o5m", true);
     }
 }

@@ -16,23 +16,21 @@
 
 package org.openstreetmap.josm.eventbus;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.openstreetmap.josm.eventbus.EventBus;
-import org.openstreetmap.josm.eventbus.Subscribe;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Validate that {@link EventBus} behaves carefully when listeners publish their own events.
  *
  * @author Jesse Wilson
  */
-public class ReentrantEventsTest {
+class ReentrantEventsTest {
 
   static final String FIRST = "one";
   static final Double SECOND = 2.0d;
@@ -40,16 +38,13 @@ public class ReentrantEventsTest {
   final EventBus bus = new EventBus();
 
   @Test
-  public void testNoReentrantEvents() {
+  void testNoReentrantEvents() {
     ReentrantEventsHater hater = new ReentrantEventsHater();
     bus.register(hater);
 
     bus.post(FIRST);
 
-    assertEquals(
-        "ReentrantEventHater expected 2 events",
-        Arrays.asList(FIRST, SECOND),
-        hater.eventsReceived);
+    assertEquals(Arrays.asList(FIRST, SECOND), hater.eventsReceived, "ReentrantEventHater expected 2 events");
   }
 
   public class ReentrantEventsHater {
@@ -69,13 +64,13 @@ public class ReentrantEventsTest {
 
     @Subscribe
     public void listenForDoubles(Double event) {
-      assertTrue("I received an event when I wasn't ready!", ready);
+      Assertions.assertTrue(ready, "I received an event when I wasn't ready!");
       eventsReceived.add(event);
     }
   }
 
   @Test
-  public void testEventOrderingIsPredictable() {
+  void testEventOrderingIsPredictable() {
     EventProcessor processor = new EventProcessor();
     bus.register(processor);
 
@@ -84,10 +79,7 @@ public class ReentrantEventsTest {
 
     bus.post(FIRST);
 
-    assertEquals(
-        "EventRecorder expected events in order",
-        Arrays.asList(FIRST, SECOND),
-        recorder.eventsReceived);
+    assertEquals(Arrays.asList(FIRST, SECOND), recorder.eventsReceived, "EventRecorder expected events in order");
   }
 
   public class EventProcessor {

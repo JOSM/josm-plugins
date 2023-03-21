@@ -1,21 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.plugins.turnrestrictions.TurnRestrictionBuilder.intersectionAngle;
 import static org.openstreetmap.josm.plugins.turnrestrictions.TurnRestrictionBuilder.selectToWayAfterSplit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,24 +24,19 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.plugins.turnrestrictions.TurnRestrictionBuilder.RelativeWayJoinOrientation;
 import org.openstreetmap.josm.plugins.turnrestrictions.editor.TurnRestrictionType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-public class TurnRestrictionBuilderTest {
-
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class TurnRestrictionBuilderTest {
     TurnRestrictionBuilder builder = new TurnRestrictionBuilder();
 
     boolean hasExactlyOneMemberWithRole(Relation r, final String role) {
-        return r.getMembers().stream().filter(rm -> role.equals(rm.getRole())).findFirst().isPresent();
+        return r.getMembers().stream().anyMatch(rm -> role.equals(rm.getRole()));
     }
 
     OsmPrimitive memberWithRole(Relation r, final String role) {
         Optional<RelationMember> opt = r.getMembers().stream().filter(rm -> role.equals(rm.getRole())).findFirst();
-        if (!opt.isPresent())
-            return null;
-        return opt.get().getMember();
+        return opt.map(RelationMember::getMember).orElse(null);
     }
 
     static void assertEmptyTurnRestriction(Relation r) {
@@ -56,7 +51,7 @@ public class TurnRestrictionBuilderTest {
      *
      */
     @Test
-    public void noUTurn_1() {
+    void testNoUTurn1() {
         Way w = new Way(1);
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -83,7 +78,7 @@ public class TurnRestrictionBuilderTest {
     *
     */
    @Test
-   public void noUTurn_2() {
+   void testNoUTurn2() {
        Way w = new Way(1);
        Node n1 = new Node(1);
        Node n2 = new Node(2);
@@ -105,12 +100,12 @@ public class TurnRestrictionBuilderTest {
    }
 
    @Test
-   public void nullSelection() {
+   void testNullSelection() {
        assertEmptyTurnRestriction(builder.build(null));
    }
 
    @Test
-   public void emptySelection() {
+   void testEmptySelection() {
        assertEmptyTurnRestriction(builder.build(new ArrayList<>()));
    }
 
@@ -119,9 +114,9 @@ public class TurnRestrictionBuilderTest {
     * only
     */
    @Test
-   public void oneSelectedWay() {
+   void testOneSelectedWay() {
        Way w = new Way(1);
-       Relation tr = builder.build(Arrays.asList(w));
+       Relation tr = builder.build(Collections.singletonList(w));
        assertNotNull(tr);
        assertEquals("restriction", tr.get("type"));
        assertEquals(1, tr.getMembersCount());
@@ -133,7 +128,7 @@ public class TurnRestrictionBuilderTest {
     * the second one the two leg.
     */
    @Test
-   public void twoUnconnectedWays() {
+   void testTwoUnconnectedWays() {
        Way w1 = new Way(1);
        w1.setNodes(Arrays.asList(new Node(11), new Node(12)));
        Way w2 = new Way(2);
@@ -158,7 +153,7 @@ public class TurnRestrictionBuilderTest {
     *    |
     */
    @Test
-   public void twoConnectedWays_1() {
+   void testTwoConnectedWays1() {
        Node n1 = new Node(1);
        n1.setCoor(new LatLon(1, 1));
        Node n2 = new Node(2);
@@ -216,7 +211,7 @@ public class TurnRestrictionBuilderTest {
     *                          (5,5)
     */
    @Test
-   public void twoConnectedWays_2() {
+   void testTwoConnectedWays2() {
        Node n1 = new Node(1);
        n1.setCoor(new LatLon(5, 5));
        Node n2 = new Node(2);
@@ -259,97 +254,95 @@ public class TurnRestrictionBuilderTest {
    }
 
    /**
-   * Two connected ways. end node of the first way connects to end node of
-   * the second way. left turn.
-   *
-   *
-   *           (7,5) -
-   *             ^     -    w2
-   *             | w1     ------> (6,7)
-   *             |
-   *           (5,5)
-   */
-  @Test
-  public void twoConnectedWays_3() {
-      Node n1 = new Node(1);
-      n1.setCoor(new LatLon(5, 5));
-      Node n2 = new Node(2);
-      n2.setCoor(new LatLon(7, 5));
-      Node n3 = new Node(3);
-      n3.setCoor(new LatLon(6, 7));
+    * Two connected ways. end node of the first way connects to end node of
+    * the second way. left turn.
+    *
+    *           (7,5) -
+    *             ^     -    w2
+    *             | w1     ------> (6,7)
+    *             |
+    *           (5,5)
+    */
+    @Test
+    void testTwoConnectedWays3() {
+        Node n1 = new Node(1);
+        n1.setCoor(new LatLon(5, 5));
+        Node n2 = new Node(2);
+        n2.setCoor(new LatLon(7, 5));
+        Node n3 = new Node(3);
+        n3.setCoor(new LatLon(6, 7));
 
-      Way w1 = new Way(1);
-      w1.setNodes(Arrays.asList(n1, n2));
-      Way w2 = new Way(2);
-      w2.setNodes(Arrays.asList(n2, n3));
+        Way w1 = new Way(1);
+        w1.setNodes(Arrays.asList(n1, n2));
+        Way w2 = new Way(2);
+        w2.setNodes(Arrays.asList(n2, n3));
 
-      Relation tr = builder.build(Arrays.asList(w1, w2, n2));
+        Relation tr = builder.build(Arrays.asList(w1, w2, n2));
 
-      assertNotNull(tr);
-      assertEquals("restriction", tr.get("type"));
-      assertEquals(3, tr.getMembersCount());
-      assertEquals(w1, memberWithRole(tr, "from"));
-      assertEquals(w2, memberWithRole(tr, "to"));
-      assertEquals(n2, memberWithRole(tr, "via"));
+        assertNotNull(tr);
+        assertEquals("restriction", tr.get("type"));
+        assertEquals(3, tr.getMembersCount());
+        assertEquals(w1, memberWithRole(tr, "from"));
+        assertEquals(w2, memberWithRole(tr, "to"));
+        assertEquals(n2, memberWithRole(tr, "via"));
 
-      assertEquals("no_right_turn", tr.get("restriction"));
-  }
+        assertEquals("no_right_turn", tr.get("restriction"));
+    }
 
-  /**
-  * Two connected ways. end node of the first way connects to end node of
-  * the second way. left turn.
-  *
-  *
-  *           (10,10)
-  *                 \
-  *                  \
-  *                   \
-  *                    v
-  *                     (8,15)
-  *                    /
-  *                   /
-  *                  /
-  *                 v
-  *            (5,11)
-  */
- @Test
- public void twoConnectedWays_4() {
-     Node n1 = new Node(1);
-     n1.setCoor(new LatLon(10, 10));
-     Node n2 = new Node(2);
-     n2.setCoor(new LatLon(8, 15));
-     Node n3 = new Node(3);
-     n3.setCoor(new LatLon(5, 11));
+    /**
+     * Two connected ways. end node of the first way connects to end node of
+     * the second way. left turn.
+     *
+     *           (10,10)
+     *                 \
+     *                  \
+     *                   \
+     *                    v
+     *                     (8,15)
+     *                    /
+     *                   /
+     *                  /
+     *                 v
+     *            (5,11)
+     */
+    @Test
+    void testTwoConnectedWays4() {
+        Node n1 = new Node(1);
+        n1.setCoor(new LatLon(10, 10));
+        Node n2 = new Node(2);
+        n2.setCoor(new LatLon(8, 15));
+        Node n3 = new Node(3);
+        n3.setCoor(new LatLon(5, 11));
 
-     Way w1 = new Way(1);
-     w1.setNodes(Arrays.asList(n1, n2));
-     Way w2 = new Way(2);
-     w2.setNodes(Arrays.asList(n2, n3));
+        Way w1 = new Way(1);
+        w1.setNodes(Arrays.asList(n1, n2));
+        Way w2 = new Way(2);
+        w2.setNodes(Arrays.asList(n2, n3));
 
-     Relation tr = builder.build(Arrays.asList(w1, w2, n2));
+        Relation tr = builder.build(Arrays.asList(w1, w2, n2));
 
-     assertNotNull(tr);
-     assertEquals("restriction", tr.get("type"));
-     assertEquals(3, tr.getMembersCount());
-     assertEquals(w1, memberWithRole(tr, "from"));
-     assertEquals(w2, memberWithRole(tr, "to"));
-     assertEquals(n2, memberWithRole(tr, "via"));
+        assertNotNull(tr);
+        assertEquals("restriction", tr.get("type"));
+        assertEquals(3, tr.getMembersCount());
+        assertEquals(w1, memberWithRole(tr, "from"));
+        assertEquals(w2, memberWithRole(tr, "to"));
+        assertEquals(n2, memberWithRole(tr, "via"));
 
-     assertEquals("no_right_turn", tr.get("restriction"));
+        assertEquals("no_right_turn", tr.get("restriction"));
 
-     /*
-      * opposite order, from w2 to w1. In  this case we have left turn.
-      */
-     tr = builder.build(Arrays.asList(w2, w1, n2));
+        /*
+         * opposite order, from w2 to w1. In  this case we have left turn.
+         */
+        tr = builder.build(Arrays.asList(w2, w1, n2));
 
-     assertNotNull(tr);
-     assertEquals("restriction", tr.get("type"));
-     assertEquals(3, tr.getMembersCount());
-     assertEquals(w2, memberWithRole(tr, "from"));
-     assertEquals(w1, memberWithRole(tr, "to"));
-     assertEquals(n2, memberWithRole(tr, "via"));
+        assertNotNull(tr);
+        assertEquals("restriction", tr.get("type"));
+        assertEquals(3, tr.getMembersCount());
+        assertEquals(w2, memberWithRole(tr, "from"));
+        assertEquals(w1, memberWithRole(tr, "to"));
+        assertEquals(n2, memberWithRole(tr, "via"));
 
-     assertEquals("no_left_turn", tr.get("restriction"));
+        assertEquals("no_left_turn", tr.get("restriction"));
     }
 
     static Node nn(long id, double lat, double lon) {
@@ -373,7 +366,7 @@ public class TurnRestrictionBuilderTest {
       *    (5,5) -------------->  (5,10) n2
       */
      @Test
-     public void intersectionAngle_1() {
+     void testIntersectionAngle1() {
          Node n1 = nn(1, 5, 5);
          Node n2 = nn(2, 5, 10);
          Node n3 = nn(3, 10, 10);
@@ -428,7 +421,7 @@ public class TurnRestrictionBuilderTest {
      *
      */
     @Test
-    public void intersectionAngle_2() {
+    void testIntersectionAngle2() {
         Node n1 = nn(1, 5, 5);
         Node n2 = nn(2, 5, 10);
         Node n3 = nn(3, 2, 10);
@@ -472,101 +465,100 @@ public class TurnRestrictionBuilderTest {
      *           /  to
      *          /
      *      (-5, -10) n2
-    *           ^
-    *           |
-    *           | from
-    *           |
-    *       (-10,-10) n1
-    */
-   @Test
-   public void intersectionAngle_3() {
-       Node n1 = nn(1, -10, -10);
-       Node n2 = nn(2, -5, -10);
-       Node n3 = nn(3, -1, -6);
-       Way from = nw(1, n1, n2);
-       Way to = nw(2, n2, n3);
+     *           ^
+     *           |
+     *           | from
+     *           |
+     *       (-10,-10) n1
+     */
+    @Test
+    void testIntersectionAngle3() {
+        Node n1 = nn(1, -10, -10);
+        Node n2 = nn(2, -5, -10);
+        Node n3 = nn(3, -1, -6);
+        Way from = nw(1, n1, n2);
+        Way to = nw(2, n2, n3);
 
-       double a = TurnRestrictionBuilder.intersectionAngle(from, to);
-       assertEquals(45, Math.toDegrees(a), 1e-7);
+        double a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(45, Math.toDegrees(a), 1e-7);
 
-       /*
-        * if reversed from, the intersection angle is still 45
+        /*
+         * if reversed from, the intersection angle is still 45
+         */
+        from = nw(1, n2, n1);
+        to = nw(2, n2, n3);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(45, Math.toDegrees(a), 1e-7);
+
+        /*
+        * if reversed to, the intersection angle is still 45
         */
-       from = nw(1, n2, n1);
-       to = nw(2, n2, n3);
-       a = TurnRestrictionBuilder.intersectionAngle(from, to);
-       assertEquals(45, Math.toDegrees(a), 1e-7);
+        from = nw(1, n1, n2);
+        to = nw(2, n3, n2);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(45, Math.toDegrees(a), 1e-7);
 
-       /*
-       * if reversed to, the intersection angle is still 45
-       */
-       from = nw(1, n1, n2);
-       to = nw(2, n3, n2);
-       a = TurnRestrictionBuilder.intersectionAngle(from, to);
-       assertEquals(45, Math.toDegrees(a), 1e-7);
+        /*
+        * if reversed both, the intersection angle is still 45
+        */
+        from = nw(1, n2, n1);
+        to = nw(2, n3, n2);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(45, Math.toDegrees(a), 1e-7);
+    }
 
-       /*
-       * if reversed both, the intersection angle is still 45
-       */
-       from = nw(1, n2, n1);
-       to = nw(2, n3, n2);
-       a = TurnRestrictionBuilder.intersectionAngle(from, to);
-       assertEquals(45, Math.toDegrees(a), 1e-7);
-   }
-
-   /**
-   *
-   *
-   *         (-1,-14) (n3)
-   *            ^
-   *            \
-   *             \ to
-   *              \
-   *          (-5, -10) n2
-  *               ^
-  *               |
-  *               | from
-  *               |
-  *           (-10,-10) n1
-  */
- @Test
- public void intersectionAngle_4() {
-     Node n1 = nn(1, -10, -10);
-     Node n2 = nn(2, -5, -10);
-     Node n3 = nn(3, -1, -14);
-     Way from = nw(1, n1, n2);
-     Way to = nw(2, n2, n3);
-
-     double a = TurnRestrictionBuilder.intersectionAngle(from, to);
-     assertEquals(-45, Math.toDegrees(a), 1e-7);
-
-     /*
-      * if reversed from, the intersection angle is still -45
-      */
-     from = nw(1, n2, n1);
-     to = nw(2, n2, n3);
-     a = TurnRestrictionBuilder.intersectionAngle(from, to);
-     assertEquals(-45, Math.toDegrees(a), 1e-7);
-
-     /*
-     * if reversed to, the intersection angle is still -45
+    /**
+     *
+     *
+     *         (-1,-14) (n3)
+     *            ^
+     *            \
+     *             \ to
+     *              \
+     *          (-5, -10) n2
+     *               ^
+     *               |
+     *               | from
+     *               |
+     *           (-10,-10) n1
      */
-     from = nw(1, n1, n2);
-     to = nw(2, n3, n2);
-     a = TurnRestrictionBuilder.intersectionAngle(from, to);
-     assertEquals(-45, Math.toDegrees(a), 1e-7);
+    @Test
+    void testIntersectionAngle4() {
+        Node n1 = nn(1, -10, -10);
+        Node n2 = nn(2, -5, -10);
+        Node n3 = nn(3, -1, -14);
+        Way from = nw(1, n1, n2);
+        Way to = nw(2, n2, n3);
 
-     /*
-     * if reversed both, the intersection angle is still 45
-     */
-     from = nw(1, n2, n1);
-     to = nw(2, n3, n2);
-     a = TurnRestrictionBuilder.intersectionAngle(from, to);
-     assertEquals(-45, Math.toDegrees(a), 1e-7);
- }
+        double a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(-45, Math.toDegrees(a), 1e-7);
 
+        /*
+         * if reversed from, the intersection angle is still -45
+         */
+        from = nw(1, n2, n1);
+        to = nw(2, n2, n3);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(-45, Math.toDegrees(a), 1e-7);
 
-     /*
+        /*
+        * if reversed to, the intersection angle is still -45
+        */
+        from = nw(1, n1, n2);
+        to = nw(2, n3, n2);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(-45, Math.toDegrees(a), 1e-7);
+
+        /*
+        * if reversed both, the intersection angle is still 45
+        */
+        from = nw(1, n2, n1);
+        to = nw(2, n3, n2);
+        a = TurnRestrictionBuilder.intersectionAngle(from, to);
+        assertEquals(-45, Math.toDegrees(a), 1e-7);
+    }
+
+    /**
      *
      *      n21        w21        n22       w22            n23
      *    (10,10)-------------> (10,15) -------------- > (10,20)
@@ -578,7 +570,7 @@ public class TurnRestrictionBuilderTest {
      *                            n11
      */
     @Test
-    public void splitToWay() {
+    void testSplitToWay() {
         Node n11 = new Node(11);
         n11.setCoor(new LatLon(5, 15));
 

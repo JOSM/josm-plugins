@@ -1,16 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.property;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Ignore;
 import org.openstreetmap.josm.plugins.graphview.core.TestDataSource;
 import org.openstreetmap.josm.plugins.graphview.core.data.Tag;
 
-@Ignore("no test")
-public abstract class RoadPropertyTest {
+public interface RoadPropertyTest {
 
-    protected static <P> void testEvaluateW(RoadPropertyType<P> property, P expectedForward, P expectedBackward, Tag... wayTags) {
+    static <P> void testEvaluateW(RoadPropertyType<P> property, P expectedForward, P expectedBackward, Tag... wayTags) {
 
         TestDataSource ds = new TestDataSource();
         TestDataSource.TestWay testWay = new TestDataSource.TestWay();
@@ -24,7 +22,7 @@ public abstract class RoadPropertyTest {
 
     }
 
-    protected static <P> void testEvaluateN(RoadPropertyType<P> property, P expected, Tag... nodeTags) {
+    static <P> void testEvaluateN(RoadPropertyType<P> property, P expected, Tag... nodeTags) {
 
         TestDataSource ds = new TestDataSource();
         TestDataSource.TestNode testNode = new TestDataSource.TestNode();
@@ -39,7 +37,7 @@ public abstract class RoadPropertyTest {
 
     }
 
-    protected static <P> void testEvaluateBoth(RoadPropertyType<P> property, P expected, Tag... nodeTags) {
+    static <P> void testEvaluateBoth(RoadPropertyType<P> property, P expected, Tag... nodeTags) {
         testEvaluateW(property, expected, expected, nodeTags);
         testEvaluateN(property, expected, nodeTags);
     }

@@ -16,21 +16,19 @@
 
 package org.openstreetmap.josm.eventbus;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openstreetmap.josm.eventbus.EventBus;
-import org.openstreetmap.josm.eventbus.Subscribe;
-import org.openstreetmap.josm.eventbus.Subscriber;
-import org.openstreetmap.josm.eventbus.SubscriberRegistry;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 
 /**
  * Tests for {@link SubscriberRegistry}.
@@ -42,7 +40,7 @@ public class SubscriberRegistryTest {
   private final SubscriberRegistry registry = new SubscriberRegistry(new EventBus());
 
   @Test
-  public void testRegister() {
+  void testRegister() {
     assertEquals(0, registry.getSubscribersForTesting(String.class).size());
 
     registry.register(new StringSubscriber());
@@ -57,7 +55,7 @@ public class SubscriberRegistryTest {
   }
 
   @Test
-  public void testUnregister() {
+  void testUnregister() {
     StringSubscriber s1 = new StringSubscriber();
     StringSubscriber s2 = new StringSubscriber();
 
@@ -72,33 +70,21 @@ public class SubscriberRegistryTest {
   }
 
   @Test
-  public void testUnregister_notRegistered() {
-    try {
-      registry.unregister(new StringSubscriber());
-      fail();
-    } catch (IllegalArgumentException expected) {
-    }
+  void testUnregisterNotRegistered() {
+    StringSubscriber temp = new StringSubscriber();
+    assertThrows(IllegalArgumentException.class, () -> registry.unregister(temp));
 
     StringSubscriber s1 = new StringSubscriber();
     registry.register(s1);
-    try {
-      registry.unregister(new StringSubscriber());
-      fail();
-    } catch (IllegalArgumentException expected) {
-      // a StringSubscriber was registered, but not the same one we tried to unregister
-    }
+    // a StringSubscriber was registered, but not the same one we tried to unregister
+    assertThrows(IllegalArgumentException.class, () -> registry.unregister(temp));
 
     registry.unregister(s1);
-
-    try {
-      registry.unregister(s1);
-      fail();
-    } catch (IllegalArgumentException expected) {
-    }
+    assertThrows(IllegalArgumentException.class, () -> registry.unregister(s1));
   }
 
   @Test
-  public void testGetSubscribers() {
+  void testGetSubscribers() {
     assertEquals(0, size(registry.getSubscribers("")));
 
     registry.register(new StringSubscriber());
@@ -119,8 +105,8 @@ public class SubscriberRegistryTest {
   }
 
   @Test
-  @Ignore("FIXME")
-  public void testGetSubscribers_returnsImmutableSnapshot() {
+  @Disabled("FIXME")
+  void testGetSubscribersReturnsImmutableSnapshot() {
     StringSubscriber s1 = new StringSubscriber();
     StringSubscriber s2 = new StringSubscriber();
     ObjectSubscriber o1 = new ObjectSubscriber();
@@ -185,15 +171,13 @@ public class SubscriberRegistryTest {
   }
 
   @Test
-  public void testFlattenHierarchy() {
-    assertEquals(
-        new HashSet<>(Arrays.asList(
-            Object.class,
-            HierarchyFixtureInterface.class,
-            HierarchyFixtureSubinterface.class,
-            HierarchyFixtureParent.class,
-            HierarchyFixture.class)),
-        SubscriberRegistry.flattenHierarchy(HierarchyFixture.class));
+  void testFlattenHierarchy() {
+    assertEquals(new HashSet<>(Arrays.asList(
+        Object.class,
+        HierarchyFixtureInterface.class,
+        HierarchyFixtureSubinterface.class,
+        HierarchyFixtureParent.class,
+        HierarchyFixture.class)), SubscriberRegistry.flattenHierarchy(HierarchyFixture.class));
   }
 
   private interface HierarchyFixtureInterface {

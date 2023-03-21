@@ -1,27 +1,32 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-public class ExceptValueModelTest {
+class ExceptValueModelTest {
 
-    @Test
-    public void testConstructors() {
-        new ExceptValueModel();
-        new ExceptValueModel(null);
-        new ExceptValueModel("");
-        new ExceptValueModel("  ");
-        new ExceptValueModel("hgv");
-        new ExceptValueModel("hgv;psv");
-        new ExceptValueModel("non_standard");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  ", "hgv", "hgv;psv", "non_standard"})
+    void testStringConstructors(String value) {
+        assertDoesNotThrow(() -> new ExceptValueModel(value));
     }
 
     @Test
-    public void testSetValue() {
+    void testAdditionalConstructors() {
+        assertAll(() -> assertDoesNotThrow(() -> new ExceptValueModel()),
+                () -> assertDoesNotThrow(() -> new ExceptValueModel(null)));
+    }
+
+    @Test
+    void testSetValue() {
         ExceptValueModel evm;
 
         // null value allowed - means no vehicle exceptions

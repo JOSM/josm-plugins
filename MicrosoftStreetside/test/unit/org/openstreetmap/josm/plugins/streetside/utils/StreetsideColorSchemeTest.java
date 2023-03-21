@@ -1,20 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.utils;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import javax.swing.JComponent;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class StreetsideColorSchemeTest {
+class StreetsideColorSchemeTest {
 
   @Test
-  public void testUtilityClass() {
+  void testUtilityClass() {
     TestUtil.testUtilityClass(StreetsideColorScheme.class);
   }
 
   @Test
-  public void testStyleAsDefaultPanel() {
-    StreetsideColorScheme.styleAsDefaultPanel();
-    StreetsideColorScheme.styleAsDefaultPanel((JComponent[]) null);
+  void testStyleAsDefaultPanel() {
+    assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel());
+    assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel((JComponent[]) null));
   }
 }

@@ -1,19 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-public class StreetsideURLTest {
+class StreetsideURLTest {
   // TODO: replace with Streetside URL @rrh
   private static final String CLIENT_ID_QUERY_PART = "client_id=T1Fzd20xZjdtR0s1VDk5OFNIOXpYdzoxNDYyOGRkYzUyYTFiMzgz";
 
@@ -43,19 +44,16 @@ public class StreetsideURLTest {
 
 
 	@Test
-    public void testParseNextFromHeaderValue() throws MalformedURLException {
+    void testParseNextFromHeaderValue() throws MalformedURLException {
       String headerVal =
         "<https://a.streetside.com/v3/sequences?page=1&per_page=200&client_id=TG1sUUxGQlBiYWx2V05NM0pQNUVMQTo2NTU3NTBiNTk1NzM1Y2U2>; rel=\"first\", " +
         "<https://a.streetside.com/v3/sequences?page=2&per_page=200&client_id=TG1sUUxGQlBiYWx2V05NM0pQNUVMQTo2NTU3NTBiNTk1NzM1Y2U2>; rel=\"prev\", " +
         "<https://a.streetside.com/v3/sequences?page=4&per_page=200&client_id=TG1sUUxGQlBiYWx2V05NM0pQNUVMQTo2NTU3NTBiNTk1NzM1Y2U2>; rel=\"next\"";
-      assertEquals(
-        new URL("https://a.streetside.com/v3/sequences?page=4&per_page=200&client_id=TG1sUUxGQlBiYWx2V05NM0pQNUVMQTo2NTU3NTBiNTk1NzM1Y2U2"),
-        StreetsideURL.APIv3.parseNextFromLinkHeaderValue(headerVal)
-      );
+      assertEquals(new URL("https://a.streetside.com/v3/sequences?page=4&per_page=200&client_id=TG1sUUxGQlBiYWx2V05NM0pQNUVMQTo2NTU3NTBiNTk1NzM1Y2U2"), StreetsideURL.APIv3.parseNextFromLinkHeaderValue(headerVal));
     }
 
     @Test
-    public void testParseNextFromHeaderValue2() throws MalformedURLException {
+    void testParseNextFromHeaderValue2() throws MalformedURLException {
       String headerVal =
         "<https://urlFirst>; rel=\"first\", " +
         "rel = \"next\" ; < ; , " +
@@ -65,13 +63,13 @@ public class StreetsideURLTest {
     }
 
     @Test
-    public void testParseNextFromHeaderValueNull() {
-      assertEquals(null, StreetsideURL.APIv3.parseNextFromLinkHeaderValue(null));
+    void testParseNextFromHeaderValueNull() {
+      assertNull(StreetsideURL.APIv3.parseNextFromLinkHeaderValue(null));
     }
 
     @Test
-    public void testParseNextFromHeaderValueMalformed() {
-      assertEquals(null, StreetsideURL.APIv3.parseNextFromLinkHeaderValue("<###>; rel=\"next\", blub"));
+    void testParseNextFromHeaderValueMalformed() {
+      assertNull(StreetsideURL.APIv3.parseNextFromLinkHeaderValue("<###>; rel=\"next\", blub"));
     }
 
 
@@ -84,23 +82,20 @@ public class StreetsideURLTest {
     }
   }*/
 
-  @Ignore
+  @Disabled
   @Test
-  public void testBrowseImageURL() throws MalformedURLException {
-    assertEquals(
-        new URL("https://www.streetside.com/map/im/1234567890123456789012"),
-        StreetsideURL.MainWebsite.browseImage("1234567890123456789012")
-    );
+  void testBrowseImageURL() throws MalformedURLException {
+    assertEquals(new URL("https://www.streetside.com/map/im/1234567890123456789012"), StreetsideURL.MainWebsite.browseImage("1234567890123456789012"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testIllegalBrowseImageURL() {
-    StreetsideURL.MainWebsite.browseImage(null);
+  @Test
+  void testIllegalBrowseImageURL() {
+    assertThrows(IllegalArgumentException.class, () -> StreetsideURL.MainWebsite.browseImage(null));
   }
 
-  @Ignore
+  @Disabled
   @Test
-  public void testConnectURL() {
+  void testConnectURL() {
     /*assertUrlEquals(
         StreetsideURL.MainWebsite.connect("http://redirect-host/ä"),
         "https://www.streetside.com/connect",
@@ -127,18 +122,18 @@ public class StreetsideURLTest {
     );*/
   }
 
-  @Ignore
+  @Disabled
   @Test
-  public void testUploadSecretsURL() throws MalformedURLException {
+  void testUploadSecretsURL() throws MalformedURLException {
     /*assertEquals(
         new URL("https://a.streetside.com/v2/me/uploads/secrets?"+CLIENT_ID_QUERY_PART),
         StreetsideURL.uploadSecretsURL()
     );*/
   }
 
-  @Ignore
+  @Disabled
   @Test
-  public void testUserURL() throws MalformedURLException {
+  void testUserURL() throws MalformedURLException {
     /*assertEquals(
         new URL("https://a.streetside.com/v3/me?"+CLIENT_ID_QUERY_PART),
         StreetsideURL.APIv3.userURL()
@@ -146,16 +141,16 @@ public class StreetsideURLTest {
   }
 
   @Test
-  public void testString2MalformedURL()
+  void testString2MalformedURL()
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
     Method method = StreetsideURL.class.getDeclaredMethod("string2URL", String[].class);
     method.setAccessible(true);
-    assertNull(method.invoke(null, new Object[]{new String[]{"malformed URL"}})); // this simply invokes string2URL("malformed URL")
-    assertNull(method.invoke(null, new Object[]{null})); // invokes string2URL(null)
+    Assertions.assertNull(method.invoke(null, new Object[]{new String[]{"malformed URL"}})); // this simply invokes string2URL("malformed URL")
+    Assertions.assertNull(method.invoke(null, new Object[]{null})); // invokes string2URL(null)
   }
 
   @Test
-  public void testUtilityClass() {
+  void testUtilityClass() {
     TestUtil.testUtilityClass(StreetsideURL.class);
     TestUtil.testUtilityClass(StreetsideURL.APIv3.class);
     TestUtil.testUtilityClass(StreetsideURL.VirtualEarth.class);
@@ -172,10 +167,7 @@ public class StreetsideURLTest {
       for (int acIndex = 0; !parameterIsPresent && acIndex < actualParams.length; acIndex++) {
         parameterIsPresent |= actualParams[acIndex].equals(expectedParams[exIndex]);
       }
-      assertTrue(
-          expectedParams[exIndex] + " was expected in the query string of " + actualUrl.toString() + " but wasn't there.",
-          parameterIsPresent
-      );
+      Assertions.assertTrue(parameterIsPresent, expectedParams[exIndex] + " was expected in the query string of " + actualUrl.toString() + " but wasn't there.");
     }
   }
 }

@@ -16,7 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -33,7 +33,7 @@ import org.openstreetmap.josm.plugins.turnrestrictions.dnd.PrimitiveIdListTransf
  * Simple test application to test functionality and layout of the
  * {@see TurnRestrictionLegEditor}
  */
-@Ignore("no test")
+@Disabled("no test")
 public class TurnRestrictionLegEditorTest extends JFrame {
 
     private TurnRestrictionLegEditor editor;

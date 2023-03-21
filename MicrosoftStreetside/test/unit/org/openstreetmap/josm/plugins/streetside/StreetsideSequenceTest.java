@@ -1,16 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -19,7 +17,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author nokutu
  * @see StreetsideSequence
  */
-public class StreetsideSequenceTest {
+class StreetsideSequenceTest {
 
   private final StreetsideImage img1 = new StreetsideImage("key1", new LatLon(0.1, 0.1), 90);
   private final StreetsideImage img2 = new StreetsideImage("key2", new LatLon(0.2, 0.2), 90);
@@ -32,7 +30,7 @@ public class StreetsideSequenceTest {
    * Creates 4 {@link StreetsideImage} objects and puts them in a
    * {@link StreetsideSequence} object.
    */
-  @Before
+  @BeforeEach
   public void setUp() {
     seq.add(Arrays.asList(img1, img2, img3, img4));
   }
@@ -42,7 +40,7 @@ public class StreetsideSequenceTest {
    * {@link StreetsideSequence#previous(StreetsideAbstractImage)}.
    */
   @Test
-  public void nextAndPreviousTest() {
+  void testNextAndPrevious() {
     assertEquals(img2, img1.next());
     assertEquals(img1, img2.previous());
     assertEquals(img3, img2.next());
@@ -59,19 +57,10 @@ public class StreetsideSequenceTest {
 
     // Test IllegalArgumentException when asking for the next image of an image
     // that is not in the sequence.
-    try {
-      seq.next(imgWithoutSeq);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
+    assertThrows(IllegalArgumentException.class, () -> seq.next(imgWithoutSeq));
+
     // Test IllegalArgumentException when asking for the previous image of an
     // image that is not in the sequence.
-    try {
-      seq.previous(imgWithoutSeq);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
+    assertThrows(IllegalArgumentException.class, () -> seq.previous(imgWithoutSeq));
   }
 }

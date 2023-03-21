@@ -1,12 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.io.datasets;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -16,21 +21,21 @@ import org.openstreetmap.josm.plugins.opendata.core.datasets.DataSetUpdater;
 import org.openstreetmap.josm.plugins.opendata.core.io.archive.ZipReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link DataSetUpdater} class.
  */
 @BasicPreferences
+@Projection
+@Timeout(value = 1, unit = TimeUnit.MINUTES)
 class DataSetUpdaterTest {
 
     /**
      * Setup test.
      */
     @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules().projection().devAPI().timeout(60000);
+    JOSMTestRules rules = new JOSMTestRules().devAPI();
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/11166">#11166</a>
@@ -39,7 +44,7 @@ class DataSetUpdaterTest {
     @Test
     void testTicket11166() throws Exception {
         File file = new File(TestUtils.getRegressionDataFile(11166, "raba760dissJosm.zip"));
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             Predicate<? super Way> p = w -> w.getNodesCount() >= 0.9 * OsmApi.getOsmApi().getCapabilities().getMaxWayNodes();
             DataSet ds = ZipReader.parseDataSet(is, null, null, false);
             assertTrue(ds.getWays().stream().anyMatch(p));

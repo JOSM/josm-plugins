@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.utils.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.openstreetmap.josm.plugins.streetside.utils.api.JsonDecoderTest.assertDecodesToNull;
 
 import java.io.ByteArrayInputStream;
@@ -18,19 +17,20 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
 import org.openstreetmap.josm.plugins.streetside.StreetsideSequence;
 import org.openstreetmap.josm.plugins.streetside.utils.JsonUtil;
 import org.openstreetmap.josm.plugins.streetside.utils.TestUtil;
 
-public class JsonSequencesDecoderTest {
+class JsonSequencesDecoderTest {
 
-  @Ignore
+  @Disabled
   @Test
-  public void testDecodeSequences() {
+  void testDecodeSequences() {
     Collection<StreetsideSequence> exampleSequences = JsonDecoder.decodeFeatureCollection(
       Json.createReader(this.getClass().getResourceAsStream("test/data/api/v3/responses/searchSequences.json")).readObject(),
       JsonSequencesDecoder::decodeSequence
@@ -50,16 +50,16 @@ public class JsonSequencesDecoderTest {
     assertEquals(333.62239999999997, seq.getImages().get(2).getHe(), 1e-10);
     assertEquals(329.94820000000004, seq.getImages().get(3).getHe(), 1e-10);
 
-    assertEquals(new LatLon(7.246497, 16.432958),  seq.getImages().get(0).getLatLon());
-    assertEquals(new LatLon(7.246567, 16.432955),  seq.getImages().get(1).getLatLon());
-    assertEquals(new LatLon(7.248372, 16.432971),  seq.getImages().get(2).getLatLon());
-    assertEquals(new LatLon(7.249027, 16.432976),  seq.getImages().get(3).getLatLon());
+    assertEquals(new LatLon(7.246497, 16.432958), seq.getImages().get(0).getLatLon());
+    assertEquals(new LatLon(7.246567, 16.432955), seq.getImages().get(1).getLatLon());
+    assertEquals(new LatLon(7.248372, 16.432971), seq.getImages().get(2).getLatLon());
+    assertEquals(new LatLon(7.249027, 16.432976), seq.getImages().get(3).getLatLon());
 
     assertEquals(1_457_963_093_860L, seq.getCd()); // 2016-03-14T13:44:53.860 UTC
   }
 
   @Test
-  public void testDecodeSequencesInvalid() {
+  void testDecodeSequencesInvalid() {
     // null input
     assertEquals(0, JsonDecoder.decodeFeatureCollection(null, JsonSequencesDecoder::decodeSequence).size());
     // empty object
@@ -75,23 +75,20 @@ public class JsonSequencesDecoderTest {
   }
 
   @Test
-  public void testDecodeSequencesWithArbitraryObjectAsFeature() {
+  void testDecodeSequencesWithArbitraryObjectAsFeature() {
     assertNumberOfDecodedSequences(0, "{\"type\": \"FeatureCollection\", \"features\": [{}]}");
   }
 
   private static void assertNumberOfDecodedSequences(int expectedNumberOfSequences, String jsonString) {
-    assertEquals(
-      expectedNumberOfSequences,
-      JsonDecoder.decodeFeatureCollection(
-        Json.createReader(new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8))).readObject(),
-        JsonSequencesDecoder::decodeSequence
-      ).size()
-    );
+    assertEquals(expectedNumberOfSequences, JsonDecoder.decodeFeatureCollection(
+      Json.createReader(new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8))).readObject(),
+      JsonSequencesDecoder::decodeSequence
+    ).size());
   }
 
-  @Ignore
+  @Disabled
   @Test
-  public void testDecodeSequence() {
+  void testDecodeSequence() {
     StreetsideSequence exampleSequence = JsonSequencesDecoder.decodeSequence(
       Json.createReader(this.getClass().getResourceAsStream("/api/v3/responses/sequence.json")).readObject()
     );
@@ -99,20 +96,14 @@ public class JsonSequencesDecoderTest {
     assertEquals(1_457_963_077_206L, exampleSequence.getCd()); // 2016-03-14T13:44:37.206 UTC
     assertEquals(2, exampleSequence.getImages().size());
 
-    assertEquals(
-      new StreetsideImage("76P0YUrlDD_lF6J7Od3yoA", new LatLon(16.43279, 7.246085), 96.71454),
-      exampleSequence.getImages().get(0)
-    );
-    assertEquals(
-      new StreetsideImage("Ap_8E0BwoAqqewhJaEbFyQ", new LatLon(16.432799, 7.246082), 96.47705000000002),
-      exampleSequence.getImages().get(1)
-    );
+    assertEquals(new StreetsideImage("76P0YUrlDD_lF6J7Od3yoA", new LatLon(16.43279, 7.246085), 96.71454), exampleSequence.getImages().get(0));
+    assertEquals(new StreetsideImage("Ap_8E0BwoAqqewhJaEbFyQ", new LatLon(16.432799, 7.246082), 96.47705000000002), exampleSequence.getImages().get(1));
   }
 
   @Test
-  public void testDecodeSequenceInvalid() {
+  void testDecodeSequenceInvalid() {
     // null input
-    assertNull(JsonSequencesDecoder.decodeSequence(null));
+    Assertions.assertNull(JsonSequencesDecoder.decodeSequence(null));
     // `properties` key is not set
     assertDecodesToNull(JsonSequencesDecoder::decodeSequence, "{\"type\": \"Feature\"}");
     // value for the key `key` in the properties is missing
@@ -149,19 +140,16 @@ public class JsonSequencesDecoderTest {
    * Checks if an empty array is returned, if <code>null</code> is supplied to the method as the array.
    */
   @Test
-  public void testDecodeJsonArray()
+  void testDecodeJsonArray()
       throws NoSuchMethodException, SecurityException, IllegalAccessException,
       IllegalArgumentException, InvocationTargetException {
     Method method = JsonSequencesDecoder.class.getDeclaredMethod("decodeJsonArray", JsonArray.class, Function.class, Class.class);
     method.setAccessible(true);
-    assertEquals(
-      0,
-      ((String[]) method.invoke(null, null, (Function<JsonValue, String>) val -> null, String.class)).length
-    );
+    assertEquals(0, ((String[]) method.invoke(null, null, (Function<JsonValue, String>) val -> null, String.class)).length);
   }
 
   @Test
-  public void testDecodeCoordinateProperty() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  void testDecodeCoordinateProperty() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     Method decodeCoordinateProperty = JsonSequencesDecoder.class.getDeclaredMethod(
       "decodeCoordinateProperty",
       JsonObject.class,
@@ -171,23 +159,17 @@ public class JsonSequencesDecoderTest {
     );
     decodeCoordinateProperty.setAccessible(true);
 
-    assertEquals(
-      0,
-      ((String[]) decodeCoordinateProperty.invoke(
-        null, null, "key", (Function<JsonValue, String>) val -> "string", String.class
-      )).length
-    );
+    assertEquals(0, ((String[]) decodeCoordinateProperty.invoke(
+      null, null, "key", (Function<JsonValue, String>) val -> "string", String.class
+    )).length);
 
-    assertEquals(
-      0,
-      ((String[]) decodeCoordinateProperty.invoke(
-        null, JsonUtil.string2jsonObject("{\"coordinateProperties\":{\"key\":0}}"), "key", (Function<JsonValue, String>) val -> "string", String.class
-      )).length
-    );
+    assertEquals(0, ((String[]) decodeCoordinateProperty.invoke(
+      null, JsonUtil.string2jsonObject("{\"coordinateProperties\":{\"key\":0}}"), "key", (Function<JsonValue, String>) val -> "string", String.class
+    )).length);
   }
 
   @Test
-  public void testDecodeLatLons()
+  void testDecodeLatLons()
       throws NoSuchMethodException, SecurityException, IllegalAccessException,
       IllegalArgumentException, InvocationTargetException {
     Method decodeLatLons = JsonSequencesDecoder.class.getDeclaredMethod("decodeLatLons", JsonObject.class);
@@ -205,13 +187,13 @@ public class JsonSequencesDecoderTest {
       "{\"type\": \"LineString\", \"coordinates\": [ [1,2,3], [\"a\", 2], [1, \"b\"] ]}".getBytes(StandardCharsets.UTF_8)
     )).readObject());
     assertEquals(3, example.length);
-    assertNull(example[0]);
-    assertNull(example[1]);
-    assertNull(example[2]);
+    Assertions.assertNull(example[0]);
+    Assertions.assertNull(example[1]);
+    Assertions.assertNull(example[2]);
   }
 
   @Test
-  public void testUtilityClass() {
+  void testUtilityClass() {
     TestUtil.testUtilityClass(JsonSequencesDecoder.class);
   }
 

@@ -1,26 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.modules.fr.toulouse;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ToulouseModule} class.
  */
-public class ToulouseModuleTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    public JOSMTestRules rules = new JOSMTestRules().preferences();
-
+@BasicPreferences
+class ToulouseModuleTest {
     @Test
-    public void testHandlersConstruction() {
+    void testHandlersConstruction() {
         ToulouseModule module = new ToulouseModule(null);
         assertFalse(module.getHandlers().isEmpty());
         assertEquals(module.getHandlers().size(), module.getNewlyInstanciatedHandlers().size());

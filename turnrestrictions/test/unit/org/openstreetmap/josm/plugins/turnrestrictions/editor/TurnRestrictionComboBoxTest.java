@@ -7,7 +7,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * the {@see TurnRestrictionComboBox}
  *
  */
-@Ignore("no test")
+@Disabled("no test")
 public class TurnRestrictionComboBoxTest extends JFrame {
 
     private TurnRestrictionEditorModel model;

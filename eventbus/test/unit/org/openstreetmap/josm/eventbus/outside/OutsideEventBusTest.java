@@ -16,12 +16,12 @@
 
 package org.openstreetmap.josm.eventbus.outside;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.eventbus.EventBus;
 import org.openstreetmap.josm.eventbus.Subscribe;
 
@@ -30,7 +30,7 @@ import org.openstreetmap.josm.eventbus.Subscribe;
  *
  * @author Louis Wasserman
  */
-public class OutsideEventBusTest {
+class OutsideEventBusTest {
 
   /*
    * If you do this test from common.eventbus.EventBusTest, it doesn't actually test the behavior.
@@ -38,7 +38,7 @@ public class OutsideEventBusTest {
    * it can fail here.
    */
   @Test
-  public void testAnonymous() {
+  void testAnonymous() {
     final AtomicReference<String> holder = new AtomicReference<>();
     final AtomicInteger deliveries = new AtomicInteger();
     EventBus bus = new EventBus();
@@ -54,7 +54,7 @@ public class OutsideEventBusTest {
     String EVENT = "Hello!";
     bus.post(EVENT);
 
-    assertEquals("Only one event should be delivered.", 1, deliveries.get());
-    assertEquals("Correct string should be delivered.", EVENT, holder.get());
+    assertEquals(1, deliveries.get(), "Only one event should be delivered.");
+    assertEquals(EVENT, holder.get(), "Correct string should be delivered.");
   }
 }
