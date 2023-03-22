@@ -35,14 +35,6 @@ public class StreetsidePlugin extends Plugin {
   /** Walk action */
   private static final StreetsideWalkAction WALK_ACTION = new StreetsideWalkAction();
 
-  static {
-      MainMenu.add(MainApplication.getMenu().fileMenu, new StreetsideExportAction(), false, 14);
-      MainMenu.add(MainApplication.getMenu().imagerySubMenu, new StreetsideDownloadAction(), false);
-      MainMenu.add(MainApplication.getMenu().viewMenu, ZOOM_ACTION, false, 15);
-      MainMenu.add(MainApplication.getMenu().fileMenu, new StreetsideDownloadViewAction(), false, 14);
-      MainMenu.add(MainApplication.getMenu().moreToolsMenu, WALK_ACTION, false);
-  }
-
   /**
    * Main constructor.
    *
@@ -55,6 +47,11 @@ public class StreetsidePlugin extends Plugin {
     if (StreetsideProperties.ACCESS_TOKEN.get() == null) {
       StreetsideUser.setTokenValid(false);
     }
+    MainMenu.add(MainApplication.getMenu().fileMenu, new StreetsideExportAction(), false, 14);
+    MainMenu.add(MainApplication.getMenu().imagerySubMenu, new StreetsideDownloadAction(), false);
+    MainMenu.add(MainApplication.getMenu().viewMenu, ZOOM_ACTION, false, 15);
+    MainMenu.add(MainApplication.getMenu().fileMenu, new StreetsideDownloadViewAction(), false, 14);
+    MainMenu.add(MainApplication.getMenu().moreToolsMenu, WALK_ACTION, false);
   }
 
   static StreetsideDataListener[] getStreetsideDataListeners() {

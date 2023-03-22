@@ -23,6 +23,7 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideCubemap;
 import org.openstreetmap.josm.plugins.streetside.StreetsideDataListener;
 import org.openstreetmap.josm.plugins.streetside.gui.StreetsideViewerDialog;
 import org.openstreetmap.josm.plugins.streetside.gui.imageinfo.StreetsideViewerPanel;
+import org.openstreetmap.josm.plugins.streetside.gui.imageinfo.ThreeSixtyDegreeViewerPanel;
 import org.openstreetmap.josm.plugins.streetside.utils.GraphicsUtils;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 
@@ -114,10 +115,9 @@ public class CubemapBuilder implements ITileDownloadingTaskListener, StreetsideD
 	}
 
 	public void downloadCubemapImages(String imageId) {
-    if(StreetsideViewerPanel.getThreeSixtyDegreeViewerPanel().getScene() != StreetsideViewerPanel.getThreeSixtyDegreeViewerPanel().getLoadingScene()) {
-      StreetsideViewerPanel.getThreeSixtyDegreeViewerPanel().setScene(
-  	      StreetsideViewerPanel.getThreeSixtyDegreeViewerPanel().getLoadingScene()
-  	  );
+      ThreeSixtyDegreeViewerPanel panel360 = StreetsideViewerPanel.getThreeSixtyDegreeViewerPanel();
+      if (panel360 != null && panel360.getScene() != panel360.getLoadingScene()) {
+        panel360.setScene(panel360.getLoadingScene());
 	  }
 
 	  final int maxThreadCount = StreetsideProperties.DOWNLOAD_CUBEFACE_TILES_TOGETHER.get()?6:6 * CubemapUtils.getMaxCols() * CubemapUtils.getMaxRows();

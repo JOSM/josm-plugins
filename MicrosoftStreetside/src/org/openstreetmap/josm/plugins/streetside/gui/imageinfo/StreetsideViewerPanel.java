@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.streetside.gui.imageinfo;
 
 import java.awt.BorderLayout;
+import java.awt.GraphicsEnvironment;
 import java.text.MessageFormat;
 
 import javax.swing.JCheckBox;
@@ -54,9 +55,9 @@ public final class StreetsideViewerPanel extends JPanel
 
 		threeSixtyDegreeViewerPanel = new ThreeSixtyDegreeViewerPanel();
 
-		GraphicsUtils.PlatformHelper.run(() -> {
-	    	threeSixtyDegreeViewerPanel.initialize();
-		});
+    if (!GraphicsEnvironment.isHeadless()) {
+      GraphicsUtils.PlatformHelper.run(threeSixtyDegreeViewerPanel::initialize);
+    }
 
 		add(threeSixtyDegreeViewerPanel, BorderLayout.CENTER);
 		revalidate();

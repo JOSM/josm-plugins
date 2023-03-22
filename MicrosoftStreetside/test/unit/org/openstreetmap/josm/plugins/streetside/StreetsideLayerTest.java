@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.GraphicsEnvironment;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -21,7 +23,6 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @BasicPreferences
 @Main
 @Projection
-@DisabledIf(value = "org.openstreetmap.josm.plugins.streetside.utils.TestUtil#cannotLoadImages", disabledReason = "At JOSM maintainer request (flaky?)")
 class StreetsideLayerTest {
   private static Layer getDummyLayer() {
     return ImageryLayer.create(new ImageryInfo("dummy", "https://example.org"));
@@ -71,6 +72,7 @@ class StreetsideLayerTest {
     assertTrue(((String) comp).length() >= 9);
   }
 
+  @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless", disabledReason = "Listener for destruction is only registered in non-headless environments")
   @Test
   void testClearInstance() {
     StreetsideLayer.getInstance();

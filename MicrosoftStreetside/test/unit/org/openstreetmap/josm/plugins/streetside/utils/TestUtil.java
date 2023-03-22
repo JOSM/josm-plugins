@@ -14,11 +14,7 @@ import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 
 import org.junit.runners.model.InitializationError;
-import org.openstreetmap.josm.plugins.streetside.StreetsidePlugin;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -29,18 +25,6 @@ public final class TestUtil {
 
   private TestUtil() {
     // Prevent instantiation
-  }
-
-  /**
-   * Check if we can load images
-   * @return {@code true} if the {@link StreetsidePlugin#LOGO} could be loaded
-   */
-  public static boolean cannotLoadImages() {
-    // The class-level @DisabledIf seems to be run prior to any possible setup code
-    if (Config.getPref() == null) {
-      Config.setPreferencesInstance(new MemoryPreferences());
-    }
-    return new ImageProvider("streetside-logo").setOptional(true).getResource() == null;
   }
 
   public static Field getAccessibleField(Class<?> clazz, String fieldName) {
