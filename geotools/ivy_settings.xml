@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ivysettings>
   <!-- When geotools is updated, run `ant merge-geotools-services` -->
-  <property name="gt.version" value="29.0"/>
+  <property name="gt.version" value="28.2"/>
   <settings defaultResolver="ordered-resolvers"/>
   <resolvers>
     <chain name="ordered-resolvers">
