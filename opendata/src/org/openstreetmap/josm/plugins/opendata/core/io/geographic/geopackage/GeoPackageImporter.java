@@ -15,7 +15,7 @@ import org.openstreetmap.josm.plugins.opendata.core.io.AbstractImporter;
 
 public class GeoPackageImporter extends AbstractImporter {
     public static final ExtensionFileFilter GEOPACKAGE_FILE_FILTER = new ExtensionFileFilter(
-            OdConstants.GEOPACKAGE_EXT, OdConstants.GEOPACKAGE_EXT, tr("Shapefiles") + " (*."+ OdConstants.GEOPACKAGE_EXT+")");
+            OdConstants.GEOPACKAGE_EXT, OdConstants.GEOPACKAGE_EXT, tr("GeoPackage files") + " (*."+ OdConstants.GEOPACKAGE_EXT+")");
     public GeoPackageImporter() {
         super(GEOPACKAGE_FILE_FILTER);
     }
