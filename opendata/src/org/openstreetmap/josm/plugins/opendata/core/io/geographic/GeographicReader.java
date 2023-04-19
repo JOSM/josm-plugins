@@ -21,7 +21,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.spi.JsonProvider;
-import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.geotools.geometry.jts.JTS;
@@ -38,7 +37,6 @@ import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -79,10 +77,8 @@ public abstract class GeographicReader extends AbstractReader {
     static {
         try {
             wgs84 = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException e) {
-            e.printStackTrace();
         } catch (FactoryException e) {
-            e.printStackTrace();
+            Logging.error(e);
         }
     }
 
@@ -96,7 +92,7 @@ public abstract class GeographicReader extends AbstractReader {
 
     private static final Map<String, Integer> esriWkid = new TreeMap<>();
 
-    public GeographicReader(GeographicHandler handler, GeographicHandler[] defaultHandlers) {
+    protected GeographicReader(GeographicHandler handler, GeographicHandler[] defaultHandlers) {
         this.nodes = new HashMap<>();
         this.handler = handler;
         this.defaultHandlers = defaultHandlers;
@@ -224,7 +220,7 @@ public abstract class GeographicReader extends AbstractReader {
         return addOsmPrimitive(r);
     }
 
-    protected final void addWayToMp(Relation r, String role, Way w) {
+    protected static void addWayToMp(Relation r, String role, Way w) {
         r.addMember(new RelationMember(role, w));
     }
 
@@ -232,13 +228,13 @@ public abstract class GeographicReader extends AbstractReader {
      * returns true if the user wants to cancel, false if they
      * want to continue
      */
-    protected static final boolean warnLenientMethod(final Component parent, final CoordinateReferenceSystem crs) {
+    protected static boolean warnLenientMethod(final Component parent, final CoordinateReferenceSystem crs) {
         return new DialogPrompter<ExtendedDialog>() {
             @Override
             protected ExtendedDialog buildDialog() {
                 final ExtendedDialog dlg = new ExtendedDialog(parent,
                         tr("Cannot transform to WGS84"),
-                        new String[] {tr("Cancel"), tr("Continue")});
+                        tr("Cancel"), tr("Continue"));
                 // CHECKSTYLE.OFF: LineLength
                 dlg.setContent("<html>" +
                         tr("JOSM was unable to find a strict mathematical transformation between ''{0}'' and WGS84.<br /><br />"+
@@ -246,13 +242,11 @@ public abstract class GeographicReader extends AbstractReader {
                         "If so, <b>do NOT upload</b> such data to OSM !", crs.getName())+
                         "</html>");
                 // CHECKSTYLE.ON: LineLength
-                dlg.setButtonIcons(new Icon[] {
-                        new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
+                dlg.setButtonIcons(new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
                         new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                                new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()});
-                dlg.setToolTipTexts(new String[] {
-                        tr("Cancel"),
-                        tr("Try lenient method")});
+                                new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get());
+                dlg.setToolTipTexts(tr("Cancel"),
+                        tr("Try lenient method"));
                 dlg.setIcon(JOptionPane.WARNING_MESSAGE);
                 dlg.setCancelButton(1);
                 return dlg;

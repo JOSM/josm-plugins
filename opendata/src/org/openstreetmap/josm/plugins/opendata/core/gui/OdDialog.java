@@ -56,7 +56,7 @@ public class OdDialog extends ToggleDialog implements ActiveLayerChangeListener 
         }
     }
 
-    private class SelectAction extends JosmAction {
+    private static class SelectAction extends JosmAction {
         SelectAction() {
             super(marktr("Select"), "dialogs/select",
                     tr("Set the selected elements on the map to the selected items in the list above."), null, false);
@@ -68,7 +68,7 @@ public class OdDialog extends ToggleDialog implements ActiveLayerChangeListener 
         }
     }
 
-    private class DiffAction extends JosmAction {
+    private static class DiffAction extends JosmAction {
         DiffAction() {
             super(marktr("Diff"), "dialogs/diff", tr("Perform diff between current data set and existing OSM data."), null, false);
         }
@@ -79,7 +79,7 @@ public class OdDialog extends ToggleDialog implements ActiveLayerChangeListener 
         }
     }
 
-    private class ToolsAction extends JosmAction {
+    private static class ToolsAction extends JosmAction {
         ToolsAction() {
             super(marktr("Tools"), "dialogs/utils", tr("Open tools menu for this data."), null, false);
         }
@@ -95,12 +95,12 @@ public class OdDialog extends ToggleDialog implements ActiveLayerChangeListener 
                 Shortcut.registerShortcut("subwindow:opendata", tr("Toggle: {0}", "OpenData"),
                         KeyEvent.VK_A, Shortcut.ALT_CTRL_SHIFT), 150, false, OdPreferenceSetting.class);
 
-        this.buttons = Arrays.asList(new SideButton[] {
-                /*selectButton =*/ new SideButton(new SelectAction()),
-                downloadButton = new SideButton(new DownloadAction()),
-                diffButton = new SideButton(new DiffAction()),
-                toolsButton = new SideButton(new ToolsAction())
-        });
+        this.downloadButton = new SideButton(new DownloadAction());
+        this.diffButton = new SideButton(new DiffAction());
+        this.toolsButton = new SideButton(new ToolsAction());
+        this.buttons = Arrays.asList(/*selectButton =*/ new SideButton(new SelectAction()),
+                this.downloadButton, this.diffButton, this.toolsButton);
+
 
         this.toolsButton.addMouseListener(new MouseAdapter() {
             @Override

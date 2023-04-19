@@ -160,7 +160,6 @@ public class ModulePreferencesModel extends ChangeNotifier {
         return displayedModules;
     }
 
-
     /**
      * Replies the list of modules waiting for update or download
      *

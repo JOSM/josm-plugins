@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.SimpleDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.tabular.DefaultCsvHandler;
+import org.openstreetmap.josm.tools.Logging;
 
 public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implements FrenchConstants {
 
@@ -70,21 +71,21 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
         }
     }
 
-    public FrenchDataSetHandler() {
+    protected FrenchDataSetHandler() {
         init();
     }
 
-    public FrenchDataSetHandler(String relevantTag) {
+    protected FrenchDataSetHandler(String relevantTag) {
         super(relevantTag);
         init();
     }
 
-    public FrenchDataSetHandler(boolean relevantUnion, String[] relevantTags) {
+    protected FrenchDataSetHandler(boolean relevantUnion, String[] relevantTags) {
         super(relevantUnion, relevantTags);
         init();
     }
 
-    public FrenchDataSetHandler(boolean relevantUnion, Tag[] relevantTags) {
+    protected FrenchDataSetHandler(boolean relevantUnion, Tag[] relevantTags) {
         super(relevantUnion, relevantTags);
         init();
     }
@@ -109,7 +110,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
                 return new URL(FRENCH_PORTAL + "donnees/view/" + nationalPortalPath);
             }
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Logging.error(e);
         }
         return null;
     }
@@ -124,7 +125,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
         return ICON_FR_24;
     }
 
-    protected static final LatLon getLatLonByDptCode(EastNorth en, String dpt, boolean useCC9) {
+    protected static LatLon getLatLonByDptCode(EastNorth en, String dpt, boolean useCC9) {
         // CHECKSTYLE.OFF: LineLength
         if (dpt.equals("971") || dpt.equals("972") || dpt.equals("977") || dpt.equals("978")) {    // Antilles
             return utm20.eastNorth2latlon(en);
@@ -160,7 +161,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
         // CHECKSTYLE.ON: LineLength
     }
 
-    private void replaceFaxPhone(OsmPrimitive p, String dataKey, String osmKey) {
+    private static void replaceFaxPhone(OsmPrimitive p, String dataKey, String osmKey) {
         String phone = p.get(dataKey);
         if (phone != null) {
             p.put(osmKey, phone.replace(" ", "").replace(".", "").replaceFirst("0", "+33"));
@@ -203,14 +204,14 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
                         String range = m.group(1);
                         Matcher m2 = Pattern.compile(dayGroup+"(?:"+sep+dayGroup+")+").matcher(range);
                         if (m2.matches()) {
-                            String replacement = "";
+                            StringBuilder replacement = new StringBuilder();
                             for (int i = 0; i < m2.groupCount(); i++) {
                                 if (i > 0) {
-                                    replacement += sep;
+                                    replacement.append(sep);
                                 }
-                                replacement += getEnDay(m2.group(i+1));
+                                replacement.append(getEnDay(m2.group(i + 1)));
                             }
-                            hours = hours.replace(range, replacement);
+                            hours = hours.replace(range, replacement.toString());
                         }
                     } else {
                         finished = true;
@@ -222,7 +223,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
         }
     }
 
-    private String getEnDay(String frDay) {
+    private static String getEnDay(String frDay) {
         for (int i = 0; i < dayFrSplit.length; i++) {
             if (dayFrSplit[i].equals(frDay)) {
                 return dayEnSplit[i];

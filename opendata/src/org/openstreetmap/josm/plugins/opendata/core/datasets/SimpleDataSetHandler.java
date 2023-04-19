@@ -32,11 +32,11 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
 
     private final boolean relevantUnion;
 
-    public SimpleDataSetHandler() {
+    protected SimpleDataSetHandler() {
         this.relevantUnion = false;
     }
 
-    public SimpleDataSetHandler(String relevantTag) {
+    protected SimpleDataSetHandler(String relevantTag) {
         addRelevantTag(relevantTag);
         this.relevantUnion = false;
         Tag tag;
@@ -50,46 +50,46 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
                 .map(ImageResource::getImageIcon).ifPresent(this::setMenuIcon);
     }
 
-    public SimpleDataSetHandler(boolean relevantUnion, String... relevantTags) {
+    protected SimpleDataSetHandler(boolean relevantUnion, String... relevantTags) {
         addRelevantTag(relevantTags);
         this.relevantUnion = relevantUnion;
     }
 
-    public SimpleDataSetHandler(String... relevantTags) {
+    protected SimpleDataSetHandler(String... relevantTags) {
         this(false, relevantTags);
     }
 
-    public SimpleDataSetHandler(Tag relevantTag) {
+    protected SimpleDataSetHandler(Tag relevantTag) {
         addRelevantTag(relevantTag);
         this.relevantUnion = false;
     }
 
-    public SimpleDataSetHandler(boolean relevantUnion, Tag ... relevantTags) {
+    protected SimpleDataSetHandler(boolean relevantUnion, Tag ... relevantTags) {
         addRelevantTag(relevantTags);
         this.relevantUnion = relevantUnion;
     }
 
-    public SimpleDataSetHandler(Tag ... relevantTags) {
+    protected SimpleDataSetHandler(Tag... relevantTags) {
         this(false, relevantTags);
     }
 
-    public void addRelevantTag(String ... relevantTags) {
+    public void addRelevantTag(String... relevantTags) {
         addTags(this.relevantTags, relevantTags);
     }
 
-    public void addRelevantTag(Tag ... relevantTags) {
+    public void addRelevantTag(Tag... relevantTags) {
         addTags(this.relevantTags, relevantTags);
     }
 
-    public void addForbiddenTag(String ... forbiddenTags) {
+    public void addForbiddenTag(String... forbiddenTags) {
         addTags(this.forbiddenTags, forbiddenTags);
     }
 
-    public void addForbiddenTag(Tag ... forbiddenTags) {
+    public void addForbiddenTag(Tag... forbiddenTags) {
         addTags(this.forbiddenTags, forbiddenTags);
     }
 
-    private void addTags(final List<Tag> list, String ... tags) {
+    private static void addTags(final List<Tag> list, String... tags) {
         if (tags != null) {
             for (String tag : tags) {
                 if (tag != null) {
@@ -104,7 +104,7 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
         }
     }
 
-    private void addTags(final List<Tag> list, Tag ... tags) {
+    private static void addTags(final List<Tag> list, Tag... tags) {
         if (tags != null) {
             for (Tag tag : tags) {
                 if (tag != null) {
@@ -132,10 +132,7 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
                 return false;
             }
         }
-        if (isForbidden(p)) {
-            return false;
-        }
-        return true;
+        return !isForbidden(p);
     }
 
     @Override
@@ -165,9 +162,7 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
     protected String getOverpassApiQueries(String bbox, String... conditions) {
         String[] mpconditions = new String[conditions.length+1];
         mpconditions[0] = OverpassApi.hasKey("type", "multipolygon");
-        for (int i = 0; i < conditions.length; i++) {
-            mpconditions[i+1] = conditions[i];
-        }
+        System.arraycopy(conditions, 0, mpconditions, 1, conditions.length);
         return OverpassApi.query(bbox, NODE, conditions) + "\n" + // Nodes
         OverpassApi.recurse(NODE_RELATION, RELATION_WAY, WAY_NODE) + "\n" +
         OverpassApi.query(bbox, WAY, conditions) + "\n" + // Full ways and their full relations
@@ -193,14 +188,14 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
 
     @Override
     protected Collection<String> getOsmXapiRequests(String bbox) {
-        String relevantTags = "";
+        StringBuilder relevantTagsSB = new StringBuilder();
         for (Tag tag : this.relevantTags) {
-            relevantTags += "["+tag.getKey()+"="+(tag.getValue() == null ? "*" : tag.getValue())+"]";
+            relevantTagsSB.append("[").append(tag.getKey()).append("=").append(tag.getValue() == null ? "*" : tag.getValue()).append("]");
         }
-        String forbiddenTags = "";
+        StringBuilder forbiddenTagsSB = new StringBuilder();
         for (Tag tag : this.forbiddenTags) {
-            forbiddenTags += "[not("+tag.getKey()+"="+(tag.getValue() == null ? "*" : tag.getValue())+")]";
+            forbiddenTagsSB.append("[not(").append(tag.getKey()).append("=").append(tag.getValue() == null ? "*" : tag.getValue()).append(")]");
         }
-        return Collections.singleton("*[bbox="+bbox+"]"+relevantTags+forbiddenTags+"[@meta]");
+        return Collections.singleton("*[bbox="+bbox+"]"+relevantTagsSB+forbiddenTagsSB+"[@meta]");
     }
 }

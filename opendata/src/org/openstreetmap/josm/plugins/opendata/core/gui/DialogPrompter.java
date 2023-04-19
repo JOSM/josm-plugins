@@ -1,11 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core.gui;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public class DialogPrompter<T extends ExtendedDialog> implements Runnable {
 
@@ -40,17 +37,7 @@ public class DialogPrompter<T extends ExtendedDialog> implements Runnable {
     }
 
     public final DialogPrompter<T> promptInEdt() {
-        if (SwingUtilities.isEventDispatchThread()) {
-            run();
-        } else {
-            try {
-                SwingUtilities.invokeAndWait(this);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
+        GuiHelper.runInEDTAndWait(this);
         return this;
     }
 

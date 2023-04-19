@@ -32,7 +32,7 @@ public final class WayCombiner {
         // Hide default constructor for utilities classes
     }
 
-    protected static Way getTargetWay(Collection<Way> combinedWays) {
+    private static Way getTargetWay(Collection<Way> combinedWays) {
         // init with an arbitrary way
         Way targetWay = combinedWays.iterator().next();
 

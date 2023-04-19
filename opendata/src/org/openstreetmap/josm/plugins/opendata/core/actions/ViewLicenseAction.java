@@ -12,6 +12,7 @@ import org.openstreetmap.josm.plugins.opendata.core.gui.ViewLicenseDialog;
 import org.openstreetmap.josm.plugins.opendata.core.licenses.License;
 import org.openstreetmap.josm.plugins.opendata.core.util.OdUtils;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 public class ViewLicenseAction extends JosmAction {
 
@@ -29,7 +30,7 @@ public class ViewLicenseAction extends JosmAction {
         try {
             new ViewLicenseDialog(license).showDialog();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logging.error(ex);
         }
     }
 }

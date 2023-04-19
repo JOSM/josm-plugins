@@ -16,7 +16,6 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -100,7 +99,7 @@ public class ModulePreference implements SubPreferenceSetting {
      * is set to true if this preference pane has been selected
      * by the user
      */
-    private boolean modulePreferencesActivated = false;
+    private boolean modulePreferencesActivated;
 
     protected JPanel buildSearchFieldPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -115,7 +114,8 @@ public class ModulePreference implements SubPreferenceSetting {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        pnl.add(tfFilter = new JTextField(), gc);
+        this.tfFilter = new JTextField();
+        pnl.add(this.tfFilter, gc);
         tfFilter.setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(tfFilter);
         tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
@@ -331,7 +331,7 @@ public class ModulePreference implements SubPreferenceSetting {
                 notifyDownloadResults(moduleDownloadTask);
                 model.refreshLocalModuleVersion(moduleDownloadTask.getDownloadedModules());
                 model.clearPendingModules(moduleDownloadTask.getDownloadedModules());
-                GuiHelper.runInEDT(() -> pnlModulePreferences.refreshView());
+                GuiHelper.runInEDT(pnlModulePreferences::refreshView);
             };
 
             // to be run asynchronously after the module list download
@@ -342,13 +342,7 @@ public class ModulePreference implements SubPreferenceSetting {
                 model.updateAvailableModules(moduleInfoDownloadTask.getAvailableModules());
                 // select modules which actually have to be updated
                 //
-                Iterator<ModuleInformation> it = toUpdate.iterator();
-                while (it.hasNext()) {
-                    ModuleInformation pi = it.next();
-                    if (!pi.isUpdateRequired()) {
-                        it.remove();
-                    }
-                }
+                toUpdate.removeIf(pi -> !pi.isUpdateRequired());
                 if (toUpdate.isEmpty()) {
                     alertNothingToUpdate();
                     return;
@@ -386,7 +380,7 @@ public class ModulePreference implements SubPreferenceSetting {
      *
      */
     class ModulePreferenceActivationListener implements ChangeListener {
-        private Component pane;
+        private final Component pane;
         ModulePreferenceActivationListener(Component preferencesPane) {
             pane = preferencesPane;
         }
@@ -408,7 +402,7 @@ public class ModulePreference implements SubPreferenceSetting {
     class SearchFieldAdapter implements DocumentListener {
         public void filter() {
             String expr = tfFilter.getText().trim();
-            if (expr.equals("")) {
+            if ("".equals(expr)) {
                 expr = null;
             }
             model.filterDisplayedModules(expr);
@@ -513,7 +507,7 @@ public class ModulePreference implements SubPreferenceSetting {
             for (int i = 0; i < model.getSize(); i++) {
                 ret.add(model.get(i));
             }
-            return ret;
+            return Collections.unmodifiableList(ret);
         }
     }
 

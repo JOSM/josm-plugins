@@ -79,7 +79,7 @@ public abstract class AbstractDataSetHandler {
     private File associatedFile;
     private ImageIcon menuIcon;
 
-    public AbstractDataSetHandler() {
+    protected AbstractDataSetHandler() {
         setShpHandler(new DefaultShpHandler());
         setArchiveHandler(new DefaultArchiveHandler());
         setCsvHandler(new DefaultCsvHandler());
@@ -89,10 +89,10 @@ public abstract class AbstractDataSetHandler {
 
     private boolean acceptsFilename(String filename, String[] expected, String ... extensions) {
         if (filename != null) {
-            for (String name : expected) {
+            for (String expectedName : expected) {
                 for (String ext : extensions) {
-                    if (Pattern.compile(name+"\\."+ext, Pattern.CASE_INSENSITIVE).matcher(filename).matches()) {
-                        //if (filename.equalsIgnoreCase(name+"."+ext)) {
+                    if (Pattern.compile(expectedName+"\\."+ext, Pattern.CASE_INSENSITIVE).matcher(filename).matches()) {
+                        //if (filename.equalsIgnoreCase(expectedName+"."+ext)) {
                         return true;
                     }
                 }
@@ -101,67 +101,67 @@ public abstract class AbstractDataSetHandler {
         return false;
     }
 
-    protected final boolean acceptsCsvFilename(String filename, String ... expected) {
+    protected final boolean acceptsCsvFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT);
     }
 
-    protected final boolean acceptsXlsFilename(String filename, String ... expected) {
+    protected final boolean acceptsXlsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.XLS_EXT);
     }
 
-    protected final boolean acceptsOdsFilename(String filename, String ... expected) {
+    protected final boolean acceptsOdsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.ODS_EXT);
     }
 
-    protected final boolean acceptsShpFilename(String filename, String ... expected) {
+    protected final boolean acceptsShpFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SHP_EXT);
     }
 
-    protected final boolean acceptsMifFilename(String filename, String ... expected) {
+    protected final boolean acceptsMifFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.MIF_EXT);
     }
 
-    protected final boolean acceptsMifTabFilename(String filename, String ... expected) {
+    protected final boolean acceptsMifTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.MIF_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsShpMifFilename(String filename, String ... expected) {
+    protected final boolean acceptsShpMifFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SHP_EXT, OdConstants.MIF_EXT);
     }
 
-    protected final boolean acceptsKmlFilename(String filename, String ... expected) {
+    protected final boolean acceptsKmlFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KML_EXT);
     }
 
-    protected final boolean acceptsKmzFilename(String filename, String ... expected) {
+    protected final boolean acceptsKmzFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT);
     }
 
-    protected final boolean acceptsKmzShpFilename(String filename, String ... expected) {
+    protected final boolean acceptsKmzShpFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT, OdConstants.SHP_EXT);
     }
 
-    protected final boolean acceptsKmzTabFilename(String filename, String ... expected) {
+    protected final boolean acceptsKmzTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsZipFilename(String filename, String ... expected) {
+    protected final boolean acceptsZipFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.ZIP_EXT);
     }
 
-    protected final boolean accepts7ZipFilename(String filename, String ... expected) {
+    protected final boolean accepts7ZipFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SEVENZIP_EXT);
     }
 
-    protected final boolean acceptsCsvKmzFilename(String filename, String ... expected) {
+    protected final boolean acceptsCsvKmzFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.KMZ_EXT);
     }
 
-    protected final boolean acceptsCsvKmzTabFilename(String filename, String ... expected) {
+    protected final boolean acceptsCsvKmzTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.KMZ_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsCsvXlsFilename(String filename, String ... expected) {
+    protected final boolean acceptsCsvXlsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.XLS_EXT);
     }
 
@@ -543,11 +543,11 @@ public abstract class AbstractDataSetHandler {
     }
 
     public final boolean addTool(JosmAction tool) {
-        return tool != null ? tools.add(tool) : false;
+        return tool != null && tools.add(tool);
     }
 
     public final boolean removeTool(JosmAction tool) {
-        return tool != null ? tools.remove(tool) : false;
+        return tool != null && tools.remove(tool);
     }
 
     public void notifyActive() {

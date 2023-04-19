@@ -32,7 +32,7 @@ public class CandidateChooser extends ExtendedDialog {
         this(parent, tr("File to load"), new String[] {tr("OK"), tr("Cancel")}, candidates);
     }
 
-    private class Renderer extends DefaultListCellRenderer {
+    private static class Renderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value,

@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
-import javax.swing.Icon;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -17,6 +16,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.opendata.core.licenses.License;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 public class ViewLicenseDialog extends ExtendedDialog {
 
@@ -44,15 +44,12 @@ public class ViewLicenseDialog extends ExtendedDialog {
         JScrollPane scrollPane = new JScrollPane(htmlPane);
         scrollPane.setPreferredSize(new Dimension(800, 600));
 
-        setButtonIcons(new Icon[] {
-                ImageProvider.get("ok"),
+        setButtonIcons(ImageProvider.get("ok"),
                 ImageProvider.get("agreement24"),
-                ImageProvider.get("cancel"),
-                });
-        setToolTipTexts(new String[] {
-                null,
+                ImageProvider.get("cancel"));
+        setToolTipTexts(null,
                 tr("View the full text of this license"),
-                null});
+                null);
         if (license.getIcon() != null) {
             setIcon(license.getIcon());
         } else {
@@ -75,7 +72,7 @@ public class ViewLicenseDialog extends ExtendedDialog {
                     htmlPane.setPage(license.getSummaryURL());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Logging.error(e);
             }
             summary = !summary;
         } else {
