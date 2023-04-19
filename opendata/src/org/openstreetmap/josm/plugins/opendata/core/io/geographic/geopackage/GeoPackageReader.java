@@ -59,6 +59,8 @@ public final class GeoPackageReader extends GeographicReader {
                 new GeotoolsConverter(this, dataStore).convert(instance);
             } catch (FactoryException | GeoCrsException | GeoMathTransformException | TransformException e) {
                 throw new IOException(e);
+            } finally {
+                dataStore.dispose();
             }
         }
         return ds;

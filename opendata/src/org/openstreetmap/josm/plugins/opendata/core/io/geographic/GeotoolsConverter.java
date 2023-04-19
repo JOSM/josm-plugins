@@ -74,11 +74,33 @@ public class GeotoolsConverter {
     public void convert(ProgressMonitor progressMonitor)
             throws IOException, FactoryException, GeoMathTransformException, TransformException, GeoCrsException {
         String[] typeNames = dataStore.getTypeNames();
-        String typeName = typeNames[0];
+        if (progressMonitor != null) {
+            progressMonitor.beginTask(tr("Loading shapefile ({0} layers)", typeNames.length), typeNames.length);
+        }
+        try {
+            for (String typeName : typeNames) {
+                FeatureSource<?, ?> featureSource = dataStore.getFeatureSource(typeName);
+                FeatureCollection<?, ?> collection = featureSource.getFeatures();
+                parseFeatures(progressMonitor != null ? progressMonitor.createSubTaskMonitor(1, false) : null, collection);
+            }
+        } finally {
+            if (progressMonitor != null) {
+                progressMonitor.finishTask();
+            }
+        }
+    }
 
-        FeatureSource<?, ?> featureSource = dataStore.getFeatureSource(typeName);
-        FeatureCollection<?, ?> collection = featureSource.getFeatures();
-
+    /**
+     * Run the actual conversion process for a collection of features
+     * @param progressMonitor The monitor to show progress on
+     * @param collection The collection to parse
+     * @throws FactoryException See {@link GeographicReader#findMathTransform(Component, boolean)}
+     * @throws GeoMathTransformException See {@link GeographicReader#findMathTransform(Component, boolean)}
+     * @throws TransformException See {@link GeographicReader#createOrGetNode(Point)}
+     * @throws GeoCrsException If the CRS cannot be detected
+     */
+    private void parseFeatures(ProgressMonitor progressMonitor, FeatureCollection<?, ?> collection)
+            throws FactoryException, GeoMathTransformException, TransformException, GeoCrsException {
         if (progressMonitor != null) {
             progressMonitor.beginTask(tr("Loading shapefile ({0} features)", collection.size()), collection.size());
         }
