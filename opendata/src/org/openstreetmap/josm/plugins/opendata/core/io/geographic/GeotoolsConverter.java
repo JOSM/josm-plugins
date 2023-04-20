@@ -26,6 +26,7 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
@@ -81,7 +82,17 @@ public class GeotoolsConverter {
             for (String typeName : typeNames) {
                 FeatureSource<?, ?> featureSource = dataStore.getFeatureSource(typeName);
                 FeatureCollection<?, ?> collection = featureSource.getFeatures();
-                parseFeatures(progressMonitor != null ? progressMonitor.createSubTaskMonitor(1, false) : null, collection);
+                try {
+                    parseFeatures(progressMonitor != null ? progressMonitor.createSubTaskMonitor(1, false) : null, collection);
+                    // Geotools wraps an IOException in a RuntimeException. We want to keep parsing layers, even if we could not understand
+                    // a previous layer.
+                } catch (RuntimeException runtimeException) {
+                    if (runtimeException.getCause() instanceof IOException && runtimeException.getCause().getCause() instanceof ParseException) {
+                        Logging.error(runtimeException);
+                    } else {
+                        throw runtimeException;
+                    }
+                }
             }
         } finally {
             if (progressMonitor != null) {
