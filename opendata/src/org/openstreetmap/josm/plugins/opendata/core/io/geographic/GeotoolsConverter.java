@@ -174,10 +174,32 @@ public class GeotoolsConverter {
             }
 
             Object geomObject = geometry.getValue();
-            if (geomObject instanceof Point) {  // TODO: Support LineString and Polygon.
+            if (geomObject instanceof Point) {
                 // Sure you could have a Set of 1 object and join these 2 branches of
                 // code, but I feel there would be a performance hit.
                 OsmPrimitive primitive = reader.createOrGetEmptyNode((Point) geomObject);
+                readNonGeometricAttributes(feature, primitive);
+            } else if (geomObject instanceof LineString) {
+                OsmPrimitive primitive = reader.createOrGetWay((LineString) geomObject);
+                readNonGeometricAttributes(feature, primitive);
+            } else if (geomObject instanceof Polygon) {
+                Polygon polygon = (Polygon) geomObject;
+                Way outer = reader.createOrGetWay(polygon.getExteriorRing());
+                Way[] inner = new Way[polygon.getNumInteriorRing()];
+                for (int i = 0; i < inner.length; i++) {
+                    inner[i] = reader.createOrGetWay(polygon.getInteriorRingN(i));
+                }
+                final OsmPrimitive primitive;
+                if (inner.length == 0) {
+                    primitive = outer;
+                } else {
+                    Relation relation = reader.createMultipolygon();
+                    GeographicReader.addWayToMp(relation, "outer", outer);
+                    for (Way iWay : inner) {
+                        GeographicReader.addWayToMp(relation, "inner", iWay);
+                    }
+                    primitive = relation;
+                }
                 readNonGeometricAttributes(feature, primitive);
             } else if (geomObject instanceof GeometryCollection) { // Deals with both MultiLineString and MultiPolygon
                 Set<OsmPrimitive> primitives = processGeometryCollection((GeometryCollection) geomObject);
@@ -220,9 +242,9 @@ public class GeotoolsConverter {
                     }
                     Way w = reader.createOrGetWay(p.getExteriorRing());
                     if (r != null) {
-                        reader.addWayToMp(r, "outer", w);
+                        GeographicReader.addWayToMp(r, "outer", w);
                         for (int j = 0; j < p.getNumInteriorRing(); j++) {
-                            reader.addWayToMp(r, "inner", reader.createOrGetWay(p.getInteriorRingN(j)));
+                            GeographicReader.addWayToMp(r, "inner", reader.createOrGetWay(p.getInteriorRingN(j)));
                         }
                     }
                     op = r != null ? r : w;
