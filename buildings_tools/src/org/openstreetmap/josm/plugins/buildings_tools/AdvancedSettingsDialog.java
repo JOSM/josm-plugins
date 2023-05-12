@@ -13,13 +13,20 @@ import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * A dialog for users to set "advanced" settings for the tool
+ */
 public class AdvancedSettingsDialog extends MyDialog {
     private final TagEditorModel tagsModel = new TagEditorModel();
 
     private final JCheckBox cBigMode = new JCheckBox(tr("Big buildings mode"));
     private final JCheckBox cSoftCur = new JCheckBox(tr("Rotate crosshair"));
     private final JCheckBox cNoClickDrag = new JCheckBox(tr("Disable click+drag"));
+    private final JCheckBox cToggleMapMode = new JCheckBox(tr("Switch between circle and rectangle modes"));
 
+    /**
+     * Create a new advanced settings dialog
+     */
     public AdvancedSettingsDialog() {
         super(tr("Advanced settings"));
 
@@ -33,19 +40,27 @@ public class AdvancedSettingsDialog extends MyDialog {
         panel.add(cBigMode, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(cSoftCur, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(cNoClickDrag, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(cToggleMapMode, GBC.eol().fill(GBC.HORIZONTAL));
 
         cBigMode.setSelected(ToolSettings.isBBMode());
         cSoftCur.setSelected(ToolSettings.isSoftCursor());
         cNoClickDrag.setSelected(ToolSettings.isNoClickAndDrag());
+        cToggleMapMode.setSelected(ToolSettings.isTogglingBuildingTypeOnRepeatedKeyPress());
+
+        cToggleMapMode.setToolTipText(tr("This is similar to the select action toggling between lasso and rectangle select modes"));
 
         setupDialog();
         showDialog();
     }
 
+    /**
+     * Save the settings
+     */
     public final void saveSettings() {
         ToolSettings.saveTags(tagsModel.getTags());
         ToolSettings.setBBMode(cBigMode.isSelected());
         ToolSettings.setSoftCursor(cSoftCur.isSelected());
         ToolSettings.setNoClickAndDrag(cNoClickDrag.isSelected());
+        ToolSettings.setTogglingBuildingTypeOnRepeatedKeyPress(cToggleMapMode.isSelected());
     }
 }

@@ -22,7 +22,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import java.awt.BasicStroke;
@@ -44,8 +43,12 @@ import static org.openstreetmap.josm.plugins.buildings_tools.BuildingsToolsPlugi
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * The action for drawing the building
+ */
 public class DrawBuildingAction extends MapMode implements MapViewPaintable, DataSelectionListener,
         KeyPressReleaseListener, ModifierExListener {
+    private static final long serialVersionUID = -3515263157730927711L;
     // We need to avoid opening many file descriptors on Linux under Wayland -- see JOSM #21929. This will probably also
     // improve performance, since we aren't creating cursors all the time.
     private static final Cursor CURSOR_SILO = ImageProvider.getCursor("crosshair", "silo");
@@ -72,6 +75,9 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     private final PreferenceChangedListener shapeChangeListener = event -> updCursor();
 
+    /**
+     * Create a new {@link DrawBuildingAction} object
+     */
     public DrawBuildingAction() {
         super(tr("Draw buildings"), "building", tr("Draw buildings"),
                 Shortcut.registerShortcut("mapmode:buildings",
@@ -87,16 +93,14 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     }
 
     private static Cursor getCursor() {
-        try {
-            if (ToolSettings.Shape.CIRCLE == ToolSettings.getShape()) {
-                return CURSOR_SILO;
-            } else {
+        switch (ToolSettings.getShape()) {
+            case RECTANGLE:
                 return CURSOR_BUILDING;
-            }
-        } catch (Exception e) {
-            Logging.error(e);
+            case CIRCLE:
+                return CURSOR_SILO;
+            default:
+                return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
         }
-        return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
     }
 
     /**
@@ -160,6 +164,9 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         mode = Mode.None;
     }
 
+    /**
+     * Cancel the drawing of a building
+     */
     public final void cancelDrawing() {
         mode = Mode.None;
         MapFrame map = MainApplication.getMap();
@@ -193,10 +200,23 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
             cancelDrawing();
         }
+        if (!ToolSettings.isTogglingBuildingTypeOnRepeatedKeyPress()
+                || !MainApplication.isDisplayingMapView() || !getShortcut().isEvent(e)) {
+            return;
+        }
+        e.consume();
+        switch (ToolSettings.getShape()) {
+            case CIRCLE:
+                ToolSettings.saveShape(ToolSettings.Shape.RECTANGLE);
+                break;
+            case RECTANGLE:
+                ToolSettings.saveShape(ToolSettings.Shape.CIRCLE);
+        }
     }
 
     @Override
     public void doKeyReleased(KeyEvent e) {
+        // Do nothing
     }
 
     private EastNorth getEastNorth() {
@@ -436,6 +456,10 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         return isEditableDataLayer(l);
     }
 
+    /**
+     * Update the snap for drawing
+     * @param newSelection The selection to use
+     */
     public final void updateSnap(Collection<? extends OsmPrimitive> newSelection) {
         building.clearAngleSnap();
         // update snap only if selection isn't too big
