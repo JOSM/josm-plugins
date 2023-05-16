@@ -71,4 +71,18 @@ class DrawnPolyLineTest {
         this.drawnPolyLine.deleteNode(0);
         assertDoesNotThrow(() -> this.drawnPolyLine.getLastPoint());
     }
+
+    /**
+     * Non-regression test for #22946: NullPointerException in {@link DrawnPolyLine#autoSimplify(double, double, int, double)}
+     * The root issue is probably from some kind of race condition.
+     */
+    @Test
+    void testNonRegression22946() {
+        this.drawnPolyLine.addLast(new LatLon(0.00001, 0.00001));
+        this.drawnPolyLine.addLast(new LatLon(0.00002, 0.00002));
+        this.drawnPolyLine.addLast(new LatLon(0.00002, 0.00003));
+        this.drawnPolyLine.clear();
+        // The maxPKM == -.1 to force the bad code path. As noted, it is probably a race condition issue.
+        assertDoesNotThrow(() -> this.drawnPolyLine.autoSimplify(5, 1.1, 10, -.1));
+    }
 }

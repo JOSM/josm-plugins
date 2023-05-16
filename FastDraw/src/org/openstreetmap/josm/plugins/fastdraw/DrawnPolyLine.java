@@ -156,7 +156,9 @@ public class DrawnPolyLine {
         while (getNodesPerKm(k) > maxPKM && e < 1e3) {
             e = e * ekf;
             simplify(e);
-            Logging.trace("DrawnPolyLine: eps={0} n={1}", e, simplePoints.size());
+            if (simplePoints != null) {
+                Logging.trace("DrawnPolyLine: eps={0} n={1}", e, simplePoints.size());
+            }
         }
         return e;
     }
