@@ -446,7 +446,7 @@ public class TagDialog extends ExtendedDialog {
         File fileName = new File(pluginDir + TagDialog.TEMPLATE_DATA);
 
         try {
-            if (pluginDir.mkdirs()) {
+            if (pluginDir.isDirectory() || pluginDir.mkdirs()) {
                 try (
                         FileOutputStream file = new FileOutputStream(fileName);
                         ObjectOutputStream o = new ObjectOutputStream(file)
