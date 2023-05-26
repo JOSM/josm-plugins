@@ -4,10 +4,10 @@ package com.innovant.josm.jrt.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.BellmanFordShortestPath;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -20,6 +20,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import com.innovant.josm.jrt.osm.OsmEdge;
 import com.innovant.josm.plugin.routing.RoutingLayer;
 import com.innovant.josm.plugin.routing.RoutingModel;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class utility to work with graph routers.
@@ -60,15 +62,8 @@ public class RoutingGraph {
      */
     private final DataSet data;
 
-    /**
-     * Logger.
-     */
-    static Logger logger = Logger.getLogger(RoutingGraph.class);
-
-    private static Collection<String> excludedHighwayValues = Arrays.asList(new String[]{
-            "bus_stop", "traffic_signals", "street_lamp", "stop", "construction",
-            "platform", "give_way", "proposed", "milestone", "speed_camera", "abandoned"
-    });
+    private static final Collection<String> excludedHighwayValues = Arrays.asList("bus_stop", "traffic_signals", "street_lamp", "stop",
+            "construction", "platform", "give_way", "proposed", "milestone", "speed_camera", "abandoned");
 
     /**
      * Graph state
@@ -83,8 +78,7 @@ public class RoutingGraph {
     //  private DirectedWeightedMultigraph<Node, OsmEdge> graph;
     //  private WeightedMultigraph<Node, OsmEdge> graph;
     private Graph<Node, OsmEdge> graph;
-    private RoutingGraphDelegator rgDelegator = null;
-
+    private RoutingGraphDelegator rgDelegator;
 
     /**
      * Graph getter
@@ -93,11 +87,13 @@ public class RoutingGraph {
         return graph;
     }
 
+    @SuppressWarnings("squid:S2234")
     private void addEdgeBidirectional(Way way, Node from, Node to) {
         addEdge(way, from, to);
         addEdge(way, to, from);
     }
 
+    @SuppressWarnings("squid:S2234")
     private void addEdgeReverseOneway(Way way, Node from, Node to) {
         addEdge(way, to, from);
     }
@@ -113,6 +109,7 @@ public class RoutingGraph {
 
     /**
      * Default Constructor.
+     * @param data The data to use for the graph
      */
     public RoutingGraph(DataSet data) {
         //      this.graphState = false;
@@ -122,15 +119,14 @@ public class RoutingGraph {
         routingProfile = new RoutingProfile("default");
         routingProfile.setOnewayUse(true); // Don't ignore oneways by default
         this.setWaySpeeds(routingProfile.getWaySpeeds());
-        logger.debug("Created RoutingGraph");
+        Logging.trace("Created RoutingGraph");
     }
 
     /**
      * Create OSM graph for routing
      */
     public void createGraph() {
-
-        logger.debug("Creating Graph...");
+        Logging.trace("Creating Graph...");
         graph = new DirectedWeightedMultigraph<>(OsmEdge.class);
         rgDelegator = new RoutingGraphDelegator(graph);
         rgDelegator.setRouteType(this.routeType);
@@ -139,13 +135,13 @@ public class RoutingGraph {
 
             // skip way if not suitable for routing.
             if (way == null || way.isDeleted() || !this.isvalidWay(way)
-                    || way.getNodes().size() < 1) continue;
+                    || way.getNodesCount() == 0) continue;
 
             // INIT
             Node from = null;
             Node to = null;
             List<Node> nodes = way.getNodes();
-            int nodes_count = nodes.size();
+            int nodesCount = nodes.size();
 
             /*
              * Assume node is A B C D E. The procedure should be
@@ -165,13 +161,13 @@ public class RoutingGraph {
              *
              */
 
-            String oneway_val = way.get("oneway");   /*   get (oneway=?) tag for this way.   */
-            String junction_val = way.get("junction");   /*   get (junction=?) tag for this way.   */
+            String onewayVal = way.get("oneway");   /*   get (oneway=?) tag for this way.   */
+            String junctionVal = way.get("junction");   /*   get (junction=?) tag for this way.   */
 
             from = nodes.get(0);                   /*   1st node A  */
             graph.addVertex(from);                 /*   add vertex A */
 
-            for (int i = 1; i < nodes_count; i++) { /*   loop from B until E */
+            for (int i = 1; i < nodesCount; i++) { /*   loop from B until E */
 
                 to = nodes.get(i);                   /*   2nd node B   */
 
@@ -184,19 +180,19 @@ public class RoutingGraph {
                         //"Ignore oneways" is selected
                         addEdgeBidirectional(way, from, to);
 
-                    } else if (oneway_val == null && junction_val == "roundabout") {
+                    } else if (onewayVal == null && "roundabout".equals(junctionVal)) {
                         //Case (roundabout): oneway=implicit yes
                         addEdgeNormalOneway(way, from, to);
 
-                    } else if (oneway_val == null || oneway_val == "false" || oneway_val == "no" || oneway_val == "0") {
+                    } else if (onewayVal == null || Arrays.asList("false", "no", "0").contains(onewayVal)) {
                         //Case (bi-way): oneway=false OR oneway=unset OR oneway=0 OR oneway=no
                         addEdgeBidirectional(way, from, to);
 
-                    } else if (oneway_val == "-1") {
+                    } else if ("-1".equals(onewayVal)) {
                         //Case (oneway reverse): oneway=-1
                         addEdgeReverseOneway(way, from, to);
 
-                    } else if (oneway_val == "1" || oneway_val == "yes" || oneway_val == "true") {
+                    } else if (Arrays.asList("1", "yes", "true").contains(onewayVal)) {
                         //Case (oneway normal): oneway=yes OR 1 OR true
                         addEdgeNormalOneway(way, from, to);
 
@@ -208,9 +204,9 @@ public class RoutingGraph {
             } // end of looping thru nodes
         } // end of looping thru ways
 
-        logger.debug("End Create Graph");
-        logger.debug("Vertex: "+graph.vertexSet().size());
-        logger.debug("Edges: "+graph.edgeSet().size());
+        Logging.trace("End Create Graph");
+        Logging.trace("Vertex: {0}", graph.vertexSet().size());
+        Logging.trace("Edges: {0}", graph.edgeSet().size());
     }
 
     /**
@@ -228,9 +224,7 @@ public class RoutingGraph {
         // weight = getWeight(way);
         double weight = getWeight(way, length);
         setWeight(edge, length);
-        logger.debug("edge for way " + way.getId()
-        + "(from node " + from.getId() + " to node "
-        + to.getId() + ") has weight: " + weight);
+        Logging.trace("edge for way {0} (from node {1} to node {2}) has weight: {3}", way.getId(), from.getId(), to.getId(), weight);
         ((DirectedWeightedMultigraph<Node, OsmEdge>) graph).setEdgeWeight(edge, weight);
     }
 
@@ -239,7 +233,7 @@ public class RoutingGraph {
      * and the length of the segment. The higher the value, the less it is used
      * in routing.
      *
-     * @param way
+     * @param osmedge
      *            the way.
      */
     private void setWeight(OsmEdge osmedge, double length) {
@@ -272,7 +266,7 @@ public class RoutingGraph {
             // Each type of way may have a different speed
             if (this.waySpeeds.containsKey(way.get("highway")))
                 speed = this.waySpeeds.get(way.get("highway"));
-            logger.debug("Speed="+speed);
+            Logging.trace("Speed={0}", speed);
             break;
         default:
             break;
@@ -314,30 +308,35 @@ public class RoutingGraph {
         List<OsmEdge> path = new ArrayList<>();
         Graph<Node, OsmEdge> g;
         double totalWeight = 0;
-        RoutingLayer layer = (RoutingLayer) MainApplication.getLayerManager().getActiveLayer();
+        final Layer editLayer = MainApplication.getLayerManager().getEditLayer();
+        final RoutingLayer layer = MainApplication.getLayerManager().getLayersOfType(RoutingLayer.class)
+                .stream().filter(rLayer -> rLayer.getDataLayer() == editLayer).findFirst().orElse(null);
+        if (layer == null) {
+            return Collections.emptyList();
+        }
         RoutingModel routingModel = layer.getRoutingModel();
 
         if (graph == null || routingModel.getOnewayChanged())
             this.createGraph();
-        logger.debug("apply algorithm between nodes ");
+        Logging.trace("apply algorithm between nodes ");
 
         for (Node node : nodes) {
-            logger.debug(node.getId());
+            Logging.trace(Long.toString(node.getId()));
         }
-        logger.debug("-----------------------------------");
+        Logging.trace("-----------------------------------");
 
         // Assign the graph to g
         g = graph;
 
         switch (algorithm) {
         case ROUTING_ALG_DIJKSTRA:
-            logger.debug("Using Dijkstra algorithm");
+            Logging.trace("Using Dijkstra algorithm");
             DijkstraShortestPath<Node, OsmEdge> routingk = null;
             for (int index = 1; index < nodes.size(); ++index) {
                 routingk = new DijkstraShortestPath<>(g, nodes
                         .get(index - 1), nodes.get(index));
                 if (routingk.getPathEdgeList() == null) {
-                    logger.debug("no path found!");
+                    Logging.trace("no path found!");
                     break;
                 }
                 path.addAll(routingk.getPathEdgeList());
@@ -345,23 +344,22 @@ public class RoutingGraph {
             }
             break;
         case ROUTING_ALG_BELLMANFORD:
-            logger.debug("Using Bellman Ford algorithm");
+            Logging.trace("Using Bellman Ford algorithm");
             for (int index = 1; index < nodes.size(); ++index) {
                 path = BellmanFordShortestPath.findPathBetween(rgDelegator, nodes
                         .get(index - 1), nodes.get(index));
-                if (path == null) {
-                    logger.debug("no path found!");
-                    return null;
+                if (path == null || path.isEmpty()) {
+                    Logging.trace("no path found!");
+                    return Collections.emptyList();
                 }
             }
             break;
         default:
-            logger.debug("Wrong algorithm");
+            Logging.trace("Wrong algorithm");
             break;
         }
 
-        logger.debug("shortest path found: " + path + "\nweight: "
-                + totalWeight);
+        Logging.trace("shortest path found: {0}\nweight: {1}", path, totalWeight);
         return path;
     }
 
@@ -388,9 +386,9 @@ public class RoutingGraph {
     /**
      * @param routeType the routeType to set
      */
-    public void setTypeRoute(RouteType routetype) {
-        this.routeType = routetype;
-        this.rgDelegator.setRouteType(routetype);
+    public void setTypeRoute(RouteType routeType) {
+        this.routeType = routeType;
+        this.rgDelegator.setRouteType(routeType);
     }
 
     /**

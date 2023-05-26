@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.MouseEvent;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -14,6 +13,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.innovant.josm.plugin.routing.RoutingLayer;
 import com.innovant.josm.plugin.routing.RoutingPlugin;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Accounts for the selection or unselection of the routing tool in the tool bar,
@@ -23,15 +23,8 @@ import com.innovant.josm.plugin.routing.RoutingPlugin;
  *
  */
 public class AddRouteNodeAction extends MapMode {
-
-    /**
-     * Logger.
-     */
-    static Logger logger = Logger.getLogger(AddRouteNodeAction.class);
-
     /**
      * Constructor
-     * @param mapFrame map frame
      */
     public AddRouteNodeAction() {
         // TODO Use constructor with shortcut
@@ -59,10 +52,10 @@ public class AddRouteNodeAction extends MapMode {
                 RoutingLayer layer = (RoutingLayer) MainApplication.getLayerManager().getActiveLayer();
                 node = layer.getNearestHighwayNode(e.getPoint());
                 if (node == null) {
-                    logger.debug("no selected node");
+                    Logging.trace("no selected node");
                     return;
                 }
-                logger.debug("selected node " + node);
+                Logging.trace("selected node {0}", node);
                 layer.getRoutingModel().addNode(node);
                 RoutingPlugin.getInstance().getRoutingDialog().addNode(node);
             }

@@ -4,9 +4,8 @@ package com.innovant.josm.jrt.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.Preferences;
-
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class holds information about a routing profile.
@@ -29,10 +28,6 @@ import org.openstreetmap.josm.data.Preferences;
  *
  */
 public class RoutingProfile {
-    /**
-     * logger
-     */
-    static Logger logger = Logger.getLogger(RoutingProfile.class);
     /**
      * True if oneway is used for routing (i.e. for cars).
      */
@@ -73,17 +68,17 @@ public class RoutingProfile {
      * understand (like "pedestrian", "motorbike", "bicycle", etc.)
      */
     public RoutingProfile(String name) {
-        logger.debug("Init RoutingProfile with name: "+name);
+        Logging.trace("Init RoutingProfile with name: {0}", name);
         this.name = name;
         waySpeeds = new HashMap<>();
         Map<String, String> prefs = Preferences.main().getAllPrefix("routing.profile."+name+".speed");
-        for (String key:prefs.keySet()) {
-            waySpeeds.put((key.split("\\.")[4]), Double.valueOf(prefs.get(key)));
+        for (Map.Entry<String, String> entry : prefs.entrySet()) {
+            waySpeeds.put((entry.getKey().split("\\.")[4]), Double.valueOf(entry.getValue()));
         }
-        for (String key:waySpeeds.keySet()) {
-            logger.debug(key+ "-- speed: "+waySpeeds.get(key));
+        for (Map.Entry<String, Double> entry : waySpeeds.entrySet()) {
+            Logging.trace("{0}-- speed: {1}", entry.getKey(), entry.getValue());
         }
-        logger.debug("End init RoutingProfile with name: "+name);
+        Logging.trace("End init RoutingProfile with name: {0}", name);
     }
 
     public void setName(String name) {

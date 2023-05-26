@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Map;
@@ -25,21 +23,16 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.log4j.Logger;
+import com.innovant.josm.jrt.osm.OsmWayTypes;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
-
-import com.innovant.josm.jrt.osm.OsmWayTypes;
+import org.openstreetmap.josm.tools.Logging;
 
 public class RoutingPreferenceDialog extends DefaultTabPreferenceSetting {
 
-    /**
-     * Logger
-     */
-    static Logger logger = Logger.getLogger(RoutingPreferenceDialog.class);
 
     private Map<String, String> orig;
     private DefaultTableModel model;
@@ -80,62 +73,51 @@ public class RoutingPreferenceDialog extends DefaultTabPreferenceSetting {
         JButton add = new JButton(tr("Add"));
         p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
         p.add(add, GBC.std().insets(0, 5, 0, 0));
-        add.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPanel p = new JPanel(new GridBagLayout());
-                p.add(new JLabel(tr("Weight")), GBC.std().insets(0, 0, 5, 0));
-                JComboBox<String> key = new JComboBox<>();
-                for (OsmWayTypes pk : OsmWayTypes.values()) {
-                    key.addItem(pk.getTag());
-                }
-                JTextField value = new JTextField(10);
-                p.add(key, GBC.eop().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
-                p.add(new JLabel(tr("Value")), GBC.std().insets(0, 0, 5, 0));
-                p.add(value, GBC.eol().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
-                int answer = JOptionPane.showConfirmDialog(gui, p,
-                        tr("Enter weight values"),
-                        JOptionPane.OK_CANCEL_OPTION);
-                if (answer == JOptionPane.OK_OPTION) {
-                    model
-                    .addRow(new String[] {
-                            key.getSelectedItem().toString(),
-                            value.getText() });
-                }
+        add.addActionListener(e -> {
+            JPanel p1 = new JPanel(new GridBagLayout());
+            p1.add(new JLabel(tr("Weight")), GBC.std().insets(0, 0, 5, 0));
+            JComboBox<String> key = new JComboBox<>();
+            for (OsmWayTypes pk : OsmWayTypes.values()) {
+                key.addItem(pk.getTag());
+            }
+            JTextField value = new JTextField(10);
+            p1.add(key, GBC.eop().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
+            p1.add(new JLabel(tr("Value")), GBC.std().insets(0, 0, 5, 0));
+            p1.add(value, GBC.eol().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
+            int answer = JOptionPane.showConfirmDialog(gui, p1,
+                    tr("Enter weight values"),
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (answer == JOptionPane.OK_OPTION) {
+                model
+                .addRow(new String[] {
+                        key.getSelectedItem().toString(),
+                        value.getText() });
             }
         });
 
         JButton delete = new JButton(tr("Delete"));
         p.add(delete, GBC.std().insets(0, 5, 0, 0));
-        delete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (list.getSelectedRow() == -1)
-                    JOptionPane.showMessageDialog(gui,
-                            tr("Please select the row to delete."));
-                else {
-                    Integer i;
-                    while ((i = list.getSelectedRow()) != -1) {
-                        model.removeRow(i);
-                    }
+        delete.addActionListener(e -> {
+            if (list.getSelectedRow() == -1)
+                JOptionPane.showMessageDialog(gui,
+                        tr("Please select the row to delete."));
+            else {
+                int i;
+                while ((i = list.getSelectedRow()) != -1) {
+                    model.removeRow(i);
                 }
             }
         });
 
         JButton edit = new JButton(tr("Edit"));
         p.add(edit, GBC.std().insets(5, 5, 5, 0));
-        edit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                edit(gui, list);
-            }
-        });
+        edit.addActionListener(e -> edit(gui, list));
 
-        JTabbedPane Opciones = new JTabbedPane();
-        Opciones.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        JTabbedPane options = new JTabbedPane();
+        options.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 
-        Opciones.addTab("Profile", null, p, null);
-        //      Opciones.addTab("Preferences", new JPanel());
+        options.addTab("Profile", null, p, null);
+        //      options.addTab("Preferences", new JPanel());
 
         list.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
@@ -144,7 +126,7 @@ public class RoutingPreferenceDialog extends DefaultTabPreferenceSetting {
             }
         });
 
-        principal.add(Opciones, GBC.eol().fill(GBC.BOTH));
+        principal.add(options, GBC.eol().fill(GBC.BOTH));
 
     }
 
@@ -183,21 +165,21 @@ public class RoutingPreferenceDialog extends DefaultTabPreferenceSetting {
         // Read dialog values from preferences
         readPreferences();
         // Put these values in the model
-        for (String tag : orig.keySet()) {
-            model.addRow(new String[] {tag, orig.get(tag)});
+        for (Map.Entry<String, String> entry : orig.entrySet()) {
+            model.addRow(new String[] {entry.getKey(), entry.getValue()});
         }
     }
 
     private void readPreferences() {
         orig = Preferences.main().getAllPrefix("routing.profile.default.speed");
         if (orig.size() == 0) { // defaults
-            logger.debug("Loading Default Preferences.");
+            Logging.trace("Loading Default Preferences.");
             for (OsmWayTypes owt : OsmWayTypes.values()) {
                 Config.getPref().putInt("routing.profile.default.speed."
                         + owt.getTag(), owt.getSpeed());
             }
             orig = Preferences.main().getAllPrefix("routing.profile.default.speed");
-        } else logger.debug("Default preferences already exist.");
+        } else Logging.trace("Default preferences already exist.");
     }
     /*
     private String getKeyTag(String tag) {

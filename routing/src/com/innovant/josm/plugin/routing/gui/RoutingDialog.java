@@ -18,7 +18,6 @@ import org.openstreetmap.josm.tools.Shortcut;
 import com.innovant.josm.plugin.routing.RoutingLayer;
 import com.innovant.josm.plugin.routing.RoutingModel;
 
-
 /**
  * @author jose
  *

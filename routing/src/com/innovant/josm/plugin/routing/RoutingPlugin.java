@@ -3,11 +3,14 @@ package com.innovant.josm.plugin.routing;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
+import com.innovant.josm.plugin.routing.actions.AddRouteNodeAction;
+import com.innovant.josm.plugin.routing.actions.MoveRouteNodeAction;
+import com.innovant.josm.plugin.routing.actions.RemoveRouteNodeAction;
+import com.innovant.josm.plugin.routing.gui.RoutingDialog;
+import com.innovant.josm.plugin.routing.gui.RoutingMenu;
+import com.innovant.josm.plugin.routing.gui.RoutingPreferenceDialog;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
@@ -26,13 +29,6 @@ import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.innovant.josm.plugin.routing.actions.AddRouteNodeAction;
-import com.innovant.josm.plugin.routing.actions.MoveRouteNodeAction;
-import com.innovant.josm.plugin.routing.actions.RemoveRouteNodeAction;
-import com.innovant.josm.plugin.routing.gui.RoutingDialog;
-import com.innovant.josm.plugin.routing.gui.RoutingMenu;
-import com.innovant.josm.plugin.routing.gui.RoutingPreferenceDialog;
-
 /**
  * The main class of the routing plugin
  * @author juangui
@@ -42,10 +38,6 @@ import com.innovant.josm.plugin.routing.gui.RoutingPreferenceDialog;
  * @version 0.3
  */
 public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSetListenerAdapter.Listener {
-    /**
-     * Logger
-     */
-    static Logger logger = Logger.getLogger(RoutingPlugin.class);
 
     /**
      * The list of routing layers
@@ -115,13 +107,7 @@ public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSe
 
         datasetAdapter = new DataSetListenerAdapter(this);
         plugin = this; // Assign reference to the plugin class
-        File log4jConfigFile = new java.io.File("log4j.xml");
-        if (log4jConfigFile.exists()) {
-            DOMConfigurator.configure(log4jConfigFile.getPath());
-        } else {
-            System.err.println("Routing plugin warning: log4j configuration not found");
-        }
-        logger.debug("Loading routing plugin...");
+        Logging.trace("Loading routing plugin...");
         preferenceSettings = new RoutingPreferenceDialog();
         // Initialize layers list
         layers = new ArrayList<>();
@@ -130,7 +116,7 @@ public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSe
         // Register this class as LayerChangeListener
         MainApplication.getLayerManager().addLayerChangeListener(this);
         DatasetEventManager.getInstance().addDatasetListener(datasetAdapter, FireMode.IN_EDT_CONSOLIDATED);
-        logger.debug("Finished loading plugin");
+        Logging.trace("Finished loading plugin");
     }
 
     /**
@@ -177,7 +163,8 @@ public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSe
             newFrame.addMapMode(moveRouteNodeButton);
             // Enable menu
             menu.enableStartItem();
-            newFrame.addToggleDialog(routingDialog = new RoutingDialog());
+            routingDialog = new RoutingDialog();
+            newFrame.addToggleDialog(routingDialog);
         } else {
             addRouteNodeAction = null;
             removeRouteNodeAction = null;
@@ -217,7 +204,7 @@ public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSe
             menu.enableRestOfItems();
             // Set layer on top and select layer, also refresh toggleDialog to reflect selection
             MainApplication.getMap().mapView.moveLayer(newLayer, 0);
-            logger.debug("Added routing layer.");
+            Logging.trace("Added routing layer.");
         }
     }
 
@@ -231,17 +218,17 @@ public class RoutingPlugin extends Plugin implements LayerChangeListener, DataSe
             moveRouteNodeButton.setVisible(false);
             menu.disableRestOfItems();
             layers.remove(oldLayer);
-            logger.debug("Removed routing layer.");
+            Logging.trace("Removed routing layer.");
         } else if (oldLayer instanceof OsmDataLayer) {
             // Remove all associated routing layers
             // Convert to Array to prevent ConcurrentModificationException when removing layers from ArrayList
             // FIXME: can't remove associated routing layers without triggering exceptions in some cases
             RoutingLayer[] layersArray = layers.toArray(new RoutingLayer[0]);
-            for (int i = 0; i < layersArray.length; i++) {
-                if (layersArray[i].getDataLayer().equals(oldLayer)) {
+            for (RoutingLayer routingLayer : layersArray) {
+                if (routingLayer.getDataLayer().equals(oldLayer)) {
                     try {
                         // Remove layer
-                        MainApplication.getLayerManager().removeLayer(layersArray[i]);
+                        MainApplication.getLayerManager().removeLayer(routingLayer);
                     } catch (IllegalArgumentException e) {
                         Logging.error(e);
                     }

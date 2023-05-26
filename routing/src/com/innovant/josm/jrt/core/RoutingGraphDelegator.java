@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package com.innovant.josm.jrt.core;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.GraphDelegator;
 import org.openstreetmap.josm.data.osm.Node;
@@ -14,12 +13,6 @@ import com.innovant.josm.jrt.osm.OsmEdge;
  *
  */
 public class RoutingGraphDelegator extends GraphDelegator<Node, OsmEdge> {
-
-    /**
-     * Logger.
-     */
-    static Logger logger = Logger.getLogger(RoutingGraphDelegator.class);
-
     /**
      *
      */

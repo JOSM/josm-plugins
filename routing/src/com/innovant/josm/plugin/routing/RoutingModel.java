@@ -4,14 +4,13 @@ package com.innovant.josm.plugin.routing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 
 import com.innovant.josm.jrt.core.RoutingGraph;
 import com.innovant.josm.jrt.core.RoutingGraph.Algorithm;
 import com.innovant.josm.jrt.osm.OsmEdge;
-
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class holds all the routing data and operations
@@ -20,40 +19,35 @@ import com.innovant.josm.jrt.osm.OsmEdge;
  *
  */
 public class RoutingModel {
-
-    /**
-     * Logger
-     */
-    static Logger logger = Logger.getLogger(RoutingModel.class);
-
     /**
      * Graph to calculate route
      */
-    public RoutingGraph routingGraph = null;
+    public final RoutingGraph routingGraph;
 
     /**
      * List of nodes that the route has to traverse
      */
-    private List<Node> nodes = null;
+    private List<Node> nodes;
 
-    private List<OsmEdge> path = null;
+    private List<OsmEdge> path;
 
     /**
      * Flag to advise about changes in the selected nodes.
      */
-    private boolean changeNodes = false;
+    private boolean changeNodes;
 
     /**
      * Flag to advise about changes in ways.
      */
-    private boolean changeOneway = false;
+    private boolean changeOneway;
 
     /**
      * Default Constructor.
+     * @param data The data to use for the routing graph
      */
     public RoutingModel(DataSet data) {
         nodes = new ArrayList<>();
-        System.out.println("gr " + data);
+        Logging.trace("gr " + data);
         routingGraph = new RoutingGraph(data);
     }
 

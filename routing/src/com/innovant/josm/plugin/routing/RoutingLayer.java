@@ -19,7 +19,6 @@ import java.util.Set;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
@@ -38,7 +37,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.innovant.josm.jrt.osm.OsmEdge;
-
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A JOSM layer that encapsulates the representation of the shortest path.
@@ -53,7 +52,7 @@ public class RoutingLayer extends Layer {
         KEY_ROUTE_WIDTH("routing.route.width"),
         KEY_ROUTE_SELECT("routing.route.select");
 
-        public final String key;
+        private final String key;
         PreferencesKeys(String key) {
             this.key = key;
         }
@@ -64,11 +63,6 @@ public class RoutingLayer extends Layer {
     }
 
     /**
-     * Logger
-     */
-    static Logger logger = Logger.getLogger(RoutingLayer.class);
-
-    /**
      * Constant
      */
     private static final double ARROW_PHI = Math.toRadians(20);
@@ -76,32 +70,34 @@ public class RoutingLayer extends Layer {
     /**
      * Routing Model
      */
-    private RoutingModel routingModel;
+    private final RoutingModel routingModel;
 
     /**
      * Start, Middle and End icons
      */
-    private Icon startIcon, middleIcon, endIcon;
+    private final Icon startIcon;
+    private final Icon middleIcon;
+    private final Icon endIcon;
 
     /**
      * Associated OSM layer
      */
-    private OsmDataLayer dataLayer;
+    private final OsmDataLayer dataLayer;
 
     /**
      * Default constructor
      * @param name Layer name.
+     * @param dataLayer The datalayer to use for routing
      */
     public RoutingLayer(String name, OsmDataLayer dataLayer) {
         super(name);
-        logger.debug("Creating Routing Layer...");
-        if (startIcon == null) startIcon = ImageProvider.get("routing", "startflag");
-        if (middleIcon == null) middleIcon = ImageProvider.get("routing", "middleflag");
-        if (endIcon == null) endIcon = ImageProvider.get("routing", "endflag");
+        Logging.trace("Creating Routing Layer...");
+        this.startIcon = ImageProvider.get("routing", "startflag");
+        this.middleIcon = ImageProvider.get("routing", "middleflag");
+        this.endIcon = ImageProvider.get("routing", "endflag");
         this.dataLayer = dataLayer;
         this.routingModel = new RoutingModel(dataLayer.data);
-        logger.debug("Routing Layer created.");
-
+        Logging.trace("Routing Layer created.");
 
         this.routingModel.routingGraph.createGraph();    /* construct the graph right after we we create the layer */
         invalidate();                            /* update MapView */
@@ -137,13 +133,11 @@ public class RoutingLayer extends Layer {
             for (Node n : w.getNodes()) {
                 if (n.isDeleted() || n.isIncomplete()) continue;
 
-                Point P = MainApplication.getMap().mapView.getPoint(n);
-                double dist = p.distance(P);
-                if (dist < snapDistance) {
-                    if ((nearest == null) || (dist < minDist)) {
-                        nearest = n;
-                        minDist = dist;
-                    }
+                Point point = MainApplication.getMap().mapView.getPoint(n);
+                double dist = p.distance(point);
+                if (dist < snapDistance && ((nearest == null) || (dist < minDist))) {
+                    nearest = n;
+                    minDist = dist;
                 }
             }
         }
@@ -152,19 +146,17 @@ public class RoutingLayer extends Layer {
 
     @Override
     public Icon getIcon() {
-        Icon icon = ImageProvider.get("layer", "routing_small");
-        return icon;
+        return ImageProvider.get("layer", "routing_small");
     }
 
     @Override
     public Object getInfoComponent() {
-        String info = "<html>"
+        return "<html>"
                 + "<body>"
                 +"Graph Vertex: "+this.routingModel.routingGraph.getVertexCount()+"<br/>"
                 +"Graph Edges: "+this.routingModel.routingGraph.getEdgeCount()+"<br/>"
                 + "</body>"
                 + "</html>";
-        return info;
     }
 
     @Override
@@ -182,9 +174,8 @@ public class RoutingLayer extends Layer {
 
     @Override
     public String getToolTipText() {
-        String tooltip = this.routingModel.routingGraph.getVertexCount() + " vertices, "
+        return this.routingModel.routingGraph.getVertexCount() + " vertices, "
                 + this.routingModel.routingGraph.getEdgeCount() + " edges";
-        return tooltip;
     }
 
     @Override
@@ -207,13 +198,13 @@ public class RoutingLayer extends Layer {
         // Color is different for active and inactive layers
         Color color;
         if (isActiveLayer) {
-            color = new NamedColorProperty(PreferencesKeys.KEY_ACTIVE_ROUTE_COLOR.key, Color.RED).get();
+            color = new NamedColorProperty(PreferencesKeys.KEY_ACTIVE_ROUTE_COLOR.getKey(), Color.RED).get();
         } else {
-            color = new NamedColorProperty(PreferencesKeys.KEY_INACTIVE_ROUTE_COLOR.key, Color.decode("#dd2222")).get();
+            color = new NamedColorProperty(PreferencesKeys.KEY_INACTIVE_ROUTE_COLOR.getKey(), Color.decode("#dd2222")).get();
         }
 
         // Get path stroke width from preferences
-        String widthString = Config.getPref().get(PreferencesKeys.KEY_ROUTE_WIDTH.key);
+        String widthString = Config.getPref().get(PreferencesKeys.KEY_ROUTE_WIDTH.getKey());
         if (widthString.length() == 0) {
             widthString = "2";                        /* I think 2 is better  */
             // FIXME add after good width is found: Config.getPref().put(KEY_ROUTE_WIDTH, widthString);
@@ -222,25 +213,21 @@ public class RoutingLayer extends Layer {
 
 
         // draw our graph
-        if (isActiveLayer) {
-            if (routingModel != null) {
-                if (routingModel.routingGraph != null && routingModel.routingGraph.getGraph() != null) {
-                    Set<OsmEdge> graphEdges = routingModel.routingGraph.getGraph().edgeSet();
-                    if (!graphEdges.isEmpty()) {
-                        Color color2 = ColorHelper.html2color("#00ff00");        /* just green for now  */
-                        OsmEdge firstedge = (OsmEdge) graphEdges.toArray()[0];
-                        Point from = mv.getPoint(firstedge.fromEastNorth());
-                        g.drawRect(from.x-4, from.y+4, from.x+4, from.y-4);
-                        for (OsmEdge edge : graphEdges) {
-                            drawGraph(g, mv, edge, color2, width);
-                        }
-                    }
+        if (isActiveLayer && routingModel.routingGraph != null && routingModel.routingGraph.getGraph() != null) {
+            Set<OsmEdge> graphEdges = routingModel.routingGraph.getGraph().edgeSet();
+            if (!graphEdges.isEmpty()) {
+                Color color2 = ColorHelper.html2color("#00ff00");        /* just green for now  */
+                OsmEdge firstedge = (OsmEdge) graphEdges.toArray()[0];
+                Point from = mv.getPoint(firstedge.fromEastNorth());
+                g.drawRect(from.x - 4, from.y + 4, from.x + 4, from.y - 4);
+                for (OsmEdge edge : graphEdges) {
+                    drawGraph(g, mv, edge, color2, width);
                 }
             }
         }
 
 
-        if (nodes == null || nodes.size() == 0) return;
+        if (nodes == null || nodes.isEmpty()) return;
 
         // Paint routing path
         List<OsmEdge> routeEdges = routingModel.getRouteEdges();
@@ -288,7 +275,7 @@ public class RoutingLayer extends Layer {
     /**
      * Draw a line with the given color.
      */
-    private void drawEdge(Graphics g, MapView mv, OsmEdge edge, Color col, int width,
+    private static void drawEdge(Graphics g, MapView mv, OsmEdge edge, Color col, int width,
             boolean showDirection) {
         g.setColor(col);
         Point from;
@@ -309,7 +296,7 @@ public class RoutingLayer extends Layer {
         g2d.setStroke(oldStroke);
     }
 
-    private void drawGraph(Graphics g, MapView mv, OsmEdge edge, Color col, int width) {
+    private static void drawGraph(Graphics g, MapView mv, OsmEdge edge, Color col, int width) {
         g.setColor(col);
         Point from;
         Point to;
