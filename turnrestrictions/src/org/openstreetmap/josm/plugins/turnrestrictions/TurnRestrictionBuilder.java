@@ -175,7 +175,7 @@ public class TurnRestrictionBuilder {
      * <p>Here's a typical configuration:</p>
      * <pre>
      *          to1             to2
-     *      -------------> o -------------->
+     *      -------------&gt; o --------------&lt;
      *                     ^
      *                     | from
      *                     |
@@ -346,9 +346,9 @@ public class TurnRestrictionBuilder {
      */
     public static boolean isConnectingNode(Way w1, Way w2, Node n) {
         if (isStartNode(w1, n)) {
-            return isStartNode(w2, n) | isEndNode(w2, n);
+            return isStartNode(w2, n) || isEndNode(w2, n);
         } else if (isEndNode(w1, n)) {
-            return isStartNode(w2, n) | isEndNode(w2, n);
+            return isStartNode(w2, n) || isEndNode(w2, n);
         }
         return false;
     }
