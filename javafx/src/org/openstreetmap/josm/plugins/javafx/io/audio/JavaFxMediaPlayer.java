@@ -39,10 +39,15 @@ public class JavaFxMediaPlayer implements SoundPlayer {
 
     private MediaPlayer mediaPlayer;
 
-    JavaFxMediaPlayer() {
+    /**
+     * Create a new {@link JavaFxMediaPlayer}.
+     * This must be public in order for the object creation through reflection to succeed.
+     */
+    public JavaFxMediaPlayer() {
         try {
             initFxPlatform();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new JosmRuntimeException(e);
         }
     }
