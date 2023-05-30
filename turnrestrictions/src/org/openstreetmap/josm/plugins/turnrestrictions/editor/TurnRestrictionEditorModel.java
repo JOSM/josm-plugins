@@ -273,9 +273,9 @@ public class TurnRestrictionEditorModel extends Observable implements DataSetLis
      *
      * <p>If {@code vias} is null, all vias are removed. All primitives
      * in {@code vias} must be assigned to a dataset and the dataset
-     * must be equal to the dataset of this editor model, see {@link #getDataSet()}</p>
+     * must be equal to the dataset of this editor model, see {@link OsmPrimitive#getDataSet()}</p>
      *
-     * <p>null values in {@link vias} are skipped.</p>
+     * <p>null values in {@code vias} are skipped.</p>
      *
      * @param vias the list of vias
      * @throws IllegalArgumentException thrown if one of the via objects belongs to the wrong dataset

@@ -70,9 +70,7 @@ public class TurnRestrictionEditorManager extends WindowAdapter implements Layer
         public boolean equals(Object obj) {
             if (this == obj)
                 return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
+            if (!(obj instanceof DialogContext))
                 return false;
             DialogContext other = (DialogContext) obj;
             if (layer == null) {
@@ -174,12 +172,12 @@ public class TurnRestrictionEditorManager extends WindowAdapter implements Layer
      * Replies the editor for the turn restriction managed by layer. Null, if no such editor
      * is currently open. Returns null, if relation is null.
      *
+     * See also {@link #isOpenInEditor(OsmDataLayer, Relation)}
+     *
      * @param layer the layer
      * @param relation the relation
      * @return the editor for the turn restriction managed by layer. Null, if no such editor
      * is currently open.
-     *
-     * @link #isOpenInEditor(OsmDataLayer, Relation)
      */
     public TurnRestrictionEditor getEditorForRelation(OsmDataLayer layer, Relation relation) {
         if (relation == null) return null;

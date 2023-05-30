@@ -129,7 +129,7 @@ public class ExceptValueModel {
      * Replies true if {@code vehicleType} is currently set as exception in this
      * model.
      *
-     * @param vehicleType one of the standard vehicle types from {@see #STANDARD_VEHICLE_EXCEPTION_VALUES}
+     * @param vehicleType one of the standard vehicle types from {@link #STANDARD_VEHICLE_EXCEPTION_VALUES}
      * @return true if {@code vehicleType} is currently set as exception in this
      * model.
      * @exception IllegalArgumentException thrown if {@code vehicleType} isn't a standard vehicle type
@@ -146,7 +146,7 @@ public class ExceptValueModel {
     /**
      * Sets the {@code vehicleType} as exception in this turn restriction.
      *
-     * @param vehicleType one of the standard vehicle types from {@see #STANDARD_VEHICLE_EXCEPTION_VALUES}
+     * @param vehicleType one of the standard vehicle types from {@link #STANDARD_VEHICLE_EXCEPTION_VALUES}
      * @exception IllegalArgumentException thrown if {@code vehicleType} isn't a standard vehicle type
      */
     public void setVehicleException(String vehicleType) throws IllegalArgumentException {
@@ -161,7 +161,7 @@ public class ExceptValueModel {
      * Sets or removes the {@code vehicleType} as exception in this turn restriction, depending
      * on whether {@code setOrRemove} is true or false, respectively.
      *
-     * @param vehicleType one of the standard vehicle types from {@see #STANDARD_VEHICLE_EXCEPTION_VALUES}
+     * @param vehicleType one of the standard vehicle types from {@link #STANDARD_VEHICLE_EXCEPTION_VALUES}
      * @param setOrRemove if true, the exception is set; otherwise, it is removed
      * @exception IllegalArgumentException thrown if {@code vehicleType} isn't a standard vehicle type
      */
@@ -176,7 +176,7 @@ public class ExceptValueModel {
     /**
      * Removes the {@code vehicleType} as exception in this turn restriction
      *
-     * @param vehicleType one of the standard vehicle types from {@see #STANDARD_VEHICLE_EXCEPTION_VALUES}
+     * @param vehicleType one of the standard vehicle types from {@link #STANDARD_VEHICLE_EXCEPTION_VALUES}
      * @exception IllegalArgumentException thrown if {@code vehicleType} isn't a standard vehicle type
      */
     public void removeVehicleException(String vehicleType) throws IllegalArgumentException {
@@ -198,9 +198,7 @@ public class ExceptValueModel {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ExceptValueModel))
             return false;
         ExceptValueModel other = (ExceptValueModel) obj;
         return getValue().equals(other.getValue());

@@ -12,9 +12,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * An issue represents a data integrity violation in a turn restriction.
  *
- * The issue has a {@see Severity}. It is described to the user with a HTML formatted
- * text (see {@see #getText()}) and it suggests a list of possible actions to fix
- * the issue (see {@see #getActions()}).
+ * The issue has a {@link Severity}. It is described to the user with a HTML formatted
+ * text (see {@link #getText()}) and it suggests a list of possible actions to fix
+ * the issue (see {@link #getActions()}).
  *
  */
 public abstract class Issue {
@@ -25,7 +25,7 @@ public abstract class Issue {
 
     /**
      * Creates a new issue associated with a parent model. Severity is
-     * initialized to {@see Severity#WARNING}.
+     * initialized to {@link Severity#WARNING}.
      *
      * @param parent the parent model. Must not be null.
      * @throws IllegalArgumentException thrown if parent is null

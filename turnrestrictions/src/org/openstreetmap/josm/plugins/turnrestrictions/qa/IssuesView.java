@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * IssuesView provides a view on a {@see IssuesModel}.
+ * IssuesView provides a view on a {@link IssuesModel}.
  */
 public class IssuesView extends VerticallyScrollablePanel implements Observer {
     //private static final Logger logger = Logger.getLogger(IssuesView.class.getName());

@@ -39,7 +39,6 @@ public class TurnRestrictionLegSplitRequiredError extends Issue {
      * @param parent the parent model
      * @param from the way with role "from"
      * @param to the way with role "to"
-     * @param intersect the intersection node
      */
     public TurnRestrictionLegSplitRequiredError(IssuesModel parent, Way from, Way to) {
         super(parent, Severity.ERROR);

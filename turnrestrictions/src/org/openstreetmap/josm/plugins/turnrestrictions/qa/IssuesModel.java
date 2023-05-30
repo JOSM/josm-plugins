@@ -83,8 +83,6 @@ public class IssuesModel extends Observable implements Observer {
      * Populates this model with issues derived from the state of the
      * turn restriction editor model. If {@code editorModel} is null, the
      * list of issues is cleared.
-     *
-     * @param editorModel the editor model.
      */
     public void populate() {
         issues.clear();

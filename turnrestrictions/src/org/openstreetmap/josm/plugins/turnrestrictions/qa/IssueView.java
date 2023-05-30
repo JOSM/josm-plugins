@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * An IssueView is a view on an individual {@see Issue}.
+ * An IssueView is a view on an individual {@link Issue}.
  */
 public class IssueView extends JPanel {
 
@@ -34,7 +34,7 @@ public class IssueView extends JPanel {
      /**
      * Builds the style sheet used in the internal help browser
      *
-     * @return the style sheet
+     * @param view the {@code HtmlPanel} where the {@link StyleSheet} should be adapted
      */
     protected void initStyleSheet(HtmlPanel view) {
         StyleSheet ss = ((HTMLEditorKit) view.getEditorPane().getEditorKit()).getStyleSheet();

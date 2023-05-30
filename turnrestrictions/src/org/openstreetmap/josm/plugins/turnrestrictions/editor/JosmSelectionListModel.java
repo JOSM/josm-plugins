@@ -45,7 +45,6 @@ public class JosmSelectionListModel extends AbstractListModel<OsmPrimitive>
     /**
      * Constructor
      *
-     * @param selectionModel the selection model used in the list. Must not be null.
      * @param layer the layer this model is displaying the selection from. Must not be null.
      * @throws IllegalArgumentException thrown if {@code layer} is null
      */

@@ -95,9 +95,7 @@ public class RelationMemberModel implements Serializable {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof RelationMemberModel))
             return false;
         RelationMemberModel other = (RelationMemberModel) obj;
         if (role == null) {

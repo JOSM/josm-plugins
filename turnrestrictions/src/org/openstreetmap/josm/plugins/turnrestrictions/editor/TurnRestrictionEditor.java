@@ -60,16 +60,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class TurnRestrictionEditor extends JDialog implements NavigationControler {
 
-    /** the property name for the current turn restriction
-     * @link #setRelation(Relation)
-     * @link #getRelation()
+    /** The property name for the current turn restriction, see {@link #setTurnRestriction(Relation)} and
+     * {@link #getTurnRestriction()}
      */
-    public static final String TURN_RESTRICION_PROP = RelationEditor.class.getName() + ".turnRestriction";
+    public static final String TURN_RESTRICTION_PROP = RelationEditor.class.getName() + ".turnRestriction";
 
-    /** the property name for the current relation snapshot
-     * @link #getRelationSnapshot()
+    /** the property name for the current relation snapshot, see {@link #getTurnRestrictionSnapshot()}
      */
-    public static final String TURN_RESTRICION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".turnRestrictionSnapshot";
+    public static final String TURN_RESTRICTION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".turnRestrictionSnapshot";
 
     /**
      * The turn restriction this editor is working on
@@ -191,7 +189,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
     }
 
     /**
-     * builds the UI
+     * Builds the UI
      */
     protected void build() {
         editorModel = new TurnRestrictionEditorModel(getLayer(), this);
@@ -264,7 +262,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
         }
         setTurnRestrictionSnapshot(turnRestriction == null ? null : new Relation(turnRestriction));
         this.turnRestriction = turnRestriction;
-        support.firePropertyChange(TURN_RESTRICION_PROP, null, this.turnRestriction);
+        support.firePropertyChange(TURN_RESTRICTION_PROP, null, this.turnRestriction);
         updateTitle();
     }
 
@@ -308,7 +306,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
      */
     protected void setTurnRestrictionSnapshot(Relation snapshot) {
         turnRestrictionSnapshot = snapshot;
-        support.firePropertyChange(TURN_RESTRICION_SNAPSHOT_PROP, null, turnRestrictionSnapshot);
+        support.firePropertyChange(TURN_RESTRICTION_SNAPSHOT_PROP, null, turnRestrictionSnapshot);
     }
 
     /**
@@ -778,7 +776,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(TURN_RESTRICION_PROP)) {
+            if (evt.getPropertyName().equals(TURN_RESTRICTION_PROP)) {
                 updateEnabledState();
             }
         }
@@ -806,7 +804,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(TURN_RESTRICION_PROP)) {
+            if (evt.getPropertyName().equals(TURN_RESTRICTION_PROP)) {
                 updateEnabledState();
             }
         }
@@ -838,7 +836,7 @@ public class TurnRestrictionEditor extends JDialog implements NavigationControle
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals(TURN_RESTRICION_PROP)) {
+            if (evt.getPropertyName().equals(TURN_RESTRICTION_PROP)) {
                 updateEnabledState();
             }
         }

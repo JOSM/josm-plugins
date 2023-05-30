@@ -208,7 +208,7 @@ public class TurnRestrictionsListModel extends AbstractListModel<Relation> {
     /**
      * Sets the selected turn restrictions
      *
-     * @return sel the list of selected turn restrictions
+     * @param sel the list of selected turn restrictions
      */
     public void setSelectedTurnRestrictions(List<Relation> sel) {
         selectionModel.clearSelection();
@@ -226,6 +226,7 @@ public class TurnRestrictionsListModel extends AbstractListModel<Relation> {
     /**
      * Returns the index of a turn restriction
      *
+     * @param tr Turn restriction relation to check
      * @return index of relation (-1, if not found)
      */
     public int getTurnRestrictionIndex(Relation tr) {

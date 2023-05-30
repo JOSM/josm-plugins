@@ -184,10 +184,10 @@ public class TurnRestrictionSelectionPopupPanel extends JPanel {
      * @param editCandidates a collection of turn restrictions as edit candidates. May be null.
      * @throws IllegalArgumentException thrown if {@code layer} is null
      */
-    public TurnRestrictionSelectionPopupPanel(OsmDataLayer layer, Collection<Relation> editCandiates) {
+    public TurnRestrictionSelectionPopupPanel(OsmDataLayer layer, Collection<Relation> editCandidates) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
-        build(editCandiates);
+        build(editCandidates);
     }
 
     /**

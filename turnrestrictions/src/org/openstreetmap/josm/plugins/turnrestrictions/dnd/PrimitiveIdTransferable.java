@@ -29,7 +29,7 @@ public class PrimitiveIdTransferable implements Transferable {
      *
      * See also {@link #getPrimitiveIds()} and {@link #getAsString()}
      */
-    public static final DataFlavor[] SUPPORTED_FLAVORS = new DataFlavor[] {
+    private static final DataFlavor[] SUPPORTED_FLAVORS = new DataFlavor[] {
         PRIMITIVE_ID_LIST_FLAVOR,
         DataFlavor.stringFlavor
     };
@@ -48,7 +48,7 @@ public class PrimitiveIdTransferable implements Transferable {
     }
 
     /**
-     * <p>If flavor is {@link #PRIMITIVE_ID_SET_FLAVOR}, replies a the list of
+     * <p>If flavor is {@link #PRIMITIVE_ID_LIST_FLAVOR}, replies a the list of
      * transferred {@link PrimitiveId}s</p>
      *
      * <p>If flavor is {@link DataFlavor#stringFlavor}, replies a string representation
