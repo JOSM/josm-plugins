@@ -30,7 +30,7 @@ public interface Workbook {
     /**
      * Get the Sheet object at the given index.
      *
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical &amp; logical)
      * @return Sheet at the provided index
      */
     Sheet getSheetAt(int index);

@@ -67,7 +67,7 @@ public final class MifReader extends AbstractMapInfoReader {
     private State state = State.UNKNOWN;
 
     private Projection josmProj;
-    private DataSet ds;
+    private DataSet dataSet;
     private Relation region;
     private Way polygon;
     private Node node;
@@ -380,8 +380,8 @@ public final class MifReader extends AbstractMapInfoReader {
     }
 
     private void parseData(String[] words) {
-        if (ds == null) {
-            ds = new DataSet();
+        if (dataSet == null) {
+            dataSet = new DataSet();
         }
     }
 
@@ -391,7 +391,7 @@ public final class MifReader extends AbstractMapInfoReader {
 
     private void parseLine(String[] words) throws IOException {
         Way line = new Way();
-        ds.addPrimitive(line);
+        dataSet.addPrimitive(line);
         readAttributes(line);
         line.addNode(createNode(words[1], words[2]));
         line.addNode(createNode(words[3], words[4]));
@@ -400,7 +400,7 @@ public final class MifReader extends AbstractMapInfoReader {
     private void startPolyLineSegment(boolean initial) throws IOException {
         Way previousPolyline = polyline;
         polyline = new Way();
-        ds.addPrimitive(polyline);
+        dataSet.addPrimitive(polyline);
         if (initial) {
             readAttributes(polyline);
         } else if (previousPolyline != null) {
@@ -430,7 +430,7 @@ public final class MifReader extends AbstractMapInfoReader {
         if (numpolygons > 1) {
             region = new Relation();
             region.put("type", "multipolygon");
-            ds.addPrimitive(region);
+            dataSet.addPrimitive(region);
             readAttributes(region);
         } else {
             region = null;
@@ -487,7 +487,7 @@ public final class MifReader extends AbstractMapInfoReader {
                 // Read header byte per byte until we determine correct charset
                 initializeReaders(in, file, cs, 1);
                 parseHeader();
-                return ds;
+                return dataSet;
             } finally {
                 if (midReader != null) {
                     midReader.close();
@@ -519,11 +519,11 @@ public final class MifReader extends AbstractMapInfoReader {
             parseColumns(words);
         } else if (words[0].equalsIgnoreCase("Data")) {
             parseData(words);
-        } else if (ds != null) {
+        } else if (dataSet != null) {
             if (state == State.START_POLYGON) {
                 numpts = Integer.parseInt(words[0]);
                 polygon = new Way();
-                ds.addPrimitive(polygon);
+                dataSet.addPrimitive(polygon);
                 if (region != null) {
                     region.addMember(new RelationMember("outer", polygon));
                 } else {
@@ -628,7 +628,7 @@ public final class MifReader extends AbstractMapInfoReader {
 
     private Node createNode(String x, String y) {
         Node node = new Node(josmProj.eastNorth2latlon(new EastNorth(Double.parseDouble(x), Double.parseDouble(y))));
-        ds.addPrimitive(node);
+        dataSet.addPrimitive(node);
         return node;
     }
 

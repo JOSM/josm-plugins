@@ -166,7 +166,7 @@ public class POIFSDocumentPath
      *
      * @return the nth component;
      *
-     * @exception ArrayIndexOutOfBoundsException if n < 0 or n >=
+     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n &gt;=
      *                                           length()
      */
 

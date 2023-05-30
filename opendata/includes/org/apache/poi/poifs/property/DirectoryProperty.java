@@ -115,9 +115,9 @@ public class DirectoryProperty extends Property implements Parent { // TODO - fi
          * @param o1 first object to compare, better be a Property
          * @param o2 second object to compare, better be a Property
          *
-         * @return negative value if o1 <  o2,
+         * @return negative value if o1 &lt;  o2,
          *         zero           if o1 == o2,
-         *         positive value if o1 >  o2.
+         *         positive value if o1 &gt;  o2.
          */
         public int compare(Property o1, Property o2)
         {

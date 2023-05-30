@@ -39,7 +39,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
  * Since version 2003 Excel has supported international formats.  These are denoted
  * with a prefix "[$-xxx]" (where xxx is a 1-7 digit hexadecimal number).
  * See the Microsoft article
- * <a href="http://office.microsoft.com/assistance/hfws.aspx?AssetID=HA010346351033&CTT=6&Origin=EC010272491033">
+ * <a href="http://office.microsoft.com/assistance/hfws.aspx?AssetID=HA010346351033&amp;CTT=6&amp;Origin=EC010272491033">
  *   Creating international number formats
  * </a> for more details on these codes.
  *

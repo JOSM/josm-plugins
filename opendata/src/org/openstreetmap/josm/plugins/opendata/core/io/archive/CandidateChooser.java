@@ -66,16 +66,6 @@ public class CandidateChooser extends ExtendedDialog {
         setContent(projPanel);
     }
 
-    /*public List<File> getSelectedFiles() {
-        List<File> result = new ArrayList<File>();
-        for (JCheckBox cbox : checkBoxes.keySet()) {
-            if (cbox.isSelected()) {
-                result.add(checkBoxes.get(cbox));
-            }
-        }
-        return result;
-    }*/
-
     public File getSelectedFile() {
         return (File) fileCombo.getSelectedItem();
     }

@@ -184,7 +184,7 @@ public class IntList
      * @return the element at the specified position in this list.
      *
      * @exception IndexOutOfBoundsException if the index is out of
-     *            range (index < 0 || index >= size()).
+     *            range (index &lt; 0 || index &gt;= size()).
      */
 
     public int get(final int index)

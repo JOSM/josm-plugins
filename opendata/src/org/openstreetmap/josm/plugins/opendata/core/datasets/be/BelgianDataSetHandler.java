@@ -34,15 +34,6 @@ public abstract class BelgianDataSetHandler extends SimpleDataSetHandler impleme
     };
 
     protected class InternalCsvHandler extends DefaultCsvHandler {
-        /*@Override
-        public List<Projection> getSpreadSheetProjections() {
-            if (singleProjection != null) {
-                return Arrays.asList(new Projection[]{singleProjection});
-            } else {
-                return Arrays.asList(projections);
-            }
-        }*/
-
         @Override
         public LatLon getCoor(EastNorth en, String[] fields) {
             if (singleProjection != null) {

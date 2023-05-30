@@ -13,8 +13,8 @@ import org.openstreetmap.josm.plugins.opendata.core.util.OdUtils;
 
 public abstract class License {
 
-    public static final ODbL ODbL = new ODbL();
-    public static final LOOL LOOL = new LOOL();
+    public static final ODbL odbl = new ODbL();
+    public static final LOOL lool = new LOOL();
 
     private final Map<String, URL> urls = new HashMap<>();
     private final Map<String, URL> summaryURLs = new HashMap<>();

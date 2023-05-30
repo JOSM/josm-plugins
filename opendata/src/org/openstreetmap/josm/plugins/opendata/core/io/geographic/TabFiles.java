@@ -110,7 +110,7 @@ public class TabFiles extends ShpFiles {
             Map<ShpFileType, URL> toUpdate = new HashMap<>();
             for (Entry<ShpFileType, URL> entry : entries) {
                 if (!exists(entry.getKey())) {
-                    url = findExistingFile(entry.getKey(), entry.getValue());
+                    url = findExistingFile(entry.getValue());
                     if (url != null) {
                         toUpdate.put(entry.getKey(), url);
                     }
@@ -120,7 +120,7 @@ public class TabFiles extends ShpFiles {
         }
     }
 
-    private URL findExistingFile(ShpFileType shpFileType, URL value) {
+    private URL findExistingFile(URL value) {
         final File file = URLs.urlToFile(value);
         File directory = file.getParentFile();
         if (directory != null && directory.exists()) {

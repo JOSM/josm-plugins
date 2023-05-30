@@ -30,7 +30,7 @@ public interface Row {
      *
      * @param column - the column number this cell represents
      * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greater than the maximum number of supported columns
+     * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than the maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     Cell createCell(int column);
@@ -43,7 +43,7 @@ public interface Row {
      *
      * @param column - the column number this cell represents
      * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or greate than a maximum number of supported columns
+     * @throws IllegalArgumentException if columnIndex &lt; 0 or greate than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     Cell createCell(int column, int type);
@@ -52,7 +52,7 @@ public interface Row {
      * Set the row number of this row.
      *
      * @param rowNum  the row number (0-based)
-     * @throws IllegalArgumentException if rowNum < 0
+     * @throws IllegalArgumentException if rowNum &lt; 0
      */
     void setRowNum(int rowNum);
 
@@ -77,7 +77,7 @@ public interface Row {
      * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
-     * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
+     * @throws IllegalArgumentException if cellnum &lt; 0 or the specified MissingCellPolicy is invalid
      * @see Row#RETURN_NULL_AND_BLANK
      * @see Row#RETURN_BLANK_AS_NULL
      * @see Row#CREATE_NULL_AS_BLANK
