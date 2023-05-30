@@ -51,7 +51,7 @@ abstract class State {
             final boolean even = (vias.size() & 1) == 0;
             final RoadGui.ViaConnector last = vias.get(vias.size() - 1);
 
-            if (last.equals(via) || !even && last.getRoadEnd().getJunction().equals(via.getRoadEnd().getJunction())) {
+            if (last.equals(via) || (!even && last.getRoadEnd().getJunction().equals(via.getRoadEnd().getJunction()))) {
                 return pop().next(via);
             }
 
