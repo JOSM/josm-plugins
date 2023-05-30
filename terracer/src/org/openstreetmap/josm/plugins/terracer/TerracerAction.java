@@ -76,7 +76,7 @@ public final class TerracerAction extends JosmAction {
                         Shortcut.SHIFT), true);
     }
 
-    protected static Set<Relation> findAssociatedStreets(Collection<OsmPrimitive> objects) {
+    private static Set<Relation> findAssociatedStreets(Collection<OsmPrimitive> objects) {
         Set<Relation> result = new HashSet<>();
         if (objects != null) {
             for (OsmPrimitive c : objects) {
@@ -247,9 +247,7 @@ public final class TerracerAction extends JosmAction {
 
     /**
      * Sorts the house number nodes according their numbers only
-     *
-     * @param house
-     *            number nodes
+     * arguments are house number nodes
      */
     static class HousenumberNodeComparator implements Comparator<Node> {
         private final Pattern pat = Pattern.compile("^(\\d+)\\s*(.*)");
@@ -512,7 +510,6 @@ public final class TerracerAction extends JosmAction {
      * @param streetName the name of a street (may be null). Used if not null and street is null.
      * @param associatedStreet The associated street. Used to determine if addr:street should be set or not.
      * @param buildingValue The value for {@code building} key to add
-     * @return {@code outline}
      * @throws UserCancelException if user cancels the operation
      */
     private void addressBuilding(Way outline, Way street, String streetName, Relation associatedStreet,

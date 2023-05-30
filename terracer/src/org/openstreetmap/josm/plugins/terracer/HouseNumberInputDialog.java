@@ -122,8 +122,6 @@ public class HouseNumberInputDialog extends ExtendedDialog {
 
     /**
      * This method initializes this
-     *
-     * @return void
      */
     private void initialize() {
         this.lo.addFocusListener(this.inputHandler);
