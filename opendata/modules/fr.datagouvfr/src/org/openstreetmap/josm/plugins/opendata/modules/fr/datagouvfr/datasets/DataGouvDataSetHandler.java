@@ -35,7 +35,7 @@ public abstract class DataGouvDataSetHandler extends FrenchDataSetHandler implem
     private void init(String portalPath, Projection singleProjection) {
         setNationalPortalPath(portalPath);
         setSingleProjection(singleProjection);
-        setLicense(License.LOOL);
+        setLicense(License.lool);
     }
 
     @Override
