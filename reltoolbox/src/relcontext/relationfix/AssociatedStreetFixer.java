@@ -11,12 +11,14 @@ import java.util.Map;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.tools.Utils;
 
 public class AssociatedStreetFixer extends RelationFixer {
 
@@ -134,7 +136,8 @@ public class AssociatedStreetFixer extends RelationFixer {
 
         List<Command> commandList = new ArrayList<>();
         if (fixed) {
-            commandList.add(new ChangeCommand(MainApplication.getLayerManager().getEditDataSet(), source, rel));
+            final DataSet ds = Utils.firstNonNull(source.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
+            commandList.add(new ChangeCommand(ds, source, rel));
         }
 
         /*if (!commonName.isEmpty())

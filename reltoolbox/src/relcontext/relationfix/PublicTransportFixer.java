@@ -5,11 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
 
+import org.openstreetmap.josm.tools.Utils;
 import relcontext.actions.PublicTransportHelper;
 
 /**
@@ -60,7 +62,11 @@ public class PublicTransportFixer extends RelationFixer {
             fixed = true;
             r = rr;
         }
-        return fixed ? new ChangeCommand(MainApplication.getLayerManager().getEditDataSet(), rel, r) : null;
+        if (fixed) {
+            final DataSet ds = Utils.firstNonNull(rel.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
+            return new ChangeCommand(ds, rel, r);
+        }
+        return null;
     }
 
     private Relation fixStopPlatformRole(Relation source) {
