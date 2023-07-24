@@ -60,7 +60,7 @@ public class ChosenRelationComponent extends JLabel implements ChosenRelationLis
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(type.substring(0, 1));
+        sb.append(type.charAt(0));
         if (type.equals("boundary") && rel.hasKey("admin_level")) {
             sb.append(rel.get("admin_level"));
         }

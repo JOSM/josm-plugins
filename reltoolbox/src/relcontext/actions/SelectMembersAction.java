@@ -4,6 +4,7 @@ package relcontext.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 
@@ -15,7 +16,7 @@ import relcontext.ChosenRelation;
 import relcontext.ChosenRelationListener;
 
 public class SelectMembersAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public SelectMembersAction(ChosenRelation rel) {
         super(tr("Select members"));
@@ -27,7 +28,8 @@ public class SelectMembersAction extends AbstractAction implements ChosenRelatio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        MainApplication.getLayerManager().getEditLayer().data.setSelected(rel.get() == null ? null : rel.get().getMemberPrimitives());
+        MainApplication.getLayerManager().getEditLayer().data.setSelected(
+                rel.get() == null ? Collections.emptyList() : rel.get().getMemberPrimitives());
     }
 
     @Override

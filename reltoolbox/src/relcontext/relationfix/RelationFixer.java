@@ -16,7 +16,7 @@ import relcontext.actions.SortAndFixAction;
 
 public abstract class RelationFixer {
 
-    private List<String> applicableTypes;
+    private final List<String> applicableTypes;
     private SortAndFixAction sortAndFixAction;
 
     /**

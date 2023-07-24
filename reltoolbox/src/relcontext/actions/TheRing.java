@@ -36,8 +36,8 @@ import org.openstreetmap.josm.tools.Logging;
 public class TheRing {
     private static final String PREF_MULTIPOLY = "reltoolbox.multipolygon.";
 
-    private Way source;
-    private List<RingSegment> segments;
+    private final Way source;
+    private final List<RingSegment> segments;
     private Relation relation = null;
 
     public TheRing(Way source) {
@@ -276,8 +276,7 @@ public class TheRing {
         }
 
         // rearrange references
-        for (int i = 0; i < rings.size(); i++) {
-            TheRing ring = rings.get(i);
+        for (TheRing ring : rings) {
             if (ring.countNonReferenceSegments() == 0) {
                 // need to find one non-reference segment
                 for (RingSegment seg : ring.segments) {
@@ -330,7 +329,8 @@ public class TheRing {
     public List<Command> getCommands(boolean createMultipolygon, Map<Relation, Relation> relationChangeMap) {
         Way sourceCopy = new Way(source);
         if (createMultipolygon) {
-            Collection<String> linearTags = Config.getPref().getList(PREF_MULTIPOLY + "lineartags", CreateMultipolygonAction.DEFAULT_LINEAR_TAGS);
+            Collection<String> linearTags = Config.getPref().getList(PREF_MULTIPOLY + "lineartags",
+                    CreateMultipolygonAction.DEFAULT_LINEAR_TAGS);
             relation = new Relation();
             relation.put("type", "multipolygon");
             for (String key : sourceCopy.keySet()) {
@@ -350,7 +350,7 @@ public class TheRing {
         List<Command> relationCommands = new ArrayList<>();
         for (OsmPrimitive p : source.getReferrers()) {
             if (p instanceof Relation) {
-                Relation rel = null;
+                Relation rel;
                 if (relationChangeMap != null) {
                     if (relationChangeMap.containsKey(p)) {
                         rel = relationChangeMap.get(p);
@@ -364,7 +364,7 @@ public class TheRing {
                 }
                 for (int i = 0; i < rel.getMembersCount(); i++) {
                     if (rel.getMember(i).getMember().equals(source)) {
-                        referencingRelations.put(rel, Integer.valueOf(i));
+                        referencingRelations.put(rel, i);
                     }
                 }
             }

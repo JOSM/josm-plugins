@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,10 +42,9 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class ReconstructPolygonAction extends JosmAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
-    private static final List<String> IRRELEVANT_KEYS = Arrays.asList(new String[] {
-            "source", "created_by", "note"});
+    private static final List<String> IRRELEVANT_KEYS = Arrays.asList("source", "created_by", "note");
 
     public ReconstructPolygonAction(ChosenRelation rel) {
         super(tr("Reconstruct polygon"), "dialogs/filter", tr("Reconstruct polygon from multipolygon relation"),
@@ -108,7 +106,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
             if (!myInnerWays.isEmpty()) {
                 // this ring has inner rings, so we leave a multipolygon in
                 // place and don't reconstruct the rings.
-                Relation n = null;
+                Relation n;
                 if (relationReused) {
                     n = new Relation();
                     n.setKeys(r.getKeys());
@@ -152,11 +150,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
                     }
                 }
                 List<OsmPrimitive> referrers = w.getReferrers();
-                for (Iterator<OsmPrimitive> ref1 = relations.iterator(); ref1.hasNext();) {
-                    if (!referrers.contains(ref1.next())) {
-                        ref1.remove();
-                    }
-                }
+                relations.removeIf(osmPrimitive -> !referrers.contains(osmPrimitive));
             }
             tags.putAll(r.getKeys());
             tags.remove("type");
@@ -168,7 +162,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
                     // check tags that remain
                     Set<String> keys = new HashSet<>(w.keySet());
                     keys.removeAll(tags.keySet());
-                    keys.removeAll(IRRELEVANT_KEYS);
+                    IRRELEVANT_KEYS.forEach(keys::remove);
                     if (keys.isEmpty()) {
                         if (candidateWay == null) {
                             candidateWay = w;
@@ -210,9 +204,6 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
     }
 
     private boolean isSuitableRelation(Relation newRelation) {
-        if (newRelation == null || !"multipolygon".equals(newRelation.get("type")) || newRelation.getMembersCount() == 0)
-            return false;
-        else
-            return true;
+        return newRelation != null && "multipolygon".equals(newRelation.get("type")) && newRelation.getMembersCount() != 0;
     }
 }

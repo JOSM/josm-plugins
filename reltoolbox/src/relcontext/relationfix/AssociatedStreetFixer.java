@@ -154,10 +154,9 @@ public class AssociatedStreetFixer extends RelationFixer {
             }
          */
         // return results
-        if (commandList.size() == 0)
+        if (commandList.isEmpty()) {
             return null;
-        if (commandList.size() == 1)
-            return commandList.get(0);
-        return new SequenceCommand(tr("fix associatedStreet relation"), commandList);
+        }
+        return SequenceCommand.wrapIfNeeded(tr("fix associatedStreet relation"), commandList);
     }
 }

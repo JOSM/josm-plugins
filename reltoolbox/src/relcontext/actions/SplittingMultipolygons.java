@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -18,9 +19,9 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -205,7 +206,7 @@ public final class SplittingMultipolygons {
                 }
                 for (int i = 0; i < rel.getMembersCount(); i++) {
                     if (rel.getMember(i).getMember().equals(w)) {
-                        references.put(rel, Integer.valueOf(i));
+                        references.put(rel, i);
                     }
                 }
             }
@@ -252,14 +253,21 @@ public final class SplittingMultipolygons {
         if (segment.isClosed() || segment.isIncomplete())
             return null;
 
+        final Node segmentFirstNode = segment.firstNode();
+        final Node segmentLastNode = segment.lastNode();
+
+        if (segmentLastNode == null || segmentFirstNode == null) {
+            return null;
+        }
+
         List<Way> ways = intersection(
-                Utils.filteredCollection(segment.firstNode().getReferrers(), Way.class),
-                Utils.filteredCollection(segment.lastNode().getReferrers(), Way.class));
+                Utils.filteredCollection(segmentFirstNode.getReferrers(), Way.class),
+                Utils.filteredCollection(segmentLastNode.getReferrers(), Way.class));
         ways.remove(segment);
         for (Iterator<Way> iter = ways.iterator(); iter.hasNext();) {
             boolean save = false;
             for (OsmPrimitive ref : iter.next().getReferrers()) {
-                if (ref instanceof Relation && ((Relation) ref).isMultipolygon() && !ref.isDeleted()) {
+                if (ref instanceof Relation && ref.isMultipolygon() && !ref.isDeleted()) {
                     save = true;
                 }
             }
@@ -291,7 +299,7 @@ public final class SplittingMultipolygons {
         }
 
         // now split the way, at last
-        List<Way> newWays = new ArrayList<>(splitWay(target, segment.firstNode(), segment.lastNode(), commands));
+        List<Way> newWays = new ArrayList<>(splitWay(target, segmentFirstNode, segmentLastNode, commands));
 
         Way addingWay = null;
         if (target.isClosed()) {
@@ -302,8 +310,10 @@ public final class SplittingMultipolygons {
             addingWay = segmentInsidePolygon(alternate.getNode(0), alternate.getNode(1), testRing) ? alternate : utarget;
         } else {
             for (Way w : newWays) {
-                if ((w.firstNode().equals(segment.firstNode()) && w.lastNode().equals(segment.lastNode()))
-                        || (w.firstNode().equals(segment.lastNode()) && w.lastNode().equals(segment.firstNode()))) {
+                final INode wFirstNode = w.firstNode();
+                final INode wLastNode = w.lastNode();
+                if ((Objects.equals(wFirstNode, segmentFirstNode) && Objects.equals(wLastNode, segmentLastNode))
+                        || (Objects.equals(wFirstNode, segmentLastNode) && Objects.equals(wLastNode, segmentFirstNode))) {
                     addingWay = w;
                     break;
                 }
@@ -340,7 +350,7 @@ public final class SplittingMultipolygons {
             for (OsmPrimitive p : n.getReferrers()) {
                 if (p instanceof Way && !p.equals(ring)) {
                     for (OsmPrimitive r : p.getReferrers()) {
-                        if (r instanceof Relation && ((Relation) r).hasKey("type") && ((Relation) r).get("type").equals("multipolygon")) {
+                        if (r instanceof Relation && r.hasKey("type") && r.get("type").equals("multipolygon")) {
                             if (touchingWays.containsKey(p)) {
                                 touchingWays.put((Way) p, Boolean.TRUE);
                             } else {

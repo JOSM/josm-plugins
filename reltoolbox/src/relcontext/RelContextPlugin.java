@@ -6,8 +6,10 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
+/**
+ * The entry-point for the reltoolbox plugin
+ */
 public class RelContextPlugin extends Plugin {
-    private RelContextDialog dialog;
 
     public RelContextPlugin(PluginInformation info) {
         super(info);
@@ -18,7 +20,7 @@ public class RelContextPlugin extends Plugin {
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
         if (oldFrame == null && newFrame != null) {
             //            if (dialog!=null) dialog.destroy();
-            dialog = new RelContextDialog();
+            RelContextDialog dialog = new RelContextDialog();
             newFrame.addToggleDialog(dialog);
         }
     }

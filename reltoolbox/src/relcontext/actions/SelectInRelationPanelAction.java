@@ -15,7 +15,7 @@ import relcontext.ChosenRelation;
 import relcontext.ChosenRelationListener;
 
 public class SelectInRelationPanelAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public SelectInRelationPanelAction(ChosenRelation rel) {
         super();

@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -40,10 +41,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintable, DataSetListener {
     protected Relation chosenRelation = null;
-    private Set<ChosenRelationListener> chosenRelationListeners = new HashSet<>();
+    private final Set<ChosenRelationListener> chosenRelationListeners = new HashSet<>();
 
     public void set(Relation rel) {
-        if (rel == chosenRelation || (rel != null && chosenRelation != null && rel.equals(chosenRelation)))
+        if (Objects.equals(rel, chosenRelation))
             return; // new is the same as old
         Relation oldRel = chosenRelation;
         chosenRelation = rel;
@@ -72,7 +73,7 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
         else if (!(r instanceof Relation))
             return false;
         else
-            return chosenRelation != null && r.equals(chosenRelation);
+            return r.equals(chosenRelation);
     }
 
     private static final String[] MULTIPOLYGON_TYPES = new String[] {
@@ -149,7 +150,7 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
         g.setColor(Color.yellow);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f * opacity));
 
-        drawRelations(g, mv, bbox, chosenRelation, new HashSet<Relation>());
+        drawRelations(g, mv, bbox, chosenRelation, new HashSet<>());
 
         g.setComposite(oldComposite);
         g.setStroke(oldStroke);
@@ -177,7 +178,8 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
                                 b.lineTo(p.x, p.y);
                             }
                             g.draw(b);
-                        }   break;
+                        }
+                        break;
                     case RELATION:
                         Color oldColor = g.getColor();
                         g.setColor(Color.magenta);
@@ -194,14 +196,14 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
 
     @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
-        if (chosenRelation != null && event.getRelation().equals(chosenRelation)) {
+        if (event.getRelation().equals(chosenRelation)) {
             fireRelationChanged(chosenRelation);
         }
     }
 
     @Override
     public void tagsChanged(TagsChangedEvent event) {
-        if (chosenRelation != null && event.getPrimitive().equals(chosenRelation)) {
+        if (event.getPrimitive().equals(chosenRelation)) {
             fireRelationChanged(chosenRelation);
         }
     }

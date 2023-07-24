@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 
 /**
- * @see https://wiki.openstreetmap.org/wiki/Relation:multipolygon
+ * @see <a href="https://wiki.openstreetmap.org/wiki/Relation:multipolygon">osmwiki:Relation:multipolygon</a>
  */
 public class MultipolygonFixer extends RelationFixer {
 
@@ -68,27 +68,24 @@ public class MultipolygonFixer extends RelationFixer {
         boolean fixed = false;
         Set<Way> outerWays = new HashSet<>();
         for (MultipolygonBuilder.JoinedPolygon poly : mpc.outerWays) {
-            for (Way w : poly.ways) {
-                outerWays.add(w);
-            }
+            outerWays.addAll(poly.ways);
         }
         Set<Way> innerWays = new HashSet<>();
         for (MultipolygonBuilder.JoinedPolygon poly : mpc.innerWays) {
-            for (Way w : poly.ways) {
-                innerWays.add(w);
-            }
+            innerWays.addAll(poly.ways);
         }
         for (int i = 0; i < r.getMembersCount(); i++) {
             RelationMember m = r.getMember(i);
             if (m.isWay()) {
+                final Way way = m.getWay();
                 String role = null;
-                if (outerWays.contains(m.getMember())) {
+                if (outerWays.contains(way)) {
                     role = "outer";
-                } else if (innerWays.contains(m.getMember())) {
+                } else if (innerWays.contains(way)) {
                     role = "inner";
                 }
                 if (role != null && !role.equals(m.getRole())) {
-                    r.setMember(i, new RelationMember(role, m.getMember()));
+                    r.setMember(i, new RelationMember(role, way));
                     fixed = true;
                 }
             }

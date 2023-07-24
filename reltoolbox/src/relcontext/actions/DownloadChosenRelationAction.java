@@ -27,7 +27,7 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class DownloadChosenRelationAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public DownloadChosenRelationAction(ChosenRelation rel) {
         putValue(SMALL_ICON, ImageProvider.get("relcontext", "download"));
@@ -73,8 +73,7 @@ public class DownloadChosenRelationAction extends AbstractAction implements Chos
 
     protected void downloadIncomplete(Relation rel) {
         if (rel.isNew()) return;
-        Set<OsmPrimitive> ret = new HashSet<>();
-        ret.addAll(rel.getIncompleteMembers());
+        Set<OsmPrimitive> ret = new HashSet<>(rel.getIncompleteMembers());
         if (ret.isEmpty()) return;
         MainApplication.worker.submit(
                 new DownloadRelationMemberTask(Collections.singletonList(rel), ret, MainApplication.getLayerManager().getEditLayer()));

@@ -11,9 +11,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
 
-
 /**
- * @see https://wiki.openstreetmap.org/wiki/Relation:boundary
+ * Fix multipolygon boundaries
+ * @see <a href="https://wiki.openstreetmap.org/wiki/Relation:boundary">osmwiki:Relation:boundary</a>
  */
 public class BoundaryFixer extends MultipolygonFixer {
 
@@ -24,7 +24,7 @@ public class BoundaryFixer extends MultipolygonFixer {
     /**
      * For boundary relations both "boundary" and "multipolygon" types are applicable, but
      * it should also have key boundary=administrative to be fully boundary.
-     * @see https://wiki.openstreetmap.org/wiki/Relation:boundary
+     * @see <a href="https://wiki.openstreetmap.org/wiki/Relation:boundary">osmwiki:Relation:boundary</a>
      */
     @Override
     public boolean isFixerApplicable(Relation rel) {

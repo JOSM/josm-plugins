@@ -13,12 +13,9 @@ import org.openstreetmap.josm.gui.MainApplication;
 import relcontext.actions.PublicTransportHelper;
 
 /**
- * @see https://wiki.openstreetmap.org/wiki/Key:public_transport
- */
-
-/**
  * Helper function for determinate role in public_transport relation
  * @author freeExec
+ * @see <a href="https://wiki.openstreetmap.org/wiki/Key:public_transport">osmwiki:Key:public_transport</a>
  */
 public class PublicTransportFixer extends RelationFixer {
 

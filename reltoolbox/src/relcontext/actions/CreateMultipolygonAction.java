@@ -70,18 +70,16 @@ public class CreateMultipolygonAction extends JosmAction {
     }
 
     public static boolean getDefaultPropertyValue(String property) {
-        if (property.equals("boundary"))
-            return false;
-        else if (property.equals("boundaryways"))
-            return true;
-        else if (property.equals("tags"))
-            return true;
-        else if (property.equals("alltags"))
-            return false;
-        else if (property.equals("single"))
-            return true;
-        else if (property.equals("allowsplit"))
-            return false;
+        switch (property) {
+            case "boundary":
+            case "alltags":
+            case "allowsplit":
+                return false;
+            case "boundaryways":
+            case "tags":
+            case "single":
+                return true;
+        }
         throw new IllegalArgumentException(property);
     }
 
@@ -273,11 +271,10 @@ public class CreateMultipolygonAction extends JosmAction {
         return commands;
     }
 
-    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList(new String[] {"barrier", "source"});
+    public static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "source");
 
-    private static final Set<String> REMOVE_FROM_BOUNDARY_TAGS = new TreeSet<>(Arrays.asList(new String[] {
-            "boundary", "boundary_type", "type", "admin_level"
-    }));
+    private static final Set<String> REMOVE_FROM_BOUNDARY_TAGS =
+            new TreeSet<>(Arrays.asList("boundary", "boundary_type", "type", "admin_level"));
 
     /**
      * This method removes tags/value pairs from inner ways that are present in relation or outer ways.

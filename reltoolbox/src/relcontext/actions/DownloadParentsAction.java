@@ -29,7 +29,7 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class DownloadParentsAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public DownloadParentsAction(ChosenRelation rel) {
         super(tr("Download referrers"));
@@ -65,8 +65,7 @@ public class DownloadParentsAction extends AbstractAction implements ChosenRelat
 
     protected void downloadIncomplete(Relation rel) {
         if (rel.isNew()) return;
-        Set<OsmPrimitive> ret = new HashSet<>();
-        ret.addAll(rel.getIncompleteMembers());
+        Set<OsmPrimitive> ret = new HashSet<>(rel.getIncompleteMembers());
         if (ret.isEmpty()) return;
         MainApplication.worker.submit(
                 new DownloadRelationMemberTask(Collections.singletonList(rel), ret, MainApplication.getLayerManager().getEditLayer()));

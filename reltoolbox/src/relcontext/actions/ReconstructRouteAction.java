@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 
@@ -95,7 +96,7 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
             if (lastNode == null) { // first segment
                 if (routeMembers.size() > 2) {
                     Way nextWay = (Way) routeMembers.get(rIndex + 1).getMember();
-                    if (w.lastNode().equals(nextWay.lastNode()) || w.lastNode().equals(nextWay.firstNode())) {
+                    if (Objects.equals(w.lastNode(), nextWay.lastNode()) || Objects.equals(w.lastNode(), nextWay.firstNode())) {
                         dirForward = true;
                         lastNode = w.lastNode();
                     } else {

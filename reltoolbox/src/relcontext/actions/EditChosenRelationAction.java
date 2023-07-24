@@ -21,7 +21,7 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class EditChosenRelationAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public EditChosenRelationAction(ChosenRelation rel) {
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit", ImageProvider.ImageSizes.SMALLICON));

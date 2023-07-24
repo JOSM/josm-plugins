@@ -27,8 +27,8 @@ import relcontext.relationfix.RelationFixer;
 
 public class SortAndFixAction extends AbstractAction implements ChosenRelationListener {
     private static final long serialVersionUID = 1L;
-    private ChosenRelation rel;
-    private List<RelationFixer> fixers;
+    private final ChosenRelation rel;
+    private final List<RelationFixer> fixers;
 
     public SortAndFixAction(ChosenRelation rel) {
         super();

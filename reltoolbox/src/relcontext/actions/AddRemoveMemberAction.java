@@ -34,8 +34,8 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class AddRemoveMemberAction extends JosmAction implements ChosenRelationListener {
-    private ChosenRelation rel;
-    private SortAndFixAction sortAndFix;
+    private final ChosenRelation rel;
+    private final SortAndFixAction sortAndFix;
 
     public AddRemoveMemberAction(ChosenRelation rel, SortAndFixAction sortAndFix) {
         super(null, "relcontext/addremove", tr("Add/remove members from the chosen relation"),

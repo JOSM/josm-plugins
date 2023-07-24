@@ -13,7 +13,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -111,12 +110,12 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
     public static final String PREF_PREFIX = "reltoolbox";
 
     private final DefaultTableModel relationsData;
-    private ChosenRelation chosenRelation;
-    private JPanel chosenRelationPanel;
-    private ChosenRelationPopupMenu popupMenu;
-    private MultipolygonSettingsPopup multiPopupMenu;
-    private RoleComboBoxModel roleBoxModel;
-    private SortAndFixAction sortAndFixAction;
+    private final ChosenRelation chosenRelation;
+    private final JPanel chosenRelationPanel;
+    private final ChosenRelationPopupMenu popupMenu;
+    private final MultipolygonSettingsPopup multiPopupMenu;
+    private final RoleComboBoxModel roleBoxModel;
+    private final SortAndFixAction sortAndFixAction;
     // actions saved for unregistering on dialog destroying
     private final EnterRoleAction enterRoleAction;
     private final FindRelationAction findRelationAction;
@@ -148,15 +147,12 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
         roleBoxModel = new RoleComboBoxModel(roleBox);
         roleBox.setModel(roleBoxModel);
         roleBox.addMouseListener(relationMouseAdapter);
-        roleBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.DESELECTED) return;
-                String memberRole = roleBoxModel.getSelectedMembersRole();
-                String selectedRole = roleBoxModel.isAnotherRoleSelected() ? askForRoleName() : roleBoxModel.getSelectedRole();
-                if (memberRole != null && selectedRole != null && !memberRole.equals(selectedRole)) {
-                    applyRoleToSelection(selectedRole.trim());
-                }
+        roleBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.DESELECTED) return;
+            String memberRole = roleBoxModel.getSelectedMembersRole();
+            String selectedRole = roleBoxModel.isAnotherRoleSelected() ? askForRoleName() : roleBoxModel.getSelectedRole();
+            if (memberRole != null && selectedRole != null && !memberRole.equals(selectedRole)) {
+                applyRoleToSelection(selectedRole.trim());
             }
         });
         roleBox.setVisible(false);
@@ -651,7 +647,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
     private class RoleComboBoxModel extends AbstractListModel<String> implements ComboBoxModel<String> {
         private List<String> roles = new ArrayList<>();
         private int selectedIndex = -1;
-        private JComboBox<String> combobox;
+        private final JComboBox<String> combobox;
         private String membersRole;
         private final String EMPTY_ROLE = tr("<empty>");
         private final String ANOTHER_ROLE = tr("another...");
@@ -708,7 +704,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
         }
 
         public String getSelectedMembersRole() {
-            return membersRole == EMPTY_ROLE ? "" : membersRole;
+            return EMPTY_ROLE.equals(membersRole) ? "" : membersRole;
         }
 
         public boolean isAnotherRoleSelected() {
@@ -755,7 +751,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
 
         @Override
         public void setSelectedItem(Object anItem) {
-            int newIndex = anItem == null ? -1 : roles.indexOf(anItem);
+            int newIndex = anItem instanceof String ? roles.indexOf((String) anItem) : -1;
             if (newIndex != selectedIndex) {
                 selectedIndex = newIndex;
                 fireContentsChanged(this, -1, -1);

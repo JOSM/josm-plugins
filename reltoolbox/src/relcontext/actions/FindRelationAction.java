@@ -7,14 +7,12 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -86,25 +84,17 @@ public class FindRelationAction extends JosmAction {
             }
         });
 
-        searchField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!relationsList.isSelectionEmpty()) {
-                    dlg.setVisible(false);
-                    optionPane.setValue(JOptionPane.OK_OPTION);
-                }
+        searchField.addActionListener(e1 -> {
+            if (!relationsList.isSelectionEmpty()) {
+                dlg.setVisible(false);
+                optionPane.setValue(JOptionPane.OK_OPTION);
             }
         });
 
         searchField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateRelationData(relationsData, searchField.getText());
-                    }
-                });
+                SwingUtilities.invokeLater(() -> updateRelationData(relationsData, searchField.getText()));
             }
 
             @Override
@@ -195,7 +185,7 @@ public class FindRelationAction extends JosmAction {
             }
         }
 
-        Collections.sort(relations, DefaultNameFormatter.getInstance().getRelationComparator());
+        relations.sort(DefaultNameFormatter.getInstance().getRelationComparator());
         data.setRelations(relations);
     }
 
@@ -213,7 +203,7 @@ public class FindRelationAction extends JosmAction {
      */
     protected static class FindRelationListModel extends AbstractListModel<Relation> {
         private final ArrayList<Relation> relations = new ArrayList<>();
-        private DefaultListSelectionModel selectionModel;
+        private final DefaultListSelectionModel selectionModel;
 
         public FindRelationListModel(DefaultListSelectionModel selectionModel) {
             super();

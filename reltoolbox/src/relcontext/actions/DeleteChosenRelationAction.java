@@ -18,7 +18,7 @@ import relcontext.ChosenRelation;
 import relcontext.ChosenRelationListener;
 
 public class DeleteChosenRelationAction extends AbstractAction implements ChosenRelationListener {
-    private ChosenRelation rel;
+    private final ChosenRelation rel;
 
     public DeleteChosenRelationAction(ChosenRelation rel) {
         super(tr("Delete relation"));

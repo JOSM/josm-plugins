@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dialog.ModalityType;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,11 +91,9 @@ public class CreateRelationAction extends JosmAction {
     }
 
     // Thanks to TagInfo for the list
-    private static final List<String> RELATION_TYPES = Arrays.asList(new String[] {
-            "multipolygon", "boundary", "route", "site", "restriction", "associatedStreet", "public_transport",
-            "street", "collection", "address", "enforcement", "destination_sign", "route_master", "junction",
-            "waterway", "bridge", "tunnel", "surveillance"
-    });
+    private static final List<String> RELATION_TYPES = Arrays.asList("multipolygon", "boundary", "route", "site",
+            "restriction", "associatedStreet", "public_transport", "street", "collection", "address", "enforcement",
+            "destination_sign", "route_master", "junction", "waterway", "bridge", "tunnel", "surveillance");
 
     private String askForType() {
         JPanel panel = new JPanel(new GridBagLayout());
@@ -121,12 +118,9 @@ public class CreateRelationAction extends JosmAction {
         final JDialog dlg = optionPane.createDialog(MainApplication.getMainFrame(), tr("Create a new relation"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
 
-        keys.getEditor().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dlg.setVisible(false);
-                optionPane.setValue(JOptionPane.OK_OPTION);
-            }
+        keys.getEditor().addActionListener(e -> {
+            dlg.setVisible(false);
+            optionPane.setValue(JOptionPane.OK_OPTION);
         });
 
         dlg.setVisible(true);

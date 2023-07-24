@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 
 /**
  * @author freeExec
- * @see https://wiki.openstreetmap.org/wiki/Key:public_transport
+ * @see <a href="https://wiki.openstreetmap.org/wiki/Key:public_transport">osmwiki:Key:public_transport</a>
  */
 public final class PublicTransportHelper {
 
@@ -48,10 +48,10 @@ public final class PublicTransportHelper {
         if (p.getType() == OsmPrimitiveType.NODE && !p.isIncomplete()) {
             if (p.hasKey(PUBLIC_TRANSPORT)) {
                 String pt = p.get(PUBLIC_TRANSPORT);
-                if (STOP_POSITION.equals(pt)) return true;
+                return STOP_POSITION.equals(pt);
             } else if (p.hasKey(RAILWAY)) {
                 String rw = p.get(RAILWAY);
-                if (RAILWAY_HALT.equals(rw) || RAILWAY_STATION.equals(rw)) return true;
+                return RAILWAY_HALT.equals(rw) || RAILWAY_STATION.equals(rw);
             }
         }
         return false;
@@ -65,14 +65,14 @@ public final class PublicTransportHelper {
         if (p.getType() == OsmPrimitiveType.NODE && !p.isIncomplete()) {
             if (p.hasKey(PUBLIC_TRANSPORT)) {
                 String pt = p.get(PUBLIC_TRANSPORT);
-                if (PLATFORM.equals(pt)) return true;
+                return PLATFORM.equals(pt);
             } else if (p.hasKey(HIGHWAY)) {
                 String hw = p.get(HIGHWAY);
                 if (BUS_STOP.equals(hw)) return true;
-                else if (PLATFORM.equals(hw)) return true;
+                else return PLATFORM.equals(hw);
             } else if (p.hasKey(RAILWAY)) {
                 String rw = p.get(RAILWAY);
-                if (PLATFORM.equals(rw)) return true;
+                return PLATFORM.equals(rw);
             }
         }
         return false;
@@ -86,13 +86,13 @@ public final class PublicTransportHelper {
         if (p.getType() == OsmPrimitiveType.WAY && !p.isIncomplete()) {
             if (p.hasKey(PUBLIC_TRANSPORT)) {
                 String pt = p.get(PUBLIC_TRANSPORT);
-                if (PLATFORM.equals(pt)) return true;
+                return PLATFORM.equals(pt);
             } else if (p.hasKey(HIGHWAY)) {
                 String hw = p.get(HIGHWAY);
-                if (PLATFORM.equals(hw)) return true;
+                return PLATFORM.equals(hw);
             } else if (p.hasKey(RAILWAY)) {
                 String rw = p.get(RAILWAY);
-                if (PLATFORM.equals(rw)) return true;
+                return PLATFORM.equals(rw);
             }
         }
         return false;
@@ -123,6 +123,6 @@ public final class PublicTransportHelper {
                 if (result != null) return result;
             }
         }
-        return result;
+        return null;
     }
 }
