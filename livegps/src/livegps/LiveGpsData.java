@@ -6,14 +6,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Point;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 
 /**
+ * Representation of a single LiveGPS data epoch
  * @author cdaller
- *
  */
 public class LiveGpsData {
     private boolean fix;
@@ -23,6 +24,7 @@ public class LiveGpsData {
     private float epx, epy;
     private String wayString;
     private Way way;
+    private WayPoint wp;
 
     public LiveGpsData(double latitude, double longitude, float course, float speed) {
         this.fix = true;
@@ -41,27 +43,47 @@ public class LiveGpsData {
     }
 
     /**
-     * @return the course
+     * Return the waypoint associated with this data set (can be {@code null})
+     * @return waypoint with additional information or {@code null}
+     */
+    public WayPoint getWaypoint() {
+        return this.wp;
+    }
+
+    /**
+     * Set the waypoint to transfer additional data form NMEA input
+     * @param wp waypoint to set
+     */
+    public void setWaypoint(WayPoint wp) {
+        this.wp = wp;
+    }
+
+    /**
+     * Return the course value
+     * @return course value in degree
      */
     public float getCourse() {
         return this.course;
     }
 
     /**
-     * @param course the course to set
+     * Set the course value in degree
+     * @param course course to set
      */
     public void setCourse(float course) {
         this.course = course;
     }
 
     /**
-     * @return the haveFix
+     * Return the fix status (whether there is a position solution or not)
+     * @return fix status
      */
     public boolean isFix() {
         return this.fix;
     }
 
     /**
+     * Set the fix status (whether there is a position solution or not)
      * @param haveFix the haveFix to set
      */
     public void setFix(boolean haveFix) {
@@ -69,27 +91,31 @@ public class LiveGpsData {
     }
 
     /**
-     * @return the latitude
+     * Return the latitude part of the position
+     * @return latitude of position
      */
     public double getLatitude() {
         return this.latLon.lat();
     }
 
     /**
-     * @return the longitude
+     * Return the longitude part of the position
+     * @return longitude of position
      */
     public double getLongitude() {
         return this.latLon.lon();
     }
 
     /**
-     * @return the speed in metres per second!
+     * Return the speed (m/s)
+     * @return speed in metres per second!
      */
     public float getSpeed() {
         return this.speed;
     }
 
     /**
+     * Set the speed (m/s)
      * @param speed the speed to set
      */
     public void setSpeed(float speed) {
@@ -97,12 +123,17 @@ public class LiveGpsData {
     }
 
     /**
-     * @return the latlon
+     * Return the position with latitude and logitude combined
+     * @return both position components
      */
     public LatLon getLatLon() {
         return this.latLon;
     }
 
+    /**
+     * Set the position with latitude and logitude combined
+     * @param latLon position to set
+     */
     public void setLatLon(LatLon latLon) {
         this.latLon = latLon;
     }
@@ -201,9 +232,7 @@ public class LiveGpsData {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof LiveGpsData))
             return false;
         final LiveGpsData other = (LiveGpsData) obj;
         if (Float.floatToIntBits(this.course) != Float.floatToIntBits(other.course))

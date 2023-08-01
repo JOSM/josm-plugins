@@ -24,10 +24,14 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 public class LiveGpsAcquirer implements Runnable {
-    private static final String DEFAULT_HOST = "localhost";
-    private static final int DEFAULT_PORT = 2947;
-    private static final String C_HOST = "livegps.gpsd.host";
-    private static final String C_PORT = "livegps.gpsd.port";
+    /* default gpsd host address */
+    public static final String DEFAULT_HOST = "localhost";
+    /* default gpsd port number */
+    public static final int DEFAULT_PORT = 2947;
+    /* option to use specify gpsd host address */
+    public static final String C_HOST = "livegps.gpsd.host";
+    /* option to use specify gpsd port number */
+    public static final String C_PORT = "livegps.gpsd.port";
     private String gpsdHost;
     private int gpsdPort;
 
@@ -36,6 +40,8 @@ public class LiveGpsAcquirer implements Runnable {
     private boolean connected = false;
     private boolean shutdownFlag = false;
     private boolean JSONProtocol = true;
+    private long skipTime = 0L;
+    private int skipNum = 0;
 
     private final List<PropertyChangeListener> propertyChangeListener = new ArrayList<>();
     private PropertyChangeEvent lastStatusEvent;
@@ -138,7 +144,7 @@ public class LiveGpsAcquirer implements Runnable {
                 }
             }
 
-            assert (connected);
+            assert connected;
 
             try {
                 String line;
@@ -190,7 +196,15 @@ public class LiveGpsAcquirer implements Runnable {
         JsonObject greeting;
         String line, type, release;
 
-        Logging.info("LiveGps: trying to connect to gpsd at " + gpsdHost + ":" + gpsdPort);
+        long t = System.currentTimeMillis();
+        if (skipTime == 0 || t > skipTime) {
+            skipTime = 0;
+            Logging.info("LiveGps: trying to connect to gpsd at " + gpsdHost + ":"
+                + gpsdPort + (skipNum != 0 ? " (skipped " + skipNum + " notices)" : ""));
+            skipNum = 0;
+        } else {
+          ++skipNum;
+        }
         fireGpsStatusChangeEvent(LiveGpsStatus.GpsStatus.CONNECTING, tr("Connecting"));
 
         InetAddress[] addrs = InetAddress.getAllByName(gpsdHost);
@@ -199,13 +213,20 @@ public class LiveGpsAcquirer implements Runnable {
                 gpsdSocket = new Socket(addrs[i], gpsdPort);
                 break;
             } catch (IOException e) {
-                Logging.warn("LiveGps: Could not open connection to gpsd: " + e);
+                if (skipTime == 0) {
+                    Logging.warn("LiveGps: Could not open connection to gpsd ("+addrs[i]+"): " + e);
+                }
                 gpsdSocket = null;
             }
         }
 
-        if (gpsdSocket == null || gpsdSocket.isConnected() == false)
+        if (gpsdSocket == null || gpsdSocket.isConnected() == false) {
+            if (skipTime == 0)
+                skipTime = System.currentTimeMillis()+60000;
             throw new IOException();
+        }
+        skipTime = 0;
+        skipNum = 0;
 
         /*
          * First emit the "w" symbol. The older version will activate, the newer one will ignore it.
@@ -310,7 +331,7 @@ public class LiveGpsAcquirer implements Runnable {
         float course = 0;
 
         words = line.split(",");
-        if ((words.length == 0) || (!words[0].equals("GPSD")))
+        if ((words.length == 0) || !words[0].equals("GPSD"))
             return null;
 
         for (int i = 1; i < words.length; i++) {

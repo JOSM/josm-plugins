@@ -22,14 +22,18 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
     private boolean enabled = false;
     private LiveGpsAcquirer acquirer = null;
     private Thread acquirerThread = null;
+    private LiveGpsAcquirerNMEA acquirerNMEA = null;
+    private Thread acquirerNMEAThread = null;
     private JMenu lgpsmenu = null;
     private JCheckBoxMenuItem lgpscapture;
     private JCheckBoxMenuItem lgpsautocenter;
@@ -185,8 +189,23 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
 
             acquirerThread.start();
 
-            enabled = true;
+            assert (acquirerNMEA == null);
+            assert (acquirerNMEAThread == null);
 
+            if (!Config.getPref().get(LiveGpsAcquirerNMEA.C_SERIAL).isEmpty()) {
+                acquirerNMEA = new LiveGpsAcquirerNMEA();
+                acquirerNMEAThread = new Thread(acquirerNMEA);
+                acquirerNMEA.addPropertyChangeListener(lgpslayer);
+                acquirerNMEA.addPropertyChangeListener(lgpsdialog);
+
+                for (PropertyChangeListener listener : listenerQueue) {
+                    acquirerNMEA.addPropertyChangeListener(listener);
+                }
+
+                acquirerNMEAThread.start();
+            }
+
+            enabled = true;
         } else if (!enable && enabled) {
             assert (lgpslayer != null);
             assert (acquirer != null);
@@ -195,6 +214,12 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
             acquirer.shutdown();
             acquirer = null;
             acquirerThread = null;
+
+            if (acquirerNMEAThread != null) {
+                acquirerNMEA.shutdown();
+                acquirerNMEA = null;
+                acquirerNMEAThread = null;
+            }
 
             enabled = false;
         }
@@ -210,6 +235,8 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
         listenerQueue.add(listener);
         if (acquirer != null)
             acquirer.addPropertyChangeListener(listener);
+        if (acquirerNMEA != null)
+            acquirerNMEA.addPropertyChangeListener(listener);
     }
 
     /**
@@ -222,6 +249,8 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
         listenerQueue.remove(listener);
         if (acquirer != null)
             acquirer.removePropertyChangeListener(listener);
+        if (acquirerNMEA != null)
+            acquirerNMEA.removePropertyChangeListener(listener);
     }
 
     @Override
@@ -231,9 +260,15 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
     }
 
     /**
-     * @return the lgpsmenu
+     * Return the LiveGPS menu
+     * @return the {@code JMenu} entry
      */
     public JMenu getLgpsMenu() {
         return this.lgpsmenu;
+    }
+
+    @Override
+    public PreferenceSetting getPreferenceSetting() {
+        return new LiveGPSPreferences();
     }
 }

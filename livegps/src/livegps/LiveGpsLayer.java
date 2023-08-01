@@ -62,7 +62,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
         return new LiveGpsDrawHelper(this);
     }
 
-    void setCurrentPosition(double lat, double lon) {
+    void setCurrentPosition(double lat, double lon, WayPoint wp) {
         LatLon thisPos = new LatLon(lat, lon);
         if (lastPos != null && thisPos.equalsEpsilon(lastPos, ILatLon.MAX_SERVER_PRECISION))
             // no change in position
@@ -70,8 +70,12 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
             return;
 
         lastPos = thisPos;
-        lastPoint = new WayPoint(thisPos);
-        lastPoint.attr.put("time", dateFormat.format(new Date()));
+        if (wp != null) {
+          lastPoint = wp;
+        } else {
+          lastPoint = new WayPoint(thisPos);
+          lastPoint.attr.put("time", dateFormat.format(new Date()));
+        }
         trackSegment.addWaypoint(lastPoint);
 
         if (autocenter)
@@ -109,7 +113,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
         if ("gpsdata".equals(evt.getPropertyName())) {
             lastData = (LiveGpsData) evt.getNewValue();
             if (lastData.isFix()) {
-                setCurrentPosition(lastData.getLatitude(), lastData.getLongitude());
+                setCurrentPosition(lastData.getLatitude(), lastData.getLongitude(), lastData.getWaypoint());
                 if (allowRedraw())
                     this.setFilterStateChanged();
             }
