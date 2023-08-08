@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The dialog to show users the tags that will be applied to an object
@@ -603,6 +604,7 @@ public class TagDialog extends ExtendedDialog {
             }
             loadExistingValuesToDto(dto);
         }
+        dto.setHousenumberChangeValue(Utils.clamp(dto.getHousenumberChangeValue(), FPS_MIN, FPS_MAX));
         return dto;
     }
 
