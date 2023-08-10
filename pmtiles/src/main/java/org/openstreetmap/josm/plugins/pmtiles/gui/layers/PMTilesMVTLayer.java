@@ -59,4 +59,14 @@ public class PMTilesMVTLayer extends MVTLayer implements PMTilesLayer {
     protected PMTilesMVTTileSource getTileSource() {
         return new PMTilesMVTTileSource((PMTilesImageryInfo) this.info);
     }
+
+    @Override
+    public PMTilesImageryInfo getInfo() {
+        return (PMTilesImageryInfo) super.getInfo();
+    }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return PMTilesLayer.super.getChangesetSourceTag();
+    }
 }

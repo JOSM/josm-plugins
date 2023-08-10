@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.openstreetmap.josm.plugins.pmtiles.PMTestUtils.ODBL_RASTER_STAMEN;
+import static org.openstreetmap.josm.plugins.pmtiles.PMTestUtils.ODBL_VECTOR_FIRENZE;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,14 +17,6 @@ import org.junit.jupiter.api.Test;
  * Test class for {@link PMTiles}
  */
 class PMTilesTest {
-    private static final URI ODBL_VECTOR_FIRENZE = new File("protomaps(vector)ODbL_firenze.pmtiles").exists() ?
-            new File("protomaps(vector)ODbL_firenze.pmtiles").toURI() :
-            URI.create("https://github.com/protomaps/PMTiles/raw/main/spec/v3/protomaps(vector)ODbL_firenze.pmtiles");
-
-    private static final URI ODBL_RASTER_STAMEN = new File("stamen_toner(raster)CC-BY%2BODbL_z3.pmtiles").exists() ?
-            new File("stamen_toner(raster)CC-BY%2BODbL_z3.pmtiles").toURI() :
-            URI.create("https://github.com/protomaps/PMTiles/raw/main/spec/v3/stamen_toner(raster)CC-BY%2BODbL_z3.pmtiles");
-
     @Test
     void testHeader() {
         final var header = assertDoesNotThrow(() -> PMTiles.readHeader(ODBL_VECTOR_FIRENZE));

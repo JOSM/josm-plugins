@@ -58,4 +58,14 @@ public class PMTilesImageLayer extends AbstractCachedTileSourceLayer<PMTilesImag
     protected PMTilesImageSource getTileSource() {
         return new PMTilesImageSource((PMTilesImageryInfo) this.info);
     }
+
+    @Override
+    public PMTilesImageryInfo getInfo() {
+        return (PMTilesImageryInfo) super.getInfo();
+    }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return PMTilesLayer.super.getChangesetSourceTag();
+    }
 }
