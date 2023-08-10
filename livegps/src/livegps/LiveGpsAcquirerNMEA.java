@@ -114,7 +114,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
 
         shutdownFlag = false;
         while (!shutdownFlag) {
-            while (!connected) {
+            while (!connected && !shutdownFlag) {
                 try {
                     connect();
                 } catch (IOException iox) {
@@ -122,7 +122,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ignore) {
-                        Logging.trace(ignore);
+                        Logging.info(ignore);
                     }
                 }
             }
@@ -136,13 +136,14 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                     throw new IOException();
                 sb.append((char) loopstartChar);
                 Instant lasttime = null;
-                while (true) {
+                while (!shutdownFlag) {
                     // handle long useless data
                     if (sb.length() >= 1020) {
                         sb.delete(0, sb.length()-1);
                     }
                     int c = serReader.read();
                     if (c == '$') {
+                        Logging.trace("Parsing NMEA: " + sb.toString().replaceAll("[\r\n]",""));
                         parser.parseNMEASentence(sb.toString());
                         sb.delete(0, sb.length());
                         sb.append('$');
@@ -150,13 +151,6 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                         throw new IOException();
                     } else {
                         sb.append((char) c);
-                    }
-                    if (!serReader.ready()) {
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException ignore) {
-                            Logging.trace(ignore);
-                        }
                     }
                     if (!serReader.ready()) {
                         WayPoint last = null;
@@ -174,6 +168,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                                     course = Float.valueOf(w.getString("course"));
                                 if (w.getString("speed") != null)
                                     speed = Float.valueOf(w.getString("speed"));
+                                Logging.trace("New LiveGPS entry: " + w);
                                 LiveGpsData gpsData = new LiveGpsData(w.lat(), w.lon(), course, speed, 0.0f, 0.0f);
                                 gpsData.setWaypoint(w);
                                 fireGpsDataChangeEvent(oldGpsData, gpsData);
@@ -182,6 +177,13 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                         }
                         if (last != null) {
                             lasttime = last.getInstant();
+                        }
+                        if (!serReader.ready()) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException ignore) {
+                                Logging.info(ignore);
+                            }
                         }
                     }
                 }
@@ -194,7 +196,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ignore) {
-                    Logging.trace(ignore);
+                    Logging.info(ignore);
                 }
             } catch (IllegalDataException ex) {
                 Logging.log(Logging.LEVEL_WARN, "LiveGps: Illegal NMEA", ex);
@@ -208,6 +210,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
     }
 
     public void shutdown() {
+        Logging.info("LiveGps: Shutdown NMEA");
         shutdownFlag = true;
     }
 

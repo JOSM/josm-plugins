@@ -168,12 +168,6 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
     public void enableTracking(boolean enable) {
 
         if (enable && !enabled) {
-            assert (acquirer == null);
-            assert (acquirerThread == null);
-
-            acquirer = new LiveGpsAcquirer();
-            acquirerThread = new Thread(acquirer);
-
             if (lgpslayer == null) {
                 lgpslayer = new LiveGpsLayer(data);
                 MainApplication.getLayerManager().addLayer(lgpslayer);
@@ -181,13 +175,22 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
                 lgpslayer.setAutoCenter(isAutoCenter());
             }
 
-            acquirer.addPropertyChangeListener(lgpslayer);
-            acquirer.addPropertyChangeListener(lgpsdialog);
-            for (PropertyChangeListener listener : listenerQueue) {
-                acquirer.addPropertyChangeListener(listener);
-            }
+            assert (acquirer == null);
+            assert (acquirerThread == null);
 
-            acquirerThread.start();
+            if (!Config.getPref().getBoolean(LiveGpsAcquirer.C_DISABLED)) {
+
+                acquirer = new LiveGpsAcquirer();
+                acquirerThread = new Thread(acquirer);
+
+                acquirer.addPropertyChangeListener(lgpslayer);
+                acquirer.addPropertyChangeListener(lgpsdialog);
+                for (PropertyChangeListener listener : listenerQueue) {
+                    acquirer.addPropertyChangeListener(listener);
+                }
+
+                acquirerThread.start();
+            }
 
             assert (acquirerNMEA == null);
             assert (acquirerNMEAThread == null);
@@ -211,9 +214,11 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
             assert (acquirer != null);
             assert (acquirerThread != null);
 
-            acquirer.shutdown();
-            acquirer = null;
-            acquirerThread = null;
+            if (acquirerThread != null) {
+                acquirer.shutdown();
+                acquirer = null;
+                acquirerThread = null;
+            }
 
             if (acquirerNMEAThread != null) {
                 acquirerNMEA.shutdown();

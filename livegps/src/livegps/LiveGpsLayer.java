@@ -41,6 +41,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
     LatLon lastPos;
     WayPoint lastPoint;
     private final AppendableGpxTrackSegment trackSegment;
+    private final GpxData gpxData;
     boolean autocenter;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -53,6 +54,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
 
         IGpxTrack trackBeingWritten = new SingleSegmentGpxTrack(trackSegment, attr);
         data.tracks.add(trackBeingWritten);
+        gpxData = data;
 
         initIntervals();
     }
@@ -77,6 +79,7 @@ public class LiveGpsLayer extends GpxLayer implements PropertyChangeListener {
           lastPoint.attr.put("time", dateFormat.format(new Date()));
         }
         trackSegment.addWaypoint(lastPoint);
+        gpxData.invalidate();
 
         if (autocenter)
             conditionalCenter(thisPos);

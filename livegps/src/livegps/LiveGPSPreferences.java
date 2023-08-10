@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -23,6 +24,7 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
     private final JTextField gpsdHost = new JTextField(30);
     private final JTextField gpsdPort = new JTextField(30);
     private final JTextField serialDevice = new JTextField(30);
+    private final JCheckBox disableGPSD = new JCheckBox(tr("Disable GPSD"));
 
     public LiveGPSPreferences() {
         super("dialogs/livegps", tr("LiveGPS settings"), tr("Here you can change some preferences of LiveGPS plugin"));
@@ -47,6 +49,9 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         panel.add(new JLabel(tr("Serial device")), GBC.std());
         panel.add(serialDevice, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
 
+        disableGPSD.setSelected(Config.getPref().getBoolean(LiveGpsAcquirer.C_DISABLED));
+        panel.add(disableGPSD, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GridBagConstraints.VERTICAL));
         createPreferenceTabWithScrollPane(gui, panel);
     }
@@ -56,6 +61,7 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         Config.getPref().put(LiveGpsAcquirer.C_HOST, gpsdHost.getText());
         Config.getPref().put(LiveGpsAcquirer.C_PORT, gpsdPort.getText());
         Config.getPref().put(LiveGpsAcquirerNMEA.C_SERIAL, serialDevice.getText());
+        Config.getPref().putBoolean(LiveGpsAcquirer.C_DISABLED, disableGPSD.isSelected());
         return false;
     }
 }

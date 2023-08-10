@@ -26,7 +26,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListener {
     private static final long serialVersionUID = 6183400754671501117L;
+    private boolean statusGPSD;
+    private boolean statusNMEA;
+    private JLabel statusText;
     private JLabel statusLabel;
+    private JLabel nmeaStatusText;
     private JLabel nmeaStatusLabel;
     private JLabel wayLabel;
     private JLabel latLabel;
@@ -44,12 +48,10 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         KeyEvent.VK_G, Shortcut.ALT_CTRL_SHIFT), 100);
         panel = new JPanel();
         panel.setLayout(new GridLayout(7, 2));
-        panel.add(new JLabel(tr("Status gpsd")));
+        panel.add(statusText = new JLabel(tr("Status gpsd")));
         panel.add(statusLabel = new JLabel());
-        if (!Config.getPref().get(LiveGpsAcquirerNMEA.C_SERIAL).isEmpty()) {
-          panel.add(new JLabel(tr("Status NMEA")));
-          panel.add(nmeaStatusLabel = new JLabel());
-        }
+        panel.add(nmeaStatusText = new JLabel(tr("Status NMEA")));
+        panel.add(nmeaStatusLabel = new JLabel());
         panel.add(new JLabel(tr("Way Info")));
         panel.add(wayLabel = new JLabel());
         panel.add(new JLabel(tr("Latitude")));
@@ -60,7 +62,27 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         panel.add(speedLabel = new JLabel());
         panel.add(new JLabel(tr("Course")));
         panel.add(courseLabel = new JLabel());
+        setStatusVisibility(true);
         createLayout(panel, true, null);
+    }
+
+    /**
+     * Set the visibility of the status fields
+     * @param init initialize the values (don't check previous state)
+     */
+    private void setStatusVisibility(boolean init) {
+        boolean statusGPSDNew = !Config.getPref().getBoolean(LiveGpsAcquirer.C_DISABLED);
+        if (init || statusGPSD != statusGPSDNew) {
+            statusText.setVisible(statusGPSDNew);
+            statusLabel.setVisible(statusGPSDNew);
+            statusGPSD = statusGPSDNew;
+        }
+        boolean statusNMEANew = !Config.getPref().get(LiveGpsAcquirerNMEA.C_SERIAL).isEmpty();
+        if (init || statusNMEA != statusNMEANew) {
+            nmeaStatusText.setVisible(statusNMEANew);
+            nmeaStatusLabel.setVisible(statusNMEANew);
+            statusNMEA = statusNMEANew;
+        }
     }
 
     @Override
@@ -101,6 +123,8 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
             LiveGpsStatus oldStatus = status;
             status = (LiveGpsStatus) evt.getNewValue();
 
+            setStatusVisibility(false);
+
             SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -115,6 +139,8 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
             } });
         } else if ("nmeastatus".equals(evt.getPropertyName())) {
             nmeaStatus = (LiveGpsStatus) evt.getNewValue();
+
+            setStatusVisibility(false);
 
             SwingUtilities.invokeLater(new Runnable() {
             @Override

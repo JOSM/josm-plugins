@@ -32,6 +32,8 @@ public class LiveGpsAcquirer implements Runnable {
     public static final String C_HOST = "livegps.gpsd.host";
     /* option to use specify gpsd port number */
     public static final String C_PORT = "livegps.gpsd.port";
+    /* option to use specify gpsd disabling */
+    public static final String C_DISABLED = "livegps.gpsd.disabled";
     private String gpsdHost;
     private int gpsdPort;
 
@@ -131,7 +133,7 @@ public class LiveGpsAcquirer implements Runnable {
         shutdownFlag = false;
         while (!shutdownFlag) {
 
-            while (!connected) {
+            while (!connected && !shutdownFlag) {
                 try {
                     connect();
                 } catch (IOException iox) {
@@ -143,6 +145,8 @@ public class LiveGpsAcquirer implements Runnable {
                     }
                 }
             }
+            if (shutdownFlag)
+              break;
 
             assert connected;
 
@@ -189,6 +193,7 @@ public class LiveGpsAcquirer implements Runnable {
     }
 
     public void shutdown() {
+        Logging.info("LiveGps: Shutdown gpsd");
         shutdownFlag = true;
     }
 
