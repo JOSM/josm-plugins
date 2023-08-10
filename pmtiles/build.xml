@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="pmtiles" default="dist" basedir=".">
+    <property name="plugin.src.dir" value="src/main/java"/>
+    <property name="plugin.test.dir" location="src/test/java"/>
+    <property name="plugin.resources.dir" value="src/main/resources"/>
+
+    <!-- enter the SVN commit message -->
+    <property name="commit.message" value="Commit message"/>
+    <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+    <property name="plugin.main.version" value="10580"/>
+
+    <!-- Configure these properties (replace "..." accordingly).
+         See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
+    -->
+    <property name="plugin.author" value="Taylor Smock"/>
+    <property name="plugin.class" value="org.openstreetmap.josm.plugins.pmtiles.PMTilesPlugin"/>
+    <property name="plugin.description" value="A plugin for pmtile support"/>
+    <property name="plugin.minimum.java.version" value="17"/>
+    <property name="plugin.canloadatruntime" value="true"/>
+    <property name="plugin.requires" value="apache-commons"/>
+    <property name="java.lang.version" value="17"/>
+
+    <!-- ** include targets that all plugins have in common ** -->
+    <import file="../build-common.xml"/>
+    <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
+        <include name="apache-commons.jar"/>
+    </fileset>
+</project>
