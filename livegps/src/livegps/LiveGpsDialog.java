@@ -139,9 +139,12 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
             @Override
             public void run() {
                 /* prevent flickering - skip the connecting message when NMEA input is working */
-                if (!(oldStatus.getStatus() == LiveGpsStatus.GpsStatus.CONNECTION_FAILED && status.getStatus() == LiveGpsStatus.GpsStatus.CONNECTING && nmeaStatus.getStatus() == LiveGpsStatus.GpsStatus.CONNECTED))
+                if (!(oldStatus.getStatus() == LiveGpsStatus.GpsStatus.CONNECTION_FAILED
+                && status.getStatus() == LiveGpsStatus.GpsStatus.CONNECTING
+                && nmeaStatus.getStatus() == LiveGpsStatus.GpsStatus.CONNECTED))
                     statusLabel.setText(status.getStatusMessage());
-                if (status.getStatus() != LiveGpsStatus.GpsStatus.CONNECTED && nmeaStatus.getStatus() != LiveGpsStatus.GpsStatus.CONNECTED) {
+                if (status.getStatus() != LiveGpsStatus.GpsStatus.CONNECTED
+                && nmeaStatus.getStatus() != LiveGpsStatus.GpsStatus.CONNECTED) {
                     panel.setBackground(Color.RED);
                 } else {
                     panel.setBackground(Color.WHITE);

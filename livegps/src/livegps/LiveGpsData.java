@@ -3,7 +3,6 @@ package livegps;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Point;
 import java.text.DecimalFormat;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -13,11 +12,9 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Geometry;
 
@@ -32,7 +29,7 @@ public class LiveGpsData {
     private float speed;
     private float epx, epy;
     private String wayString;
-    private WayPoint wp;
+    private WayPoint waypoint;
     private static final DecimalFormat offsetFormat = new DecimalFormat("0.00");
 
     public LiveGpsData(double latitude, double longitude, float course, float speed) {
@@ -56,15 +53,15 @@ public class LiveGpsData {
      * @return waypoint with additional information or {@code null}
      */
     public WayPoint getWaypoint() {
-        return this.wp;
+        return this.waypoint;
     }
 
     /**
      * Set the waypoint to transfer additional data form NMEA input
-     * @param wp waypoint to set
+     * @param waypoint waypoint to set
      */
-    public void setWaypoint(WayPoint wp) {
-        this.wp = wp;
+    public void setWaypoint(WayPoint waypoint) {
+        this.waypoint = waypoint;
     }
 
     /**
@@ -185,6 +182,7 @@ public class LiveGpsData {
                      @Override
                      protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
                      }
+
                      @Override
                      protected void decorateNameWithNodes(StringBuilder name, IWay way) {
                      }

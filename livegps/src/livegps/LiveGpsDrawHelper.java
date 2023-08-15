@@ -13,6 +13,9 @@ import org.openstreetmap.josm.gui.layer.MapViewGraphics;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 
+/**
+ * Painting the LiveGPS data layer, especially the current position arrow
+ */
 public class LiveGpsDrawHelper extends GpxDrawHelper {
     private final LiveGpsLayer layer;
 

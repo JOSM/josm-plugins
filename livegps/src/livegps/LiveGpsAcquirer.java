@@ -23,6 +23,9 @@ import javax.json.JsonObject;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
+/**
+ * Acquires NMEA data from a GPSD
+ */
 public class LiveGpsAcquirer implements Runnable {
     private String gpsdHost;
     private int gpsdPort;
@@ -152,9 +155,9 @@ public class LiveGpsAcquirer implements Runnable {
                     throw new IOException();
 
                 if (JSONProtocol == true)
-                    gpsData = ParseJSON(line);
+                    gpsData = parseJSON(line);
                 else
-                    gpsData = ParseOld(line);
+                    gpsData = parseOld(line);
 
                 if (gpsData == null)
                     continue;
@@ -277,7 +280,7 @@ public class LiveGpsAcquirer implements Runnable {
         }
     }
 
-    private LiveGpsData ParseJSON(String line) {
+    private LiveGpsData parseJSON(String line) {
         JsonObject report;
         double lat, lon;
         float speed = 0;
@@ -318,7 +321,7 @@ public class LiveGpsAcquirer implements Runnable {
         return new LiveGpsData(lat, lon, course, speed, epx, epy);
     }
 
-    private LiveGpsData ParseOld(String line) {
+    private LiveGpsData parseOld(String line) {
         String[] words;
         double lat = 0;
         double lon = 0;

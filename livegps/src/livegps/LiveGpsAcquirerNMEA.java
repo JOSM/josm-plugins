@@ -141,7 +141,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                     }
                     int c = serReader.read();
                     if (c == '$') {
-                        Logging.trace("Parsing NMEA: " + sb.toString().replaceAll("[\r\n]",""));
+                        Logging.trace("Parsing NMEA: " + sb.toString().replaceAll("[\r\n]", ""));
                         parser.parseNMEASentence(sb.toString());
                         sb.delete(0, sb.length());
                         sb.append('$');
@@ -154,7 +154,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                         WayPoint last = null;
                         Collection<WayPoint> wpts = parser.getAndDropWaypoints();
                         for (WayPoint w : wpts) {
-                            if(w.getInstant() == null)
+                            if (w.getInstant() == null)
                                 continue;
                             if (w.getInstant().equals(lasttime)) {
                                 Logging.info("Skip double waypoint at " + lasttime);

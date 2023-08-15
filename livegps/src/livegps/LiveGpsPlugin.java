@@ -28,6 +28,9 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Main LiveGPS plugin class
+ */
 public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
     private boolean enabled = false;
     private LiveGpsAcquirer acquirer = null;

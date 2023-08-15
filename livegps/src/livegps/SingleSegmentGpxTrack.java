@@ -10,6 +10,9 @@ import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WithAttributes;
 
+/**
+ * LiveGPS track which gets step by step expanded with new data
+ */
 public class SingleSegmentGpxTrack extends WithAttributes implements IGpxTrack {
 
     private final IGpxTrackSegment trackSegment;
