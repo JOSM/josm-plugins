@@ -178,7 +178,7 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
             assert (acquirer == null);
             assert (acquirerThread == null);
 
-            if (!Config.getPref().getBoolean(LiveGpsAcquirer.C_DISABLED)) {
+            if (!Config.getPref().getBoolean(LiveGPSPreferences.C_DISABLED)) {
 
                 acquirer = new LiveGpsAcquirer();
                 acquirerThread = new Thread(acquirer);
@@ -195,7 +195,7 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
             assert (acquirerNMEA == null);
             assert (acquirerNMEAThread == null);
 
-            if (!Config.getPref().get(LiveGpsAcquirerNMEA.C_SERIAL).isEmpty()) {
+            if (!Config.getPref().get(LiveGPSPreferences.C_SERIAL).isEmpty()) {
                 acquirerNMEA = new LiveGpsAcquirerNMEA();
                 acquirerNMEAThread = new Thread(acquirerNMEA);
                 acquirerNMEA.addPropertyChangeListener(lgpslayer);

@@ -24,16 +24,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 public class LiveGpsAcquirer implements Runnable {
-    /* default gpsd host address */
-    public static final String DEFAULT_HOST = "localhost";
-    /* default gpsd port number */
-    public static final int DEFAULT_PORT = 2947;
-    /* option to use specify gpsd host address */
-    public static final String C_HOST = "livegps.gpsd.host";
-    /* option to use specify gpsd port number */
-    public static final String C_PORT = "livegps.gpsd.port";
-    /* option to use specify gpsd disabling */
-    public static final String C_DISABLED = "livegps.gpsd.disabled";
     private String gpsdHost;
     private int gpsdPort;
 
@@ -54,11 +44,11 @@ public class LiveGpsAcquirer implements Runnable {
      */
     public LiveGpsAcquirer() {
 
-        gpsdHost = Config.getPref().get(C_HOST, DEFAULT_HOST);
-        gpsdPort = Config.getPref().getInt(C_PORT, DEFAULT_PORT);
+        gpsdHost = Config.getPref().get(LiveGPSPreferences.C_HOST, LiveGPSPreferences.DEFAULT_HOST);
+        gpsdPort = Config.getPref().getInt(LiveGPSPreferences.C_PORT, LiveGPSPreferences.DEFAULT_PORT);
         // put the settings back in to the preferences, makes keys appear.
-        Config.getPref().put(C_HOST, gpsdHost);
-        Config.getPref().putInt(C_PORT, gpsdPort);
+        Config.getPref().put(LiveGPSPreferences.C_HOST, gpsdHost);
+        Config.getPref().putInt(LiveGPSPreferences.C_PORT, gpsdPort);
     }
 
     /**

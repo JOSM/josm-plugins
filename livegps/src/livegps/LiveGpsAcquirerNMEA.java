@@ -24,8 +24,6 @@ import org.openstreetmap.josm.tools.Logging;
  * Acquires NMEA data from a (virtual) serial port
  */
 public class LiveGpsAcquirerNMEA implements Runnable {
-    /* option to use serial port direct access */
-    public static final String C_SERIAL = "livegps.serial.port";
     private String serName;
 
     private InputStreamReader serReader;
@@ -41,7 +39,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
      * Constructor, initializes the configurable settings.
      */
     public LiveGpsAcquirerNMEA() {
-        serName = Config.getPref().get(C_SERIAL);
+        serName = Config.getPref().get(LiveGPSPreferences.C_SERIAL);
     }
 
     /**

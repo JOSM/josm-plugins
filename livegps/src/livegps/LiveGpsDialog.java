@@ -15,6 +15,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -33,7 +34,9 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
     private JLabel nmeaStatusText;
     private JLabel nmeaStatusLabel;
     private JLabel wayLabel;
+    private JLabel latText;
     private JLabel latLabel;
+    private JLabel longText;
     private JLabel longLabel;
     private JLabel courseLabel;
     private JLabel speedLabel;
@@ -54,9 +57,9 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         panel.add(nmeaStatusLabel = new JLabel());
         panel.add(new JLabel(tr("Way Info")));
         panel.add(wayLabel = new JLabel());
-        panel.add(new JLabel(tr("Latitude")));
+        panel.add(latText = new JLabel(tr("Latitude")));
         panel.add(latLabel = new JLabel());
-        panel.add(new JLabel(tr("Longitude")));
+        panel.add(longText = new JLabel(tr("Longitude")));
         panel.add(longLabel = new JLabel());
         panel.add(new JLabel(tr("Speed")));
         panel.add(speedLabel = new JLabel());
@@ -71,13 +74,13 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
      * @param init initialize the values (don't check previous state)
      */
     private void setStatusVisibility(boolean init) {
-        boolean statusGPSDNew = !Config.getPref().getBoolean(LiveGpsAcquirer.C_DISABLED);
+        boolean statusGPSDNew = !Config.getPref().getBoolean(LiveGPSPreferences.C_DISABLED);
         if (init || statusGPSD != statusGPSDNew) {
             statusText.setVisible(statusGPSDNew);
             statusLabel.setVisible(statusGPSDNew);
             statusGPSD = statusGPSDNew;
         }
-        boolean statusNMEANew = !Config.getPref().get(LiveGpsAcquirerNMEA.C_SERIAL).isEmpty();
+        boolean statusNMEANew = !Config.getPref().get(LiveGPSPreferences.C_SERIAL).isEmpty();
         if (init || statusNMEA != statusNMEANew) {
             nmeaStatusText.setVisible(statusNMEANew);
             nmeaStatusLabel.setVisible(statusNMEANew);
@@ -99,6 +102,13 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                 if (data.isFix()) {
                     panel.setBackground(Color.WHITE);
                     ICoordinateFormat mCord = CoordinateFormatManager.getDefaultFormat();
+                    if (ProjectedCoordinateFormat.INSTANCE.equals(mCord)) {
+                        latText.setText(tr("Northing"));
+                        longText.setText(tr("Easting"));
+                    } else {
+                        latText.setText(tr("Latitude"));
+                        longText.setText(tr("Longitude"));
+                    }
                     latLabel.setText(mCord.latToString(data.getLatLon()));
                     longLabel.setText(mCord.lonToString(data.getLatLon()));
                     double mySpeed = data.getSpeed() * 3.6f;

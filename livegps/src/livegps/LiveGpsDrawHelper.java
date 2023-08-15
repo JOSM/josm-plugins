@@ -16,17 +16,10 @@ import org.openstreetmap.josm.spi.preferences.Config;
 public class LiveGpsDrawHelper extends GpxDrawHelper {
     private final LiveGpsLayer layer;
 
-    public static final String C_LIVEGPS_COLOR_POSITION = "color.livegps.position";
-    public static final String C_LIVEGPS_COLOR_POSITION_ESTIMATE = "color.livegps.position_estimate";
-
     private static final CachingProperty<Color> COLOR_POSITION =
-            new NamedColorProperty(C_LIVEGPS_COLOR_POSITION, Color.RED).cached();
+            new NamedColorProperty(LiveGPSPreferences.C_LIVEGPS_COLOR_POSITION, Color.RED).cached();
     private static final CachingProperty<Color> COLOR_POSITION_ESTIMATE =
-            new NamedColorProperty(C_LIVEGPS_COLOR_POSITION_ESTIMATE, Color.CYAN).cached();
-
-    private static final String C_CURSOR_H = "livegps.cursor_height"; /* in pixels */
-    private static final String C_CURSOR_W = "livegps.cursor_width"; /* in pixels */
-    private static final String C_CURSOR_T = "livegps.cursor_thickness"; /* in pixels */
+            new NamedColorProperty(LiveGPSPreferences.C_LIVEGPS_COLOR_POSITION_ESTIMATE, Color.CYAN).cached();
 
     public LiveGpsDrawHelper(LiveGpsLayer livegpslayer) {
         super(livegpslayer);
@@ -47,9 +40,9 @@ public class LiveGpsDrawHelper extends GpxDrawHelper {
 
         Point screen = mv.getPoint(lastPoint.getCoor());
 
-        int TriaHeight = Config.getPref().getInt(C_CURSOR_H, 20);
-        int TriaWidth = Config.getPref().getInt(C_CURSOR_W, 10);
-        int TriaThick = Config.getPref().getInt(C_CURSOR_T, 4);
+        int TriaHeight = Config.getPref().getInt(LiveGPSPreferences.C_CURSOR_H, 20);
+        int TriaWidth = Config.getPref().getInt(LiveGPSPreferences.C_CURSOR_W, 10);
+        int TriaThick = Config.getPref().getInt(LiveGPSPreferences.C_CURSOR_T, 4);
 
         /*
          * Draw a bold triangle.
