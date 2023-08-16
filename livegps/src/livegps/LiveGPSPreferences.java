@@ -59,6 +59,7 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
     private final JTextField gpsdPort = new JTextField(30);
     private final JTextField serialDevice = new JTextField(30);
     private final JCheckBox disableGPSD = new JCheckBox(tr("Disable GPSD"));
+    private final JCheckBox showOffset = new JCheckBox(tr("Show Distance to nearest way"));
 
     public LiveGPSPreferences() {
         super("dialogs/livegps", tr("LiveGPS settings"), tr("Here you can change some preferences of LiveGPS plugin"));
@@ -78,13 +79,18 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         panel.add(new JLabel(tr("Port number gpsd")), GBC.std());
         panel.add(gpsdPort, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
 
+        disableGPSD.setSelected(Config.getPref().getBoolean(C_DISABLED, false));
+        panel.add(disableGPSD, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
+
         serialDevice.setText(Config.getPref().get(C_SERIAL));
-        serialDevice.setToolTipText(tr("Serial device for direct NMEA input, does not exist by default"));
+        serialDevice.setToolTipText(tr(".Serial device for direct NMEA input, does not exist by default.</html>"));
         panel.add(new JLabel(tr("Serial device")), GBC.std());
         panel.add(serialDevice, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
+        /* I18n : {0} to {3} is like /dev/ttyACM<b>x</b>, {4} and {5} are COM1 and COM9 */
+        panel.add(new JLabel(tr("<html>For Linux {0}, {1}, {2} or {3} (<b>x</b> means any number beginning with 0).<br>For Windows {4} to {5} (COM ports bigger than 9 wont work).</html>", "/dev/ttyS<b>x</b>", "/dev/ttyACM<b>x</b>", "/dev/ttyUSB<b>x</b>", "/dev/rfcomm<b>x</b>", "COM1", "COM9")), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(10, 0, 0, 5));
 
-        disableGPSD.setSelected(Config.getPref().getBoolean(C_DISABLED));
-        panel.add(disableGPSD, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
+        showOffset.setSelected(Config.getPref().getBoolean(C_WAYOFFSET, false));
+        panel.add(showOffset, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GridBagConstraints.VERTICAL));
         createPreferenceTabWithScrollPane(gui, panel);
@@ -96,6 +102,7 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         Config.getPref().put(C_PORT, gpsdPort.getText());
         Config.getPref().put(C_SERIAL, serialDevice.getText());
         Config.getPref().putBoolean(C_DISABLED, disableGPSD.isSelected());
+        Config.getPref().putBoolean(C_WAYOFFSET, showOffset.isSelected());
         return false;
     }
 }

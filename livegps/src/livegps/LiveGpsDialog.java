@@ -40,6 +40,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
     private JLabel longLabel;
     private JLabel courseLabel;
     private JLabel speedLabel;
+    private JLabel wayText;
     private JPanel panel;
     private LiveGpsStatus status = new LiveGpsStatus(LiveGpsStatus.GpsStatus.CONNECTING, tr("Connecting"));
     private LiveGpsStatus nmeaStatus = new LiveGpsStatus(LiveGpsStatus.GpsStatus.CONNECTING, tr("Connecting"));
@@ -55,7 +56,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         panel.add(statusLabel = new JLabel());
         panel.add(nmeaStatusText = new JLabel(tr("Status NMEA")));
         panel.add(nmeaStatusLabel = new JLabel());
-        panel.add(new JLabel(tr("Way Info")));
+        panel.add(wayText = new JLabel(tr("Way Info")));
         panel.add(wayLabel = new JLabel());
         panel.add(latText = new JLabel(tr("Latitude")));
         panel.add(latLabel = new JLabel());
@@ -66,6 +67,12 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         panel.add(new JLabel(tr("Course")));
         panel.add(courseLabel = new JLabel());
         setStatusVisibility(true);
+        if (Config.getPref().getBoolean(LiveGPSPreferences.C_WAYOFFSET, false)) {
+            /* I18N: way information with offset (in m) enabled */
+            wayText.setText(tr("Way Info [m]"));
+        } else {
+            wayText.setText(tr("Way Info"));
+        }
         createLayout(panel, true, null);
     }
 
@@ -109,6 +116,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                         latText.setText(tr("Latitude"));
                         longText.setText(tr("Longitude"));
                     }
+
                     latLabel.setText(mCord.latToString(data.getLatLon()));
                     longLabel.setText(mCord.lonToString(data.getLatLon()));
                     double mySpeed = data.getSpeed() * 3.6f;
@@ -120,6 +128,12 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                         wayLabel.setText(wayString);
                     } else {
                         wayLabel.setText(tr("unknown"));
+                    }
+                    if (Config.getPref().getBoolean(LiveGPSPreferences.C_WAYOFFSET, false)) {
+                        /* I18N: way information with offset (in m) enabled */
+                        wayText.setText(tr("Way Info [m]"));
+                    } else {
+                        wayText.setText(tr("Way Info"));
                     }
                 } else {
                     latLabel.setText("");

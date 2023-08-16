@@ -175,8 +175,10 @@ public class LiveGpsData {
     public String getWayInfo() {
         if (wayString == null) {
             Node n = new Node(latLon);
+            Way way = null;
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            Way way = Geometry.getClosestPrimitive(n, ds.getWays());
+            if (ds != null)
+                Geometry.getClosestPrimitive(n, ds.getWays());
             if (way != null) {
                 wayString = way.getDisplayName(new DefaultNameFormatter() {
                      @Override
