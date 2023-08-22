@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.json.JsonArray;
-import javax.json.JsonException;
-import javax.json.JsonObject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -40,8 +40,8 @@ final class ChatServerConnection {
     private int userId;
     private String userName;
     private static ChatServerConnection instance;
-    private Set<ChatServerConnectionListener> listeners;
-    private LogRequest requestThread;
+    private final Set<ChatServerConnectionListener> listeners;
+    private final LogRequest requestThread;
 
     private ChatServerConnection() {
         userId = 0;
@@ -122,6 +122,7 @@ final class ChatServerConnection {
                     Thread.sleep(200);
                 }
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 Logging.warn(e);
             }
             autoLogin(userName);
@@ -278,11 +279,11 @@ final class ChatServerConnection {
     private static double latToTileY(double lat, int zoom) {
         double l = lat / 180 * Math.PI;
         double pf = Math.log(Math.tan(l) + (1 / Math.cos(l)));
-        return Math.pow(2.0, zoom - 1) * (Math.PI - pf) / Math.PI;
+        return Math.pow(2.0, zoom - 1d) * (Math.PI - pf) / Math.PI;
     }
 
     private static double lonToTileX(double lon, int zoom) {
-        return Math.pow(2.0, zoom - 3) * (lon + 180.0) / 45.0;
+        return Math.pow(2.0, zoom - 3d) * (lon + 180.0) / 45.0;
     }
 
     public static int getCurrentZoom() {
@@ -304,17 +305,16 @@ final class ChatServerConnection {
         }
         double factor = screenPixels / tilePixels;
         double result = Math.log(factor) / Math.log(2) / 2 + 1;
-        int intResult = (int) Math.floor(result);
-        return intResult;
+        return (int) Math.floor(result);
     }
 
     private class LogRequest implements Runnable {
         private static final int MAX_JUMP = 20000; // in meters
-        private LatLon lastPosition = null;
-        private long lastUserId = 0;
-        private long lastId = 0;
-        private boolean lastStatus = false;
-        private boolean stopping = false;
+        private LatLon lastPosition;
+        private long lastUserId;
+        private long lastId;
+        private boolean lastStatus;
+        private boolean stopping;
 
         @Override
         public void run() {
@@ -323,9 +323,11 @@ final class ChatServerConnection {
             while (!stopping) {
                 process();
                 try {
-                    Thread.sleep(interval * 1000);
+                    Thread.sleep(interval * 1000L);
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     stopping = true;
+                    Logging.trace(e);
                 }
             }
         }
@@ -366,6 +368,7 @@ final class ChatServerConnection {
             try {
                 json = JsonQueryUtil.query(query, true);
             } catch (IOException ex) {
+                Logging.trace(ex);
                 json = null; // ?
             }
             if (json == null) {

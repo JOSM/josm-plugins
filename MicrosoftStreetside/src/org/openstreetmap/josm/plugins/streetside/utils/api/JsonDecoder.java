@@ -8,18 +8,17 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.function.Function;
 
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 
 public final class JsonDecoder {
-
-  final static Logger logger = Logger.getLogger(JsonDecoder.class);
+  private static final double[] EMPTY_DOUBLE = new double[0];
 
   private JsonDecoder() {
     // Private constructor to avoid instantiation
@@ -64,7 +63,7 @@ public final class JsonDecoder {
    */
   static LatLon decodeLatLon(final JsonArray json) {
     final double[] result = decodeDoublePair(json);
-    if (result != null) {
+    if (result.length == 2) {
       return new LatLon(result[1], result[0]);
     }
     return null;
@@ -76,7 +75,6 @@ public final class JsonDecoder {
    * @return a double array which contains the two values in the same order, or <code>null</code>
    *         if the parameter was not a {@link JsonArray} of exactly size 2 containing two {@link JsonNumber}s
    */
-  @SuppressWarnings("PMD.ReturnEmptyArrayRatherThanNull")
   static double[] decodeDoublePair(final JsonArray json) {
     if (
       json != null &&
@@ -86,7 +84,7 @@ public final class JsonDecoder {
     ) {
       return new double[]{json.getJsonNumber(0).doubleValue(), json.getJsonNumber(1).doubleValue()};
     }
-    return null;
+    return EMPTY_DOUBLE;
   }
 
   /**
@@ -95,7 +93,7 @@ public final class JsonDecoder {
    * @param timestamp the timestamp formatted according to the format <code>yyyy-MM-dd'T'HH:mm:ss.SSSX</code>
    * @return the point in time as a {@link Long} value representing the UNIX epoch time, or <code>null</code> if the
    *   parameter does not match the required format (this also triggers a warning via
-   *   {@link Logger}, or the parameter is <code>null</code>).
+   *   {@link Logging}, or the parameter is <code>null</code>).
    */
   static Long decodeTimestamp(final String timestamp) {
     if (timestamp != null) {
@@ -103,7 +101,7 @@ public final class JsonDecoder {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.UK).parse(timestamp).getTime();
       } catch (ParseException e) {
         StackTraceElement calledBy = e.getStackTrace()[Math.min(e.getStackTrace().length - 1, 2)];
-        logger.warn(I18n.tr(String.format(
+        Logging.warn(I18n.tr(String.format(
           "Could not decode time from the timestamp `%s` (called by %s.%s:%d)",
           timestamp, calledBy.getClassName(), calledBy.getMethodName(), calledBy.getLineNumber()
         ), e));

@@ -1,7 +1,7 @@
 // License: WTFPL. For details, see LICENSE file.
 package geochat;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * A callback for {@link JsonQueryUtil}.

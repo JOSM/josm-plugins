@@ -72,9 +72,9 @@ public class PointInfoPlugin extends Plugin {
         module = null;
         if (Config.getPref().getBoolean("plugin.pointinfo.automode", true)) {
             ReverseRecord r = ReverseFinder.queryNominatim(pos);
-            Iterator i = modules.values().iterator();
+            Iterator<AbstractPointInfoModule> i = modules.values().iterator();
             while (module == null && i.hasNext()) {
-                AbstractPointInfoModule m = (AbstractPointInfoModule) i.next();
+                AbstractPointInfoModule m = i.next();
                 if (r.matchAnyArea(m.getArea())) {
                     module = m;
                 }

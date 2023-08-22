@@ -4,11 +4,12 @@ package geochat;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
+import jakarta.json.Json;
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -42,16 +43,16 @@ public final class JsonQueryUtil implements Runnable {
      */
     public static JsonObject query(String query, boolean logAtDebug) throws IOException {
         String serverURL = Config.getPref().get("geochat.server", "https://zverik.dev.openstreetmap.org/osmochat.php?action=");
-        URL url = new URL(serverURL + query);
-        Response connection = HttpClient.create(url).setLogAtDebug(logAtDebug).connect();
+        URI url = URI.create(serverURL + query);
+        Response connection = HttpClient.create(url.toURL()).setLogAtDebug(logAtDebug).connect();
         if (connection.getResponseCode() != 200) {
             throw new IOException("HTTP Response code " + connection.getResponseCode() + " (" + connection.getResponseMessage() + ")");
         }
         InputStream inp = connection.getContent();
         if (inp == null)
             throw new IOException("Empty response");
-        try {
-            return Json.createReader(inp).readObject();
+        try (JsonReader reader = Json.createReader(inp)){
+            return reader.readObject();
         } catch (JsonException e) {
             throw new IOException("Failed to parse JSON: " + e.getMessage(), e);
         } finally {

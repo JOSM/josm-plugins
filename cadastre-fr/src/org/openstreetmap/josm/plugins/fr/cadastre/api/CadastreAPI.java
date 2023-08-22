@@ -4,16 +4,17 @@ package org.openstreetmap.josm.plugins.fr.cadastre.api;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonStructure;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonStructure;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -54,8 +55,9 @@ public final class CadastreAPI {
      * @throws IOException if any I/O error occurs
      */
     public static Set<String> getSheets(double minlon, double minlat, double maxlon, double maxlat) throws IOException {
-        URL url = new URL(API_ENDPOINT.get() + "/feuilles?bbox=" + String.join(",",
-                Double.toString(minlon), Double.toString(minlat), Double.toString(maxlon), Double.toString(maxlat)));
+        URL url = URI.create(API_ENDPOINT.get() + "/feuilles?bbox=" + String.join(",",
+                Double.toString(minlon), Double.toString(minlat), Double.toString(maxlon), Double.toString(maxlat)))
+                .toURL();
         try {
             Response response = HttpClient.create(url).connect();
             if (response.getResponseCode() >= 400) {
@@ -64,12 +66,14 @@ public final class CadastreAPI {
                         response.getResponseCode(), "https://github.com/etalab/geo.data.gouv.fr/issues", "https://twitter.com/geodatagouv",
                         "geo@data.gouv.fr"));
             }
-            JsonStructure json = Json.createReader(new StringReader(response.fetchContent())).read();
-            if (json instanceof JsonArray) {
-                return json.asJsonArray().stream().map(x -> x.asJsonObject().getString("id")).collect(Collectors.toSet());
-            } else {
-                JsonObject obj = json.asJsonObject();
-                throw new IOException(new OsmApiException(obj.getInt("code"), null, obj.getString("message"), url.toExternalForm()));
+            try (JsonReader reader = Json.createReader(response.getContentReader())) {
+                JsonStructure json = reader.read();
+                if (json instanceof JsonArray) {
+                    return json.asJsonArray().stream().map(x -> x.asJsonObject().getString("id")).collect(Collectors.toSet());
+                } else {
+                    JsonObject obj = json.asJsonObject();
+                    throw new IOException(new OsmApiException(obj.getInt("code"), null, obj.getString("message"), url.toExternalForm()));
+                }
             }
         } catch (MalformedURLException e) {
             throw new JosmRuntimeException(e);

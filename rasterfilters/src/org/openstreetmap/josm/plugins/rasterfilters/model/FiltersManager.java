@@ -8,13 +8,12 @@ import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.rmi.server.UID;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -116,7 +115,7 @@ public class FiltersManager implements StateChangeListener, ImageProcessor, Acti
                 } else if (component instanceof JComboBox) {
                     ((JComboBox<String>) component).addActionListener(filterListener);
                 } else if (component instanceof ColorPicker) {
-                    ((ColorPicker) component).addPropertyChangeListener(filterListener);
+                    component.addPropertyChangeListener(filterListener);
                 }
 
                 // adding parameters to the filter instance
@@ -176,12 +175,8 @@ public class FiltersManager implements StateChangeListener, ImageProcessor, Acti
     @Override
     public BufferedImage process(BufferedImage image) {
 
-        Iterator<Filter> it = filtersMap.values().iterator();
-
         // iterating through map of filters according to the order
-        while (it.hasNext()) {
-
-            Filter curFilter = it.next();
+        for (Filter curFilter : filtersMap.values()) {
 
             if (!disabledFilters.contains(curFilter)) {
                 // if next filter will return null

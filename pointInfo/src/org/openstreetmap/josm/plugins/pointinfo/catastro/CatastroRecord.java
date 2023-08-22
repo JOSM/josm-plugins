@@ -1,25 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.pointinfo.catastro;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 
 import org.openstreetmap.josm.tools.Logging;
-import java.util.logging.Level;
+import org.xml.sax.SAXException;
 
 /**
  * Class to contain Catastro data
@@ -49,8 +50,8 @@ class CatastroRecord {
      *
      */
     private void init() {
-        errors = new ArrayList<JsonObject>();
-        coords = new ArrayList<JsonObject>();
+        errors = new ArrayList<>();
+        coords = new ArrayList<>();
     }
 
     /**
@@ -67,55 +68,47 @@ class CatastroRecord {
             doc.getDocumentElement().normalize();
             parseErrors(doc);
             parseCoordenadas(doc);
-        } catch (Exception e) {
-            Logging.log(Level.WARNING, e);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            Logging.warn(e);
         }
     }
 
     private void parseErrors(Document doc) {
-        try {
-            NodeList nList = doc.getElementsByTagName("err");
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);            
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    String code = eElement.getElementsByTagName("cod").item(0).getTextContent();
-                    String desc = eElement.getElementsByTagName("des").item(0).getTextContent();
-                    JsonObject error = Json.createObjectBuilder()
-                        .add("code", code)
-                        .add("desc", desc)
-                        .build();
-                    errors.add(error);
-                    Logging.info("Error: (" + code + ") " + desc);
-                }
+        NodeList nList = doc.getElementsByTagName("err");
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                String code = eElement.getElementsByTagName("cod").item(0).getTextContent();
+                String desc = eElement.getElementsByTagName("des").item(0).getTextContent();
+                JsonObject error = Json.createObjectBuilder()
+                    .add("code", code)
+                    .add("desc", desc)
+                    .build();
+                errors.add(error);
+                Logging.info("Error: (" + code + ") " + desc);
             }
-        } catch (Exception e) {
-            Logging.log(Level.WARNING, "errors:", e);
         }
     }
     
     private void parseCoordenadas(Document doc) {
-        try {
-            NodeList nList = doc.getElementsByTagName("coord");
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-                Node nNode = nList.item(temp);            
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element eElement = (Element) nNode;
-                    String ref = eElement.getElementsByTagName("pc1").item(0).getTextContent()
-                        + eElement.getElementsByTagName("pc2").item(0).getTextContent();
-                    String address = eElement.getElementsByTagName("ldt")
-                        .item(0).getTextContent();
-                    JsonObject coord = Json.createObjectBuilder()
-                        .add("ref", ref)
-                        .add("address", address)
-                        .build();
-                    coords.add(coord);
-                    Logging.info("Referencia Catastral: " + ref);
-                    Logging.info("Dirección: " + address);
-                }
+        NodeList nList = doc.getElementsByTagName("coord");
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                String ref = eElement.getElementsByTagName("pc1").item(0).getTextContent()
+                    + eElement.getElementsByTagName("pc2").item(0).getTextContent();
+                String address = eElement.getElementsByTagName("ldt")
+                    .item(0).getTextContent();
+                JsonObject coord = Json.createObjectBuilder()
+                    .add("ref", ref)
+                    .add("address", address)
+                    .build();
+                coords.add(coord);
+                Logging.info("Referencia Catastral: " + ref);
+                Logging.info("Dirección: " + address);
             }
-        } catch (Exception e) {
-            Logging.log(Level.WARNING, "coordenadas:", e);
         }
     }
     
@@ -129,20 +122,21 @@ class CatastroRecord {
         r.append("<br/>");
         for (JsonObject coord: coords) {
             r.append("<i><u>Información de la parcela</u></i><br/>");
-            r.append("<b>Referencia Catastral: </b>" + coord.getString("ref") + "<br/>");
-            r.append("<b>Dirección: </b>" + coord.getString("address") + "<br/>");
-            r.append("<b>Fotografía de fachada:</b> <a href=\"" 
-                + fURL + coord.getString("ref") + "\">"
-                + "Enlace a web de Catastro</a> (<a href=\""
-                + eURL + fURL + coord.getString("ref")
-                + "\">metadatos</a>)<br/><br/>");
+            r.append("<b>Referencia Catastral: </b>").append(coord.getString("ref")).append("<br/>");
+            r.append("<b>Dirección: </b>").append(coord.getString("address")).append("<br/>");
+            r.append("<b>Fotografía de fachada:</b> <a href=\"").append(fURL)
+                    .append(coord.getString("ref"))
+                    .append("\">")
+                    .append("Enlace a web de Catastro</a> (<a href=\"")
+                    .append(eURL).append(fURL)
+                    .append(coord.getString("ref")).append("\">metadatos</a>)<br/><br/>");
         }
-        if (errors.size() > 0) {
+        if (!errors.isEmpty()) {
             r.append("<i><u>Errores</u></i><br/>");
         }
         for (JsonObject error: errors) {
-            r.append("(" + error.getString("code") + ") ");
-            r.append(error.getString("desc") + "<br/>");
+            r.append("(").append(error.getString("code")).append(") ");
+            r.append(error.getString("desc")).append("<br/>");
         }
         r.append("<hr/>");
         r.append("<center><i>Fuente: <a href=\"" + cURL +"\">" + cSource + "</a></i></center>");

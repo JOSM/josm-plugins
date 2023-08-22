@@ -4,22 +4,20 @@ package org.openstreetmap.josm.plugins.streetside.utils.api;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.plugins.streetside.model.ImageDetection;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Decodes the JSON returned by {@link APIv3} into Java objects.
  * Takes a {@link JsonObject} and {@link #decodeImageDetection(JsonObject)} tries to convert it to a {@link ImageDetection}.
  */
 public final class JsonImageDetectionDecoder {
-
-  final static Logger logger = Logger.getLogger(JsonImageDetectionDecoder.class);
 
   private JsonImageDetectionDecoder() {
     // Private constructor to avoid instantiation
@@ -49,7 +47,7 @@ public final class JsonImageDetectionDecoder {
   private static Shape decodeShape(JsonValue json) {
     if (json instanceof JsonObject) {
       if (!"Polygon".equals(((JsonObject) json).getString("type", null))) {
-        logger.warn(
+        Logging.warn(
           String.format("Image detections using shapes with type=%s are currently not supported!",
           ((JsonObject) json).getString("type", "‹no type set›"))
         );
@@ -92,9 +90,9 @@ public final class JsonImageDetectionDecoder {
     final Path2D shape = new Path2D.Double();
     json.forEach(val -> {
       double[] coord = JsonDecoder.decodeDoublePair(val instanceof JsonArray ? (JsonArray) val : null);
-      if (shape.getCurrentPoint() == null && coord != null) {
+      if (shape.getCurrentPoint() == null && coord.length == 2) {
         shape.moveTo(coord[0], coord[1]);
-      } else if (coord != null) {
+      } else if (coord != null && coord.length == 2) {
         shape.lineTo(coord[0], coord[1]);
       }
     });

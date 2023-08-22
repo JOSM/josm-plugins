@@ -2,7 +2,7 @@ package org.openstreetmap.josm.plugins.rasterfilters.preferences;
 
 import java.util.Objects;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 class FilterInfo {
     private String name;

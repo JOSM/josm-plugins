@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.pointinfo;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * Class to contain Nominatim Reverse Geocoding data
@@ -72,7 +72,7 @@ class ReverseRecord {
      * @param area area to be checked
      * @return match area matched
      */
-    public Boolean matchAnyArea(String area) {
+    public boolean matchAnyArea(String area) {
         if (area.equals(countryCode)) return true;
         if (area.equals(country)) return true;
         if (area.equals(state)) return true;

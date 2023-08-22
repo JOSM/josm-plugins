@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.plugins.rasterfilters.values.BooleanValue;
 import org.openstreetmap.josm.plugins.rasterfilters.values.ColorValue;
@@ -51,9 +51,9 @@ public class FilterStateModel {
 
         // setting up the beginning state of filter
         // according to its metainfo
-        if (json.getString("type").equals("linear_slider")) {
+        if ("linear_slider".equals(json.getString("type"))) {
 
-            if (valueType.equals("float") || valueType.equals("double")) {
+            if ("float".equals(valueType) || "double".equals(valueType)) {
 
                 double defaultValue = json.getJsonNumber("default")
                         .doubleValue();
@@ -62,7 +62,7 @@ public class FilterStateModel {
                         defaultValue);
                 params.put(parameterName, value);
 
-            } else if (valueType.equals("integer")) {
+            } else if ("integer".equals(valueType)) {
 
                 int defaultValue = json.getJsonNumber("default").intValue();
 
@@ -72,14 +72,14 @@ public class FilterStateModel {
 
             }
 
-        } else if (json.getString("type").equals("checkbox")) {
+        } else if ("checkbox".equals(json.getString("type"))) {
 
             boolean defaultValue = json.getBoolean("default");
 
             BooleanValue value = new BooleanValue(parameterName, defaultValue);
             params.put(parameterName, value);
 
-        } else if (json.getString("type").equals("select")) {
+        } else if ("select".equals(json.getString("type"))) {
 
             String defaultValue = json.getString("default");
 
@@ -87,7 +87,7 @@ public class FilterStateModel {
                     defaultValue);
             params.put(parameterName, value);
 
-        } else if (json.getString("type").equals("colorpicker")) {
+        } else if ("colorpicker".equals(json.getString("type"))) {
 
             JsonObject defaultColorJson = json.getJsonObject("default");
             int r = defaultColorJson.getInt("red");

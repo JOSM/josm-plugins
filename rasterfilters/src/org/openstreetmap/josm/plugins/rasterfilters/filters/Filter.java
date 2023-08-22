@@ -3,7 +3,7 @@ package org.openstreetmap.josm.plugins.rasterfilters.filters;
 import java.awt.image.BufferedImage;
 import java.rmi.server.UID;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * The Filter interface is inherited by all filters which are implemented.

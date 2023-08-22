@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.spi.JsonProvider;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.spi.JsonProvider;
 import javax.swing.JOptionPane;
 
 import org.geotools.geometry.jts.JTS;
@@ -237,8 +237,9 @@ public abstract class GeographicReader extends AbstractReader {
                         tr("Cancel"), tr("Continue"));
                 // CHECKSTYLE.OFF: LineLength
                 dlg.setContent("<html>" +
-                        tr("JOSM was unable to find a strict mathematical transformation between ''{0}'' and WGS84.<br /><br />"+
-                        "Do you want to try a <i>lenient</i> method, which will perform a non-precise transformation (<b>with location errors up to 1 km</b>) ?<br/><br/>"+
+                        tr("JOSM was unable to find a strict mathematical transformation between ''{0}'' and WGS84.<br /><br />" +
+                        "Do you want to try a <i>lenient</i> method, which will perform a non-precise transformation " +
+                        "(<b>with location errors up to 1 km</b>) ?<br/><br/>"+
                         "If so, <b>do NOT upload</b> such data to OSM !", crs.getName())+
                         "</html>");
                 // CHECKSTYLE.ON: LineLength

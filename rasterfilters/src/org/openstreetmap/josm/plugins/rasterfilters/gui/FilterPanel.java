@@ -12,8 +12,8 @@ import java.awt.event.ItemListener;
 import java.rmi.server.UID;
 import java.util.Hashtable;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -64,35 +64,30 @@ public class FilterPanel extends JPanel {
     public JComponent addGuiElement(JsonObject json) {
         String type = json.getString("type");
 
-        if (type.equals("linear_slider")) {
+        switch (type) {
+            case "linear_slider":
+                setNeededHeight(getNeededHeight() + 70);
+                return createSlider(json);
 
-            setNeededHeight(getNeededHeight() + 70);
+            case "checkbox":
+                setNeededHeight(getNeededHeight() + 30);
 
-            return createSlider(json);
+                JCheckBox checkBox = createCheckBox(json.getString("title"));
+                checkBox.setSelected(json.getBoolean("default"));
+                checkBox.setName(json.getString("name"));
 
-        } else if (type.equals("checkbox")) {
+                return checkBox;
 
-            setNeededHeight(getNeededHeight() + 30);
+            case "select":
+                setNeededHeight(getNeededHeight() + 50);
+                return createSelect(json);
 
-            JCheckBox checkBox = createCheckBox(json.getString("title"));
-            checkBox.setSelected(json.getBoolean("default"));
-            checkBox.setName(json.getString("name"));
-
-            return checkBox;
-
-        } else if (type.equals("select")) {
-
-            setNeededHeight(getNeededHeight() + 50);
-
-            return createSelect(json);
-
-        } else if (type.equals("colorpicker")) {
-
-            setNeededHeight(getNeededHeight() + 220);
-
-            return createColorPicker(json);
+            case "colorpicker":
+                setNeededHeight(getNeededHeight() + 220);
+                return createColorPicker(json);
+            default:
+                return null;
         }
-        return null;
     }
 
     private JComponent createSelect(JsonObject json) {
@@ -169,7 +164,7 @@ public class FilterPanel extends JPanel {
         return checkBox;
     }
 
-    private JCheckBox createDisableBox(ItemListener listener) {
+    private static JCheckBox createDisableBox(ItemListener listener) {
         JCheckBox disable = new JCheckBox("Disable");
         Font font = new Font("Arial", Font.PLAIN, 12);
 
@@ -179,7 +174,7 @@ public class FilterPanel extends JPanel {
         return disable;
     }
 
-    private JButton createRemoveButton(ActionListener listener) {
+    private static JButton createRemoveButton(ActionListener listener) {
         JButton removeButton = new JButton("Remove");
         Font font = new Font("Arial", Font.PLAIN, 12);
 
@@ -241,14 +236,14 @@ public class FilterPanel extends JPanel {
         String valueType = json.getString("value_type");
 
         JSlider slider = null;
-        if (valueType.equals("integer")) {
+        if ("integer".equals(valueType)) {
             int minValue = array.getInt(0);
             int maxValue = array.getInt(1);
             int initValue = json.getInt("default");
 
             Logging.debug("Slider is integer\n");
-            Logging.debug("minValue: " + String.valueOf(minValue)
-                    + "maxValue: " + String.valueOf(maxValue));
+            Logging.debug("minValue: " + minValue
+                    + "maxValue: " + maxValue);
             try {
                 slider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue,
                         initValue);
@@ -256,7 +251,7 @@ public class FilterPanel extends JPanel {
                 slider.setToolTipText(String.valueOf(slider.getValue()));
                 slider.setMinorTickSpacing(maxValue / 4);
             } catch (IllegalArgumentException e) {
-
+                Logging.trace(e);
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
                         tr("JSlider initialization error. Make sure your meta-inf is correct."),
@@ -264,21 +259,21 @@ public class FilterPanel extends JPanel {
                         JOptionPane.ERROR_MESSAGE);
             }
 
-        } else if (valueType.equals("float")) {
+        } else if ("float".equals(valueType)) {
 
             Logging.debug("Slider is float\n");
             // every value is supplied by 10 to be integer for slider
             double minValueDouble = array.getJsonNumber(0).doubleValue();
             double maxValueDouble = array.getJsonNumber(1).doubleValue();
-            Logging.debug("DminValue: " + String.valueOf(minValueDouble)
-                    + "DmaxValue: " + String.valueOf(maxValueDouble));
+            Logging.debug("DminValue: " + minValueDouble
+                    + "DmaxValue: " + maxValueDouble);
 
             int minValue = (int) (minValueDouble * 100);
             int maxValue = (int) (maxValueDouble * 100);
 
 
             double initValue = json.getJsonNumber("default").doubleValue() * 100;
-            double delta = (maxValue - minValue) / 100;
+            double delta = (maxValue - minValue) / 100d;
 
             for (int i = 0; i <= maxValue; i++) {
 
@@ -291,15 +286,12 @@ public class FilterPanel extends JPanel {
             }
 
             try {
-
                 slider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue, (int) initValue);
                 slider.setMinorTickSpacing(maxValue / 4);
                 slider.setName(json.getString("name"));
                 slider.setToolTipText(String.valueOf((double) slider.getValue() / 100));
-
-
             } catch (IllegalArgumentException e) {
-
+                Logging.trace(e);
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
                         tr("JSlider initialization error. Make sure your meta-inf is correct."),
