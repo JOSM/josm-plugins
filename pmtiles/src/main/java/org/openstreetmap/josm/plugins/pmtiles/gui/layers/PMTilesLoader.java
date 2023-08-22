@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.plugins.pmtiles.lib.PMTiles;
  * The loader class for PMTiles
  */
 public class PMTilesLoader implements TileLoader {
+    private static final ThreadPoolExecutor EXECUTOR = TMSCachedTileLoader.getNewThreadPoolExecutor("pmtiles");
     private final Collection<PMTileJob> jobs = new HashSet<>();
     private final ICacheAccess<String, CacheEntry> cache;
     private final TileJobOptions options;
@@ -45,7 +47,7 @@ public class PMTilesLoader implements TileLoader {
 
     @Override
     public TileJob createTileLoaderJob(Tile tile) {
-        final var job = new PMTileJob(cache, options, TMSCachedTileLoader.getNewThreadPoolExecutor("pmtiles"), header, tile, directoryCache);
+        final var job = new PMTileJob(cache, options, EXECUTOR, header, tile, directoryCache);
         this.jobs.add(job);
         return job;
     }
