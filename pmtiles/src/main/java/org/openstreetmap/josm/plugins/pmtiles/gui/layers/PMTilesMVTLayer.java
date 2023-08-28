@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTFile;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSource;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 
@@ -68,5 +69,11 @@ public class PMTilesMVTLayer extends MVTLayer implements PMTilesLayer {
     @Override
     public String getChangesetSourceTag() {
         return PMTilesLayer.super.getChangesetSourceTag();
+    }
+
+    @Override
+    public void visitBoundingBox(BoundingXYVisitor v) {
+        super.visitBoundingBox(v);
+        PMTilesLayer.super.visitBoundingBox(v);
     }
 }

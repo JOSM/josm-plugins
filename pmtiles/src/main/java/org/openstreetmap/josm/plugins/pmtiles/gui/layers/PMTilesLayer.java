@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.pmtiles.gui.layers;
 
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 import org.openstreetmap.josm.tools.TextUtils;
 import org.openstreetmap.josm.tools.Utils;
@@ -47,5 +48,15 @@ interface PMTilesLayer {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Visits the content bounds of this layer. The behavior of this method depends on the layer,
+     * but each implementation should attempt to cover the relevant content of the layer in this method.
+     * @param v The visitor that gets notified about the contents of this layer.
+     * @see org.openstreetmap.josm.gui.layer.Layer#visitBoundingBox
+     */
+    default void visitBoundingBox(BoundingXYVisitor v) {
+        v.visit(this.getInfo().getBounds());
     }
 }

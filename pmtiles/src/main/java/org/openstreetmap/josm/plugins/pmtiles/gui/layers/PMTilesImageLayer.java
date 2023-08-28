@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTFile;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 
@@ -67,5 +68,11 @@ public class PMTilesImageLayer extends AbstractCachedTileSourceLayer<PMTilesImag
     @Override
     public String getChangesetSourceTag() {
         return PMTilesLayer.super.getChangesetSourceTag();
+    }
+
+    @Override
+    public void visitBoundingBox(BoundingXYVisitor v) {
+        super.visitBoundingBox(v);
+        PMTilesLayer.super.visitBoundingBox(v);
     }
 }
