@@ -224,7 +224,10 @@ public class MergeOverlapAction extends JosmAction {
             }
         }
         if (!del.isEmpty()) {
-            cmds.add(DeleteCommand.delete(del));
+            final Command deleteCommand = DeleteCommand.delete(del);
+            if (deleteCommand != null) {
+                cmds.add(deleteCommand);
+            }
         }
 
         // Commit

@@ -398,7 +398,10 @@ public class TheRing {
             }
         }
         if (!foundOwnWay) {
-            commands.add(DeleteCommand.delete(Collections.singleton(source)));
+            final Command deleteCommand = DeleteCommand.delete(Collections.singleton(source));
+            if (deleteCommand != null) {
+                commands.add(deleteCommand);
+            }
         }
         commands.addAll(relationCommands);
         if (createMultipolygon) {

@@ -977,16 +977,9 @@ public class AddrInterpolationDialog extends JDialog implements ActionListener {
     }
 
     private void removeAddressInterpolationWay() {
-
-        // Remove way - nodes of the way remain
-        commandGroup.add(DeleteCommand.delete(Collections.singleton(addrInterpolationWay)));
-
-        // Remove untagged nodes
-        for (int i = 1; i < addrInterpolationWay.getNodesCount()-1; i++) {
-            Node testNode = addrInterpolationWay.getNode(i);
-            if (!testNode.hasKeys()) {
-                commandGroup.add(DeleteCommand.delete(Collections.singleton(testNode)));
-            }
+        final Command deleteCommand = DeleteCommand.delete(Collections.singleton(addrInterpolationWay), true);
+        if (deleteCommand != null) {
+            commandGroup.add(deleteCommand);
         }
 
         addrInterpolationWay = null;

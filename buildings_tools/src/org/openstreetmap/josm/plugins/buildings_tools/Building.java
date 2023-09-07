@@ -486,7 +486,10 @@ class Building {
                     }
                     addressCmds.add(new ChangeMembersCommand(r, members));
                 }
-                addressCmds.add(DeleteCommand.delete(Collections.singleton(addrNode)));
+                final Command deleteCommand = DeleteCommand.delete(Collections.singleton(addrNode));
+                if (deleteCommand != null) {
+                    addressCmds.add(deleteCommand);
+                }
                 if (cmdList == null) {
                     Command c = new SequenceCommand(tr("Add address for building"), addressCmds);
                     UndoRedoHandler.getInstance().add(c);

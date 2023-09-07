@@ -256,12 +256,16 @@ public class SplitObjectAction extends JosmAction {
                 }
             }
             SplitWayCommand result = SplitWayCommand.splitWay(
-                    selectedWay, wayChunks, Collections.<OsmPrimitive>emptyList());
+                    selectedWay, wayChunks, Collections.emptyList());
             if (splitWay != null) {
                 result.executeCommand();
                 Command delCmd = DeleteCommand.delete(Collections.singletonList(splitWay));
-                delCmd.executeCommand();
-                UndoRedoHandler.getInstance().add(new SplitObjectCommand(Arrays.asList(result, delCmd)), false);
+                if (delCmd != null) {
+                    delCmd.executeCommand();
+                    UndoRedoHandler.getInstance().add(new SplitObjectCommand(Arrays.asList(result, delCmd)), false);
+                } else {
+                    UndoRedoHandler.getInstance().add(new SplitObjectCommand(Collections.singletonList(result)), false);
+                }
             } else {
                 UndoRedoHandler.getInstance().add(result);
             }
@@ -541,7 +545,7 @@ public class SplitObjectAction extends JosmAction {
 
                 if (wayChunks != null) {
                     SplitWayCommand result = SplitWayCommand.splitWay(
-                                    way, wayChunks, Collections.<OsmPrimitive>emptyList());
+                                    way, wayChunks, Collections.emptyList());
                     result.executeCommand(); // relation members are overwritten/broken if there are multiple unapplied splits
                     splitCmds.add(result);
                 }

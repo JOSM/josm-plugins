@@ -37,8 +37,14 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Merge address points with a building
+ */
 public class MergeAddrPointsAction extends JosmAction {
 
+    /**
+     * Merge the address point with the building
+     */
     public MergeAddrPointsAction() {
         super(tr("Merge address points"), "mergeaddr",
                 tr("Move tags from address nodes inside buildings to building ways"),
@@ -172,7 +178,10 @@ public class MergeAddrPointsAction extends JosmAction {
             }
         }
         if (!replaced.isEmpty()) {
-            cmds.add(new DeleteCommand(replaced.stream().map(p -> p.a).collect(Collectors.toList())));
+            final Command deleteCommand = DeleteCommand.delete(replaced.stream().map(p -> p.a).collect(Collectors.toList()));
+            if (deleteCommand != null) {
+                cmds.add(deleteCommand);
+            }
         }
 
         if (multi != 0)

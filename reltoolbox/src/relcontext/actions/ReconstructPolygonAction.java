@@ -173,7 +173,10 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
                                 w = candidateWay;
                                 candidateWay = tmp;
                             }
-                            commands.add(DeleteCommand.delete(Collections.singleton(w)));
+                            final Command deleteCommand = DeleteCommand.delete(Collections.singleton(w));
+                            if (deleteCommand != null) {
+                                commands.add(deleteCommand);
+                            }
                         }
                     }
                 }
