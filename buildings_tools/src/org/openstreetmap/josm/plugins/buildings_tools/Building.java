@@ -48,7 +48,7 @@ class Building {
     private double len;
     private double width;
     private double heading;
-    private AngleSnap angleSnap = new AngleSnap();
+    private final AngleSnap angleSnap = new AngleSnap();
     private Double drawingAngle;
     private static final double EQUAL_NODE_DIST_TOLERANCE = 1e-6;
 
@@ -470,7 +470,7 @@ class Building {
     }
 
     private static void addAddress(Way w, Collection<Command> cmdList) {
-        if (ToolSettings.PROP_USE_ADDR_NODE.get()) {
+        if (Boolean.TRUE.equals(ToolSettings.PROP_USE_ADDR_NODE.get())) {
             Node addrNode = getAddressNode(w);
             if (addrNode != null) {
                 Collection<Command> addressCmds = cmdList != null ? cmdList : new LinkedList<>();
@@ -486,7 +486,7 @@ class Building {
                     }
                     addressCmds.add(new ChangeMembersCommand(r, members));
                 }
-                addressCmds.add(new DeleteCommand(addrNode));
+                addressCmds.add(DeleteCommand.delete(Collections.singleton(addrNode)));
                 if (cmdList == null) {
                     Command c = new SequenceCommand(tr("Add address for building"), addressCmds);
                     UndoRedoHandler.getInstance().add(c);
