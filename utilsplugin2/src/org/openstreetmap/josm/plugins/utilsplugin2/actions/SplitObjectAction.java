@@ -46,15 +46,16 @@ import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Splits a closed way (polygon) into two closed ways or a multipolygon into two separate multipolygons.
- *
+ * <p>
  * The closed ways are just split at the selected nodes (which must be exactly two).
  * The nodes remain in their original order.
- *
+ * <p>
  * This is similar to SplitWayAction with the addition that the split ways are closed
  * immediately.
  */
@@ -73,7 +74,7 @@ public class SplitObjectAction extends JosmAction {
 
     /**
      * Called when the action is executed.
-     *
+     * <p>
      * This method performs an expensive check whether the selection clearly defines one
      * of the split actions outlined above, and if yes, calls the splitObject method.
      */
@@ -258,7 +259,7 @@ public class SplitObjectAction extends JosmAction {
                     selectedWay, wayChunks, Collections.<OsmPrimitive>emptyList());
             if (splitWay != null) {
                 result.executeCommand();
-                DeleteCommand delCmd = new DeleteCommand(splitWay);
+                Command delCmd = DeleteCommand.delete(Collections.singletonList(splitWay));
                 delCmd.executeCommand();
                 UndoRedoHandler.getInstance().add(new SplitObjectCommand(Arrays.asList(result, delCmd)), false);
             } else {
@@ -336,6 +337,7 @@ public class SplitObjectAction extends JosmAction {
             return splitResult;
 
         } catch (IllegalArgumentException e) {
+            Logging.trace(e);
             // Changes were already undone in splitMultipolygonAtWay
             showWarningNotification(e.getMessage());
             return new Pair<>(new ArrayList<>(), new ArrayList<>());
