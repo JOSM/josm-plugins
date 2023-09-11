@@ -63,7 +63,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
         List<Way> ways = new ArrayList<>();
         boolean wont = false;
         for (RelationMember m : r.getMembers()) {
-            if (m.isWay()) {
+            if (m.isWay() && m.getWay().getReferrers().size() == 1) {
                 ways.add(m.getWay());
             } else {
                 wont = true;
@@ -71,7 +71,8 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
         }
         if (wont) {
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                    tr("Multipolygon must consist only of ways"), tr("Reconstruct polygon"), JOptionPane.ERROR_MESSAGE);
+                    tr("Multipolygon must consist only of ways with one referring relation"),
+                    tr("Reconstruct polygon"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -173,10 +174,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
                                 w = candidateWay;
                                 candidateWay = tmp;
                             }
-                            final Command deleteCommand = DeleteCommand.delete(Collections.singleton(w));
-                            if (deleteCommand != null) {
-                                commands.add(deleteCommand);
-                            }
+                            commands.add(new DeleteCommand(w));
                         }
                     }
                 }

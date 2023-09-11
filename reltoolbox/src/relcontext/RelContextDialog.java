@@ -177,29 +177,16 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
 
         rcPanel.add(chosenRelationPanel, BorderLayout.NORTH);
 
-        roleBox.addPropertyChangeListener("enabled", new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                boolean showRoleBox = roleBox.isEnabled();
-                roleBox.setVisible(showRoleBox);
-                chosenRelationComponent.setVisible(!showRoleBox);
-            }
+        roleBox.addPropertyChangeListener("enabled", evt -> {
+            boolean showRoleBox = roleBox.isEnabled();
+            roleBox.setVisible(showRoleBox);
+            chosenRelationComponent.setVisible(!showRoleBox);
         });
 
-        sortAndFixAction.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                sortAndFixButton.setVisible(sortAndFixAction.isEnabled());
-            }
-        });
+        sortAndFixAction.addPropertyChangeListener(evt -> sortAndFixButton.setVisible(sortAndFixAction.isEnabled()));
         sortAndFixButton.setVisible(false);
 
-        downloadChosenRelationAction.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                downloadButton.setVisible(downloadChosenRelationAction.isEnabled());
-            }
-        });
+        downloadChosenRelationAction.addPropertyChangeListener(evt -> downloadButton.setVisible(downloadChosenRelationAction.isEnabled()));
         downloadButton.setVisible(false);
         if (Config.getPref().getBoolean(PREF_PREFIX + ".hidetopline", false)) {
             chosenRelationPanel.setVisible(false);
@@ -316,19 +303,16 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
         });
         columns.getColumn(1).setPreferredWidth(40);
         columns.getColumn(0).setPreferredWidth(220);
-        relationsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedRow = relationsTable.getSelectedRow();
-                if (selectedRow >= 0) {
-                    chosenRelation.set((Relation) relationsData.getValueAt(selectedRow, 0));
-                    relationsTable.clearSelection();
-                }
+        relationsTable.getSelectionModel().addListSelectionListener(e -> {
+            int selectedRow = relationsTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                chosenRelation.set((Relation) relationsData.getValueAt(selectedRow, 0));
+                relationsTable.clearSelection();
             }
         });
     }
 
-    private JComponent sizeButton(JComponent b, int width, int height) {
+    private static JComponent sizeButton(JComponent b, int width, int height) {
         Dimension pref = b.getPreferredSize();
         b.setPreferredSize(new Dimension(width <= 0 ? pref.width : width, height <= 0 ? pref.height : height));
         return b;
@@ -494,12 +478,9 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
         final JDialog dlg = optionPane.createDialog(MainApplication.getMainFrame(), tr("Specify role"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
 
-        role.getEditor().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dlg.setVisible(false);
-                optionPane.setValue(JOptionPane.OK_OPTION);
-            }
+        role.getEditor().addActionListener(e -> {
+            dlg.setVisible(false);
+            optionPane.setValue(JOptionPane.OK_OPTION);
         });
 
         dlg.setVisible(true);
@@ -751,7 +732,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
 
         @Override
         public void setSelectedItem(Object anItem) {
-            int newIndex = anItem instanceof String ? roles.indexOf((String) anItem) : -1;
+            int newIndex = anItem instanceof String ? roles.indexOf(anItem) : -1;
             if (newIndex != selectedIndex) {
                 selectedIndex = newIndex;
                 fireContentsChanged(this, -1, -1);
