@@ -17,7 +17,6 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 import org.openstreetmap.josm.plugins.pmtiles.gui.layers.PMTilesImageLayer;
 import org.openstreetmap.josm.plugins.pmtiles.gui.layers.PMTilesMVTLayer;
@@ -70,27 +69,6 @@ public class DownloadPMTilesTask implements DownloadTask {
     @Override
     public boolean acceptsUrl(String url, boolean isRemotecontrol) {
         return url.endsWith(".pmtiles");
-    }
-
-    @Override
-    public String acceptsDocumentationSummary() {
-        // I think this should be a "default" implementation in DownloadTask
-        StringBuilder buff = new StringBuilder(128)
-                .append("<tr><td>")
-                .append(getTitle())
-                .append(":</td><td>");
-        String[] patterns = getPatterns();
-        if (patterns.length > 0) {
-            buff.append("<ul>");
-            for (String pattern: patterns) {
-                buff.append("<li>")
-                        .append(XmlWriter.encode(pattern))
-                        .append("</li>");
-            }
-            buff.append("</ul>");
-        }
-        buff.append("</td></tr>");
-        return buff.toString();
     }
 
     @Override
