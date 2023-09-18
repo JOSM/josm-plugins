@@ -63,7 +63,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
         List<Way> ways = new ArrayList<>();
         boolean wont = false;
         for (RelationMember m : r.getMembers()) {
-            if (m.isWay() && m.getWay().getReferrers().size() == 1) {
+            if (m.isWay()) {
                 ways.add(m.getWay());
             } else {
                 wont = true;
@@ -156,10 +156,10 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
             tags.putAll(r.getKeys());
             tags.remove("type");
 
-            // then delete ways that are not relevant (do not take part in other relations of have strange tags)
+            // then delete ways that are not relevant (do not take part in other relations or have strange tags)
             Way candidateWay = null;
             for (Way w : p.ways) {
-                if (w.getReferrers().equals(relations)) {
+                if (w.getReferrers().size() == 1) {
                     // check tags that remain
                     Set<String> keys = new HashSet<>(w.keySet());
                     keys.removeAll(tags.keySet());
@@ -191,7 +191,8 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
 
         // only delete the relation if it hasn't been re-used
         if (!relationReused) {
-            commands.add(relationDeleteCommand);
+            // The relation needs to be deleted first, so that undo/redo continue to work properly
+            commands.add(0, relationDeleteCommand);
         }
 
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Reconstruct polygons from relation {0}",
