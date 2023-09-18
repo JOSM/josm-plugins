@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
+import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.imagery.TileJobOptions;
 import org.openstreetmap.josm.plugins.pmtiles.lib.DirectoryCache;
 import org.openstreetmap.josm.plugins.pmtiles.lib.Header;
