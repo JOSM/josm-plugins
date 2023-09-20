@@ -67,7 +67,7 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
      * Create a new {@link GeoChatPanel}
      */
     public GeoChatPanel() {
-        super(tr("GeoChat"), "org/openstreetmap/josm/plugins/geochat", tr("Open GeoChat panel"), null, 200, true);
+        super(tr("GeoChat"), "geochat", tr("Open GeoChat panel"), null, 200, true);
 
         noData = new JLabel(tr("Zoom in to see messages"), SwingConstants.CENTER);
 
