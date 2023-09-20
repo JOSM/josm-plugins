@@ -20,8 +20,11 @@ import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField
  */
 public class JPanelTextField extends DisableShortcutsOnFocusGainedTextField {
 
+    /**
+     * Create a new {@link JPanelTextField}
+     */
     public JPanelTextField() {
-        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, new HashSet<KeyStroke>());
+        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, new HashSet<>());
         standardKeys = getInputMap(JComponent.WHEN_FOCUSED).allKeys();
     }
 
@@ -50,11 +53,11 @@ public class JPanelTextField extends DisableShortcutsOnFocusGainedTextField {
                 start++;
                 if (start < caret) {
                     String word = text.substring(start, caret);
-                    String complete = word == null ? null : autoComplete(word, start == 0);
+                    String complete = autoComplete(word, start == 0);
                     if (complete != null && !complete.equals(word)) {
                         StringBuilder sb = new StringBuilder();
                         if (start > 0)
-                            sb.append(text.substring(0, start));
+                            sb.append(text, 0, start);
                         sb.append(complete);
                         if (caret < text.length())
                             sb.append(text.substring(caret));
@@ -62,9 +65,8 @@ public class JPanelTextField extends DisableShortcutsOnFocusGainedTextField {
                         setCaretPosition(start + complete.length());
                     }
                 }
-            } else if (code == KeyEvent.VK_ESCAPE) {
-                if (MainApplication.isDisplayingMapView())
-                    MainApplication.getMap().mapView.requestFocus();
+            } else if (code == KeyEvent.VK_ESCAPE && MainApplication.isDisplayingMapView()) {
+                MainApplication.getMap().mapView.requestFocus();
             }
 
             boolean keyIsStandard = false;
@@ -88,7 +90,9 @@ public class JPanelTextField extends DisableShortcutsOnFocusGainedTextField {
      *
      * @param text Contents of the text field.
      */
-    protected void processEnter(String text) { }
+    protected void processEnter(String text) {
+        // Overridden where needed
+    }
 
     /**
      * Autocomplete the word.

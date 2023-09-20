@@ -1,7 +1,7 @@
 // License: WTFPL. For details, see LICENSE file.
 package geochat;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -11,16 +11,16 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * @author zverik
  */
 public final class ChatMessage implements Comparable<ChatMessage> {
-    private LatLon pos;
-    private Date time;
-    private String author;
+    private final LatLon pos;
+    private final Instant time;
+    private final String author;
     private String recipient;
-    private String message;
-    private long id;
+    private final String message;
+    private final long id;
     private boolean priv;
-    private boolean incoming;
+    private final boolean incoming;
 
-    public ChatMessage(long id, LatLon pos, String author, boolean incoming, String message, Date time) {
+    public ChatMessage(long id, LatLon pos, String author, boolean incoming, String message, Instant time) {
         this.id = id;
         this.author = author;
         this.message = message;
@@ -71,7 +71,7 @@ public final class ChatMessage implements Comparable<ChatMessage> {
         return incoming;
     }
 
-    public Date getTime() {
+    public Instant getTime() {
         return time;
     }
 

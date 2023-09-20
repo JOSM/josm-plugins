@@ -31,9 +31,9 @@ import org.openstreetmap.josm.tools.Logging;
 class ChatPaneManager {
     private static final String PUBLIC_PANE = "Public Pane";
 
-    private GeoChatPanel panel;
-    private JTabbedPane tabs;
-    private Map<String, ChatPane> chatPanes;
+    private final GeoChatPanel panel;
+    private final JTabbedPane tabs;
+    private final Map<String, ChatPane> chatPanes;
     private boolean collapsed;
 
     ChatPaneManager(GeoChatPanel panel, JTabbedPane tabs) {
@@ -79,7 +79,7 @@ class ChatPaneManager {
         entry.notify = alarmLevel;
         int idx = tabs.indexOfComponent(entry.component);
         if (idx >= 0)
-            GuiHelper.runInEDT(() -> ((ChatTabTitleComponent) tabs.getTabComponentAt(idx)).updateAlarm());
+            GuiHelper.runInEDT(((ChatTabTitleComponent) tabs.getTabComponentAt(idx))::updateAlarm);
     }
 
     public static final int MESSAGE_TYPE_DEFAULT = 0;
@@ -176,9 +176,9 @@ class ChatPaneManager {
         Component c = tabs.getSelectedComponent();
         if (c == null)
             return null;
-        for (String user : chatPanes.keySet()) {
-            if (c.equals(chatPanes.get(user).component))
-                return user;
+        for (Map.Entry<String, ChatPaneManager.ChatPane> entry : chatPanes.entrySet()) {
+            if (c.equals(entry.getValue().component))
+                return entry.getKey();
         }
         return null;
     }
@@ -225,7 +225,7 @@ class ChatPaneManager {
     }
 
     private class ChatTabTitleComponent extends JLabel {
-        private ChatPane entry;
+        private final ChatPane entry;
 
         ChatTabTitleComponent(ChatPane entry) {
             super(entry.isPublic ? tr("Public") : entry.userName);

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.MainApplication;
  * @author zverik
  */
 class GeoChatPopupAdapter extends MouseAdapter {
-    private GeoChatPanel panel;
+    private final GeoChatPanel panel;
 
     GeoChatPopupAdapter(GeoChatPanel panel) {
         this.panel = panel;
@@ -61,7 +61,7 @@ class GeoChatPopupAdapter extends MouseAdapter {
     }
 
     private class PrivateChatAction extends AbstractAction {
-        private String userName;
+        private final String userName;
 
         PrivateChatAction(String userName) {
             super(userName);

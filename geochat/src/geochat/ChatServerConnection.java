@@ -6,13 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonException;
@@ -21,12 +24,16 @@ import jakarta.json.JsonObject;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.io.NetworkManager;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class holds all the chat data and periodically polls the server.
@@ -36,19 +43,20 @@ import org.openstreetmap.josm.tools.Logging;
 final class ChatServerConnection {
     public static final String TOKEN_PREFIX = "=";
     private static final String TOKEN_PATTERN = "^[a-zA-Z0-9]{10}$";
+    private static final ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(1);
 
     private int userId;
     private String userName;
     private static ChatServerConnection instance;
     private final Set<ChatServerConnectionListener> listeners;
-    private final LogRequest requestThread;
 
     private ChatServerConnection() {
         userId = 0;
         userName = null;
         listeners = new HashSet<>();
-        requestThread = new LogRequest();
-        new Thread(requestThread).start();
+        LogRequest requestThread = new LogRequest();
+        final int interval = Config.getPref().getInt("geochat.interval", 2);
+        EXECUTOR.scheduleAtFixedRate(requestThread, interval, interval, TimeUnit.SECONDS);
     }
 
     public static ChatServerConnection getInstance() {
@@ -115,7 +123,8 @@ final class ChatServerConnection {
             checkLogin();
             return;
         }
-        new Thread(() -> {
+        // Blocking the geochat executor here isn't a big deal, since we need to be logged in for chat anyway.
+        EXECUTOR.schedule(() -> {
             try {
                 int cnt = 10;
                 while (getPosition() == null && cnt-- > 0) {
@@ -126,7 +135,7 @@ final class ChatServerConnection {
                 Logging.warn(e);
             }
             autoLogin(userName);
-        }).start();
+        }, 200, TimeUnit.MILLISECONDS);
     }
 
     public void login(final String userName) {
@@ -314,29 +323,16 @@ final class ChatServerConnection {
         private long lastUserId;
         private long lastId;
         private boolean lastStatus;
-        private boolean stopping;
 
         @Override
         public void run() {
             //            lastId = Config.getPref().getLong("geochat.lastid", 0);
-            int interval = Config.getPref().getInt("geochat.interval", 2);
-            while (!stopping) {
+            if (!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE) || !Utils.isRunningWebStart()) {
                 process();
-                try {
-                    Thread.sleep(interval * 1000L);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    stopping = true;
-                    Logging.trace(e);
-                }
             }
         }
 
-        public void stop() {
-            stopping = true;
-        }
-
-        public void process() {
+        private void process() {
             if (!isLoggedIn()) {
                 fireStatusChanged(false);
                 return;
@@ -370,6 +366,14 @@ final class ChatServerConnection {
             } catch (IOException ex) {
                 Logging.trace(ex);
                 json = null; // ?
+                final Throwable root = Utils.getRootCause(ex);
+                if (root instanceof UnknownHostException) {
+                    UnknownHostException uhe = (UnknownHostException) root;
+                    NetworkManager.addNetworkError(uhe.getMessage(), uhe);
+                    if (JosmUrls.getInstance().getJOSMWebsite().endsWith(uhe.getMessage())) {
+                        NetworkManager.setOffline(OnlineResource.JOSM_WEBSITE);
+                    }
+                }
             }
             if (json == null) {
                 // do nothing?
@@ -423,7 +427,7 @@ final class ChatServerConnection {
                     String message = msg.getString("message");
                     boolean incoming = msg.getBoolean("incoming");
                     ChatMessage cm = new ChatMessage(id, new LatLon(lat, lon), author,
-                            incoming, message, new Date(timeStamp * 1000));
+                            incoming, message, Instant.ofEpochSecond(timeStamp));
                     cm.setPrivate(priv);
                     if (msg.get("recipient") != null && !incoming)
                         cm.setRecipient(msg.getString("recipient"));

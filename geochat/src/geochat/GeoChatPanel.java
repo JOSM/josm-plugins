@@ -17,7 +17,9 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,17 +52,20 @@ import org.openstreetmap.josm.tools.Logging;
  * @author zverik
  */
 public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionListener, MapViewPaintable {
-    private JTextField input;
-    private JTabbedPane tabs;
-    private JComponent noData;
-    private JPanel loginPanel;
-    private JPanel gcPanel;
-    private ChatServerConnection connection;
+    private final JTextField input;
+    private final JTabbedPane tabs;
+    private final JComponent noData;
+    private final JPanel loginPanel;
+    private final JPanel gcPanel;
+    private final ChatServerConnection connection;
     // those fields should be visible to popup menu actions
     Map<String, LatLon> users;
     ChatPaneManager chatPanes;
     boolean userLayerActive;
 
+    /**
+     * Create a new {@link GeoChatPanel}
+     */
     public GeoChatPanel() {
         super(tr("GeoChat"), "geochat", tr("Open GeoChat panel"), null, 200, true);
 
@@ -93,12 +98,12 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
         // Start threads
         connection = ChatServerConnection.getInstance();
         connection.addListener(this);
-        boolean autoLogin = Config.getPref().get("geochat.username", null) == null ? false : Config.getPref().getBoolean("geochat.autologin", true);
+        boolean autoLogin = Config.getPref().get("geochat.username", null) != null && Config.getPref().getBoolean("geochat.autologin", true);
         connection.autoLoginWithDelay(autoLogin ? defaultUserName : null);
         updateTitleAlarm();
     }
 
-    private String constructUserName() {
+    private static String constructUserName() {
         String userName = Config.getPref().get("geochat.username", null); // so the default is null
         if (userName == null)
             userName = UserIdentityManager.getInstance().getUserName();
@@ -186,10 +191,10 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
         g2d.setFont(font);
         FontMetrics fm = g2d.getFontMetrics();
 
-        for (String user : users.keySet()) {
-            int stringWidth = fm.stringWidth(user);
+        for (Map.Entry<String, LatLon> entry : users.entrySet()) {
+            int stringWidth = fm.stringWidth(entry.getKey());
             int radius = stringWidth / 2 + 10;
-            Point p = mv.getPoint(users.get(user));
+            Point p = mv.getPoint(entry.getValue());
 
             g2d.setComposite(ac04);
             g2d.setColor(Color.white);
@@ -197,7 +202,7 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
 
             g2d.setComposite(ac10);
             g2d.setColor(Color.black);
-            g2d.drawString(user, p.x - stringWidth / 2, p.y + fm.getDescent());
+            g2d.drawString(entry.getKey(), p.x - stringWidth / 2, p.y + fm.getDescent());
         }
     }
 
@@ -213,7 +218,7 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
 
         String comment;
         if (connection.isLoggedIn()) {
-            comment = trn("{0} user", "{0} users", users.size() + 1, users.size() + 1);
+            comment = trn("{0} user", "{0} users", users.size() + 1L, users.size() + 1);
         } else {
             comment = tr("not logged in");
         }
@@ -292,9 +297,9 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
             MainApplication.getMap().mapView.repaint();
     }
 
-    private final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withZone(ZoneId.systemDefault());
 
-    private void formatMessage(StringBuilder sb, ChatMessage msg) {
+    private static void formatMessage(StringBuilder sb, ChatMessage msg) {
         sb.append("\n");
         sb.append('[').append(TIME_FORMAT.format(msg.getTime())).append("] ");
         sb.append(msg.getAuthor()).append(": ").append(msg.getMessage());
@@ -337,6 +342,7 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
             for (String user : users.keySet()) {
                 sb.append(first ? " " : ", ");
                 sb.append(user);
+                first = false;
             }
             chatPanes.addLineToPublic(sb.toString(), ChatPaneManager.MESSAGE_TYPE_INFORMATION);
         }

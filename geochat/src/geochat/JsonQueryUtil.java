@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ServiceConfigurationError;
 
 import jakarta.json.Json;
 import jakarta.json.JsonException;
@@ -51,9 +52,9 @@ public final class JsonQueryUtil implements Runnable {
         InputStream inp = connection.getContent();
         if (inp == null)
             throw new IOException("Empty response");
-        try (JsonReader reader = Json.createReader(inp)){
+        try (JsonReader reader = Json.createReader(inp)) {
             return reader.readObject();
-        } catch (JsonException e) {
+        } catch (ServiceConfigurationError | JsonException e) {
             throw new IOException("Failed to parse JSON: " + e.getMessage(), e);
         } finally {
             connection.disconnect();
@@ -62,10 +63,8 @@ public final class JsonQueryUtil implements Runnable {
 
     // Asynchronous operation
 
-    private String query;
-    private JsonQueryCallback callback;
-
-    private JsonQueryUtil() {}
+    private final String query;
+    private final JsonQueryCallback callback;
 
     private JsonQueryUtil(String query, JsonQueryCallback callback) {
         this.query = query;
