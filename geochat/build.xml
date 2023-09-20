@@ -7,7 +7,7 @@
     <property name="plugin.main.version" value="18723"/>
 
     <property name="plugin.author" value="Ilya Zverev"/>
-    <property name="plugin.class" value="geochat.GeoChatPlugin"/>
+    <property name="plugin.class" value="org.openstreetmap.josm.plugins.geochat.GeoChatPlugin"/>
     <property name="plugin.description" value="Talk with users editing the map nearby, be notified when someone comes close."/>
     <property name="plugin.icon" value="images/dialogs/geochat.png"/>
     <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/JOSM/Plugins/GeoChat"/>

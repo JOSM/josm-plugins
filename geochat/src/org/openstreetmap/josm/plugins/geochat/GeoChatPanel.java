@@ -1,5 +1,5 @@
 // License: WTFPL. For details, see LICENSE file.
-package geochat;
+package org.openstreetmap.josm.plugins.geochat;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -67,7 +67,7 @@ public class GeoChatPanel extends ToggleDialog implements ChatServerConnectionLi
      * Create a new {@link GeoChatPanel}
      */
     public GeoChatPanel() {
-        super(tr("GeoChat"), "geochat", tr("Open GeoChat panel"), null, 200, true);
+        super(tr("GeoChat"), "org/openstreetmap/josm/plugins/geochat", tr("Open GeoChat panel"), null, 200, true);
 
         noData = new JLabel(tr("Zoom in to see messages"), SwingConstants.CENTER);
 

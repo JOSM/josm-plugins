@@ -1,5 +1,5 @@
 // License: WTFPL. For details, see LICENSE file.
-package geochat;
+package org.openstreetmap.josm.plugins.geochat;
 
 import java.awt.KeyboardFocusManager;
 import java.awt.event.InputEvent;
