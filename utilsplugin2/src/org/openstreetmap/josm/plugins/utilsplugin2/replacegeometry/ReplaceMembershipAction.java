@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,17 +26,23 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * In relations where the selected object is member of, replace it with a new one
  */
 public class ReplaceMembershipAction extends JosmAction {
 
+    /**
+     * Create a new {@link ReplaceMembershipAction}
+     */
     public ReplaceMembershipAction() {
         super(
                 tr("Replace Membership"), (String) null,
-                tr("In relations where the selected object is member of, replace it with a new one"), null, false,
-                ReplaceMembershipAction.class.getName(), true);
+                tr("In relations where the selected object is member of, replace it with a new one"),
+                Shortcut.registerShortcut("utilsplugin2:tools:replacegeometry", tr("More tools: {0}", tr("Replace Membership")),
+                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+                false, ReplaceMembershipAction.class.getName(), true);
     }
 
     @Override
