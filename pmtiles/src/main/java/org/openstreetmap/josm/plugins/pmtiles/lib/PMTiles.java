@@ -13,13 +13,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.InflaterInputStream;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import org.apache.commons.compress.compressors.brotli.BrotliCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.openstreetmap.josm.plugins.pmtiles.lib.internal.DirectoryParser;
 import org.openstreetmap.josm.plugins.pmtiles.lib.internal.HeaderParser;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 /**
  * The entry point for PMTiles
@@ -272,7 +273,7 @@ public final class PMTiles {
                 }
             }
         }
-        var request = HttpRequest.newBuilder(location).header("Range", "bytes=" + start + "-" + (start + length))
+        var request = HttpRequest.newBuilder(location).header("Range", "bytes=" + start + "-" + (start + length - 1))
                 .header("User-Agent", "JOSM PMTiles v1").GET().build();
         try {
             final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
