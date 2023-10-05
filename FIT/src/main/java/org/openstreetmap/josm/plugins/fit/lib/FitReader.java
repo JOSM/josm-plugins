@@ -26,6 +26,7 @@ import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitRecordCompress
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitRecordHeader;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitRecordNormalHeader;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.IField;
+import org.openstreetmap.josm.plugins.fit.lib.utils.CountingInputStream;
 import org.openstreetmap.josm.plugins.fit.lib.utils.NumberUtils;
 
 /**
@@ -47,20 +48,22 @@ public final class FitReader {
      *                      exception.
      */
     public static FitData[] read(InputStream inputStream, FitReaderOptions... options) throws FitException {
-        final var bufferedInputStream = inputStream.markSupported() ? inputStream
-                : new BufferedInputStream(inputStream);
+        final var bufferedInputStream = new CountingInputStream(
+                inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream));
         final var optionsSet = options.length == 0 ? EnumSet.noneOf(FitReaderOptions.class)
                 : EnumSet.of(options[0], options);
         final var fitData = new ArrayList<FitData>();
         try {
             final var header = readFitHeader(bufferedInputStream);
+            final var headerSize = bufferedInputStream.bytesRead();
             bufferedInputStream.mark(1);
             var localMessageHeaders = new FitDefinitionMessage[1];
             var developerData = new FitDeveloperFieldDescriptionMessage[0];
             long lastTimeStamp = Long.MIN_VALUE;
             var offsetAddition = 0;
             byte lastOffset = 0;
-            while (bufferedInputStream.read() != -1) {
+            while (bufferedInputStream.read() != -1
+                    && bufferedInputStream.bytesRead() < header.dataSize() - headerSize) {
                 bufferedInputStream.reset();
                 final var nextRecordHeader = readNextRecordHeader(bufferedInputStream);
                 if (nextRecordHeader instanceof FitRecordNormalHeader normalHeader) {
@@ -124,7 +127,7 @@ public final class FitReader {
             }
         } catch (FitException fitException) {
             handleException(optionsSet, fitException);
-        } catch (IOException ioException) {
+        } catch (IllegalArgumentException | IOException ioException) {
             handleException(optionsSet, new FitException(ioException));
         }
         return fitData.toArray(EMPTY_FIT_DATA_ARRAY);
@@ -198,7 +201,7 @@ public final class FitReader {
         final boolean littleEndian = inputStream.read() == 0; // 0 = little endian, 1 == big endian
         final var globalMessageNumber = NumberUtils.decodeInt(2, littleEndian, inputStream);
         final int numberOfFields = inputStream.read();
-        final var fitFields = new ArrayList<FitField>(numberOfFields);
+        final var fitFields = new ArrayList<FitField>(Math.max(0, numberOfFields));
         for (var i = 0; i < numberOfFields; i++) {
             fitFields.add(readNextField(inputStream));
         }
