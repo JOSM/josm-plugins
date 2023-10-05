@@ -13,8 +13,8 @@
     </content>
     <orderEntry type="jdk" jdkName="temurin-17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="org.openstreetmap.josm" />
     <orderEntry type="module" module-name="org.openstreetmap.josm.plugins.commons" />
+    <orderEntry type="module" module-name="org.openstreetmap.josm" />
   </component>
   <component name="SonarLintModuleSettings">
     <option name="uniqueId" value="7819a276-9077-412b-9b73-174c14ba84c1" />
