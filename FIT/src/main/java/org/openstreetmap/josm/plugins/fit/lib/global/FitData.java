@@ -6,7 +6,7 @@ package org.openstreetmap.josm.plugins.fit.lib.global;
  */
 public sealed
 interface FitData
-permits FitDeveloperDataIdMessage, FitDevice, FitUnknownRecord, HeartRateCadenceDistanceSpeed
+permits FileCreator, FitDeveloperDataIdMessage, FitDevice, FitEvent, FitUnknownRecord, HeartRateCadenceDistanceSpeed
 {
 
     FitDevDataRecord devData();

@@ -19,7 +19,7 @@ import org.openstreetmap.josm.plugins.fit.lib.utils.NumberUtils;
 public record HeartRateCadenceDistanceSpeed(Instant timestamp, double lat, double lon, double ele, short heartRate, short cadence,
                                             int distance, int speed, long[][] unknown,
                                             FitDevDataRecord devData) implements FitData, IFitTimestamp<HeartRateCadenceDistanceSpeed> {
-    private static final long[][] NO_UNKNOWNS = new long[0][];
+    static final long[][] NO_UNKNOWNS = new long[0][];
 
     // Using the 2023-09-09-12-0016.fit.gpx file provided by richlv:
     // 1063184416, 1063184419, 1063184488 -> 2023-09-09 + (T09:00:16Z, T09:00:19Z, T09:01:28Z)
@@ -64,7 +64,9 @@ public record HeartRateCadenceDistanceSpeed(Instant timestamp, double lat, doubl
                 case 4 -> cadence = NumberUtils.decodeShort(size, littleEndian, inputStream);
                 case 5 -> distance = NumberUtils.decodeInt(size, littleEndian, inputStream);
                 case 6 -> speed = NumberUtils.decodeInt(size, littleEndian, inputStream);
-                case 253 -> timestamp = Instant.ofEpochSecond(EPOCH_DIFFERENCE + NumberUtils.decodeLong(size, littleEndian, inputStream));
+                // 13 seems to be either -1 (invalid entry?), or 23-27
+                // 107 seems to always be -1 (invalid entry?), 0, and 1.
+                case 253 -> timestamp = decodeInstant(size, littleEndian, inputStream);
                 default -> {
                     unknowns = Arrays.copyOf(unknowns, unknowns.length + 1);
                     unknowns[unknowns.length - 1] = new long[]{fitField.fieldDefinitionNumber(),
@@ -76,7 +78,15 @@ public record HeartRateCadenceDistanceSpeed(Instant timestamp, double lat, doubl
                 DevDataUtils.parseDevFields(littleEndian, developerFieldList, developerFields, inputStream));
     }
 
+    static Instant decodeInstant(short size, boolean littleEndian, InputStream inputStream) throws IOException {
+        final var timestamp = NumberUtils.decodeLong(size, littleEndian, inputStream);
+        return Instant.ofEpochSecond(EPOCH_DIFFERENCE + timestamp);
+    }
+
     private static double decodeDegrees(long original) {
+        if (original == FitBaseType.sint32.invalidValue()) {
+            return Double.NaN;
+        }
         // signed ints, no need to look into zigzag decoding
         // 0 -> 0 (assumed)
         // 676960569 -> 56.7421794

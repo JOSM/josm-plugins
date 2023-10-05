@@ -1,15 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.fit.lib.global;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.openstreetmap.josm.plugins.fit.lib.FitBaseType;
+import org.openstreetmap.josm.plugins.fit.lib.records.FitDevStringData;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitDefinitionMessage;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitDeveloperField;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitDeveloperFieldDescriptionMessage;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitField;
 import org.openstreetmap.josm.plugins.fit.lib.utils.DevDataUtils;
+import org.openstreetmap.josm.plugins.fit.lib.utils.StringUtils;
 
 /**
  * Global message ids
@@ -40,17 +44,26 @@ public interface Global {
             // No clue what to call this. For all I know, it is a typo and will never appear in the wild.
             case 20 ->
                     HeartRateCadenceDistanceSpeed.parse(littleEndian, fieldList, developerFieldList, developerFields, inputStream);
+            case 21 -> FitEvent.parse(littleEndian, fieldList, developerFieldList, developerFields, inputStream);
             case MESSAGE_NUMBER_DEV_FIELD_DESCRIPTION -> FitDeveloperFieldDescriptionMessage
                     .parse(littleEndian, fieldList, developerFieldList, developerFields, inputStream);
             case MESSAGE_NUMBER_APP_ID ->
                     FitDeveloperDataIdMessage.parse(littleEndian, fieldList, developerFieldList, developerFields, inputStream);
+            case 49 -> FileCreator.parse(littleEndian, fieldList, developerFieldList, developerFields, inputStream);
             default -> {
                 final var fieldData = new FitUnknownRecord.FieldData[fieldList.size()];
                 var index = 0;
                 for (FitField field : fieldList) {
-                    fieldData[index++] = new FitUnknownRecord.FieldData(field, inputStream.readNBytes(field.size()));
+                    if (field.fitBaseType() == FitBaseType.string) {
+                        fieldData[index++] = new FitUnknownRecord.FieldData(field,
+                                new FitDevStringData("", "",
+                                        StringUtils.decodeString(new ByteArrayInputStream(inputStream.readNBytes(field.size())))));
+                    } else {
+                        fieldData[index++] = new FitUnknownRecord.FieldData(field, DevDataUtils.getData(field.fitBaseType(),
+                                "", "", field.size(), littleEndian, inputStream));
+                    }
                 }
-                yield new FitUnknownRecord(fieldData,
+                yield new FitUnknownRecord(globalMessageNumber, fieldData,
                         DevDataUtils.parseDevFields(littleEndian, developerFieldList, developerFields, inputStream));
             }
         };

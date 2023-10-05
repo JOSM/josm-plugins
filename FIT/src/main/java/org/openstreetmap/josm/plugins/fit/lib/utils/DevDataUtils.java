@@ -37,19 +37,25 @@ public final class DevDataUtils {
             final String fieldName = devField.fieldName();
             final String units = devField.units();
             final short fieldSize = fitField.size();
-            arrayData[index++] = switch (FitBaseType.fromBaseTypeField(devField.fitBaseTypeId())) {
-            case float64 -> new FitDevDoubleData(fieldName, units,
-                    NumberUtils.decodeDouble(fieldSize, littleEndian, inputStream));
-            case float32 -> new FitDevFloatData(fieldName, units,
-                    NumberUtils.decodeFloat(fieldSize, littleEndian, inputStream));
-            case enum_, sint8, uint8, uint8z, sint16, uint16, uint16z, sint32 -> new FitDevIntData(fieldName, units,
-                    NumberUtils.decodeInt(fieldSize, littleEndian, inputStream));
-            case uint32, uint32z, sint64, uint64, uint64z -> new FitDevLongData(fieldName, units,
-                    NumberUtils.decodeLong(fieldSize, littleEndian, inputStream));
-            case string -> new FitDevStringData(fieldName, units, StringUtils.decodeString(inputStream));
-            case byte_, UNKNOWN -> new FitDevUnknown(fieldName, units, inputStream.readNBytes(fieldSize));
-            };
+            arrayData[index++] = getData(FitBaseType.fromBaseTypeField(devField.fitBaseTypeId()), fieldName, units,
+                    fieldSize, littleEndian, inputStream);
         }
         return new FitDevDataRecord(arrayData);
+    }
+
+    public static IFitDevData<?> getData(FitBaseType type, String fieldName, String units, short fieldSize,
+            boolean littleEndian, InputStream inputStream) throws IOException {
+        return switch (type) {
+        case float64 -> new FitDevDoubleData(fieldName, units,
+                NumberUtils.decodeDouble(fieldSize, littleEndian, inputStream));
+        case float32 -> new FitDevFloatData(fieldName, units,
+                NumberUtils.decodeFloat(fieldSize, littleEndian, inputStream));
+        case enum_, sint8, uint8, uint8z, sint16, uint16, uint16z, sint32 -> new FitDevIntData(fieldName, units,
+                NumberUtils.decodeInt(fieldSize, littleEndian, inputStream));
+        case uint32, uint32z, sint64, uint64, uint64z -> new FitDevLongData(fieldName, units,
+                NumberUtils.decodeLong(fieldSize, littleEndian, inputStream));
+        case string -> new FitDevStringData(fieldName, units, StringUtils.decodeString(inputStream));
+        case byte_, UNKNOWN -> new FitDevUnknown(fieldName, units, inputStream.readNBytes(fieldSize));
+        };
     }
 }

@@ -6,7 +6,7 @@ import java.time.Instant;
 public sealed
 
 interface IFitTimestamp<T>
-permits HeartRateCadenceDistanceSpeed
+permits FitEvent, HeartRateCadenceDistanceSpeed
 {
 
     Instant timestamp();
