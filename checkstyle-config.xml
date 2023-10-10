@@ -102,8 +102,8 @@ JOSM Checkstyle rules
       <property name="checkFormat" value="$1"/>
     </module>
   </module>
-  <module name="Header">
-    <property name="header" value="// License: GPL. For details, see LICENSE file."/>
+  <module name="RegexpHeader">
+    <property name="header" value="// License: (GPL|Public Domain)\. For details, see LICENSE file\."/>
     <property name="fileExtensions" value=".java"/>
   </module>
   <module name="FileLength">

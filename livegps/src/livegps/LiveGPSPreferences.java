@@ -87,7 +87,10 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         panel.add(new JLabel(tr("Serial device")), GBC.std());
         panel.add(serialDevice, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
         /* I18n : {0} to {3} is like /dev/ttyACM<b>x</b>, {4} and {5} are COM1 and COM9 */
-        panel.add(new JLabel(tr("<html>For Linux {0}, {1}, {2} or {3} (<b>x</b> means any number beginning with 0).<br>For Windows {4} to {5} (COM ports bigger than 9 wont work).</html>", "/dev/ttyS<b>x</b>", "/dev/ttyACM<b>x</b>", "/dev/ttyUSB<b>x</b>", "/dev/rfcomm<b>x</b>", "COM1", "COM9")), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(10, 0, 0, 5));
+        panel.add(new JLabel(tr("<html>For Linux {0}, {1}, {2} or {3} (<b>x</b> means any number beginning with 0).<br>"
+            +"For Windows {4} to {5} (COM ports bigger than 9 wont work).</html>", "/dev/ttyS<b>x</b>",
+            "/dev/ttyACM<b>x</b>", "/dev/ttyUSB<b>x</b>", "/dev/rfcomm<b>x</b>", "COM1", "COM9")),
+            GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(10, 0, 0, 5));
 
         showOffset.setSelected(Config.getPref().getBoolean(C_WAYOFFSET, false));
         panel.add(showOffset, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
