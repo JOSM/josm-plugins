@@ -21,7 +21,7 @@
             <classpath refid="checkstyle.classpath"/>
             <classpath path="${checkstyle-build.dir}"/>
         </taskdef>
-        <checkstyle config="checkstyle-config.xml">
+        <checkstyle config="../checkstyle-config.xml">
             <fileset dir="${basedir}/src" includes="**/*.java" />
             <formatter type="xml" toFile="checkstyle-josm-${ant.project.name}.xml"/>
         </checkstyle>
