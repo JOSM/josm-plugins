@@ -15,16 +15,4 @@
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
-
-    <target name="checkstyle" depends="checkstyle-compile">
-        <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties">
-            <classpath refid="checkstyle.classpath"/>
-            <classpath path="${checkstyle-build.dir}"/>
-        </taskdef>
-        <checkstyle config="../checkstyle-config.xml">
-            <fileset dir="${basedir}/src" includes="**/*.java" />
-            <formatter type="xml" toFile="checkstyle-josm-${ant.project.name}.xml"/>
-        </checkstyle>
-    </target>
-
 </project>
