@@ -599,7 +599,9 @@
         description="Run unit tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <sequential>
             <echo message="Running unit tests with JUnit"/>
-            <jacoco:agent destfile="${plugin.test.dir}/jacoco.exec" enabled="${coverageByDefault}" inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}" property="jacocoagent"/>
+            <jacoco:agent destfile="${plugin.test.dir}/jacoco.exec" enabled="${coverageByDefault}"
+                          inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}"
+                          property="jacocoagent" if:true="${coverageByDefault}"/>
             <junitlauncher printsummary="${junit.printsummary}">
                 <classpath>
                     <fileset refid="plugin.requires.jars"/>
