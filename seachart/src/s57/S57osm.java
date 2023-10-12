@@ -2,6 +2,8 @@
 package s57;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -97,7 +99,21 @@ public final class S57osm { // OSM to S57 Object/Attribute and Object/Primitive 
         return;
     }
 
-    public static void OSMmap(File in, S57map map, boolean bb) throws Exception {
+    public static void OSMmap(File file, S57map map, boolean bb) throws Exception {
+        try (InputStream in = new FileInputStream(file)) {
+          OSMmap(in, map, bb);
+        }
+    }
+
+    public static void OSMmap(InputStream in, S57map map, boolean bb) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(in);
+
+        OSMmap(doc, map, bb);
+    }
+
+    public static void OSMmap(Document doc, S57map map, boolean bb) throws Exception {
         double lat = 0;
         double lon = 0;
         long id = 0;
@@ -112,9 +128,6 @@ public final class S57osm { // OSM to S57 Object/Attribute and Object/Primitive 
         map.nodes.put(3L, new Snode());
         map.nodes.put(4L, new Snode());
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(in);
         doc.getDocumentElement().normalize();
         if (!doc.getDocumentElement().getNodeName().equals("osm")) {
             System.err.println("OSM file format error");

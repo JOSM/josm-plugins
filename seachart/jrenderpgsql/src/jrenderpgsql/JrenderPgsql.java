@@ -6,10 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -395,7 +396,7 @@ public final class JrenderPgsql {
         // The pseudo OSM file is now complete, and we feed it to the S57
         // library where it will be parsed again.
 
-        BufferedReader in = new BufferedReader(new StringReader(combinedBuf.toString()));
+        ByteArrayInputStream in = new ByteArrayInputStream(combinedBuf.toString().getBytes(StandardCharsets.UTF_8));
         map = new S57map(true);
         S57osm.OSMmap(in, map, false);
         in.close();
@@ -426,6 +427,14 @@ public final class JrenderPgsql {
 
             public RuleSet ruleset() {
                 return RuleSet.SEAMARK;
+            }
+
+            public Chart chart() {
+              return null;
+            }
+
+            public int grid() {
+              return 0;
             }
         };
 
