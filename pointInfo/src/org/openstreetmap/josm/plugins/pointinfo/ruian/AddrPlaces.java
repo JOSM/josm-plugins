@@ -73,15 +73,15 @@ class AddrPlaces {
     }
 
     public void setCisloTyp(String v) {
-        m_cislo_typ = v;
+        m_cislo_typ = (v == null ? "" : v);
     }
 
     public void setCisloDomovni(String v) {
-        m_cislo_domovni = v;
+        m_cislo_domovni = (v == null ? "" : v);
     }
 
     public void setCisloOrientacni(String v) {
-        m_cislo_orientacni = v;
+        m_cislo_orientacni = (v == null ? "" : v);
     }
 
     public void setUliceID(long v) {
@@ -89,7 +89,7 @@ class AddrPlaces {
     }
 
     public void setUlice(String v) {
-        m_ulice = v;
+        m_ulice = (v == null ? "" : v);
     }
 
     public void setCastObceID(long v) {
@@ -97,7 +97,7 @@ class AddrPlaces {
     }
 
     public void setCastObce(String v) {
-        m_cast_obce = v;
+        m_cast_obce = (v == null ? "" : v);
     }
 
     public void setMestskaCastID(long v) {
@@ -105,7 +105,7 @@ class AddrPlaces {
     }
 
     public void setMestskaCast(String v) {
-        m_mestska_cast = v;
+        m_mestska_cast = (v == null ? "" : v);
     }
 
     public void setObecID(long v) {
@@ -113,7 +113,7 @@ class AddrPlaces {
     }
 
     public void setObec(String v) {
-        m_obec = v;
+        m_obec = (v == null ? "" : v);
     }
 
     public void setOkresID(long v) {
@@ -121,7 +121,7 @@ class AddrPlaces {
     }
 
     public void setOkres(String v) {
-        m_okres = v;
+        m_okres = (v == null ? "" : v);
     }
 
     public void setKrajID(long v) {
@@ -129,11 +129,11 @@ class AddrPlaces {
     }
 
     public void setKraj(String v) {
-        m_kraj = v;
+        m_kraj = (v == null ? "" : v);
     }
 
     public void setPsc(String v) {
-        m_psc = v;
+        m_psc = (v == null ? "" : v);
     }
 
     public void setVzdalenost(float v) {
