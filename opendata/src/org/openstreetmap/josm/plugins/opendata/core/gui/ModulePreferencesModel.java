@@ -5,11 +5,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
@@ -18,12 +18,13 @@ import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.modules.ModuleException;
 import org.openstreetmap.josm.plugins.opendata.core.modules.ModuleInformation;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Logging;
 
 public class ModulePreferencesModel extends ChangeNotifier {
     private final ArrayList<ModuleInformation> availableModules = new ArrayList<>();
     private final ArrayList<ModuleInformation> displayedModules = new ArrayList<>();
     private final HashMap<ModuleInformation, Boolean> selectedModulesMap = new HashMap<>();
-    private Set<String> pendingDownloads = new HashSet<>();
+    private final Set<String> pendingDownloads = new HashSet<>();
     private String filterExpression;
     private final Set<String> currentActiveModules;
 
@@ -61,10 +62,8 @@ public class ModulePreferencesModel extends ChangeNotifier {
         filterDisplayedModules(filterExpression);
         Set<String> activeModules = new HashSet<>(getModules(Collections.emptyList()));
         for (ModuleInformation pi: availableModules) {
-            if (selectedModulesMap.get(pi) == null) {
-                if (activeModules.contains(pi.name)) {
-                    selectedModulesMap.put(pi, true);
-                }
+            if (selectedModulesMap.get(pi) == null && activeModules.contains(pi.name)) {
+                selectedModulesMap.put(pi, true);
             }
         }
         fireStateChanged();
@@ -94,10 +93,8 @@ public class ModulePreferencesModel extends ChangeNotifier {
         filterDisplayedModules(filterExpression);
         Set<String> activeModules = new HashSet<>(getModules(Collections.emptyList()));
         for (ModuleInformation pi: availableModules) {
-            if (selectedModulesMap.get(pi) == null) {
-                if (activeModules.contains(pi.name)) {
-                    selectedModulesMap.put(pi, true);
-                }
+            if (selectedModulesMap.get(pi) == null && activeModules.contains(pi.name)) {
+                selectedModulesMap.put(pi, true);
             }
         }
         fireStateChanged();
@@ -114,7 +111,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
             if (selectedModulesMap.get(pi) == null) {
                 continue;
             }
-            if (selectedModulesMap.get(pi)) {
+            if (Boolean.TRUE.equals(selectedModulesMap.get(pi))) {
                 ret.add(pi);
             }
         }
@@ -124,7 +121,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
     /**
      * Replies the list of selected module information objects
      *
-     * @return the list of selected module information objects
+     * @return the set of selected module information objects
      */
     public Set<String> getSelectedModuleNames() {
         Set<String> ret = new HashSet<>();
@@ -138,23 +135,17 @@ public class ModulePreferencesModel extends ChangeNotifier {
      * Sorts the list of available modules
      */
     protected void sort() {
-        Collections.sort(
-                availableModules,
-                new Comparator<ModuleInformation>() {
-                    @Override
-                    public int compare(ModuleInformation o1, ModuleInformation o2) {
-                        String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase();
-                        String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase();
-                        return n1.compareTo(n2);
-                    }
-                }
-                );
+        availableModules.sort((o1, o2) -> {
+            String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase(Locale.ROOT);
+            String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase(Locale.ROOT);
+            return n1.compareTo(n2);
+        });
     }
 
     /**
-     * Replies the list of module informations to display
+     * Replies the list of module information to display
      *
-     * @return the list of module informations to display
+     * @return the list of module information to display
      */
     public List<ModuleInformation> getDisplayedModules() {
         return displayedModules;
@@ -224,7 +215,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
         return null;
     }
 
-    /**
+    /*
      * Initializes the model from preferences
      */
     /*public void initFromPreferences() {
@@ -256,7 +247,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
         return selectedModulesMap.get(pi);
     }
 
-    /**
+    /*
      * Replies the set of modules which have been added by the user to
      * the set of activated modules.
      *
@@ -274,7 +265,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
         return ret;
     }*/
 
-    /**
+    /*
      * Replies the set of modules which have been removed by the user from
      * the set of activated modules.
      *
@@ -293,7 +284,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
         return ret;
     }*/
 
-    /**
+    /*
      * Replies the set of module names which have been added by the user to
      * the set of activated modules.
      *
@@ -349,7 +340,7 @@ public class ModulePreferencesModel extends ChangeNotifier {
                 }
                 oldinfo.localversion = newinfo.version;
             } catch (ModuleException e) {
-                e.printStackTrace();
+                Logging.debug(e);
             }
         }
     }

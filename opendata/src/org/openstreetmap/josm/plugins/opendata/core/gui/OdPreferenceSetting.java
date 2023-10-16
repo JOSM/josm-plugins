@@ -57,7 +57,7 @@ public class OdPreferenceSetting extends DefaultTabPreferenceSetting {
      *
      * @return the collection of module site URLs from where module lists can be downloaded
      */
-    public static final Collection<String> getModuleSites() {
+    public static Collection<String> getModuleSites() {
         return Config.getPref().getList(OdConstants.PREF_MODULES_SITES, Arrays.asList(OdConstants.DEFAULT_MODULE_SITES));
     }
 
@@ -152,12 +152,7 @@ public class OdPreferenceSetting extends DefaultTabPreferenceSetting {
         // this is the task which will run *after* the modules are downloaded
         //
         final Runnable continuation = () -> {
-            boolean requiresRestart = false;
-            if (task != null && !task.isCanceled()) {
-                if (!task.getDownloadedModules().isEmpty()) {
-                    requiresRestart = true;
-                }
-            }
+            boolean requiresRestart = task != null && !task.isCanceled() && !task.getDownloadedModules().isEmpty();
 
             // build the messages. We only display one message, including the status
             // information from the module download task and - if necessary - a hint
@@ -199,6 +194,6 @@ public class OdPreferenceSetting extends DefaultTabPreferenceSetting {
             continuation.run();
         }
 
-        return task == null ? result : false;
+        return task == null && result;
     }
 }

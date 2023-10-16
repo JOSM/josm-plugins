@@ -17,7 +17,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -54,7 +53,7 @@ public class GmlReader extends GeographicReader {
 
     private final GmlHandler gmlHandler;
 
-    private XMLStreamReader parser;
+    private final XMLStreamReader parser;
 
     private int dim;
 
@@ -83,7 +82,8 @@ public class GmlReader extends GeographicReader {
         XMLStreamReader parser = XmlUtils.newSafeXMLInputFactory().createXMLStreamReader(ir);
         try {
             return new GmlReader(parser, handler != null ? handler.getGmlHandler() : null).parseDoc(instance);
-        } catch (Exception e) {
+        } catch (XMLStreamException | GeoCrsException | FactoryException | GeoMathTransformException |
+                 TransformException e) {
             throw new IOException(e);
         }
     }
@@ -109,7 +109,7 @@ public class GmlReader extends GeographicReader {
         return ds;
     }
 
-    private void findCRS(String srs) throws NoSuchAuthorityCodeException, FactoryException {
+    private void findCRS(String srs) throws FactoryException {
         Logging.info("Finding CRS for "+srs);
         if (gmlHandler != null) {
             crs = gmlHandler.getCrsFor(srs);
@@ -149,7 +149,7 @@ public class GmlReader extends GeographicReader {
     private void parseFeatureMember(Component parent) throws XMLStreamException, GeoCrsException, FactoryException,
     UserCancelException, GeoMathTransformException, MismatchedDimensionException, TransformException {
         Way way = null;
-        Node node = null;
+        Node node;
         Map<String, StringBuilder> tags = new HashMap<>();
         OsmPrimitive prim = null;
         String key = null;
@@ -194,11 +194,7 @@ public class GmlReader extends GeographicReader {
                     break;
                 }
             } else if (event == XMLStreamConstants.CHARACTERS && key != null) {
-                StringBuilder sb = tags.get(key);
-                if (sb == null) {
-                    sb = new StringBuilder();
-                    tags.put(key, sb);
-                }
+                StringBuilder sb = tags.computeIfAbsent(key, k -> new StringBuilder());
                 sb.append(parser.getTextCharacters(), parser.getTextStart(), parser.getTextLength());
             }
         }

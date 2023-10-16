@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -119,10 +120,7 @@ public class OdDataLayer extends OsmDataLayer implements OdLayer, LayerChangeLis
 
     @Override
     public Action[] getMenuEntries() {
-        List<Action> result = new ArrayList<>();
-        for (Action entry : super.getMenuEntries()) {
-            result.add(entry);
-        }
+        List<Action> result = new ArrayList<>(Arrays.asList(super.getMenuEntries()));
         if (this.handler != null) {
             if (this.handler.getWikiURL() != null || this.handler.getLocalPortalURL() != null || this.handler.getNationalPortalURL() != null) {
                 result.add(SeparatorLayerAction.INSTANCE);

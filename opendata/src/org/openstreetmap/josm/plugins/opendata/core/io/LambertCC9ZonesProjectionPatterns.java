@@ -13,7 +13,7 @@ public class LambertCC9ZonesProjectionPatterns extends ProjectionPatterns {
     public static final Projection[] lambertCC9Zones = new Projection[9];
     static {
         for (int i = 0; i < lambertCC9Zones.length; i++) {
-            lambertCC9Zones[i] = Projections.getProjectionByCode("EPSG:"+Integer.toString(3942+i));
+            lambertCC9Zones[i] = Projections.getProjectionByCode("EPSG:" + (3942 + i));
         }
     }
 

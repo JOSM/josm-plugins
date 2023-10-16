@@ -9,8 +9,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public abstract class DefaultGeographicHandler implements GeographicHandler {
 
     private boolean useNodeMap = true;
-    private boolean checkNodeProximity = false;
-    private boolean preferMultipolygonToSimpleWay = false;
+    private boolean checkNodeProximity;
+    private boolean preferMultipolygonToSimpleWay;
 
     @Override
     public boolean preferMultipolygonToSimpleWay() {

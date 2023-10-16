@@ -6,16 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -27,7 +23,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  *
  */
 public class ModuleListPanel extends VerticallyScrollablePanel {
-    private ModulePreferencesModel model;
+    private final ModulePreferencesModel model;
 
     public ModuleListPanel() {
         model = new ModulePreferencesModel();
@@ -41,7 +37,7 @@ public class ModuleListPanel extends VerticallyScrollablePanel {
 
     protected String formatModuleRemoteVersion(ModuleInformation pi) {
         StringBuilder sb = new StringBuilder();
-        if (pi.version == null || pi.version.trim().equals("")) {
+        if (pi.version == null || pi.version.trim().isEmpty()) {
             sb.append(tr("unknown"));
         } else {
             sb.append(pi.version);
@@ -51,7 +47,7 @@ public class ModuleListPanel extends VerticallyScrollablePanel {
 
     protected String formatModuleLocalVersion(ModuleInformation pi) {
         if (pi == null) return tr("unknown");
-        if (pi.localversion == null || pi.localversion.trim().equals(""))
+        if (pi.localversion == null || pi.localversion.trim().isEmpty())
             return tr("unknown");
         return pi.localversion;
     }
@@ -105,12 +101,7 @@ public class ModuleListPanel extends VerticallyScrollablePanel {
             final JCheckBox cbModule = new JCheckBox();
             cbModule.setSelected(selected);
             cbModule.setToolTipText(formatCheckboxTooltipText(pi));
-            cbModule.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    model.setModuleSelected(pi.getName(), cbModule.isSelected());
-                }
-            });
+            cbModule.addActionListener(e -> model.setModuleSelected(pi.getName(), cbModule.isSelected()));
             JLabel lblModule = new JLabel(
                     tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion),
                     pi.getScaledIcon(),
@@ -129,12 +120,9 @@ public class ModuleListPanel extends VerticallyScrollablePanel {
 
             HtmlPanel description = new HtmlPanel();
             description.setText(pi.getDescriptionAsHtml());
-            description.getEditorPane().addHyperlinkListener(new HyperlinkListener() {
-                @Override
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() == EventType.ACTIVATED) {
-                        OpenBrowser.displayUrl(e.getURL().toString());
-                    }
+            description.getEditorPane().addHyperlinkListener(e -> {
+                if (e.getEventType() == EventType.ACTIVATED) {
+                    OpenBrowser.displayUrl(e.getURL().toString());
                 }
             });
 

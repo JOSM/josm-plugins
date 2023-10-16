@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public final class ChooserLauncher implements Runnable {
 
-    private Projection proj = null;
+    private Projection proj;
     private final ProgressMonitor progressMonitor;
 
     private ChooserLauncher(ProgressMonitor progressMonitor) {

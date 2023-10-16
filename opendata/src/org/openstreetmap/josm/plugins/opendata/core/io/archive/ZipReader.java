@@ -26,8 +26,6 @@ public class ZipReader extends ArchiveReader {
 
     private final ZipInputStream zis;
 
-    private ZipEntry entry;
-
     public ZipReader(InputStream in, AbstractDataSetHandler handler, boolean promptUser) {
         super(handler, handler != null ? handler.getArchiveHandler() : null, promptUser);
         this.zis = in instanceof ZipInputStream ? (ZipInputStream) in : new ZipInputStream(in);
@@ -45,6 +43,7 @@ public class ZipReader extends ArchiveReader {
 
     @Override
     protected void extractArchive(final File temp, final List<File> candidates) throws IOException, FileNotFoundException {
+        ZipEntry entry;
         while ((entry = zis.getNextEntry()) != null) {
             Logging.debug("Extracting {0}", entry.getName());
             File file = new File(temp + File.separator + entry.getName());
@@ -62,7 +61,7 @@ public class ZipReader extends ArchiveReader {
                 // Write temp file
                 try (FileOutputStream fos = new FileOutputStream(file)) {
                     byte[] buffer = new byte[8192];
-                    int count = 0;
+                    int count;
                     while ((count = zis.read(buffer, 0, buffer.length)) > 0) {
                         fos.write(buffer, 0, count);
                     }

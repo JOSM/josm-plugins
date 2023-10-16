@@ -83,25 +83,26 @@ public class TabReader extends AbstractMapInfoReader {
                     doParse(columns.toArray(new String[0]), instance);
         } catch (IOException e) {
             Logging.error(e.getMessage());
+            Logging.debug(e);
         }
         return ds;
     }
 
     @Override
     protected void parseHeaderLine(String[] words) throws IOException {
-        if (words[0].equalsIgnoreCase("!table")) {
+        if ("!table".equalsIgnoreCase(words[0])) {
             // Do nothing
-        } else if (words[0].equalsIgnoreCase("!version")) {
+        } else if ("!version".equalsIgnoreCase(words[0])) {
             parseVersion(words);
-        } else if (words[0].equalsIgnoreCase("!charset")) {
+        } else if ("!charset".equalsIgnoreCase(words[0])) {
             parseCharset(words);
         } else if (numcolumns > 0) {
             parseField(words);
-        } else if (words[0].equalsIgnoreCase("Definition")) {
+        } else if ("Definition".equalsIgnoreCase(words[0])) {
             // Do nothing
-        } else if (words[0].equalsIgnoreCase("Type")) {
+        } else if ("Type".equalsIgnoreCase(words[0])) {
             parseType(words);
-        } else if (words[0].equalsIgnoreCase("Fields")) {
+        } else if ("Fields".equalsIgnoreCase(words[0])) {
             parseColumns(words);
         } else if (!line.isEmpty()) {
             Logging.warn("Line "+lineNum+". Unknown clause in header: "+line);
@@ -114,7 +115,7 @@ public class TabReader extends AbstractMapInfoReader {
     }
 
     private void parseType(String[] words) throws IllegalCharsetNameException, UnsupportedCharsetException {
-        if (words[1].equalsIgnoreCase("NATIVE") && words[2].equalsIgnoreCase("Charset")) {
+        if ("NATIVE".equalsIgnoreCase(words[1]) && "Charset".equalsIgnoreCase(words[2])) {
             datCharset = parseCharset(words, 3);
         } else {
             Logging.warn("Line "+lineNum+". Unknown Type clause in header: "+line);

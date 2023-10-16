@@ -6,18 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -156,20 +155,16 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
                 connection.setRequestProperty("Host", url.getHost());
                 connection.setRequestProperty("Accept-Charset", "utf-8");
             }
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = in.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
                 return sb.toString();
             }
-        } catch (MalformedURLException e) {
-            if (canceled) return null;
-            e.printStackTrace();
-            return null;
         } catch (IOException e) {
             if (canceled) return null;
-            e.printStackTrace();
+            Logging.debug(e);
             return null;
         } finally {
             synchronized (this) {
@@ -204,20 +199,16 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
             }
             try (
                     InputStream in = connection.getInputStream();
-                    OutputStream out = new FileOutputStream(destFile)
+                    OutputStream out = Files.newOutputStream(destFile.toPath())
                     ) {
                 byte[] buffer = new byte[8192];
                 for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
                     out.write(buffer, 0, read);
                 }
             }
-        } catch (MalformedURLException e) {
-            if (canceled) return;
-            e.printStackTrace();
-            return;
         } catch (IOException e) {
             if (canceled) return;
-            e.printStackTrace();
+            Logging.debug(e);
             return;
         } finally {
             synchronized (this) {
@@ -248,15 +239,14 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
     protected void cacheModuleList(String site, String list) {
         try {
             File moduleDir = OdPlugin.getInstance().getModulesDirectory();
-            if (!moduleDir.exists()) {
-                if (!moduleDir.mkdirs()) {
-                    Logging.warn(tr("Warning: failed to create module directory ''{0}''. Cannot cache module list from module site ''{1}''.",
-                            moduleDir.toString(), site));
-                }
+            if (!moduleDir.exists() && !moduleDir.mkdirs()) {
+                Logging.warn(tr("Warning: failed to create module directory ''{0}''. Cannot cache module list from module site ''{1}''.",
+                        moduleDir.toString(), site));
             }
             File cacheFile = createSiteCacheFile(moduleDir, site, CacheType.PLUGIN_LIST);
             getProgressMonitor().subTask(tr("Writing module list to local cache ''{0}''", cacheFile.toString()));
-            try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), "utf-8"))) {
+            try (OutputStream fileOutputStream = Files.newOutputStream(cacheFile.toPath());
+                 PrintWriter writer = new PrintWriter(new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8))) {
                 writer.write(list);
             }
         } catch (IOException e) {
@@ -274,14 +264,11 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
     protected void parseModuleListDocument(String site, String doc) {
         try {
             getProgressMonitor().subTask(tr("Parsing module list from site ''{0}''", site));
-            InputStream in = new ByteArrayInputStream(doc.getBytes("UTF-8"));
+            InputStream in = new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8));
             availableModules.addAll(new ModuleListParser().parse(in));
-        } catch (UnsupportedEncodingException e) {
-            Logging.error(tr("Failed to parse module list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            e.printStackTrace();
         } catch (ModuleListParseException e) {
             Logging.error(tr("Failed to parse module list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            e.printStackTrace();
+            Logging.debug(e);
         }
     }
 
@@ -295,14 +282,9 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
         List<File> siteCacheFiles = new LinkedList<>();
         for (String location : ModuleInformation.getModuleLocations()) {
             File[] f = new File(location).listFiles(
-                    new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            return name.matches("^([0-9]+-)?site.*\\.txt$") ||
-                                    name.matches("^([0-9]+-)?site.*-icons\\.zip$");
-                        }
-                    }
-                    );
+                    (dir, name) -> name.matches("^([0-9]+-)?site.*\\.txt$") ||
+                            name.matches("^([0-9]+-)?site.*-icons\\.zip$")
+            );
             if (f != null && f.length > 0) {
                 siteCacheFiles.addAll(Arrays.asList(f));
             }

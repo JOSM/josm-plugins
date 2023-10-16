@@ -5,8 +5,8 @@ import java.nio.charset.Charset;
 
 public class DefaultCsvHandler extends DefaultSpreadSheetHandler implements CsvHandler {
 
-    private Charset charset = null;
-    private String separator = null;
+    private Charset charset;
+    private String separator;
     
     @Override
     public void setCharset(Charset cs) {

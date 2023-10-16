@@ -103,7 +103,7 @@ public final class OdPlugin extends Plugin {
             // Load modules in new thread
             loadModules();
             // Add menu in EDT
-            GuiHelper.runInEDT(() -> buildMenu());
+            GuiHelper.runInEDT(this::buildMenu);
         }).start();
 
         // Add download task
@@ -116,7 +116,7 @@ public final class OdPlugin extends Plugin {
         return instance;
     }
 
-    private JMenu getModuleMenu(Module module) {
+    private static JMenu getModuleMenu(Module module) {
         String moduleName = module.getDisplayedName();
         if (moduleName == null || moduleName.isEmpty()) {
             moduleName = module.getModuleInformation().getName();
@@ -140,8 +140,10 @@ public final class OdPlugin extends Plugin {
                     DataSetCategory cat = handler.getCategory();
                     JMenu endMenu = null;
                     if (cat != null) {
-                        if ((endMenu = catMenus.get(cat)) == null) {
-                            catMenus.put(cat, endMenu = new JMenu(cat.getName()));
+                        endMenu = catMenus.get(cat);
+                        if (endMenu == null) {
+                            endMenu = new JMenu(cat.getName());
+                            catMenus.put(cat, endMenu);
                             setMenuItemIcon(cat.getIcon(), endMenu);
                             moduleMenu.add(endMenu);
                         }
@@ -182,7 +184,7 @@ public final class OdPlugin extends Plugin {
         MainMenu.add(menu, new OpenPreferencesActions());
     }
 
-    private void setMenuItemIcon(ImageIcon icon, JMenuItem menuItem) {
+    private static void setMenuItemIcon(ImageIcon icon, JMenuItem menuItem) {
         if (icon != null) {
             if (icon.getIconHeight() != 16 || icon.getIconWidth() != 16) {
                 icon = new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
@@ -194,7 +196,8 @@ public final class OdPlugin extends Plugin {
     @Override
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
         if (newFrame != null) {
-            newFrame.addToggleDialog(dialog = new OdDialog());
+            dialog = new OdDialog();
+            newFrame.addToggleDialog(dialog);
         } else {
             dialog = null;
         }
@@ -205,7 +208,7 @@ public final class OdPlugin extends Plugin {
         return new OdPreferenceSetting();
     }
 
-    private void loadModules() {
+    private static void loadModules() {
         MainFrame parent = MainApplication.getMainFrame();
         List<ModuleInformation> modulesToLoad = ModuleHandler.buildListOfModulesToLoad(parent);
         if (!modulesToLoad.isEmpty() && ModuleHandler.checkAndConfirmModuleUpdate(parent)) {

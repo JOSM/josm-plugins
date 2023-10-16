@@ -24,7 +24,7 @@ public class OdsDocument extends OpenDocument {
         loadFrom(in);
     }
 
-    private InputSource getEntryInputSource(ZipInputStream zis) throws IOException {
+    private static InputSource getEntryInputSource(ZipInputStream zis) throws IOException {
         int n;
         final byte[] buffer = new byte[4096];
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -45,7 +45,7 @@ public class OdsDocument extends OpenDocument {
             boolean contentParsed = false;
 
             while (!contentParsed && (entry = zis.getNextEntry()) != null) {
-                if (entry.getName().equals("content.xml")) {
+                if ("content.xml".equals(entry.getName())) {
                     rdr.setContentHandler(contentHandler);
                     Logging.info("Parsing content.xml");
                     rdr.parse(getEntryInputSource(zis));

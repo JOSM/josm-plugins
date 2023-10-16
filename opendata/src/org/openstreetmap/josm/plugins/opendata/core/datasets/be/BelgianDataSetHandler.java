@@ -86,7 +86,7 @@ public abstract class BelgianDataSetHandler extends SimpleDataSetHandler impleme
     @Override
     public URL getNationalPortalURL() {
         try {
-            String nationalPortalPath = "";
+            String nationalPortalPath;
             String lang = Config.getPref().get("language");
             if (lang == null || lang.isEmpty()) {
                 lang = Locale.getDefault().toString();

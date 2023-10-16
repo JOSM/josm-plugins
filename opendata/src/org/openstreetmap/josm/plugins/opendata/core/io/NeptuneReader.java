@@ -85,11 +85,11 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
 
     private final Map<String, OsmPrimitive> tridentObjects = new HashMap<>();
 
-    public static final boolean acceptsXmlNeptuneFile(File file) {
+    public static boolean acceptsXmlNeptuneFile(File file) {
         return acceptsXmlNeptuneFile(file, null);
     }
 
-    public static final boolean acceptsXmlNeptuneFile(File file, URL schemaURL) {
+    public static boolean acceptsXmlNeptuneFile(File file, URL schemaURL) {
 
         if (schemaURL == null) {
             schemaURL = schemas.get(0);
@@ -104,12 +104,10 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
                 validator.validate(xmlFile);
                 Logging.info(xmlFile.getSystemId() + " is valid");
                 return true;
-            } catch (SAXException e) {
+            } catch (SAXException | IOException e) {
                 Logging.error(xmlFile.getSystemId() + " is NOT valid");
                 Logging.error("Reason: " + e.getLocalizedMessage());
-            } catch (IOException e) {
-                Logging.error(xmlFile.getSystemId() + " is NOT valid");
-                Logging.error("Reason: " + e.getLocalizedMessage());
+                Logging.debug(e);
             }
         } catch (IOException e) {
             Logging.error(e);
@@ -122,7 +120,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
         return new NeptuneReader().doParseDataSet(in, instance);
     }
 
-    protected static final <T> T unmarshal(Class<T> docClass, InputStream inputStream) throws JAXBException {
+    protected static <T> T unmarshal(Class<T> docClass, InputStream inputStream) throws JAXBException {
         String packageName = docClass.getPackage().getName();
         JAXBContext jc = JAXBContext.newInstance(packageName, NeptuneReader.class.getClassLoader());
         Unmarshaller u = jc.createUnmarshaller();
@@ -214,7 +212,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
         return new LatLon(point.getLatitude().doubleValue(), point.getLongitude().doubleValue());
     }
 
-    protected final <T extends TridentObjectType> T findTridentObject(List<T> list, String id) {
+    protected static <T extends TridentObjectType> T findTridentObject(List<T> list, String id) {
         for (T object : list) {
             if (object.getObjectId().equals(id)) {
                 return object;
@@ -342,7 +340,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
                 if (grandchild == null) {
                     Logging.warn("Cannot find StopPoint: "+grandchildId);
                 } else {
-                    if (grandchild.getLongLatType().equals(LongLatTypeType.WGS_84)) {
+                    if (grandchild.getLongLatType() == LongLatTypeType.WGS_84) {
                         Node platform = createPlatform(grandchild);
                         stopArea.addMember(new RelationMember(OSM_PLATFORM, platform));
                     } else {
@@ -357,7 +355,7 @@ public class NeptuneReader extends AbstractReader implements FrenchConstants {
         AreaCentroid areaCentroid = findAreaCentroid(centroidId);
         if (areaCentroid == null) {
             Logging.warn("Cannot find AreaCentroid: "+centroidId);
-        } else if (!areaCentroid.getLongLatType().equals(LongLatTypeType.WGS_84)) {
+        } else if (areaCentroid.getLongLatType() != LongLatTypeType.WGS_84) {
             Logging.warn("Unsupported long/lat type: "+areaCentroid.getLongLatType());
         } else {
             for (RelationMember member : stopArea.getMembers()) {

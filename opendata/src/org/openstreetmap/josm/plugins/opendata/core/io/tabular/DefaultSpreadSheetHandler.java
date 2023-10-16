@@ -13,7 +13,7 @@ public class DefaultSpreadSheetHandler implements SpreadSheetHandler {
 
     private int sheetNumber = -1;
     private int lineNumber = -1;
-    private boolean handlesProjection = false;
+    private boolean handlesProjection;
     
     private int xCol = -1;
     private int yCol = -1;

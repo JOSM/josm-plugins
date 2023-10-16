@@ -51,7 +51,7 @@ public class ProjectionPatterns {
         return projection;
     }
 
-    public static final Pattern getCoordinatePattern(String coor, String proj) {
+    public static Pattern getCoordinatePattern(String coor, String proj) {
         if (proj != null && !proj.isEmpty()) {
             return Pattern.compile("(?:.*(?:"+coor+").*(?:"+proj+").*)|(?:.*("+proj+").*(?:"+coor+").*)", Pattern.CASE_INSENSITIVE);
         } else {

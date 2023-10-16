@@ -25,6 +25,7 @@ import org.openstreetmap.josm.plugins.opendata.core.layers.OdDataLayer;
 import org.openstreetmap.josm.plugins.opendata.core.licenses.License;
 import org.openstreetmap.josm.plugins.opendata.core.modules.Module;
 import org.openstreetmap.josm.plugins.opendata.core.modules.ModuleHandler;
+import org.openstreetmap.josm.tools.Logging;
 
 public class DownloadDataTask extends DownloadOsmTask {
 
@@ -45,9 +46,9 @@ public class DownloadDataTask extends DownloadOsmTask {
     public boolean acceptsUrl(String url) {
         this.handler = null;
         for (Module module : ModuleHandler.moduleList) {
-            for (AbstractDataSetHandler handler : module.getNewlyInstanciatedHandlers()) {
-                if (handler.acceptsUrl(url)) {
-                    this.handler = handler;
+            for (AbstractDataSetHandler moduleHandler : module.getNewlyInstanciatedHandlers()) {
+                if (moduleHandler.acceptsUrl(url)) {
+                    this.handler = moduleHandler;
                     return true;
                 }
             }
@@ -112,6 +113,7 @@ public class DownloadDataTask extends DownloadOsmTask {
         try {
             return new AskLicenseAgreementDialog(license).showDialog().getValue() == 1;
         } catch (IOException e) {
+            Logging.debug(e);
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("License URL not available: {0}", license.toString()));
             return false;
         }

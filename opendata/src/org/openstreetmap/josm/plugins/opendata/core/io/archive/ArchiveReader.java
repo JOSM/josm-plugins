@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -153,7 +154,7 @@ public abstract class ArchiveReader extends AbstractReader {
                 if (progressMonitor != null) {
                     instance = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                 }
-                final String lowerCaseName = f.getName().toLowerCase();
+                final String lowerCaseName = f.getName().toLowerCase(Locale.ROOT);
                 if (lowerCaseName.endsWith(OdConstants.CSV_EXT)) {
                     from = CsvReader.parseDataSet(in, handler, instance);
                 } else if (lowerCaseName.endsWith(OdConstants.KML_EXT)) {
@@ -167,7 +168,7 @@ public abstract class ArchiveReader extends AbstractReader {
                 } else if (lowerCaseName.endsWith(OdConstants.SHP_EXT)) {
                     from = ShpReader.parseDataSet(in, f, handler, instance);
                 } else if (lowerCaseName.endsWith(OdConstants.MIF_EXT)) {
-                    from = MifReader.parseDataSet(in, f, handler, instance);
+                    from = MifReader.parseDataSet(in, f, handler);
                 } else if (lowerCaseName.endsWith(OdConstants.TAB_EXT)) {
                     from = TabReader.parseDataSet(in, f, handler, instance);
                 } else if (lowerCaseName.endsWith(OdConstants.GML_EXT)) {
@@ -189,7 +190,7 @@ public abstract class ArchiveReader extends AbstractReader {
     protected final void lookForCandidate(String entryName, final List<File> candidates, File file) {
         // Test file name to see if it may contain useful data
         for (String ext : NetworkReader.FILE_READERS.keySet()) {
-            if (entryName.toLowerCase().endsWith("."+ext)) {
+            if (entryName.toLowerCase(Locale.ROOT).endsWith("."+ext)) {
                 candidates.add(file);
                 break;
             }

@@ -50,7 +50,7 @@ public interface GeotoolsHandler extends GeographicHandler {
             throws FactoryException {
         if (getCrsFor(sourceCRS.getName().getCode()) != null) {
             return CRS.findMathTransform(getCrsFor(sourceCRS.getName().getCode()), targetCRS, lenient);
-        } else if (sourceCRS instanceof AbstractDerivedCRS && sourceCRS.getName().getCode().equalsIgnoreCase("Lambert_Conformal_Conic")) {
+        } else if (sourceCRS instanceof AbstractDerivedCRS && "Lambert_Conformal_Conic".equalsIgnoreCase(sourceCRS.getName().getCode())) {
             List<MathTransform> result = new ArrayList<>();
             AbstractDerivedCRS crs = (AbstractDerivedCRS) sourceCRS;
             MathTransform transform = crs.getConversionFromBase().getMathTransform();
@@ -92,6 +92,7 @@ public interface GeotoolsHandler extends GeographicHandler {
                                             result.add(CRS.findMathTransform(CRS.decode(p.toCode()), targetCRS, lenient));
                                         } catch (FactoryException e) {
                                             Logging.error(e.getMessage());
+                                            Logging.debug(e);
                                         }
                                     }
                                 }

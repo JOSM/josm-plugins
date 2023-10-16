@@ -24,6 +24,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.locationtech.jts.geom.Point;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -111,7 +112,7 @@ public class ShpReader extends GeographicReader {
         } catch (IOException e) {
             Logging.error(e);
             throw e;
-        } catch (Exception e) {
+        } catch (FactoryException | GeoMathTransformException | TransformException | GeoCrsException e) {
             Logging.error(e);
             throw new IOException(e);
         }

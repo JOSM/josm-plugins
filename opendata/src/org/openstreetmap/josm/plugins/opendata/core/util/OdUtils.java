@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.plugins.opendata.core.util;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ public abstract class OdUtils {
 
     private static final String TEMP_DIR_PREFIX = "josm_opendata_temp_";
 
-    public static final boolean isMultipolygon(OsmPrimitive p) {
-        return p instanceof Relation && ((Relation) p).isMultipolygon();
+    public static boolean isMultipolygon(OsmPrimitive p) {
+        return p instanceof Relation && p.isMultipolygon();
     }
 
-    public static final String[] stripQuotesAndExtraChars(String[] split, String sep) {
+    public static String[] stripQuotesAndExtraChars(String[] split, String sep) {
         List<String> result = new ArrayList<>();
         boolean append = false;
         for (int i = 0; i < split.length; i++) {
@@ -36,12 +35,12 @@ public abstract class OdUtils {
                 if (split[i].endsWith("\"") && StringUtils.countMatches(split[i], "\"") % 2 != 0) {
                     append = false;
                 }
-                result.set(index, result.get(index)+sep+split[i].replaceAll("\"", ""));
+                result.set(index, result.get(index)+sep+split[i].replace("\"", ""));
             } else if (split[i].startsWith("\"")) {
                 if (!(split[i].endsWith("\"") && StringUtils.countMatches(split[i], "\"") % 2 == 0)) {
                     append = true;
                 }
-                result.add(split[i].replaceAll("\"", ""));
+                result.add(split[i].replace("\"", ""));
             } else {
                 result.add(split[i]);
             }
@@ -53,23 +52,23 @@ public abstract class OdUtils {
         return result.toArray(new String[0]);
     }
 
-    public static final ImageIcon getImageIcon(String iconName) {
+    public static ImageIcon getImageIcon(String iconName) {
         return getImageIcon(iconName, false);
     }
 
-    public static final ImageIcon getImageIcon(String iconName, boolean optional) {
+    public static ImageIcon getImageIcon(String iconName, boolean optional) {
         return getImageProvider(iconName, optional).get();
     }
 
-    public static final ImageProvider getImageProvider(String iconName) {
+    public static ImageProvider getImageProvider(String iconName) {
         return getImageProvider(iconName, false);
     }
 
-    public static final ImageProvider getImageProvider(String iconName, boolean optional) {
+    public static ImageProvider getImageProvider(String iconName, boolean optional) {
         return new ImageProvider(iconName).setOptional(optional);
     }
 
-    public static final String getJosmLanguage() {
+    public static String getJosmLanguage() {
         String lang = Config.getPref().get("language");
         if (lang == null || lang.isEmpty()) {
             lang = Locale.getDefault().toString();
@@ -77,19 +76,19 @@ public abstract class OdUtils {
         return lang;
     }
 
-    public static final double convertMinuteSecond(double minute, double second) {
+    public static double convertMinuteSecond(double minute, double second) {
         return (minute/60.0) + (second/3600.0);
     }
 
-    public static final double convertDegreeMinuteSecond(double degree, double minute, double second) {
+    public static double convertDegreeMinuteSecond(double degree, double minute, double second) {
         return degree + convertMinuteSecond(minute, second);
     }
 
-    public static final File createTempDir() throws IOException {
+    public static File createTempDir() throws IOException {
         return Files.createTempDirectory(TEMP_DIR_PREFIX).toFile();
     }
 
-    public static final void deleteDir(File dir) {
+    public static void deleteDir(File dir) {
         for (File file : dir.listFiles()) {
             if (!file.delete()) {
                 file.deleteOnExit();
@@ -100,15 +99,10 @@ public abstract class OdUtils {
         }
     }
 
-    public static final void deletePreviousTempDirs() {
+    public static void deletePreviousTempDirs() {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"));
         if (tmpDir.exists() && tmpDir.isDirectory()) {
-            for (File dir : tmpDir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.startsWith(TEMP_DIR_PREFIX);
-                }
-            })) {
+            for (File dir : tmpDir.listFiles((dir, name) -> name.startsWith(TEMP_DIR_PREFIX))) {
                 deleteDir(dir);
             }
         }

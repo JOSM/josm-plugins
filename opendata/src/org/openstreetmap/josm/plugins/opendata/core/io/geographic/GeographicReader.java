@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.spi.JsonProvider;
 import javax.swing.JOptionPane;
 
 import org.geotools.geometry.jts.JTS;
@@ -67,6 +63,11 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
+
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.spi.JsonProvider;
 
 /**
  * Superclass of geographic format readers (currently GML, GPKG, and SHP).
@@ -180,16 +181,16 @@ public abstract class GeographicReader extends AbstractReader {
         Way w = null;
         Way tempWay = new Way();
         if (ls != null) {
-            final List<Node> nodes = new ArrayList<>(ls.getNumPoints());
+            final List<Node> lsNodes = new ArrayList<>(ls.getNumPoints());
             // Build list of nodes
             for (int i = 0; i < ls.getNumPoints(); i++) {
                 try {
-                    nodes.add(createOrGetNode(ls.getPointN(i)));
+                    lsNodes.add(createOrGetNode(ls.getPointN(i)));
                 } catch (TransformException | IllegalArgumentException e) {
                     Logging.error("Exception for " + ls + ": " + e.getClass().getName() + ": " + e.getMessage());
                 }
             }
-            tempWay.setNodes(nodes);
+            tempWay.setNodes(lsNodes);
             // Find possible duplicated ways
             if (tempWay.getNodesCount() > 0) {
                 Collection<Way> candidates = Utils.filteredCollection(tempWay.firstNode().getReferrers(), Way.class);

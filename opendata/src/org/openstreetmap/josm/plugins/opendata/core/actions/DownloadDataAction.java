@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.opendata.core.actions;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.swing.Action;
 
@@ -20,7 +21,7 @@ public class DownloadDataAction extends JosmAction {
         CheckParameterUtil.ensureParameterNotNull(name, "name");
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         putValue(Action.NAME, name);
-        putValue("toolbar", ("opendata_download_"+module.getDisplayedName()+"_"+name).toLowerCase().replace(" ", "_"));
+        putValue("toolbar", ("opendata_download_"+module.getDisplayedName()+"_"+name).toLowerCase(Locale.ROOT).replace(" ", "_"));
         this.url = url;
     }
 

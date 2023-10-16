@@ -4,17 +4,22 @@ package org.openstreetmap.josm.plugins.opendata.core.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.AbstractReader;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GeoJSONReader;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
@@ -120,11 +125,11 @@ public class NetworkReader extends OsmServerReader {
         return null;
     }
 
-    private Class<? extends AbstractReader> findReaderByExtension(String filename) {
-        filename = filename.replace("\"", "").toLowerCase();
-        for (String ext : FILE_AND_ARCHIVE_READERS.keySet()) {
-            if (filename.endsWith("."+ext)) {
-                return FILE_AND_ARCHIVE_READERS.get(ext);
+    private static Class<? extends AbstractReader> findReaderByExtension(String filename) {
+        filename = filename.replace("\"", "").toLowerCase(Locale.ROOT);
+        for (Map.Entry<String, Class<? extends AbstractReader>> entry : FILE_AND_ARCHIVE_READERS.entrySet()) {
+            if (filename.endsWith("."+entry.getKey())) {
+                return entry.getValue();
             }
         }
         return null;
@@ -141,7 +146,7 @@ public class NetworkReader extends OsmServerReader {
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
         InputStream in = null;
-        ProgressMonitor instance = null;
+        ProgressMonitor instance;
         try {
             in = getInputStreamRaw(url, progressMonitor);
             if (in == null)
@@ -175,7 +180,7 @@ public class NetworkReader extends OsmServerReader {
             } else if (readerClass.equals(GeoJSONReader.class)) {
                 return GeoJSONReader.parseDataSet(in, instance);
             } else if (readerClass.equals(MifReader.class)) {
-                return MifReader.parseDataSet(in, null, handler, instance);
+                return MifReader.parseDataSet(in, null, handler);
             } else if (readerClass.equals(ShpReader.class)) {
                 return ShpReader.parseDataSet(in, null, handler, instance);
             } else if (readerClass.equals(TabReader.class)) {
@@ -191,9 +196,7 @@ public class NetworkReader extends OsmServerReader {
             } else {
                 throw new IllegalArgumentException("Unsupported reader class: "+readerClass.getName());
             }
-        } catch (OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (IOException | XMLStreamException | IllegalDataException e) {
             if (cancel)
                 return null;
             throw new OsmTransferException(e);
@@ -204,7 +207,7 @@ public class NetworkReader extends OsmServerReader {
                 if (in != null) {
                     in.close();
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 Logging.trace(e);
             }
         }

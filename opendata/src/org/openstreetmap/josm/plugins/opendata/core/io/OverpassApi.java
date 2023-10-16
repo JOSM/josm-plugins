@@ -42,7 +42,7 @@ public abstract class OverpassApi {
         private final String value;
     }
 
-    public static final StringBuilder union(CharSequence... queries) {
+    public static StringBuilder union(CharSequence... queries) {
         StringBuilder result = new StringBuilder("<union>\n");
         for (CharSequence query : queries) {
             if (query != null) {
@@ -53,7 +53,7 @@ public abstract class OverpassApi {
         return result;
     }
 
-    public static final StringBuilder query(String bbox, OaQueryType type, CharSequence... conditions) {
+    public static StringBuilder query(String bbox, OaQueryType type, CharSequence... conditions) {
         StringBuilder result = new StringBuilder("<query type=\"").append(type).append("\" >\n");
         if (bbox != null) {
             result.append("<bbox-query ").append(bbox).append("/>\n");
@@ -67,27 +67,27 @@ public abstract class OverpassApi {
         return result;
     }
 
-    public static final String recurse(OaRecurseType type, String into) {
+    public static String recurse(OaRecurseType type, String into) {
         return "<recurse type=\""+type+"\" into=\""+into+"\"/>\n";
     }
 
-    public static final String recurse(OaRecurseType... types) {
-        String result = "";
+    public static String recurse(OaRecurseType... types) {
+        StringBuilder result = new StringBuilder();
         for (OaRecurseType type : types) {
-            result += "<recurse type=\""+type+"\"/>\n";
+            result.append("<recurse type=\"").append(type).append("\"/>\n");
         }
-        return result;
+        return result.toString();
     }
 
-    public static final String print() {
+    public static String print() {
         return "<print mode=\"meta\"/>";
     }
 
-    public static final String hasKey(String key) {
+    public static String hasKey(String key) {
         return hasKey(key, null);
     }
 
-    public static final String hasKey(String key, String value) {
+    public static String hasKey(String key, String value) {
         return "<has-kv k=\""+key+"\" "+(value != null && !value.isEmpty() ? "v=\""+value+"\"" : "")+" />";
     }
 }

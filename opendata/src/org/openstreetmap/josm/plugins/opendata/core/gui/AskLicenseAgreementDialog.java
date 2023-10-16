@@ -13,9 +13,8 @@ public class AskLicenseAgreementDialog extends ViewLicenseDialog {
     public AskLicenseAgreementDialog(License license) throws IOException {
         super(license, MainApplication.getMainFrame(), tr("License Agreement"), new String[] {tr("Accept"), "", tr("Refuse")});
 
-        setToolTipTexts(new String[] {
-                tr("I understand and accept these terms and conditions"),
+        setToolTipTexts(tr("I understand and accept these terms and conditions"),
                 tr("View the full text of this license"),
-                tr("I refuse these terms and conditions. Cancel download.")});
+                tr("I refuse these terms and conditions. Cancel download."));
     }
 }

@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
@@ -37,21 +39,21 @@ import org.openstreetmap.josm.tools.Logging;
  * without the need of loading any class from the module jar file.
  */
 public class ModuleInformation {
-    public File file = null;
-    public String name = null;
-    public String className = null;
-    public String link = null;
-    public String description = null;
-    public String author = null;
-    public String version = null;
-    public String localversion = null;
-    public String downloadlink = null;
+    public File file;
+    public String name;
+    public String className;
+    public String link;
+    public String description;
+    public String author;
+    public String version;
+    public String localversion;
+    public String downloadlink;
     public String iconPath;
     public ImageIcon icon;
     public List<URL> libraries = new LinkedList<>();
     public final Map<String, String> attr = new TreeMap<>();
 
-    /**
+    /*
      * Creates a module information object by reading the module information from
      * the manifest in the module jar.
      *
@@ -77,7 +79,7 @@ public class ModuleInformation {
         this.file = file;
         try (
             FileInputStream fis = new FileInputStream(file);
-            JarInputStream jar = new JarInputStream(fis);
+            JarInputStream jar = new JarInputStream(fis)
         ) {
             Manifest manifest = jar.getManifest();
             if (manifest == null)
@@ -138,14 +140,13 @@ public class ModuleInformation {
                 .setSuppressWarnings(suppressWarnings).get();
     }
 
-    @SuppressWarnings("unused")
     private void scanManifest(Manifest manifest) {
         String lang = LanguageInfo.getLanguageCodeManifest();
-        Attributes attr = manifest.getMainAttributes();
-        className = attr.getValue("Module-Class");
-        String s = attr.getValue(lang+"Module-Link");
+        Attributes manifestMainAttributes = manifest.getMainAttributes();
+        className = manifestMainAttributes.getValue("Module-Class");
+        String s = manifestMainAttributes.getValue(lang+"Module-Link");
         if (s == null) {
-            s = attr.getValue("Module-Link");
+            s = manifestMainAttributes.getValue("Module-Link");
         }
         if (s != null) {
             try {
@@ -156,17 +157,17 @@ public class ModuleInformation {
             }
         }
         link = s;
-        s = attr.getValue(lang+"Module-Description");
+        s = manifestMainAttributes.getValue(lang+"Module-Description");
         if (s == null) {
-            s = attr.getValue("Module-Description");
+            s = manifestMainAttributes.getValue("Module-Description");
             if (s != null) {
                 s = tr(s);
             }
         }
         description = s;
-        version = attr.getValue("Module-Version");
-        author = attr.getValue("Author");
-        iconPath = attr.getValue("Module-Icon");
+        version = manifestMainAttributes.getValue("Module-Version");
+        author = manifestMainAttributes.getValue("Author");
+        iconPath = manifestMainAttributes.getValue("Module-Icon");
         if (iconPath != null && file != null) {
             // extract icon from the module jar file
             icon = extractIcon(iconPath, file, true);
@@ -179,7 +180,7 @@ public class ModuleInformation {
             }
         }
 
-        String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
+        String classPath = manifestMainAttributes.getValue(Attributes.Name.CLASS_PATH);
         if (classPath != null) {
             for (String entry : classPath.split(" ")) {
                 File entryFile;
@@ -192,8 +193,8 @@ public class ModuleInformation {
                 libraries.add(fileToURL(entryFile));
             }
         }
-        for (Object o : attr.keySet()) {
-            this.attr.put(o.toString(), attr.getValue(o.toString()));
+        for (Object o : manifestMainAttributes.keySet()) {
+            this.attr.put(o.toString(), manifestMainAttributes.getValue(o.toString()));
         }
     }
 
@@ -204,14 +205,14 @@ public class ModuleInformation {
      * @return the description as HTML document
      */
     public String getDescriptionAsHtml() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(32);
         sb.append("<html><body>");
         sb.append(description == null ? tr("no description available") : description);
         if (link != null) {
             sb.append(" <a href=\"").append(link).append("\">").append(tr("More info...")).append("</a>");
         }
         if (downloadlink != null && !downloadlink.startsWith(OdConstants.OSM_SITE+"dist/")) {
-            sb.append("<p>&nbsp;</p><p>"+tr("<b>Module provided by an external source:</b> {0}", downloadlink)+"</p>");
+            sb.append("<p>&nbsp;</p><p>").append(tr("<b>Module provided by an external source:</b> {0}", downloadlink)).append("</p>");
         }
         sb.append("</body></html>");
         return sb.toString();
@@ -227,7 +228,7 @@ public class ModuleInformation {
     public Module load(Class<? extends Module> klass) throws ModuleException {
         try {
             return klass.getConstructor(ModuleInformation.class).newInstance(this);
-        } catch (Exception t) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException t) {
             throw new ModuleException(name, t);
         }
     }
@@ -245,7 +246,7 @@ public class ModuleInformation {
             return null;
         try {
             return (Class<? extends Module>) Class.forName(className, true, classLoader);
-        } catch (Exception t) {
+        } catch (ClassNotFoundException t) {
             throw new ModuleException(name, t);
         }
     }
@@ -281,13 +282,11 @@ public class ModuleInformation {
         if (this.downloadlink == null) return false;
         if (this.version == null && referenceVersion != null)
             return true;
-        if (this.version != null && !this.version.equals(referenceVersion))
-            return true;
-        return false;
+        return this.version != null && !this.version.equals(referenceVersion);
     }
 
     /**
-     * Replies true if this this module should be updated/downloaded because either
+     * Replies true if this module should be updated/downloaded because either
      * it is not available locally (its local version is null) or its local version is
      * older than the available version on the server.
      *
@@ -302,7 +301,7 @@ public class ModuleInformation {
     protected boolean matches(String filter, String value) {
         if (filter == null) return true;
         if (value == null) return false;
-        return value.toLowerCase().contains(filter.toLowerCase());
+        return value.toLowerCase(Locale.ROOT).contains(filter.toLowerCase(Locale.ROOT));
     }
 
     /**

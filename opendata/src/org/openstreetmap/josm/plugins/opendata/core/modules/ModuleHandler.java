@@ -10,7 +10,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -75,6 +75,7 @@ public final class ModuleHandler {
             sources.add(ClassLoader.getSystemClassLoader());
             sources.add(ModuleHandler.class.getClassLoader());
         } catch (SecurityException ex) {
+            Logging.trace(ex);
             sources.add(ImageProvider.class.getClassLoader());
         }
     }
@@ -102,7 +103,7 @@ public final class ModuleHandler {
         String togglePreferenceKey = null;
         long tim = System.currentTimeMillis();
         long last = Config.getPref().getLong("opendata.modulemanager.lastupdate", 0);
-        Integer maxTime = Config.getPref().getInt("opendata.modulemanager.time-based-update.interval", 60);
+        int maxTime = Config.getPref().getInt("opendata.modulemanager.time-based-update.interval", 60);
         long d = (tim - last) / (24 * 60 * 60 * 1000L);
         if ((last <= 0) || (maxTime <= 0)) {
             Config.getPref().put("opendata.modulemanager.lastupdate", Long.toString(tim));
@@ -137,22 +138,22 @@ public final class ModuleHandler {
         // check whether automatic update at startup was disabled
         //
         String policy = Config.getPref().get(togglePreferenceKey, "ask");
-        policy = policy.trim().toLowerCase();
-        if (policy.equals("never")) {
+        policy = policy.trim().toLowerCase(Locale.ROOT);
+        if ("never".equals(policy)) {
             if ("opendata.modulemanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Logging.info(tr("Skipping module update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return false;
         }
 
-        if (policy.equals("always")) {
+        if ("always".equals(policy)) {
             if ("opendata.modulemanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 Logging.info(tr("Running module update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return true;
         }
 
-        if (!policy.equals("ask")) {
+        if (!"ask".equals(policy)) {
             Logging.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
         int ret = HelpAwareOptionPane.showOptionDialog(
@@ -251,13 +252,11 @@ public final class ModuleHandler {
             }
             msg = null;
         } catch (ModuleException e) {
-            e.printStackTrace();
+            Logging.debug(e);
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load module {0} because the module<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", module.name, module.className);
             }
-        } catch (Exception e) {
-            Logging.error(e);
         }
         if (msg != null && confirmDisableModule(parent, msg, module.name)) {
             PreferencesUtils.removeFromList(Config.getPref(), OdConstants.PREF_MODULES, module.name);
@@ -306,7 +305,7 @@ public final class ModuleHandler {
      * module lists.
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the list of locally available module information
+     * @return the map of locally available module information
      *
      */
     private static Map<String, ModuleInformation> loadLocallyAvailableModuleInformation(ProgressMonitor monitor) {
@@ -319,9 +318,13 @@ public final class ModuleHandler {
             Future<?> future = service.submit(task);
             try {
                 future.get();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (ExecutionException e) {
                 Logging.error(e);
-                return null;
+                return Collections.emptyMap();
+            } catch (InterruptedException e) {
+                Logging.error(e);
+                Thread.currentThread().interrupt();
+                return Collections.emptyMap();
             }
             HashMap<String, ModuleInformation> ret = new HashMap<>();
             for (ModuleInformation pi: task.getAvailableModules()) {
@@ -362,11 +365,10 @@ public final class ModuleHandler {
      * out. This involves user interaction. This method displays alert and confirmation messages.
      *
      * @param parent parent component
-     * @return the set of modules to load (as set of module names)
+     * @return the list of modules to load (as set of module names)
      */
     public static List<ModuleInformation> buildListOfModulesToLoad(Component parent) {
-        Set<String> modules = new HashSet<>();
-        modules.addAll(Config.getPref().getList(OdConstants.PREF_MODULES, new LinkedList<String>()));
+        Set<String> modules = new HashSet<>(Config.getPref().getList(OdConstants.PREF_MODULES, new LinkedList<>()));
         if (System.getProperty("josm."+OdConstants.PREF_MODULES) != null) {
             modules.addAll(Arrays.asList(System.getProperty("josm."+OdConstants.PREF_MODULES).split(",")));
         }
@@ -386,7 +388,7 @@ public final class ModuleHandler {
     }
 
     private static void alertFailedModuleUpdate(Component parent, Collection<ModuleInformation> modules) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder(150);
         sb.append("<html>");
         sb.append(trn(
                 "Updating the following module has failed:",
@@ -446,11 +448,13 @@ public final class ModuleHandler {
                 modules = buildListOfModulesToLoad(parent);
             } catch (ExecutionException e) {
                 Logging.warn(tr("Warning: failed to download module information list"));
-                e.printStackTrace();
+                Logging.debug(e);
                 // don't abort in case of error, continue with downloading modules below
             } catch (InterruptedException e) {
                 Logging.warn(tr("Warning: failed to download module information list"));
-                e.printStackTrace();
+                Logging.debug(e);
+                Thread.currentThread().interrupt();
+                return Collections.emptyList();
                 // don't abort in case of error, continue with downloading modules below
             }
 
@@ -476,12 +480,13 @@ public final class ModuleHandler {
                 try {
                     future.get();
                 } catch (ExecutionException e) {
-                    e.printStackTrace();
+                    Logging.debug(e);
                     alertFailedModuleUpdate(parent, modulesToUpdate);
                     return modules;
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Logging.debug(e);
                     alertFailedModuleUpdate(parent, modulesToUpdate);
+                    Thread.currentThread().interrupt();
                     return modules;
                 }
                 // notify user if downloading a locally installed module failed
@@ -539,48 +544,44 @@ public final class ModuleHandler {
     /**
      * Installs downloaded modules. Moves files with the suffix ".jar.new" to the corresponding
      * ".jar" files.
+     * <p>
+     * If {@code doWarn} is true, this method emits warning messages on the console if a downloaded
+     * but not yet installed module .jar can't be installed. If {@code doWarn} is false, the
+     * installation of the respective module is silently skipped.
      *
-     * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
-     * but not yet installed module .jar can't be be installed. If {@code dowarn} is false, the
-     * installation of the respective module is sillently skipped.
-     *
-     * @param dowarn if true, warning messages are displayed; false otherwise
+     * @param doWarn if true, warning messages are displayed; false otherwise
      */
-    public static void installDownloadedModules(boolean dowarn) {
+    public static void installDownloadedModules(boolean doWarn) {
         File moduleDir = OdPlugin.getInstance().getModulesDirectory();
         if (!moduleDir.exists() || !moduleDir.isDirectory() || !moduleDir.canWrite())
             return;
 
-        final File[] files = moduleDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".jar.new");
-            } });
+        final File[] files = moduleDir.listFiles((dir, name) -> name.endsWith(".jar.new"));
 
-        for (File updatedModule : files) {
-            final String filePath = updatedModule.getPath();
-            File module = new File(filePath.substring(0, filePath.length() - 4));
-            String moduleName = updatedModule.getName().substring(0, updatedModule.getName().length() - 8);
-            // CHECKSTYLE.OFF: LineLength
-            if (module.exists()) {
-                if (!module.delete() && dowarn) {
+        if (files != null) {
+            for (File updatedModule : files) {
+                final String filePath = updatedModule.getPath();
+                File module = new File(filePath.substring(0, filePath.length() - 4));
+                String moduleName = updatedModule.getName().substring(0, updatedModule.getName().length() - 8);
+                if (module.exists() && !module.delete() && doWarn) {
                     Logging.warn(tr("Warning: failed to delete outdated module ''{0}''.", module.toString()));
-                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation. JOSM is still going to load the old module version.", moduleName));
+                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation." +
+                            "JOSM is still going to load the old module version.", moduleName));
                     continue;
                 }
+                if (!updatedModule.renameTo(module) && doWarn) {
+                    Logging.warn(tr("Warning: failed to install module ''{0}'' from temporary download file ''{1}''. Renaming failed.",
+                            module.toString(), updatedModule.toString()));
+                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation." +
+                            "JOSM is still going to load the old module version.", moduleName));
+                }
             }
-            if (!updatedModule.renameTo(module) && dowarn) {
-                Logging.warn(tr("Warning: failed to install module ''{0}'' from temporary download file ''{1}''. Renaming failed.", module.toString(), updatedModule.toString()));
-                Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation. JOSM is still going to load the old module version.", moduleName));
-            }
-            // CHECKSTYLE.ON: LineLength
         }
-        return;
     }
 
     private static class UpdateModulesMessagePanel extends JPanel {
         private JMultilineLabel lblMessage;
-        private JCheckBox cbDontShowAgain;
+        private JCheckBox cbDoNotShowAgain;
 
         protected void build() {
             setLayout(new GridBagLayout());
@@ -590,15 +591,17 @@ public final class ModuleHandler {
             gc.weightx = 1.0;
             gc.weighty = 1.0;
             gc.insets = new Insets(5, 5, 5, 5);
-            add(lblMessage = new JMultilineLabel(""), gc);
+            lblMessage = new JMultilineLabel("");
+            add(lblMessage, gc);
             lblMessage.setFont(lblMessage.getFont().deriveFont(Font.PLAIN));
 
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weighty = 0.0;
-            add(cbDontShowAgain = new JCheckBox(
-                    tr("Do not ask again and remember my decision (go to Preferences->Modules to change it later)")), gc);
-            cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
+            cbDoNotShowAgain = new JCheckBox(
+                    tr("Do not ask again and remember my decision (go to Preferences->Modules to change it later)"));
+            add(cbDoNotShowAgain, gc);
+            cbDoNotShowAgain.setFont(cbDoNotShowAgain.getFont().deriveFont(Font.PLAIN));
         }
 
         UpdateModulesMessagePanel() {
@@ -611,12 +614,12 @@ public final class ModuleHandler {
 
         public void initDontShowAgain(String preferencesKey) {
             String policy = Config.getPref().get(preferencesKey, "ask");
-            policy = policy.trim().toLowerCase();
-            cbDontShowAgain.setSelected(!policy.equals("ask"));
+            policy = policy.trim().toLowerCase(Locale.ROOT);
+            cbDoNotShowAgain.setSelected(!"ask".equals(policy));
         }
 
         public boolean isRememberDecision() {
-            return cbDontShowAgain.isSelected();
+            return cbDoNotShowAgain.isSelected();
         }
     }
 }

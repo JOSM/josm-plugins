@@ -4,11 +4,11 @@ package org.openstreetmap.josm.plugins.opendata.core.io.geographic;
 import static org.geotools.data.shapefile.files.ShpFileType.SHP;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -56,15 +56,15 @@ public class TabFiles extends ShpFiles {
         return URLs.fileToUrl(new File(headerFile.getAbsolutePath()+".shp"));
     }
 
-    private String baseName(Object obj) {
+    private static String baseName(Object obj) {
         if (obj instanceof URL) {
             return toBase(((URL) obj).toExternalForm());
         }
         return null;
     }
 
-    private String toBase(String path) {
-        return path.substring(0, path.toLowerCase().lastIndexOf(".tab"));
+    private static String toBase(String path) {
+        return path.substring(0, path.toLowerCase(Locale.ROOT).lastIndexOf(".tab"));
     }
 
     ////////////////////////////////////////////////////
@@ -85,9 +85,9 @@ public class TabFiles extends ShpFiles {
 
             String extensionWithPeriod = type.extensionWithPeriod;
             if (upperCase) {
-                extensionWithPeriod = extensionWithPeriod.toUpperCase();
+                extensionWithPeriod = extensionWithPeriod.toUpperCase(Locale.ROOT);
             } else {
-                extensionWithPeriod = extensionWithPeriod.toLowerCase();
+                extensionWithPeriod = extensionWithPeriod.toLowerCase(Locale.ROOT);
             }
 
             URL newURL;
@@ -96,7 +96,7 @@ public class TabFiles extends ShpFiles {
                 newURL = new URL(url, string);
             } catch (MalformedURLException e) {
                 // shouldn't happen because the starting url was constructable
-                throw new RuntimeException(e);
+                throw new JosmRuntimeException(e);
             }
             urls.put(type, newURL);
         }
@@ -107,7 +107,7 @@ public class TabFiles extends ShpFiles {
         // IE Shp, SHP, Shp, ShP etc...
         if (isLocal()) {
             Set<Entry<ShpFileType, URL>> entries = urls.entrySet();
-            Map<ShpFileType, URL> toUpdate = new HashMap<>();
+            Map<ShpFileType, URL> toUpdate = new EnumMap<>(ShpFileType.class);
             for (Entry<ShpFileType, URL> entry : entries) {
                 if (!exists(entry.getKey())) {
                     url = findExistingFile(entry.getValue());
@@ -120,12 +120,12 @@ public class TabFiles extends ShpFiles {
         }
     }
 
-    private URL findExistingFile(URL value) {
+    private static URL findExistingFile(URL value) {
         final File file = URLs.urlToFile(value);
         File directory = file.getParentFile();
         if (directory != null && directory.exists()) {
-            File[] files = directory.listFiles((FilenameFilter) (dir, name) -> file.getName().equalsIgnoreCase(name));
-            if (files.length > 0) {
+            File[] files = directory.listFiles((dir, name) -> file.getName().equalsIgnoreCase(name));
+            if (files != null && files.length > 0) {
                 try {
                     return files[0].toURI().toURL();
                 } catch (MalformedURLException e) {

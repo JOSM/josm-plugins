@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
@@ -17,15 +17,18 @@ import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.tools.Logging;
 
+/**
+ * A common {@link Module} base implementation
+ */
 public abstract class AbstractModule implements Module {
 
     protected final List<Class<? extends AbstractDataSetHandler>> handlers = new ArrayList<>();
 
-    private final List<AbstractDataSetHandler> instanciatedHandlers = new ArrayList<>();
+    private final List<AbstractDataSetHandler> instantiatedHandlers = new ArrayList<>();
 
     protected final ModuleInformation info;
 
-    public AbstractModule(ModuleInformation info) {
+    protected AbstractModule(ModuleInformation info) {
         this.info = info;
     }
 
@@ -47,7 +50,7 @@ public abstract class AbstractModule implements Module {
     @Override
     public SourceProvider getMapPaintStyleSourceProvider() {
         final List<SourceEntry> sources = new ArrayList<>();
-        for (AbstractDataSetHandler handler : getInstanciatedHandlers()) {
+        for (AbstractDataSetHandler handler : getInstantiatedHandlers()) {
             ExtendedSourceEntry src;
             if (handler != null && (src = handler.getMapPaintStyle()) != null) {
                 // Copy style sheet to disk to allow JOSM to load it at startup
@@ -55,11 +58,12 @@ public abstract class AbstractModule implements Module {
                 String path = OdPlugin.getInstance().getResourcesDirectory() + File.separator
                         + src.url.replace(OdConstants.PROTO_RSRC, "").replace('/', File.separatorChar);
 
-                int n = 0;
+                int n;
                 byte[] buffer = new byte[4096];
                 try (InputStream in = getClass().getResourceAsStream(
                         src.url.substring(OdConstants.PROTO_RSRC.length()-1));
                      FileOutputStream out = new FileOutputStream(path)) {
+                    Objects.requireNonNull(in);
                     String dir = path.substring(0, path.lastIndexOf(File.separatorChar));
                     if (new File(dir).mkdirs() && Logging.isDebugEnabled()) {
                         Logging.debug("Created directory: "+dir);
@@ -71,32 +75,22 @@ public abstract class AbstractModule implements Module {
                     src.url = OdConstants.PROTO_FILE+path;
                     sources.add(src);
                 } catch (IOException e) {
-                    Logging.error(e.getMessage());
+                    Logging.error(e);
                 }
             }
         }
-        return sources.isEmpty() ? null : new SourceProvider() {
-            @Override
-            public Collection<SourceEntry> getSources() {
-                return sources;
-            }
-        };
+        return sources.isEmpty() ? null : () -> sources;
     }
 
     @Override
     public SourceProvider getPresetSourceProvider() {
         final List<SourceEntry> sources = new ArrayList<>();
-        for (AbstractDataSetHandler handler : getInstanciatedHandlers()) {
+        for (AbstractDataSetHandler handler : getInstantiatedHandlers()) {
             if (handler != null && handler.getTaggingPreset() != null) {
                 sources.add(handler.getTaggingPreset());
             }
         }
-        return sources.isEmpty() ? null : new SourceProvider() {
-            @Override
-            public Collection<SourceEntry> getSources() {
-                return sources;
-            }
-        };
+        return sources.isEmpty() ? null : () -> sources;
     }
 
     @Override
@@ -114,10 +108,10 @@ public abstract class AbstractModule implements Module {
         return result;
     }
 
-    private List<AbstractDataSetHandler> getInstanciatedHandlers() {
-        if (instanciatedHandlers.isEmpty()) {
-            instanciatedHandlers.addAll(getNewlyInstanciatedHandlers());
+    private List<AbstractDataSetHandler> getInstantiatedHandlers() {
+        if (instantiatedHandlers.isEmpty()) {
+            instantiatedHandlers.addAll(getNewlyInstanciatedHandlers());
         }
-        return instanciatedHandlers;
+        return instantiatedHandlers;
     }
 }

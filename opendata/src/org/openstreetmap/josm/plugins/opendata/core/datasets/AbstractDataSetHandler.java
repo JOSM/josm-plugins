@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -87,7 +88,7 @@ public abstract class AbstractDataSetHandler {
         setGeoPackageHandler(new DefaultGeoPackageHandler());
     }
 
-    private boolean acceptsFilename(String filename, String[] expected, String ... extensions) {
+    private static boolean acceptsFilename(String filename, String[] expected, String ... extensions) {
         if (filename != null) {
             for (String expectedName : expected) {
                 for (String ext : extensions) {
@@ -101,71 +102,71 @@ public abstract class AbstractDataSetHandler {
         return false;
     }
 
-    protected final boolean acceptsCsvFilename(String filename, String... expected) {
+    protected static boolean acceptsCsvFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT);
     }
 
-    protected final boolean acceptsXlsFilename(String filename, String... expected) {
+    protected static boolean acceptsXlsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.XLS_EXT);
     }
 
-    protected final boolean acceptsOdsFilename(String filename, String... expected) {
+    protected static boolean acceptsOdsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.ODS_EXT);
     }
 
-    protected final boolean acceptsShpFilename(String filename, String... expected) {
+    protected static boolean acceptsShpFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SHP_EXT);
     }
 
-    protected final boolean acceptsMifFilename(String filename, String... expected) {
+    protected static boolean acceptsMifFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.MIF_EXT);
     }
 
-    protected final boolean acceptsMifTabFilename(String filename, String... expected) {
+    protected static boolean acceptsMifTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.MIF_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsShpMifFilename(String filename, String... expected) {
+    protected static boolean acceptsShpMifFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SHP_EXT, OdConstants.MIF_EXT);
     }
 
-    protected final boolean acceptsKmlFilename(String filename, String... expected) {
+    protected static boolean acceptsKmlFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KML_EXT);
     }
 
-    protected final boolean acceptsKmzFilename(String filename, String... expected) {
+    protected static boolean acceptsKmzFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT);
     }
 
-    protected final boolean acceptsKmzShpFilename(String filename, String... expected) {
+    protected static boolean acceptsKmzShpFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT, OdConstants.SHP_EXT);
     }
 
-    protected final boolean acceptsKmzTabFilename(String filename, String... expected) {
+    protected static boolean acceptsKmzTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.KMZ_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsZipFilename(String filename, String... expected) {
+    protected static boolean acceptsZipFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.ZIP_EXT);
     }
 
-    protected final boolean accepts7ZipFilename(String filename, String... expected) {
+    protected static boolean accepts7ZipFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.SEVENZIP_EXT);
     }
 
-    protected final boolean acceptsCsvKmzFilename(String filename, String... expected) {
+    protected static boolean acceptsCsvKmzFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.KMZ_EXT);
     }
 
-    protected final boolean acceptsCsvKmzTabFilename(String filename, String... expected) {
+    protected static boolean acceptsCsvKmzTabFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.KMZ_EXT, OdConstants.TAB_EXT);
     }
 
-    protected final boolean acceptsCsvXlsFilename(String filename, String... expected) {
+    protected static boolean acceptsCsvXlsFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.CSV_EXT, OdConstants.XLS_EXT);
     }
 
-    protected final boolean acceptsGpkgFilename(String filename, String... expected) {
+    protected static boolean acceptsGpkgFilename(String filename, String... expected) {
         return acceptsFilename(filename, expected, OdConstants.GEOPACKAGE_EXT);
     }
 
@@ -237,7 +238,7 @@ public abstract class AbstractDataSetHandler {
     }
 
     public List<Pair<String, URL>> getDataURLs() {
-        return null;
+        return Collections.emptyList();
     }
 
     public AbstractReader getReaderForUrl(String url) {
@@ -314,27 +315,27 @@ public abstract class AbstractDataSetHandler {
         String replace(String value);
     }
 
-    protected final void replace(IPrimitive p, String dataKey, String osmKey) {
+    protected static void replace(IPrimitive p, String dataKey, String osmKey) {
         addOrReplace(p, dataKey, osmKey, null, null, null, true);
     }
 
-    protected final void replace(IPrimitive p, String dataKey, String osmKey, ValueReplacer replacer) {
+    protected static void replace(IPrimitive p, String dataKey, String osmKey, ValueReplacer replacer) {
         addOrReplace(p, dataKey, osmKey, null, null, replacer, true);
     }
 
-    protected final void replace(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues) {
+    protected static void replace(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues) {
         addOrReplace(p, dataKey, osmKey, dataValues, osmValues, null, true);
     }
 
-    protected final void add(IPrimitive p, String dataKey, String osmKey, ValueReplacer replacer) {
+    protected static void add(IPrimitive p, String dataKey, String osmKey, ValueReplacer replacer) {
         addOrReplace(p, dataKey, osmKey, null, null, replacer, false);
     }
 
-    protected final void add(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues) {
+    protected static void add(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues) {
         addOrReplace(p, dataKey, osmKey, dataValues, osmValues, null, false);
     }
 
-    private void addOrReplace(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues,
+    private static void addOrReplace(IPrimitive p, String dataKey, String osmKey, String[] dataValues, String[] osmValues,
             ValueReplacer replacer, boolean replace) {
         String value = p.get(dataKey);
         if (value != null) {
@@ -357,7 +358,7 @@ public abstract class AbstractDataSetHandler {
         }
     }
 
-    private void doAddReplace(IPrimitive p, String dataKey, String osmKey, String osmValue, boolean replace) {
+    private static void doAddReplace(IPrimitive p, String dataKey, String osmKey, String osmValue, boolean replace) {
         if (replace) {
             p.remove(dataKey);
         }
@@ -435,8 +436,8 @@ public abstract class AbstractDataSetHandler {
     }
 
     public boolean acceptsUrl(String url) {
-        URL dataURL = getDataURL();
-        if (dataURL != null && url.equals(dataURL.toString())) {
+        URL currentDataUrl = getDataURL();
+        if (currentDataUrl != null && url.equals(currentDataUrl.toString())) {
             return true;
         }
         List<Pair<String, URL>> dataURLs = getDataURLs();

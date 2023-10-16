@@ -8,13 +8,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * A parser for the module list provided by an opendata Module Download Site.
- *
+ * <p>
  * See <a href="https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/modules.txt">OSM SVN</a>
  * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
  * name/value-pairs.
@@ -34,12 +34,10 @@ public class ModuleListParser {
     protected ModuleInformation createInfo(String name, String url, String manifest) throws ModuleListParseException {
         try {
             return new ModuleInformation(
-                    new ByteArrayInputStream(manifest.getBytes("utf-8")),
+                    new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
                     name.substring(0, name.length() - 4),
                     url
                     );
-        } catch (UnsupportedEncodingException e) {
-            throw new ModuleListParseException(tr("Failed to create module information from manifest for module ''{0}''", name), e);
         } catch (ModuleException e) {
             throw new ModuleListParseException(tr("Failed to create module information from manifest for module ''{0}''", name), e);
         }
@@ -47,7 +45,7 @@ public class ModuleListParser {
 
     /**
      * Parses a module information document and replies a list of module information objects.
-     *
+     * <p>
      * See <a href="https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/modules.txt">OSM SVN</a>
      * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
      * name/value-pairs.
@@ -58,9 +56,9 @@ public class ModuleListParser {
      */
     public List<ModuleInformation> parse(InputStream in) throws ModuleListParseException {
         List<ModuleInformation> ret = new LinkedList<>();
-        BufferedReader r = null;
+        BufferedReader r;
         try {
-            r = new BufferedReader(new InputStreamReader(in, "utf-8"));
+            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();
@@ -77,7 +75,7 @@ public class ModuleListParser {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
                     if (line.length() > 70) {
-                        manifest.append(line.substring(0, 70)).append("\n");
+                        manifest.append(line, 0, 70).append("\n");
                         line = " " + line.substring(70);
                     }
                     manifest.append(line).append("\n");

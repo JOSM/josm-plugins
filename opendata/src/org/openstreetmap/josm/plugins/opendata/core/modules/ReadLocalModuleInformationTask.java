@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,7 @@ import org.xml.sax.SAXException;
 /**
  * This is an asynchronous task for reading module information from the files
  * in the local module repositories.
- *
+ * <p>
  * It scans the files in the local modules repository (see {@link OdPlugin#getModulesDirectory()}
  * and extracts module information from three kind of files:
  * <ul>
@@ -35,7 +34,7 @@ import org.xml.sax.SAXException;
  * </ul>
  */
 public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
-    private Map<String, ModuleInformation> availableModules;
+    private final Map<String, ModuleInformation> availableModules;
     private boolean canceled;
 
     public ReadLocalModuleInformationTask() {
@@ -77,13 +76,8 @@ public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
 
     protected void scanSiteCacheFiles(ProgressMonitor monitor, File modulesDirectory) {
         File[] siteCacheFiles = modulesDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*\\.txt$");
-                    }
-                }
-                );
+                (dir, name) -> name.matches("^([0-9]+-)?site.*\\.txt$")
+        );
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing module site cache files..."));
@@ -95,7 +89,7 @@ public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
                 processLocalModuleInformationFile(f);
             } catch (ModuleListParseException e) {
                 Logging.warn(tr("Warning: Failed to scan file ''{0}'' for module information. Skipping.", fname));
-                e.printStackTrace();
+                Logging.debug(e);
             }
             monitor.worked(1);
         }
@@ -103,13 +97,8 @@ public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
 
     protected void scanIconCacheFiles(ProgressMonitor monitor, File modulesDirectory) {
         File[] siteCacheFiles = modulesDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*modules-icons\\.zip$");
-                    }
-                }
-                );
+                (dir, name) -> name.matches("^([0-9]+-)?site.*modules-icons\\.zip$")
+        );
         if (siteCacheFiles == null || siteCacheFiles.length == 0)
             return;
         monitor.subTask(tr("Processing module site cache icon files..."));
@@ -132,13 +121,8 @@ public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
 
     protected void scanModuleFiles(ProgressMonitor monitor, File modulesDirectory) {
         File[] moduleFiles = modulesDirectory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".jar") || name.endsWith(".jar.new");
-                    }
-                }
-                );
+                (dir, name) -> name.endsWith(".jar") || name.endsWith(".jar.new")
+        );
         if (moduleFiles == null || moduleFiles.length == 0)
             return;
         monitor.subTask(tr("Processing module files..."));
@@ -156,7 +140,7 @@ public class ReadLocalModuleInformationTask extends PleaseWaitRunnable {
                 }
             } catch (ModuleException e) {
                 Logging.warn(tr("Warning: Failed to scan file ''{0}'' for module information. Skipping.", fname));
-                e.printStackTrace();
+                Logging.debug(e);
             }
             monitor.worked(1);
         }

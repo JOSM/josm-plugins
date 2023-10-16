@@ -158,11 +158,6 @@ public class ModulePreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(final PreferenceTabbedPane gui) {
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.BOTH;
         OdPreferenceSetting settings = gui.getSetting(OdPreferenceSetting.class);
         settings.tabPane.addTab(tr("Modules"), buildModuleListPanel());
         pnlModulePreferences.refreshView();
@@ -208,7 +203,7 @@ public class ModulePreference implements SubPreferenceSetting {
      * @return the list of modules waiting for update or download
      */
     public List<ModuleInformation> getModulesScheduledForUpdateOrDownload() {
-        return model != null ? model.getModulesScheduledForUpdateOrDownload() : null;
+        return model.getModulesScheduledForUpdateOrDownload();
     }
 
     @Override

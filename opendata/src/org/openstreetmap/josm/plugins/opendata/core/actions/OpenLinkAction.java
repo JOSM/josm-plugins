@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class OpenLinkAction extends JosmAction {
 
-    private URL url;
+    private final URL url;
 
     public OpenLinkAction(URL url, String icon24Name, String title, String description) {
         super(title, null, description, null, false);
@@ -34,6 +34,7 @@ public class OpenLinkAction extends JosmAction {
         } catch (URISyntaxException e1) {
             try {
                 Logging.error(e1.getLocalizedMessage());
+                Logging.debug(e1);
                 int index = e1.getIndex();
                 if (index > -1) {
                     String s = url.toString().substring(index, index+1);

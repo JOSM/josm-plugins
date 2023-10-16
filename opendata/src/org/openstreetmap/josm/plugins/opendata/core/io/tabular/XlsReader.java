@@ -21,7 +21,6 @@ import org.openstreetmap.josm.tools.Logging;
 
 public class XlsReader extends SpreadSheetReader {
 
-    private Workbook wb;
     private Sheet sheet;
     private int rowIndex;
 
@@ -38,7 +37,7 @@ public class XlsReader extends SpreadSheetReader {
     protected void initResources(InputStream in, ProgressMonitor progressMonitor) throws IOException {
         Logging.info("Parsing XLS file");
         try {
-            wb = new HSSFWorkbook(new POIFSFileSystem(in));
+            Workbook wb = new HSSFWorkbook(new POIFSFileSystem(in));
             sheet = wb.getSheetAt(getSheetNumber());
             rowIndex = 0;
         } catch (ExceptionInInitializerError e) {

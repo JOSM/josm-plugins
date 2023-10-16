@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.opendata.core;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -13,7 +14,7 @@ public abstract class OdConstants {
     /**
      * Encodings
      */
-    public static final String UTF8 = "UTF-8";
+    public static final String UTF8 = StandardCharsets.UTF_8.name();
     public static final String ISO8859_15 = "ISO-8859-15";
     public static final String CP850 = "Cp850";
     public static final String CP1251 = "Cp1251";
@@ -49,7 +50,7 @@ public abstract class OdConstants {
 
     public static final String PREF_MODULES = "opendata.modules";
     public static final String PREF_MODULES_SITES = "opendata.modules.sites";
-    public static final String OSM_SITE = "https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/";
+    public static final String OSM_SITE = "https://josm.openstreetmap.de/browser/osm/applications/editors/josm/plugins/opendata";
     public static final String[] DEFAULT_MODULE_SITES = {OSM_SITE + "modules.txt%<?modules=>"};
 
     public static final String PREF_CRS_COMPARISON_TOLERANCE = "opendata.crs.comparison_tolerance";

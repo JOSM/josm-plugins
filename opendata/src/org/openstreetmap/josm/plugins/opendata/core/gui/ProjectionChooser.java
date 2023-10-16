@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
@@ -43,15 +42,15 @@ public class ProjectionChooser extends ExtendedDialog {
      * Panel.
      */
     private JPanel projSubPrefPanel;
-    private JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
+    private final JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
     private JLabel projectionCodeLabel;
     private Component projectionCodeGlue;
-    private JLabel projectionCode = new JLabel();
+    private final JLabel projectionCode = new JLabel();
     private JLabel projectionNameLabel;
     private Component projectionNameGlue;
-    private JLabel projectionName = new JLabel();
-    private JLabel bounds = new JLabel();
+    private final JLabel projectionName = new JLabel();
+    private final JLabel bounds = new JLabel();
 
     /**
      * This is the panel holding all projection preferences
@@ -76,16 +75,20 @@ public class ProjectionChooser extends ExtendedDialog {
     }
 
     public void addGui() {
+        projectionCodeLabel = new JLabel(tr("Projection code"));
+        projectionCodeGlue = GBC.glue(5, 0);
+        projectionNameLabel = new JLabel(tr("Projection name"));
+        projectionNameGlue = GBC.glue(5, 0);
         projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         projPanel.setLayout(new GridBagLayout());
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
-        projPanel.add(projectionCodeLabel = new JLabel(tr("Projection code")), GBC.std().insets(25, 5, 0, 5));
-        projPanel.add(projectionCodeGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionCodeLabel, GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionCodeGlue, GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCode, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
-        projPanel.add(projectionNameLabel = new JLabel(tr("Projection name")), GBC.std().insets(25, 5, 0, 5));
-        projPanel.add(projectionNameGlue = GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(projectionNameLabel, GBC.std().insets(25, 5, 0, 5));
+        projPanel.add(projectionNameGlue, GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionName, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
@@ -93,12 +96,9 @@ public class ProjectionChooser extends ExtendedDialog {
         projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 5, 5, 5));
 
         selectedProjectionChanged((ProjectionChoice) projectionCombo.getSelectedItem());
-        projectionCombo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
-                selectedProjectionChanged(pc);
-            }
+        projectionCombo.addActionListener(e -> {
+            ProjectionChoice pc = (ProjectionChoice) projectionCombo.getSelectedItem();
+            selectedProjectionChanged(pc);
         });
         setContent(projPanel);
     }
@@ -109,12 +109,7 @@ public class ProjectionChooser extends ExtendedDialog {
         if (size < 1)
             return;
 
-        final ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateMeta(pc);
-            }
-        };
+        final ActionListener listener = e -> updateMeta(pc);
 
         // Replace old panel with new one
         projSubPrefPanelWrapper.removeAll();

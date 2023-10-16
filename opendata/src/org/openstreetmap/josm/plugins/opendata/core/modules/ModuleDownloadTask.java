@@ -36,7 +36,6 @@ public class ModuleDownloadTask extends PleaseWaitRunnable {
     private final Collection<ModuleInformation> toUpdate = new LinkedList<>();
     private final Collection<ModuleInformation> failed = new LinkedList<>();
     private final Collection<ModuleInformation> downloaded = new LinkedList<>();
-    //private Exception lastException;
     private boolean canceled;
     private HttpURLConnection downloadConnection;
 
@@ -133,12 +132,9 @@ public class ModuleDownloadTask extends PleaseWaitRunnable {
 
     @Override protected void realRun() throws SAXException, IOException {
         File moduleDir = OdPlugin.getInstance().getModulesDirectory();
-        if (!moduleDir.exists()) {
-            if (!moduleDir.mkdirs()) {
-                //lastException = new ModuleDownloadException(tr("Failed to create module directory ''{0}''", moduleDir.toString()));
-                failed.addAll(toUpdate);
-                return;
-            }
+        if (!moduleDir.exists() && !moduleDir.mkdirs()) {
+            failed.addAll(toUpdate);
+            return;
         }
         getProgressMonitor().setTicksCount(toUpdate.size());
         for (ModuleInformation d : toUpdate) {
@@ -149,7 +145,7 @@ public class ModuleDownloadTask extends PleaseWaitRunnable {
             try {
                 download(d, moduleFile);
             } catch (ModuleDownloadException e) {
-                e.printStackTrace();
+                Logging.error(e);
                 failed.add(d);
                 continue;
             }

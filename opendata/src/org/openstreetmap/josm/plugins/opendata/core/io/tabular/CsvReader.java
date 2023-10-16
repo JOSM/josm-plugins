@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.util.OdUtils;
 import org.openstreetmap.josm.tools.Logging;
@@ -29,7 +29,7 @@ public class CsvReader extends SpreadSheetReader {
 
     public CsvReader(CsvHandler handler, String defaultSep) {
         super(handler);
-        this.charset = handler != null && handler.getCharset() != null ? handler.getCharset() : Charset.forName(OdConstants.UTF8);
+        this.charset = handler != null && handler.getCharset() != null ? handler.getCharset() : StandardCharsets.UTF_8;
         this.sep = handler != null && handler.getSeparator() != null ? handler.getSeparator() : defaultSep;
     }
 

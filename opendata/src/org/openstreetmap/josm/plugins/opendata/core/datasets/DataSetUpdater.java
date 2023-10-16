@@ -25,9 +25,9 @@ import org.openstreetmap.josm.spi.preferences.Config;
 /**
  * Data set updater.
  */
-public abstract class DataSetUpdater {
+public interface DataSetUpdater {
 
-    public static final void updateDataSet(DataSet dataSet, AbstractDataSetHandler handler, File associatedFile) {
+    static void updateDataSet(DataSet dataSet, AbstractDataSetHandler handler, File associatedFile) {
         if (dataSet != null) {
             if (handler != null) {
                 if (associatedFile != null) {

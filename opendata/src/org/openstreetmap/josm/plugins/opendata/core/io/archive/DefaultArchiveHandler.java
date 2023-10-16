@@ -5,7 +5,7 @@ import java.io.File;
 
 public class DefaultArchiveHandler implements ArchiveHandler {
 
-    private boolean skipXsdValidation = false;
+    private boolean skipXsdValidation;
     
     @Override
     public final void setSkipXsdValidation(boolean skip) {

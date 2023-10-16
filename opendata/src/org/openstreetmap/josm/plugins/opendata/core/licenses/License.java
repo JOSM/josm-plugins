@@ -4,7 +4,6 @@ package org.openstreetmap.josm.plugins.opendata.core.licenses;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -24,9 +23,9 @@ public abstract class License {
     private static URL getURL(Map<String, URL> map) {
         // Find URL for current language
         String lang = OdUtils.getJosmLanguage();
-        for (String l : map.keySet()) {
-            if (lang.startsWith(l)) {
-                return map.get(l);
+        for (Map.Entry<String, URL> entry : map.entrySet()) {
+            if (lang.startsWith(entry.getKey())) {
+                return entry.getValue();
             }
         }
         // If not found, return english URL
@@ -35,12 +34,9 @@ public abstract class License {
             return url;
         }
         // If not found, return first non-null url
-        if (map.keySet().size() > 0) {
-            for (Iterator<String> it = map.keySet().iterator(); it.hasNext();) {
-                url = map.get(it.next());
-                if (url != null) {
-                    return url;
-                }
+        if (!map.keySet().isEmpty()) {
+            for (URL entryUrl : map.values()) {
+                return entryUrl;
             }
         }
         // If empty, return null

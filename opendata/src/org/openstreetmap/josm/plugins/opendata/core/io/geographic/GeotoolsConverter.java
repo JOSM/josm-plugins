@@ -275,29 +275,25 @@ public class GeotoolsConverter {
     }
 
     private static void readNonGeometricAttributes(Feature feature, OsmPrimitive primitive) {
-        try {
-            Collection<Property> properties = feature.getProperties();
-            Map<String, String> tagMap = new LinkedHashMap<>(properties.size());
-            for (Property prop : properties) {
-                if (!(prop instanceof GeometryAttribute)) {
-                    Name name = prop.getName();
-                    Object value = prop.getValue();
-                    if (name != null && value != null) {
-                        String sName = name.toString();
-                        String sValue = value.toString();
-                        if (value instanceof Date) {
-                            sValue = new SimpleDateFormat("yyyy-MM-dd").format(value);
-                        }
-                        if (!sName.isEmpty() && !sValue.isEmpty()) {
-                            tagMap.put(sName, sValue);
-                            //primitive.put(sName, sValue);
-                        }
+        Collection<Property> properties = feature.getProperties();
+        Map<String, String> tagMap = new LinkedHashMap<>(properties.size());
+        for (Property prop : properties) {
+            if (!(prop instanceof GeometryAttribute)) {
+                Name name = prop.getName();
+                Object value = prop.getValue();
+                if (name != null && value != null) {
+                    String sName = name.toString();
+                    String sValue = value.toString();
+                    if (value instanceof Date) {
+                        sValue = new SimpleDateFormat("yyyy-MM-dd").format(value);
+                    }
+                    if (!sName.isEmpty() && !sValue.isEmpty()) {
+                        tagMap.put(sName, sValue);
+                        //primitive.put(sName, sValue);
                     }
                 }
             }
-            primitive.putAll(tagMap);
-        } catch (Exception e) {
-            Logging.error(e);
         }
+        primitive.putAll(tagMap);
     }
 }

@@ -11,6 +11,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -50,9 +51,9 @@ public abstract class AbstractMapInfoReader extends AbstractReader {
 
     protected final File getDataFile(File headerFile, String extension) {
         String filename = headerFile.getName().substring(0, headerFile.getName().lastIndexOf('.'));
-        File dataFile = new File(headerFile.getParent() + File.separator + filename + extension.toUpperCase());
+        File dataFile = new File(headerFile.getParent() + File.separator + filename + extension.toUpperCase(Locale.ROOT));
         if (!dataFile.exists()) {
-            dataFile = new File(headerFile.getParent() + File.separator + filename + extension.toLowerCase());
+            dataFile = new File(headerFile.getParent() + File.separator + filename + extension.toLowerCase(Locale.ROOT));
         }
         return dataFile;
     }

@@ -35,14 +35,14 @@ public abstract class SpreadSheetReader extends AbstractReader {
     private static final NumberFormat formatFrance = NumberFormat.getInstance(Locale.FRANCE);
     private static final NumberFormat formatUK = NumberFormat.getInstance(Locale.UK);
 
-    private static final String COOR = "(\\-?\\d+(?:[\\.,]\\d+)?)";
+    private static final String COOR = "(-?\\d+(?:[.,]\\d+)?)";
     // Lat/lon pattern with optional altitude and precision
     private static final Pattern LATLON_PATTERN = Pattern.compile(
             "^"+COOR+"[,;\\s]\\s*"+COOR+"(?:[,;\\s]\\s*"+COOR+"(?:[,;\\s]\\s*"+COOR+")?)?$");
 
     protected final SpreadSheetHandler handler;
 
-    public SpreadSheetReader(SpreadSheetHandler handler) {
+    protected SpreadSheetReader(SpreadSheetHandler handler) {
         this.handler = handler;
     }
 
@@ -67,7 +67,7 @@ public abstract class SpreadSheetReader extends AbstractReader {
     }
 
     public static class CoordinateColumns {
-        public Projection proj = null;
+        public Projection proj;
         public int xCol = -1;
         public int yCol = -1;
         public final boolean isOk() {
@@ -80,9 +80,10 @@ public abstract class SpreadSheetReader extends AbstractReader {
         }
     }
 
-    private CoordinateColumns addCoorColIfNeeded(List<CoordinateColumns> columns, CoordinateColumns col) {
+    private static CoordinateColumns addCoorColIfNeeded(List<CoordinateColumns> columns, CoordinateColumns col) {
         if (col == null || col.isOk()) {
-            columns.add(col = new CoordinateColumns());
+            col = new CoordinateColumns();
+            columns.add(col);
         }
         return col;
     }
@@ -100,10 +101,7 @@ public abstract class SpreadSheetReader extends AbstractReader {
 
         for (int i = 0; i < header.length; i++) {
             for (ProjectionPatterns pp : OdConstants.PROJECTIONS) {
-                List<CoordinateColumns> columns = projColumns.get(pp);
-                if (columns == null) {
-                    projColumns.put(pp, columns = new ArrayList<>());
-                }
+                List<CoordinateColumns> columns = projColumns.computeIfAbsent(pp, k -> new ArrayList<>());
                 CoordinateColumns col = columns.isEmpty() ? null : columns.get(columns.size()-1);
                 if (pp.getXYPattern().matcher(header[i]).matches()) {
                     CoordinateColumns coorCol = addCoorColIfNeeded(columns, col);
@@ -122,12 +120,12 @@ public abstract class SpreadSheetReader extends AbstractReader {
 
         final List<CoordinateColumns> columns = new ArrayList<>();
 
-        for (ProjectionPatterns pp : projColumns.keySet()) {
-            for (CoordinateColumns col : projColumns.get(pp)) {
+        for (Map.Entry<ProjectionPatterns, List<SpreadSheetReader.CoordinateColumns>> entry : projColumns.entrySet()) {
+            for (CoordinateColumns col : entry.getValue()) {
                 if (col.isOk()) {
                     columns.add(col);
                     if (col.proj == null) {
-                        col.proj = pp.getProjection(header[col.xCol], header[col.yCol]);
+                        col.proj = entry.getKey().getProjection(header[col.xCol], header[col.yCol]);
                     }
                 }
             }
@@ -165,12 +163,12 @@ public abstract class SpreadSheetReader extends AbstractReader {
             throw new IllegalDataException(tr("No valid coordinates have been found."));
         }
 
-        String message = "";
+        StringBuilder message = new StringBuilder();
         for (CoordinateColumns c : columns) {
-            if (!message.isEmpty()) {
-                message += "; ";
+            if (message.length() != 0) {
+                message.append("; ");
             }
-            message += c.proj + "("+header[c.xCol]+", "+header[c.yCol]+")";
+            message.append(c.proj).append('(').append(header[c.xCol]).append(", ").append(header[c.yCol]).append(')');
         }
 
         Logging.info("Loading data using projections "+message);
@@ -228,11 +226,9 @@ public abstract class SpreadSheetReader extends AbstractReader {
                             }
                         }
                     }
-                    if (!coordinate) {
-                        if (!fields[i].isEmpty()) {
-                            for (Node n : nodes.values()) {
-                                n.put(header[i], fields[i]);
-                            }
+                    if (!coordinate && !fields[i].isEmpty()) {
+                        for (Node n : nodes.values()) {
+                            n.put(header[i], fields[i]);
                         }
                     }
                 } catch (ParseException e) {

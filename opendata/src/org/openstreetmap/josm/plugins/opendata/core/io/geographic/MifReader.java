@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -28,7 +29,6 @@ import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.plugins.opendata.core.OdConstants;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.AbstractDataSetHandler;
 import org.openstreetmap.josm.plugins.opendata.core.gui.ChooserLauncher;
@@ -59,7 +59,6 @@ public final class MifReader extends AbstractMapInfoReader {
 
     private File file;
     private InputStream stream;
-    private Charset charset;
     private BufferedReader midReader;
 
     private Character delimiter = '\t';
@@ -70,22 +69,21 @@ public final class MifReader extends AbstractMapInfoReader {
     private DataSet dataSet;
     private Relation region;
     private Way polygon;
-    private Node node;
     private Way polyline;
 
     // CoordSys clause
     private String units;
-    private Double originLon;
-    private Double originLat;
-    private Double stdP1;
-    private Double stdP2;
-    private Double scaleFactor;
-    private Double falseEasting;
-    private Double falseNorthing;
-    private Double minx;
-    private Double miny;
-    private Double maxx;
-    private Double maxy;
+    private double originLon = Double.NaN;
+    private double originLat = Double.NaN;
+    private double stdP1 = Double.NaN;
+    private double stdP2 = Double.NaN;
+    private double scaleFactor = Double.NaN;
+    private double falseEasting = Double.NaN;
+    private double falseNorthing = Double.NaN;
+    private double minx = Double.NaN;
+    private double miny = Double.NaN;
+    private double maxx = Double.NaN;
+    private double maxy = Double.NaN;
 
     // Region clause
     private int numpolygons = -1;
@@ -99,20 +97,20 @@ public final class MifReader extends AbstractMapInfoReader {
     }
 
     public static DataSet parseDataSet(InputStream in, File file,
-            AbstractDataSetHandler handler, ProgressMonitor instance) throws IOException {
-        return new MifReader(handler).parse(in, file, instance, Charset.forName(OdConstants.ISO8859_15));
+            AbstractDataSetHandler handler) throws IOException {
+        return new MifReader(handler).parse(in, file, Charset.forName(OdConstants.ISO8859_15));
     }
 
     private void parseDelimiter(String[] words) {
         delimiter = words[1].charAt(1);
     }
 
-    private void parseUnique(String[] words) {
+    private void parseUnique() {
         // TODO
         Logging.warn("TODO Unique: "+line);
     }
 
-    private void parseIndex(String[] words) {
+    private void parseIndex() {
         // TODO
         Logging.warn("TODO Index: "+line);
     }
@@ -281,7 +279,7 @@ public final class MifReader extends AbstractMapInfoReader {
                     for (int i = 0; josmProj == null && i < 9; i++) {
                         if (equals(originLat, 42.0+i) && equals(stdP1, 41.25+i) && equals(stdP2, 42.75+i)
                                 && equals(falseNorthing, (i+1)*1000000.0 + 200000.0)) {
-                            josmProj = Projections.getProjectionByCode("EPSG:"+Integer.toString(3942 + i)); // LambertCC9Zones
+                            josmProj = Projections.getProjectionByCode("EPSG:"+ (3942 + i)); // LambertCC9Zones
                         }
                     }
                 }
@@ -292,7 +290,7 @@ public final class MifReader extends AbstractMapInfoReader {
         }
 
         // TODO: handle cases with Affine declaration
-        int index = parseAffineUnits(words);
+        int index = parseAffineUnits();
 
         // handle cases with Bounds declaration
         parseBounds(words, index);
@@ -306,25 +304,25 @@ public final class MifReader extends AbstractMapInfoReader {
 
     private void parseCoordSysSyntax2(String[] words) {
         // handle cases with Affine declaration
-        int index = parseAffineUnits(words);
+        int index = parseAffineUnits();
 
         units = words[index+1];
 
         parseBounds(words, index+2);
     }
 
-    private int parseAffineUnits(String[] words) {
+    private int parseAffineUnits() {
         // TODO: handle affine units
-        return 2+0;
+        return 2;
     }
 
     private void parseBounds(String[] words, int index) {
         if (index < words.length && "Bounds".equals(words[index])) {
             // Useless parenthesis... "(minx, miny) (maxx, maxy)"
-            minx = Double.valueOf(words[index+1].substring(1));
-            miny = Double.valueOf(words[index+2].substring(0, words[index+2].length()-1));
-            maxx = Double.valueOf(words[index+3].substring(1));
-            maxy = Double.valueOf(words[index+4].substring(0, words[index+4].length()-1));
+            minx = Double.parseDouble(words[index+1].substring(1));
+            miny = Double.parseDouble(words[index+2].substring(0, words[index+2].length()-1));
+            maxx = Double.parseDouble(words[index+3].substring(1));
+            maxy = Double.parseDouble(words[index+4].substring(0, words[index+4].length()-1));
             if (Logging.isTraceEnabled()) {
                 Logging.trace(Arrays.toString(words) + " -> "+minx+","+miny+","+maxx+","+maxy);
             }
@@ -335,7 +333,7 @@ public final class MifReader extends AbstractMapInfoReader {
         for (int i = 0; i < words.length; i++) {
             words[i] = words[i].replace(",", "");
         }
-        switch (words[1].toLowerCase()) {
+        switch (words[1].toLowerCase(Locale.ROOT)) {
         case "earth":
             parseCoordSysSyntax1(words);
             break;
@@ -368,7 +366,7 @@ public final class MifReader extends AbstractMapInfoReader {
         }
     }
 
-    private void parseTransform(String[] words) {
+    private void parseTransform() {
         // TODO
         Logging.warn("TODO Transform: "+line);
     }
@@ -379,7 +377,7 @@ public final class MifReader extends AbstractMapInfoReader {
         state = State.READING_COLUMNS;
     }
 
-    private void parseData(String[] words) {
+    private void parseData() {
         if (dataSet == null) {
             dataSet = new DataSet();
         }
@@ -438,50 +436,49 @@ public final class MifReader extends AbstractMapInfoReader {
         state = State.START_POLYGON;
     }
 
-    private void parseArc(String[] words) {
+    private void parseArc() {
         // TODO
         Logging.warn("TODO Arc: "+line);
     }
 
-    private void parseText(String[] words) {
+    private void parseText() {
         // TODO
         Logging.warn("TODO Text: "+line);
     }
 
-    private void parseRect(String[] words) {
+    private void parseRect() {
         // TODO
         Logging.warn("TODO Rect: "+line);
     }
 
-    private void parseRoundRect(String[] words) {
+    private void parseRoundRect() {
         // TODO
         Logging.warn("TODO RoundRect: "+line);
     }
 
-    private void parseEllipse(String[] words) {
+    private void parseEllipse() {
         // TODO
         Logging.warn("TODO Ellipse: "+line);
     }
 
     private void initializeReaders(InputStream in, File f, Charset cs, int bufSize) throws IOException {
         stream = in;
-        charset = cs;
         file = f;
         Reader isr;
         // Did you know ? new InputStreamReader(in, charset) has a non-configurable buffer of 8kb :(
         if (bufSize < 8192) {
-            isr = new InputStreamReaderUnbuffered(in, charset);
+            isr = new InputStreamReaderUnbuffered(in, cs);
         } else {
-            isr = new InputStreamReader(in, charset);
+            isr = new InputStreamReader(in, cs);
         }
         headerReader = new BufferedReader(isr, bufSize);
         if (midReader != null) {
             midReader.close();
         }
-        midReader = getDataReader(file, ".mid", charset);
+        midReader = getDataReader(file, ".mid", cs);
     }
 
-    private DataSet parse(InputStream in, File file, ProgressMonitor instance, Charset cs) throws IOException {
+    private DataSet parse(InputStream in, File file, Charset cs) throws IOException {
         try {
             try {
                 // Read header byte per byte until we determine correct charset
@@ -500,25 +497,25 @@ public final class MifReader extends AbstractMapInfoReader {
 
     @Override
     protected void parseHeaderLine(String[] words) throws IOException {
-        if (words[0].equalsIgnoreCase("Version")) {
+        if ("Version".equalsIgnoreCase(words[0])) {
             parseVersion(words);
-        } else if (words[0].equalsIgnoreCase("Charset")) {
+        } else if ("Charset".equalsIgnoreCase(words[0])) {
             // Reinitialize readers with an efficient buffer value now we know for sure the good charset
             initializeReaders(stream, file, parseCharset(words), 8192);
-        } else if (words[0].equalsIgnoreCase("Delimiter")) {
+        } else if ("Delimiter".equalsIgnoreCase(words[0])) {
             parseDelimiter(words);
-        } else if (words[0].equalsIgnoreCase("Unique")) {
-            parseUnique(words);
-        } else if (words[0].equalsIgnoreCase("Index")) {
-            parseIndex(words);
-        } else if (words[0].equalsIgnoreCase("CoordSys")) {
+        } else if ("Unique".equalsIgnoreCase(words[0])) {
+            parseUnique();
+        } else if ("Index".equalsIgnoreCase(words[0])) {
+            parseIndex();
+        } else if ("CoordSys".equalsIgnoreCase(words[0])) {
             parseCoordSys(words);
-        } else if (words[0].equalsIgnoreCase("Transform")) {
-            parseTransform(words);
-        } else if (words[0].equalsIgnoreCase("Columns")) {
+        } else if ("Transform".equalsIgnoreCase(words[0])) {
+            parseTransform();
+        } else if ("Columns".equalsIgnoreCase(words[0])) {
             parseColumns(words);
-        } else if (words[0].equalsIgnoreCase("Data")) {
-            parseData(words);
+        } else if ("Data".equalsIgnoreCase(words[0])) {
+            parseData();
         } else if (dataSet != null) {
             if (state == State.START_POLYGON) {
                 numpts = Integer.parseInt(words[0]);
@@ -537,7 +534,7 @@ public final class MifReader extends AbstractMapInfoReader {
 
             } else if (state == State.READING_POINTS && numpts > 0) {
                 if (josmProj != null) {
-                    node = createNode(words[0], words[1]);
+                    Node node = createNode(words[0], words[1]);
                     if (polygon != null) {
                         polygon.addNode(node);
                     } else if (polyline != null) {
@@ -546,7 +543,7 @@ public final class MifReader extends AbstractMapInfoReader {
                 }
                 if (--numpts == 0) {
                     if (numpolygons > -1) {
-                        if (!polygon.isClosed()) {
+                        if (polygon != null && !polygon.isClosed()) {
                             polygon.addNode(polygon.firstNode());
                         }
                         if (--numpolygons > 0) {
@@ -564,35 +561,31 @@ public final class MifReader extends AbstractMapInfoReader {
                         }
                     }
                 }
-            } else if (words[0].equalsIgnoreCase("Point")) {
+            } else if ("Point".equalsIgnoreCase(words[0])) {
                 parsePoint(words);
-            } else if (words[0].equalsIgnoreCase("Line")) {
+            } else if ("Line".equalsIgnoreCase(words[0])) {
                 parseLine(words);
-            } else if (words[0].equalsIgnoreCase("PLine")) {
+            } else if ("PLine".equalsIgnoreCase(words[0])) {
                 parsePLine(words);
-            } else if (words[0].equalsIgnoreCase("Region")) {
+            } else if ("Region".equalsIgnoreCase(words[0])) {
                 parseRegion(words);
-            } else if (words[0].equalsIgnoreCase("Arc")) {
-                parseArc(words);
-            } else if (words[0].equalsIgnoreCase("Text")) {
-                parseText(words);
-            } else if (words[0].equalsIgnoreCase("Rect")) {
-                parseRect(words);
-            } else if (words[0].equalsIgnoreCase("RoundRect")) {
-                parseRoundRect(words);
-            } else if (words[0].equalsIgnoreCase("Ellipse")) {
-                parseEllipse(words);
-            } else if (words[0].equalsIgnoreCase("Pen")) {
-                // Do nothing
-            } else if (words[0].equalsIgnoreCase("Brush")) {
-                // Do nothing
-            } else if (words[0].equalsIgnoreCase("Center")) {
-                // Do nothing
-            } else if (words[0].equalsIgnoreCase("Symbol")) {
-                // Do nothing
-            } else if (words[0].equalsIgnoreCase("Font")) {
-                // Do nothing
-            } else if (!words[0].isEmpty()) {
+            } else if ("Arc".equalsIgnoreCase(words[0])) {
+                parseArc();
+            } else if ("Text".equalsIgnoreCase(words[0])) {
+                parseText();
+            } else if ("Rect".equalsIgnoreCase(words[0])) {
+                parseRect();
+            } else if ("RoundRect".equalsIgnoreCase(words[0])) {
+                parseRoundRect();
+            } else if ("Ellipse".equalsIgnoreCase(words[0])) {
+                parseEllipse();
+            } else if (!"Pen".equalsIgnoreCase(words[0])
+                    && !"Brush".equalsIgnoreCase(words[0])
+                    && !"Center".equalsIgnoreCase(words[0])
+                    && !"Symbol".equalsIgnoreCase(words[0])
+                    && !"Font".equalsIgnoreCase(words[0])
+                    && !words[0].isEmpty()) {
+                // Pen, Brush, Center, Symbol, and Font we currently ignore
                 Logging.warn("Line "+lineNum+". Unknown clause in data section: "+line);
             }
         } else if (state == State.READING_COLUMNS && numcolumns > 0) {
@@ -627,9 +620,9 @@ public final class MifReader extends AbstractMapInfoReader {
     }
 
     private Node createNode(String x, String y) {
-        Node node = new Node(josmProj.eastNorth2latlon(new EastNorth(Double.parseDouble(x), Double.parseDouble(y))));
-        dataSet.addPrimitive(node);
-        return node;
+        Node newNode = new Node(josmProj.eastNorth2latlon(new EastNorth(Double.parseDouble(x), Double.parseDouble(y))));
+        dataSet.addPrimitive(newNode);
+        return newNode;
     }
 
     /**
@@ -638,7 +631,7 @@ public final class MifReader extends AbstractMapInfoReader {
      * @param b second double
      * @return {@code true} if {@code a} and {@code b} are equals
      */
-    public static boolean equals(Double a, Double b) {
+    public static boolean equals(double a, double b) {
         if (a == b) return true;
         // If the difference is less than epsilon, treat as equal.
         return Math.abs(a - b) < 0.0000001;
