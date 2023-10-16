@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.actions.JosmAction;
@@ -21,6 +21,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class UndoSelectionAction extends JosmAction {
 
+    /**
+     * Create a new {@link UndoSelectionAction}
+     */
     public UndoSelectionAction() {
         super(tr("Undo selection"), "undoselection",
                 tr("Reselect last added object or selection form history"),
@@ -36,7 +39,7 @@ public class UndoSelectionAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getLayerManager().getActiveDataSet();
         if (ds != null) {
-            LinkedList<Collection<? extends OsmPrimitive>> history = ds.getSelectionHistory();
+            List<Collection<? extends OsmPrimitive>> history = ds.getSelectionHistory();
             if (history == null || history.isEmpty()) return; // empty history
             if (lastSel != null) {
                 Collection<OsmPrimitive> selection = ds.getSelected();
