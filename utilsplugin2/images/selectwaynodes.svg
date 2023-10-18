@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+    <defs id="defs1">
+        <marker id="ArrowWide"
+                style="overflow:visible"
+                refX="0"
+                refY="0"
+                orient="auto-start-reverse"
+                markerWidth="0.9"
+                markerHeight="0.9"
+                viewBox="0 0 1 1"
+                preserveAspectRatio="xMidYMid"
+                markerUnits="strokeWidth">
+            <path id="path1"
+                  style="fill:none;stroke:context-stroke"
+                  d="M 3,-3 0,0 3,3"
+                  transform="rotate(180,0.125,0)"/>
+        </marker>
+        <marker id="ArrowWide_Fnone_S-000000"
+                style="overflow:visible"
+                refX="0"
+                refY="0"
+                orient="auto-start-reverse"
+                markerWidth="0.9"
+                markerHeight="0.9"
+                viewBox="0 0 1 1"
+                preserveAspectRatio="xMidYMid"
+                markerUnits="strokeWidth">
+            <path id="path5"
+                  style="fill:none;stroke:#000000"
+                  d="M 3,-3 0,0 3,3"
+                  transform="rotate(180,0.125,0)" />
+        </marker>
+        <marker id="ArrowWide_Fnone_S-000000_reversed"
+                style="overflow:visible"
+                refX="0"
+                refY="0"
+                orient="auto"
+                markerWidth="0.9"
+                markerHeight="0.9"
+                viewBox="0 0 1 1"
+                preserveAspectRatio="xMidYMid"
+                markerUnits="strokeWidth">
+            <g id="g6" transform="rotate(180,0,0)">
+                <path id="path6"
+                      style="fill:none;stroke:#000000"
+                      d="M 3,-3 0,0 3,3"
+                      transform="rotate(180,0.125,0)" />
+            </g>
+        </marker>
+    </defs>
+    <g id="layer1">
+        <path id="path2"
+              style="fill:none;stroke:#000000;stroke-width:1px"
+              d="m 2,14 3.33,-3.33 4,-2 L 12.666,4" />
+        <rect id="rect1"
+              style="fill:#ffffff;stroke:#df421e;stroke-width:0.66;stroke-linecap:square"
+              width="2"
+              height="2"
+              x="1"
+              y="13" />
+        <rect id="rect1-8"
+              style="fill:#ffffff;stroke:#df421e;stroke-width:0.66;stroke-linecap:square"
+              width="2"
+              height="2"
+              x="4.33"
+              y="9.67" />
+        <rect id="rect1-4-0"
+              style="fill:#ffffff;stroke:#df421e;stroke-width:0.66;stroke-linecap:square"
+              width="2"
+              height="2"
+              x="8.333"
+              y="7.666" />
+        <rect id="rect1-4"
+              style="fill:#ffffff;stroke:#df421e;stroke-width:0.66;stroke-linecap:square"
+              width="2"
+              height="2"
+              x="11.666"
+              y="3" />
+        <path id="path3"
+              style="fill:none;stroke:#000000;stroke-width:0.65;marker-end:url(#ArrowWide_Fnone_S-000000)"
+              d="m 11.5,12.25 h -4" />
+        <path id="path3-8"
+              style="fill:none;stroke:#000000;stroke-width:0.65;marker-end:url(#ArrowWide_Fnone_S-000000)"
+              d="m 8.5,14.25 h -4" />
+        <path id="path3-4"
+              style="fill:none;stroke:#000000;stroke-width:0.65;marker-start:url(#ArrowWide_Fnone_S-000000_reversed)"
+              d="M 10,3.5 H 6" />
+        <path id="path4"
+              style="fill:none;stroke:#000000;stroke-width:0.7;marker-end:url(#ArrowWide_Fnone_S-000000)"
+              d="M 4,4.75 7.25,8" />
+    </g>
+</svg>

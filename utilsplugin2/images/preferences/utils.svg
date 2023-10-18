@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+    <defs id="defs1">
+        <linearGradient id="linearGradient9">
+            <stop style="stop-color:#9a9ab2;stop-opacity:1;"
+                  offset="0"
+                  id="stop10" />
+            <stop style="stop-color:#efeff3;stop-opacity:1;"
+                  offset="1"
+                  id="stop9" />
+        </linearGradient>
+        <linearGradient id="linearGradient7">
+            <stop style="stop-color:#d32c23;stop-opacity:1;"
+                  offset="0"
+                  id="stop7" />
+            <stop style="stop-color:#f5cdcb;stop-opacity:1;"
+                  offset="1"
+                  id="stop8" />
+        </linearGradient>
+        <linearGradient id="linearGradient3">
+            <stop style="stop-color:#bbbcc5;stop-opacity:1;"
+                  offset="0"
+                  id="stop4" />
+            <stop style="stop-color:#dcdce6;stop-opacity:1;"
+                  offset="1"
+                  id="stop3" />
+        </linearGradient>
+        <linearGradient xlink:href="#linearGradient3"
+                        id="linearGradient4"
+                        x1="2"
+                        y1="8"
+                        x2="16"
+                        y2="8"
+                        gradientUnits="userSpaceOnUse" />
+        <linearGradient xlink:href="#linearGradient7"
+                        id="linearGradient8"
+                        x1="1.5"
+                        y1="11.125"
+                        x2="9"
+                        y2="11.125"
+                        gradientUnits="userSpaceOnUse" />
+        <linearGradient xlink:href="#linearGradient9"
+                        id="linearGradient10"
+                        x1="8"
+                        y1="6"
+                        x2="16"
+                        y2="6"
+                        gradientUnits="userSpaceOnUse" />
+    </defs>
+    <g id="layer1" style="display:inline">
+        <path style="display:inline;fill:url(#linearGradient4);stroke:#9697a3;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+              d="M 12.25,14.25 14.5,12 8.5,6 V 3.25 L 6.75,1.5 H 4 L 3.5,2 6,4.5 5,5.5 2.5,3 2,3.5 v 3 l 1.75,1.75 h 2.5 z"
+              id="path1" />
+        <path style="display:inline;fill:url(#linearGradient10);stroke:#585873;stroke-width:0.1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+              d="m 8.25,8.75 4.5,-4.5 c 1.462102,-0.3685612 1.542186,-1.1312044 1.25,-2 -1.130797,-0.1859456 -1.656635,0.3860933 -1.75,1.5 l -4.5,4.5 z"
+              id="path3" />
+        <path style="display:inline;fill:url(#linearGradient8);stroke:#9a2220;stroke-width:0.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.996078"
+              d="m 2.5,14.75 h 1 L 8,10 H 8.75 V 9 L 7.5,7.75 h -1 V 8.5 L 1.75,13 v 1 z"
+              id="path2" />
+    </g>
+</svg>
