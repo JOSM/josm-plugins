@@ -16,12 +16,16 @@
                                             imageio/build.xml
                                             pmtiles/build.xml
                                             todo/build.xml"/>
+    <property name="java11_plugins" value="geotools/build.xml
+                                           cadastre-fr/build.xml
+                                           opendata/build.xml
+                                           ImportImagePlugin/build.xml
+                                           OsmInspectorPlugin/build.xml" />
     <property name="ordered_plugins" value="jackson/build.xml
                                             jaxb/build.xml
                                             jna/build.xml
                                             jts/build.xml
                                             ejml/build.xml
-                                            geotools/build.xml
                                             utilsplugin2/build.xml
                                             log4j/build.xml
                                             apache-commons/build.xml
@@ -37,9 +41,10 @@
                 <filelist dir="." files="${ordered_plugins}"/>
                 <!-- Build JavaFX plugins only with Java 11+ -->
                 <filelist dir="." files="${javafx_plugins}" if:set="isJava11"/>
+                <filelist dir="." files="${java11_plugins}" if:set="isJava11"/>
                 <filelist dir="." files="${java17_plugins}" if:set="isJava17"/>
                 <filelist dir="." files="${java21_plugins}" if:set="isJava21"/>
-                <fileset  dir="." includes="*/build.xml" excludes="00_*/build.xml *.wip/build.xml ${javafx_plugins} ${ordered_plugins} ${java17_plugins} ${java21_plugins} "/>
+                <fileset  dir="." includes="*/build.xml" excludes="00_*/build.xml *.wip/build.xml ${javafx_plugins} ${ordered_plugins} ${java11_plugins} ${java17_plugins} ${java21_plugins} "/>
             </subant>
         </sequential>
     </macrodef>
