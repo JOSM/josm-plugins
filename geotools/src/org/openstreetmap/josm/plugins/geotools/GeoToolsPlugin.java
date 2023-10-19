@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.geotools;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -14,8 +15,8 @@ import javax.media.jai.OperationRegistry;
 import it.geosolutions.imageio.compression.CompressionRegistry;
 import org.geotools.image.ImageWorker;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.openstreetmap.josm.plugins.Plugin;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.Logging;
@@ -101,12 +102,15 @@ public class GeoToolsPlugin extends Plugin {
     }
 
     private static void checkEPSG() {
+        final Collection<String> codes = CRS.getSupportedCodes("EPSG");
+        if (codes.isEmpty() || !(codes.contains("4326") || codes.contains("EPSG:4326"))) {
         try {
-            CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException e) {
-            Logging.error("geotools: error in EPSG database initialization. NoSuchAuthorityCodeException: "+e.getMessage());
-        } catch (FactoryException e) {
-            Logging.error("geotools: error in EPSG database initialization. FactoryException: "+e.getMessage());
+                CRS.decode("EPSG:4326");
+            } catch (NoSuchAuthorityCodeException e) {
+                Logging.error("geotools: error in EPSG database initialization. NoSuchAuthorityCodeException: " + e.getMessage());
+            } catch (FactoryException e) {
+                Logging.error("geotools: error in EPSG database initialization. FactoryException: " + e.getMessage());
+            }
         }
     }
 }

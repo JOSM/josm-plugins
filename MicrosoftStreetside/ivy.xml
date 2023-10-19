@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <ivy-module xmlns:m="http://ant.apache.org/ivy/maven" version="2.0">
   <info organisation="org.openstreetmap.josm.plugins" module="MicrosoftStreetside" revision="0.0.1"/>
-  <configurations defaultconf="default" defaultconfmapping="default-&gt;default">
+  <configurations defaultconf="default" defaultconfmapping="default->default">
     <conf name="default"/>
     <conf name="provided" description="Needed for compile, but will be present at runtime"/>
   </configurations>
   <dependencies>
-    <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.12.4" conf="default-&gt;default"/>
-    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.12.4" conf="default-&gt;default"/>
-    <dependency org="us.monoid.web" name="resty" rev="0.3.2" conf="default-&gt;default"/>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.15.3" conf="default->default"/>
+    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.15.3" conf="default->default"/>
+    <dependency org="us.monoid.web" name="resty" rev="0.3.2" conf="default->default"/>
     <dependency org="org.openjfx" name="javafx-swing" rev="19" conf="provided">
       <artifact name="javafx-swing" type="jar" m:classifier="linux"/>
       <artifact name="javafx-swing" type="jar" m:classifier="mac"/>

@@ -13,12 +13,12 @@ import org.geotools.referencing.operation.projection.LambertConformal;
 import org.geotools.referencing.operation.projection.LambertConformal1SP;
 import org.geotools.referencing.operation.projection.LambertConformal2SP;
 import org.geotools.referencing.operation.projection.MapProjection.AbstractProvider;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.MathTransform;
+import org.geotools.api.parameter.ParameterDescriptor;
+import org.geotools.api.parameter.ParameterValueGroup;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.datum.GeodeticDatum;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.openstreetmap.josm.data.projection.AbstractProjection;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -39,7 +39,7 @@ public interface GeotoolsHandler extends GeographicHandler {
     /**
      * A mapping of GeoTools ellipsoid to JOSM ellipsoids. Don't use outside the {@link GeotoolsHandler} class.
      */
-    List<Pair<org.opengis.referencing.datum.Ellipsoid, Ellipsoid>>
+    List<Pair<org.geotools.api.referencing.datum.Ellipsoid, Ellipsoid>>
             ellipsoids = Collections.unmodifiableList(Arrays.asList(
             new Pair<>(DefaultEllipsoid.GRS80, Ellipsoid.GRS80),
             new Pair<>(DefaultEllipsoid.WGS84, Ellipsoid.WGS84)
@@ -62,7 +62,7 @@ public interface GeotoolsHandler extends GeographicHandler {
                     if (p instanceof AbstractProjection) {
                         AbstractProjection ap = (AbstractProjection) p;
                         if (ap.getProj() instanceof LambertConformalConic) {
-                            for (Pair<org.opengis.referencing.datum.Ellipsoid, Ellipsoid> pair : ellipsoids) {
+                            for (Pair<org.geotools.api.referencing.datum.Ellipsoid, Ellipsoid> pair : ellipsoids) {
                                 if (pair.a.equals(geo.getEllipsoid()) && pair.b.equals(ap.getEllipsoid())) {
                                     boolean ok = true;
                                     ParameterValueGroup values = lambert.getParameterValues();

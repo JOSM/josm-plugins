@@ -30,16 +30,16 @@ import org.geotools.referencing.crs.AbstractSingleCRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.datum.Datum;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.referencing.operation.TransformException;
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.IdentifiedObject;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.ProjectedCRS;
+import org.geotools.api.referencing.cs.CoordinateSystem;
+import org.geotools.api.referencing.datum.Datum;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.OperationNotFoundException;
+import org.geotools.api.referencing.operation.TransformException;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -347,7 +347,7 @@ public abstract class GeographicReader extends AbstractReader {
      * Find the math transform for the CRS used by this reader
      * @param parent The parent component, used for showing dialogs
      * @param findSimiliarCrs {@code true} if we don't need to find the exact CRS
-     * @throws FactoryException See {@link CRS#findMathTransform}, {@link org.opengis.referencing.AuthorityFactory#getAuthorityCodes}
+     * @throws FactoryException See {@link CRS#findMathTransform}, {@link org.geotools.api.referencing.AuthorityFactory#getAuthorityCodes}
      * @throws UserCancelException If the user cancelled in one of the message dialogs
      * @throws GeoMathTransformException If no transform could be found
      */

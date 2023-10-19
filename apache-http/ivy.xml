@@ -3,12 +3,7 @@
 <ivy-module version="2.0">
     <info organisation="org.openstreetmap.josm.plugins" module="apache-http"/>
     <dependencies>
-        <!-- Leave these in until at least 2021-03-01 so plugins can migrate -->
-        <dependency org="org.apache.httpcomponents" name="httpcore" rev="4.4.15" conf="default->default"/>
-        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.13" conf="default->default"/>
-        <dependency org="org.apache.httpcomponents" name="httpmime" rev="4.5.13" conf="default->default"/>
-        <!-- These are in a different namespace, so conflicts shouldn't occur. -->
-        <dependency org="org.apache.httpcomponents.client5" name="httpclient5" rev="5.1.2" conf="default->default"/>
+        <dependency org="org.apache.httpcomponents.client5" name="httpclient5" rev="5.2.1" conf="default->default"/>
         <!-- We may want to add fluent, cache, and windows extensions in the future -->
     </dependencies>
 </ivy-module>

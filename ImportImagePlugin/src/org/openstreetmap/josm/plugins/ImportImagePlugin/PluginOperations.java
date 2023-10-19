@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.ImportImagePlugin;
 
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,20 +15,20 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
+import org.geotools.api.data.DataSourceException;
+import org.geotools.api.parameter.ParameterValueGroup;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CRSAuthorityFactory;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.util.InternationalString;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.processing.CoverageProcessor;
-import org.geotools.data.DataSourceException;
 import org.geotools.data.WorldFileReader;
 import org.geotools.gce.geotiff.GeoTiffReader;
-import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.InternationalString;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -152,7 +151,7 @@ public final class PluginOperations {
             double height = img.getHeight() * (-tfwReader.getYPixelSize());
             double lowerLeft_x = tfwReader.getXULC();
             double lowerLeft_y = tfwReader.getYULC() - height;
-            Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
+            ReferencedEnvelope bbox = ReferencedEnvelope.rect(lowerLeft_x, lowerLeft_y, width, height, null);
             coverage = createGridCoverage(img, bbox, refSys);
 
         } else if (".jpg".equalsIgnoreCase(extension)
@@ -184,7 +183,7 @@ public final class PluginOperations {
             double height = img.getHeight() * (-tfwReader.getYPixelSize());
             double lowerLeft_x = tfwReader.getXULC();
             double lowerLeft_y = tfwReader.getYULC() - height;
-            Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
+            ReferencedEnvelope bbox = ReferencedEnvelope.rect(lowerLeft_x, lowerLeft_y, width, height, null);
             coverage = createGridCoverage(img, bbox, refSys);
 
         } else if (".bmp".equalsIgnoreCase(extension)) {
@@ -215,7 +214,7 @@ public final class PluginOperations {
             double height = img.getHeight() * (-tfwReader.getYPixelSize());
             double lowerLeft_x = tfwReader.getXULC();
             double lowerLeft_y = tfwReader.getYULC() - height;
-            Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
+            ReferencedEnvelope bbox = ReferencedEnvelope.rect(lowerLeft_x, lowerLeft_y, width, height, null);
             coverage = createGridCoverage(img, bbox, refSys);
 
         } else if (".png".equalsIgnoreCase(extension)) {
@@ -247,7 +246,7 @@ public final class PluginOperations {
             double height = img.getHeight() * (-tfwReader.getYPixelSize());
             double lowerLeft_x = tfwReader.getXULC();
             double lowerLeft_y = tfwReader.getYULC() - height;
-            Envelope2D bbox = new Envelope2D(null, new Rectangle2D.Double(lowerLeft_x, lowerLeft_y, width, height));
+            ReferencedEnvelope bbox = ReferencedEnvelope.rect(lowerLeft_x, lowerLeft_y, width, height, null);
             coverage = createGridCoverage(img, bbox, refSys);
 
         } else {
@@ -292,7 +291,7 @@ public final class PluginOperations {
     /**
      * Method for external use.
      */
-    public static GridCoverage2D createGridCoverage(BufferedImage img, Envelope2D bbox, CoordinateReferenceSystem crs) {
+    public static GridCoverage2D createGridCoverage(BufferedImage img, ReferencedEnvelope bbox, CoordinateReferenceSystem crs) {
         bbox.setCoordinateReferenceSystem(crs);
         return new GridCoverageFactory().create("", img, bbox);
     }

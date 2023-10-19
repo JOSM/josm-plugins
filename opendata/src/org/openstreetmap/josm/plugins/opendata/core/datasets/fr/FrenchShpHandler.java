@@ -4,11 +4,11 @@ package org.openstreetmap.josm.plugins.opendata.core.datasets.fr;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.LambertConformal2SP;
 import org.geotools.referencing.operation.projection.MapProjection.AbstractProvider;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.datum.GeodeticDatum;
-import org.opengis.referencing.operation.MathTransform;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.ProjectedCRS;
+import org.geotools.api.referencing.datum.GeodeticDatum;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.DefaultShpHandler;
 import org.openstreetmap.josm.plugins.opendata.core.io.geographic.GeotoolsHandler;
 

@@ -12,6 +12,7 @@
     <property name="plugin.canloadatruntime" value="true"/>
     <property name="plugin.requires" value="apache-commons;ejml;jackson;jaxb;jts"/>
     <property name="plugin.stage" value="20"/>
+    <property name="plugin.minimum.java.version" value="11"/>
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>

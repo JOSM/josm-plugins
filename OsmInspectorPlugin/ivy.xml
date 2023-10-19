@@ -1,19 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- License: GPL. For details, see LICENSE file. -->
 <ivy-module version="2.0">
-    <info organisation="org.openstreetmap.josm.plugins" module="geotools"/>
+    <info organisation="org.openstreetmap.josm.plugins" module="OsmInspector"/>
     <dependencies>
-        <dependency org="org.geotools" name="gt-coverage" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-coverage-api" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-epsg-extension" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-epsg-hsql" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-geotiff" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-main" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-metadata" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-api" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-referencing" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-shapefile" rev="${gt.version}" conf="default->default"/>
-        <dependency org="org.geotools" name="gt-geopkg" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-app-schema-resolver" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-cql" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-render" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-wfs-ng" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-xml" rev="${gt.version}" conf="default->default"/>
+        <!--
+        <dependency org="org.geotools" name="gt-xsd-core" rev="${gt.version}" conf="default->default"/>
+        <dependency org="org.geotools" name="gt-xsd-wfs" rev="${gt.version}" conf="default->default"/>
+        -->
+
+        <!-- from geotools plugin (effectively copied from geotools ivy.xml, just excluding all geotools dependencies) -->
+        <exclude org="org.geotools" module="gt-coverage" />
+        <exclude org="org.geotools" module="gt-coverage-api" />
+        <exclude org="org.geotools" module="gt-epsg-extension" />
+        <exclude org="org.geotools" module="gt-epsg-hsql" />
+        <exclude org="org.geotools" module="gt-geotiff" />
+        <exclude org="org.geotools" module="gt-main" />
+        <exclude org="org.geotools" module="gt-metadata" />
+        <exclude org="org.geotools" module="gt-api" />
+        <exclude org="org.geotools" module="gt-referencing" />
+        <exclude org="org.geotools" module="gt-shapefile" />
+        <exclude org="org.geotools" module="gt-geopkg" />
         <!-- Dependencies that were not needed in 22.0 (according to lib in svn) -->
         <exclude org="org.geotools" module="gt-imagemosaic"/>
         <exclude org="net.sourceforge.hatbox" module="hatbox"/>

@@ -3,15 +3,15 @@
 <ivy-module version="2.0">
     <info organisation="org.openstreetmap.josm.plugins" module="apache-commons"/>
     <dependencies>
-        <dependency org="com.github.luben" name="zstd-jni" rev="1.5.2-5" conf="default->default"/>
+        <dependency org="com.github.luben" name="zstd-jni" rev="1.5.5-6" conf="default->default"/>
         <dependency org="org.apache.commons" name="commons-collections4" rev="4.4" conf="default->default"/>
-        <dependency org="org.apache.commons" name="commons-compress" rev="1.22" conf="default->default"/>
+        <dependency org="org.apache.commons" name="commons-compress" rev="1.24.0" conf="default->default"/>
         <dependency org="org.apache.commons" name="commons-imaging" rev="1.0-alpha3" conf="default->default"/>
         <!-- Apache Commons IO does not use the standard org name -->
-        <dependency org="commons-io" name="commons-io" rev="2.11.0" conf="default->default"/>
+        <dependency org="commons-io" name="commons-io" rev="2.14.0" conf="default->default"/>
         <!-- Apache Commons Logging also does not use the standard org name -->
         <dependency org="commons-logging" name="commons-logging" rev="1.2" conf="default->default"/>
-        <dependency org="org.apache.commons" name="commons-lang3" rev="3.12.0" conf="default->default"/>
+        <dependency org="org.apache.commons" name="commons-lang3" rev="3.13.0" conf="default->default"/>
         <dependency org="org.apache.commons" name="commons-math3" rev="3.6.1" conf="default->default"/>
         <dependency org="org.apache.commons" name="commons-text" rev="1.10.0" conf="default->default"/>
         <dependency org="org.brotli" name="dec" rev="0.1.2" conf="default->default"/>

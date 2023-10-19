@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- License: GPL. For details, see LICENSE file. -->
 <ivy-module version="2.0">
-    <info organisation="org.openstreetmap.josm.plugins" module="geotools"/>
+    <info organisation="org.openstreetmap.josm.plugins" module="jackson"/>
     <dependencies>
-        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.14.0" conf="default->default"/>
+        <dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.15.3" conf="default->default"/>
     </dependencies>
 </ivy-module>

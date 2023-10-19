@@ -20,10 +20,10 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.gce.geotiff.GeoTiffWriter;
-import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotools.api.parameter.GeneralParameterValue;
+import org.geotools.api.parameter.ParameterValueGroup;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.fr.cadastre.wms.WMSLayer;
@@ -36,7 +36,7 @@ public class MenuActionSaveRasterAs extends JosmAction {
 
     private static final String NAME = marktr("Save image as...");
 
-    private WMSLayer wmsLayer;
+    private final WMSLayer wmsLayer;
 
     static class FiltrePng extends FileFilter {
         @Override
@@ -105,9 +105,9 @@ public class MenuActionSaveRasterAs extends JosmAction {
                 try {
                     double x = wmsLayer.getImage(0).min.east();
                     double y = wmsLayer.getImage(0).min.north();
-                    Envelope2D bbox = new Envelope2D(CRS.decode("EPSG:27561"),
-                            x, y,
-                            wmsLayer.getImage(0).max.east()-x, wmsLayer.getImage(0).max.north()-y);
+                    ReferencedEnvelope bbox = ReferencedEnvelope.rect(x, y,
+                            wmsLayer.getImage(0).max.east() - x, wmsLayer.getImage(0).max.north() - y,
+                            CRS.decode("EPSG:27561"));
                     GridCoverageFactory factory = new GridCoverageFactory();
                     GridCoverage2D coverage = factory.create("tiff", bi, bbox);
                     final File output = new File(file.getParent(), file.getName()+".tif");

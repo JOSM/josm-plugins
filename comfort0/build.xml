@@ -17,6 +17,7 @@
     <property name="parser.dir" location="src/net/simon04/comfort0/level0l"/>
     <target name="pre-compile" depends="javacc"/>
     <target name="javacc" depends="init,init-ivy" unless="javacc.notRequired">
+        <ivy:settings file="${josm.ivysettings}" />
         <ivy:cachepath file="${core.tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${parser.dir}/parsergen"/>
         <java classname="javacc" fork="true" failonerror="true">

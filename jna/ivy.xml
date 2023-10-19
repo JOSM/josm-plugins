@@ -4,7 +4,7 @@
 		<conf name="default" />
 	</configurations>
 	<dependencies>
-        <dependency org="net.java.dev.jna" name="jna" rev="5.12.1"/>
-        <dependency org="net.java.dev.jna" name="jna-platform" rev="5.12.1"/>
+        <dependency org="net.java.dev.jna" name="jna" rev="5.13.0"/>
+        <dependency org="net.java.dev.jna" name="jna-platform" rev="5.13.0"/>
 	</dependencies>
 </ivy-module>

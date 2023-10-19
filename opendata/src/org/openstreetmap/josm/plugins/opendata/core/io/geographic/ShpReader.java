@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotools.data.DataStore;
+import org.geotools.api.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.locationtech.jts.geom.Point;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
+import org.geotools.api.geometry.MismatchedDimensionException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.operation.TransformException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;

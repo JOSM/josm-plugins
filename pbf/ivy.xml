@@ -1,7 +1,7 @@
 <ivy-module version="2.0">
   <info organisation="org.openstreetmap.josm.plugins" module="pbf"/>
   <dependencies>
-    <dependency conf="default->default" org="com.google.protobuf" name="protobuf-java" rev="3.20.3"/>
+    <dependency conf="default->default" org="com.google.protobuf" name="protobuf-java" rev="3.24.4"/>
     <dependency conf="default->default" org="org.openstreetmap.pbf" name="osmpbf" rev="1.5.0"/>
   </dependencies>
 </ivy-module>

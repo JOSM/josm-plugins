@@ -19,11 +19,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.image.ImageWorker;
 import org.geotools.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -56,7 +56,7 @@ public class ImageLayer extends Layer {
     private double angle;
 
     // current bbox
-    private Envelope2D bbox;
+    private ReferencedEnvelope bbox;
 
     // Layer icon
     private Icon layericon;
@@ -143,8 +143,8 @@ public class ImageLayer extends Layer {
         }
         Logging.debug("ImportImagePlugin ImageLayer: Coverage created: {0}", coverage);
 
-        upperLeft = new EastNorth(coverage.getEnvelope2D().x,
-                coverage.getEnvelope2D().y + coverage.getEnvelope2D().height);
+        upperLeft = new EastNorth(coverage.getEnvelope2D().getMinX(),
+                coverage.getEnvelope2D().getMaxY());
         angle = 0;
         bbox = coverage.getEnvelope2D();
 
@@ -229,7 +229,7 @@ public class ImageLayer extends Layer {
         }
     }
 
-    public Envelope2D getBbox() {
+    public ReferencedEnvelope getBbox() {
         return bbox;
     }
 
@@ -300,9 +300,7 @@ public class ImageLayer extends Layer {
         this.bbox = coverage.getEnvelope2D();
         this.image = ((PlanarImage) coverage.getRenderedImage()).getAsBufferedImage();
 
-        upperLeft = new EastNorth(coverage.getEnvelope2D().x, coverage
-                .getEnvelope2D().y
-                + coverage.getEnvelope2D().height);
+        upperLeft = new EastNorth(coverage.getEnvelope2D().getMinX(), coverage.getEnvelope2D().getMaxY());
         angle = 0;
 
         // repaint and zoom to new bbox

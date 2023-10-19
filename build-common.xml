@@ -31,7 +31,6 @@
     <property name="plugin.dist.dir"        location="../../dist"/>
     <property name="java.lang.version"      value="8" />
     <property name="javadoc.executable"     value="javadoc" />
-    <property name="javadoc.link"           value="https://docs.oracle.com/javase/8/docs/api" />
     <property name="manifest"               value="MANIFEST"/>
     <property name="manifest.unixoid"       value="MANIFEST-unixoid"/>
     <property name="manifest.windows"       value="MANIFEST-windows"/>
@@ -61,6 +60,13 @@
     <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition>
     <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
     <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
+
+    <!-- set the javadoc location -->
+    <property name="javadoc.link"           value="https://docs.oracle.com/javase/8/docs/api" unless:set="isJava11"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/11/docs/api/" if:set="isJava11" unless:set="isJava17"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/17/docs/api/" if:set="isJava17" unless:set="isJava21"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/21/docs/api/" if:set="isJava21"/>
+
     <!-- Disable jacoco on Java 21+ (Jacoco does not yet support Java 21+) -->
     <condition property="coverageByDefault">
         <not>

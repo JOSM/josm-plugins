@@ -11,6 +11,7 @@
     <property name="plugin.icon" value="images/ejml.png"/>
     <property name="plugin.canloadatruntime" value="true"/>
     <property name="plugin.stage" value="15"/>
+    <property name="plugin.minimum.java.version" value="11"/>
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>

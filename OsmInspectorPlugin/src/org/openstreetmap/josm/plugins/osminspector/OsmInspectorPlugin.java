@@ -25,7 +25,7 @@ public class OsmInspectorPlugin extends Plugin
 implements ZoomChangeListener, 
 MouseListener, PreferenceChangedListener, DownloadSelection{
 
-	/** The JOSM user identity manager, it is used for obtaining the user name */
+    /** The JOSM user identity manager, it is used for obtaining the user name */
     private final UserIdentityManager userIdentityManager;
    
 
@@ -34,13 +34,13 @@ MouseListener, PreferenceChangedListener, DownloadSelection{
 
     private OsmInspectorLayer inspectorLayer;
     
-	public OsmInspectorPlugin(PluginInformation info) {
-		super(info);
-		userIdentityManager = UserIdentityManager.getInstance();
-		initializePlugin();
-	}
-	
-	/**
+    public OsmInspectorPlugin(PluginInformation info) {
+        super(info);
+        userIdentityManager = UserIdentityManager.getInstance();
+        initializePlugin();
+    }
+
+    /**
      * Initialize the <code>OsmInspectorPlugin</code> object. Creates the
      * <code>OsmInspectorGUI</code> and initializes the following variables with
      *.
@@ -58,10 +58,10 @@ MouseListener, PreferenceChangedListener, DownloadSelection{
         Config.getPref().put("osmInspector.localVersion",getPluginInformation().localversion);
         inspectorLayer = null;
     }
-	@Override
-	public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
-		MainApplication.getToolbar().register( new ImportOsmInspectorBugsAction( this ) );
-		if (newFrame == null) {
+    @Override
+    public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
+        MainApplication.getToolbar().register( new ImportOsmInspectorBugsAction( this ) );
+        if (newFrame == null) {
             /* if new MapFrame is null, remove listener */
             NavigatableComponent.removeZoomChangeListener(this);
         } else {
@@ -80,65 +80,65 @@ MouseListener, PreferenceChangedListener, DownloadSelection{
                 MainApplication.getToolbar().control.add( new ImportOsmInspectorBugsAction( this ) );
             }
         }
-	}
+    }
 
-	@Override
-	public void zoomChanged() {
-		
-	}
+    @Override
+    public void zoomChanged() {
 
-	@Override
-	//
-	//  Delegate feature selection to layer
-	//
-	public void mouseClicked(MouseEvent e) {
-	    if (inspectorLayer != null) {
-	        inspectorLayer.selectFeatures(e.getX(), e.getY());
-	    }
-	}
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-	}
+    @Override
+    //
+    //  Delegate feature selection to layer
+    //
+    public void mouseClicked(MouseEvent e) {
+        if (inspectorLayer != null) {
+            inspectorLayer.selectFeatures(e.getX(), e.getY());
+        }
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		
-	}
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-	}
+    @Override
+    public void mouseExited(MouseEvent e) {
 
-	@Override
-	public void preferenceChanged(PreferenceChangeEvent e) {
-		
-	}
+    }
 
-	public OsmInspectorLayer getLayer()
-	{
-		return inspectorLayer;
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
 
-	public void setLayer( OsmInspectorLayer theLayer )
-	{
-		inspectorLayer = theLayer;
-	}
+    }
 
-	@Override
-	public void addGui(DownloadDialog gui) {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
 
-	@Override
-	public void setDownloadArea(Bounds bounds) {
-		// TODO Auto-generated method stub
-	}
+    }
+
+    @Override
+    public void preferenceChanged(PreferenceChangeEvent e) {
+
+    }
+
+    public OsmInspectorLayer getLayer()
+    {
+        return inspectorLayer;
+    }
+
+    public void setLayer( OsmInspectorLayer theLayer )
+    {
+        inspectorLayer = theLayer;
+    }
+
+    @Override
+    public void addGui(DownloadDialog gui) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setDownloadArea(Bounds bounds) {
+        // TODO Auto-generated method stub
+    }
 }
