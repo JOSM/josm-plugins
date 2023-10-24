@@ -4,7 +4,7 @@ package org.openstreetmap.josm.plugins.imageio;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An artifact from Maven
