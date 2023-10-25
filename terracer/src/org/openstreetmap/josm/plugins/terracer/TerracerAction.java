@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,7 @@ import org.openstreetmap.josm.tools.Utils;
  * closed ways. If two ways are selected and one of them can be identified as
  * a street (highway=*, name=*) then the given street will be added
  * to the 'associatedStreet' relation.
- *
+ * <p>
  *
  * At present it only works on quadrilaterals, but there is no reason
  * why it couldn't be extended to work with other shapes too. The
@@ -63,6 +62,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @author zere - Copyright 2009 CloudMade Ltd
  */
 public final class TerracerAction extends JosmAction {
+    private static final String BUILDING = "building";
+    private static final String ADDR_HOUSENUMBER = "addr:housenumber";
+    private static final String ADDR_STREET = "addr:street";
 
     private Collection<Command> commands;
     private Collection<OsmPrimitive> primitives;
@@ -122,10 +124,8 @@ public final class TerracerAction extends JosmAction {
                 outline = (Way) prim;
             } else if (sel.size() > 1) {
                 List<Way> ways = new ArrayList<>(Utils.filteredCollection(sel, Way.class));
-                Iterator<Way> wit = ways.iterator();
-                while (wit.hasNext()) {
-                    Way way = wit.next();
-                    if (way.hasKey("building")) {
+                for (Way way : ways) {
+                    if (way.hasKey(BUILDING)) {
                         if (outline != null)
                             // already have a building
                             throw new InvalidUserInputException("already have a building");
@@ -139,20 +139,18 @@ public final class TerracerAction extends JosmAction {
                         if (streetname == null)
                             throw new InvalidUserInputException("street does not have any name");
                     } else
-                        throw new InvalidUserInputException(way+" is neither a building nor a highway");
+                        throw new InvalidUserInputException(way + " is neither a building nor a highway");
                 }
 
                 if (outline == null)
                     throw new InvalidUserInputException("no outline way found");
 
                 List<Node> nodes = new ArrayList<>(Utils.filteredCollection(sel, Node.class));
-                Iterator<Node> nit = nodes.iterator();
                 // Actually this should test if the selected address nodes lie
                 // within the selected outline. Any ideas how to do this?
-                while (nit.hasNext()) {
-                    Node node = nit.next();
-                    if (node.hasKey("addr:housenumber")) {
-                        String nodesStreetName = node.get("addr:street");
+                for (Node node : nodes) {
+                    if (node.hasKey(ADDR_HOUSENUMBER)) {
+                        String nodesStreetName = node.get(ADDR_STREET);
                         // if a node has a street name if must be equal
                         // to the one of the other address nodes
                         if (nodesStreetName != null) {
@@ -173,7 +171,7 @@ public final class TerracerAction extends JosmAction {
                     }
                 }
 
-                Collections.sort(housenumbers, new HousenumberNodeComparator());
+                housenumbers.sort(new HousenumberNodeComparator());
             }
 
             if (outline == null || !outline.isClosed() || outline.getNodesCount() < 5)
@@ -181,8 +179,8 @@ public final class TerracerAction extends JosmAction {
 
         } catch (InvalidUserInputException ex) {
             Logging.warn("Terracer: "+ex.getMessage());
-            new ExtendedDialog(MainApplication.getMainFrame(), tr("Invalid selection"), new String[] {"OK"})
-                .setButtonIcons(new String[] {"ok"}).setIcon(JOptionPane.INFORMATION_MESSAGE)
+            new ExtendedDialog(MainApplication.getMainFrame(), tr("Invalid selection"), "OK")
+                .setButtonIcons("ok").setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .setContent(tr("Select a single, closed way of at least four nodes. " +
                     "(Optionally you can also select a street for the addr:street tag " +
                     "and a node to mark the start of numbering.)"))
@@ -216,16 +214,12 @@ public final class TerracerAction extends JosmAction {
         if (housenumbers.size() == 1) {
             // Special case of one outline and one address node.
             // Don't open the dialog
-            try {
-                terraceBuilding(outline, init, street, associatedStreet, 0, null, null, 0,
-                        housenumbers, streetname, associatedStreet != null, false, "yes");
-            } catch (UserCancelException ex) {
-                Logging.trace(ex);
-            }
+            terraceBuilding(outline, init, street, associatedStreet, 0, null, null, 0,
+                    housenumbers, streetname, associatedStreet != null, false, "yes");
         } else {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
             // show input dialog.
-            new HouseNumberInputHandler(this, outline, init, street, streetname, outline.get("building"),
+            new HouseNumberInputHandler(this, outline, init, street, streetname, outline.get(BUILDING),
                     associatedStreet, housenumbers, title).dialog.showDialog();
         }
         cleanup();
@@ -237,7 +231,7 @@ public final class TerracerAction extends JosmAction {
         tagsInConflict = null;
     }
 
-    public Integer getNumber(String number) {
+    private static Integer getNumber(String number) {
         try {
             return Integer.parseInt(number);
         } catch (NumberFormatException ex) {
@@ -250,7 +244,7 @@ public final class TerracerAction extends JosmAction {
      * arguments are house number nodes
      */
     static class HousenumberNodeComparator implements Comparator<Node> {
-        private final Pattern pat = Pattern.compile("^(\\d+)\\s*(.*)");
+        private static final Pattern PATTERN_HOUSE_NUMBER = Pattern.compile("^(\\d+)\\s*(.*)", Pattern.UNICODE_CHARACTER_CLASS);
 
         @Override
         public int compare(Node node1, Node node2) {
@@ -258,13 +252,13 @@ public final class TerracerAction extends JosmAction {
             // compare the numbers itself numerically since string comparison
             // doesn't work for numbers with different number of digits,
             // e.g. 9 is higher than 11
-            String node1String = node1.get("addr:housenumber");
-            String node2String = node2.get("addr:housenumber");
-            Matcher mat = pat.matcher(node1String);
+            String node1String = node1.get(ADDR_HOUSENUMBER);
+            String node2String = node2.get(ADDR_HOUSENUMBER);
+            Matcher mat = PATTERN_HOUSE_NUMBER.matcher(node1String);
             if (mat.find()) {
                 Integer node1Int = Integer.valueOf(mat.group(1));
                 String node1Rest = mat.group(2);
-                mat = pat.matcher(node2String);
+                mat = PATTERN_HOUSE_NUMBER.matcher(node2String);
                 if (mat.find()) {
                     Integer node2Int = Integer.valueOf(mat.group(1));
                     // If the numbers are the same, the rest has to make the decision,
@@ -284,7 +278,7 @@ public final class TerracerAction extends JosmAction {
 
     /**
      * Terraces a single, closed, quadrilateral way.
-     *
+     * <p>
      * Any node must be adjacent to both a short and long edge, we naively
      * choose the longest edge and its opposite and interpolate along them
      * linearly to produce new nodes. Those nodes are then assembled into
@@ -306,20 +300,20 @@ public final class TerracerAction extends JosmAction {
      *        existing relation
      * @param keepOutline If the outline way should be kept
      * @param buildingValue The value for {@code building} key to add
-     * @throws UserCancelException if user cancels the operation
      */
     public void terraceBuilding(final Way outline, Node init, Way street, Relation associatedStreet, Integer segments,
                 String start, String end, int step, List<Node> housenumbers, String streetName, boolean handleRelations,
-                boolean keepOutline, String buildingValue) throws UserCancelException {
+                boolean keepOutline, String buildingValue) {
         final int nb;
-        Integer to = null, from = null;
+        Integer to;
+        Integer from = null;
         if (housenumbers == null || housenumbers.isEmpty()) {
             to = getNumber(end);
             from = getNumber(start);
             if (to != null && from != null) {
-                nb = 1 + (to.intValue() - from.intValue()) / step;
+                nb = 1 + (to - from) / step;
             } else if (segments != null) {
-                nb = segments.intValue();
+                nb = segments;
             } else {
                 // if we get here, there is is a bug in the input validation.
                 throw new TerracerRuntimeException(
@@ -334,7 +328,7 @@ public final class TerracerAction extends JosmAction {
         // now find which is the longest side connecting the first node
         Pair<Way, Way> interp = findFrontAndBack(outline);
 
-        final boolean swap = init != null && (interp.a.lastNode().equals(init) || interp.b.lastNode().equals(init));
+        final boolean swap = init != null && (init.equals(interp.a.lastNode()) || init.equals(interp.b.lastNode()));
 
         final double frontLength = wayLength(interp.a);
         final double backLength = wayLength(interp.b);
@@ -417,7 +411,7 @@ public final class TerracerAction extends JosmAction {
 
         // Remove the address nodes since their tags have been incorporated into the terraces.
         // Or should removing them also be an option?
-        if (!housenumbers.isEmpty()) {
+        if (housenumbers != null && !housenumbers.isEmpty()) {
             commands.add(DeleteCommand.delete(housenumbers, true, true));
         }
 
@@ -510,16 +504,18 @@ public final class TerracerAction extends JosmAction {
      * @param streetName the name of a street (may be null). Used if not null and street is null.
      * @param associatedStreet The associated street. Used to determine if addr:street should be set or not.
      * @param buildingValue The value for {@code building} key to add
-     * @throws UserCancelException if user cancels the operation
+     * @param houseNumbers The house numbers to use
+     * @param i The index to use in {@code houseNumbers} for a replacement house number (preferential)
+     * @param defaultNumber The number to use if there was not an underlying house number
      */
     private void addressBuilding(Way outline, Way street, String streetName, Relation associatedStreet,
-            List<Node> housenumbers, int i, String defaultNumber, String buildingValue) throws UserCancelException {
-        Node houseNum = (housenumbers != null && i >= 0 && i < housenumbers.size()) ? housenumbers.get(i) : null;
+            List<Node> houseNumbers, int i, String defaultNumber, String buildingValue) {
+        Node houseNum = (houseNumbers != null && i >= 0 && i < houseNumbers.size()) ? houseNumbers.get(i) : null;
         boolean buildingAdded = false;
         boolean numberAdded = false;
         Map<String, String> tags = new HashMap<>();
         if (houseNum != null) {
-            primitives = Arrays.asList(new OsmPrimitive[]{houseNum, outline});
+            primitives = Arrays.asList(houseNum, outline);
 
             TagCollection tagsToCopy = TagCollection.unionOfAllPrimitives(primitives).getTagsFor(houseNum.keySet());
             tagsInConflict = tagsToCopy.getTagsFor(tagsToCopy.getKeysWithMultipleValues());
@@ -529,21 +525,21 @@ public final class TerracerAction extends JosmAction {
                 tags.put(tag.getKey(), tag.getValue());
             }
 
-            buildingAdded = houseNum.hasKey("building");
-            numberAdded = houseNum.hasKey("addr:housenumber");
+            buildingAdded = houseNum.hasKey(BUILDING);
+            numberAdded = houseNum.hasKey(ADDR_HOUSENUMBER);
         }
         if (!buildingAdded && buildingValue != null && !buildingValue.isEmpty()) {
-            tags.put("building", buildingValue);
+            tags.put(BUILDING, buildingValue);
         }
         if (defaultNumber != null && !numberAdded) {
-            tags.put("addr:housenumber", defaultNumber);
+            tags.put(ADDR_HOUSENUMBER, defaultNumber);
         }
         // Only put addr:street if no relation exists or if it has no name
         if (associatedStreet == null || !associatedStreet.hasKey("name")) {
             if (street != null) {
-                tags.put("addr:street", street.get("name"));
+                tags.put(ADDR_STREET, street.get("name"));
             } else if (streetName != null && !streetName.trim().isEmpty()) {
-                tags.put("addr:street", streetName.trim());
+                tags.put(ADDR_STREET, streetName.trim());
             }
         }
         if (!tags.isEmpty()) {
@@ -554,7 +550,7 @@ public final class TerracerAction extends JosmAction {
     /**
      * Creates a node at a certain distance along a way, as calculated by the
      * great circle distance.
-     *
+     * <p>
      * Note that this really isn't an efficient way to do this and leads to
      * O(N^2) running time for the main algorithm, but its simple and easy
      * to understand, and probably won't matter for reasonable-sized ways.
@@ -563,7 +559,7 @@ public final class TerracerAction extends JosmAction {
      * @param l The length at which to place the node.
      * @return A node at a distance l along w from the first point.
      */
-    private Node interpolateAlong(Way w, double l) {
+    private static Node interpolateAlong(Way w, double l) {
         List<Pair<Node, Node>> pairs = w.getNodePairs(false);
         for (int i = 0; i < pairs.size(); ++i) {
             Pair<Node, Node> p = pairs.get(i);
@@ -586,7 +582,7 @@ public final class TerracerAction extends JosmAction {
      * @param w The way to calculate length of.
      * @return The length of the way.
      */
-    private double wayLength(Way w) {
+    private static double wayLength(Way w) {
         double length = 0.0;
         for (Pair<Node, Node> p : w.getNodePairs(false)) {
             length += p.a.greatCircleDistance(p.b);
@@ -602,7 +598,7 @@ public final class TerracerAction extends JosmAction {
      * @param w The way to analyse.
      * @return A pair of ways (front, back) pointing in the same directions.
      */
-    private Pair<Way, Way> findFrontAndBack(Way w) {
+    private static Pair<Way, Way> findFrontAndBack(Way w) {
         // calculate the "side-ness" score for each segment of the way
         double[] sideness = calculateSideness(w);
 
@@ -657,15 +653,22 @@ public final class TerracerAction extends JosmAction {
 
     /**
      * returns the distance of two segments of a closed polygon
+     * @param i1 The first segment index
+     * @param i2 The second segment index
+     * @param n The number of segments in the polygon
+     * @return The distance between the two segments
      */
-    private int indexDistance(int i1, int i2, int n) {
+    private static int indexDistance(int i1, int i2, int n) {
         return Math.min(positiveModulus(i1 - i2, n), positiveModulus(i2 - i1, n));
     }
 
     /**
      * return the modulus in the range [0, n)
+     * @param a dividend
+     * @param n divisor
+     * @return The positive modulus (if {@code a} is negative)
      */
-    private int positiveModulus(int a, int n) {
+    private static int positiveModulus(int a, int n) {
         if (n <= 0)
             throw new IllegalArgumentException();
         int res = a % n;
@@ -678,8 +681,11 @@ public final class TerracerAction extends JosmAction {
     /**
      * Calculate the length of a side (from node i to i+1) in a way. This assumes that
      * the way is closed, but I only ever call it for buildings.
+     * @param w The way
+     * @param i The side (0 indexed)
+     * @return The length of that way segment
      */
-    private double sideLength(Way w, int i) {
+    private static double sideLength(Way w, int i) {
         Node a = w.getNode(i);
         Node b = w.getNode((i + 1) % (w.getNodesCount() - 1));
         return a.greatCircleDistance(b);
@@ -689,7 +695,7 @@ public final class TerracerAction extends JosmAction {
      * Given an array of doubles (but this could made generic very easily) sort
      * into order and return the array of indexes such that, for a returned array
      * x, a[x[i]] is sorted for ascending index i.
-     *
+     * <p>
      * This isn't efficient at all, but should be fine for the small arrays we're
      * expecting. If this gets slow - replace it with some more efficient algorithm.
      *
@@ -697,21 +703,7 @@ public final class TerracerAction extends JosmAction {
      * @return An array of indexes, the same size as the input, such that a[x[i]]
      * is in sorted order.
      */
-    private int[] sortedIndexes(final double[] a) {
-        class SortWithIndex implements Comparable<SortWithIndex> {
-            public double x;
-            public int i;
-
-            SortWithIndex(double a, int b) {
-                x = a;
-                i = b;
-            }
-
-            @Override
-            public int compareTo(SortWithIndex o) {
-                return Double.compare(x, o.x);
-            }
-        }
+    private static int[] sortedIndexes(final double[] a) {
 
         final int length = a.length;
         ArrayList<SortWithIndex> sortable = new ArrayList<>(length);
@@ -730,8 +722,10 @@ public final class TerracerAction extends JosmAction {
 
     /**
      * Calculate "sideness" metric for each segment in a way.
+     * @param w The way to get the sideness metric for
+     * @return The sideness for each segment of the way
      */
-    private double[] calculateSideness(Way w) {
+    private static double[] calculateSideness(Way w) {
         final int length = w.getNodesCount() - 1;
         double[] sideness = new double[length];
 
@@ -751,8 +745,13 @@ public final class TerracerAction extends JosmAction {
      * Calculate sideness of a single segment given the nodes which make up that
      * segment and its previous and next segments in order. Sideness is calculated
      * for the segment b-c.
+     * @param a The previous node
+     * @param b The first node of the current segment
+     * @param c The last node of the current segment
+     * @param d The next node
+     * @return the sideness
      */
-    private double calculateSideness(Node a, Node b, Node c, Node d) {
+    private static double calculateSideness(ILatLon a, ILatLon b, ILatLon c, ILatLon d) {
         final double ndx = b.lon() - a.lon();
         final double pdx = d.lon() - c.lon();
         final double ndy = b.lat() - a.lat();
@@ -765,7 +764,7 @@ public final class TerracerAction extends JosmAction {
     /**
      * Creates a new node at the interpolated position between the argument
      * nodes. Interpolates linearly in projected coordinates.
-     *
+     * <p>
      * If new node coordinate matches a or b coordinates, a or b is returned.
      *
      * @param a First node, at which f=0.
@@ -773,9 +772,9 @@ public final class TerracerAction extends JosmAction {
      * @param f Fractional position between first and last nodes.
      * @return A new node at the interpolated position (or a or b in case if f ≈ 0 or f ≈ 1).
      */
-    private Node interpolateNode(Node a, Node b, double f) {
+    private static Node interpolateNode(Node a, Node b, double f) {
         Node n = new Node(a.getEastNorth().interpolate(b.getEastNorth(), f));
-		if (n.equalsEpsilon(a, ILatLon.MAX_SERVER_PRECISION))
+        if (n.equalsEpsilon(a, ILatLon.MAX_SERVER_PRECISION))
             return a;
         if (n.equalsEpsilon(b, ILatLon.MAX_SERVER_PRECISION))
             return b;
@@ -785,5 +784,26 @@ public final class TerracerAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(getLayerManager().getEditDataSet() != null);
+    }
+
+    private static class SortWithIndex implements Comparable<SortWithIndex> {
+        /**
+         * The value to sort
+         */
+        public final double x;
+        /**
+         * The index in the original array
+         */
+        public final int i;
+
+        SortWithIndex(double a, int b) {
+            x = a;
+            i = b;
+        }
+
+        @Override
+        public int compareTo(SortWithIndex o) {
+            return Double.compare(x, o.x);
+        }
     }
 }

@@ -3,19 +3,20 @@ package org.openstreetmap.josm.plugins.terracer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -31,12 +32,13 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
  * The HouseNumberInputDialog is the layout of the house number input logic.
- *
+ * <p>
  *  This dialog is concerned with the layout, all logic goes into the
  *  HouseNumberinputHandler class.
  *
@@ -57,32 +59,27 @@ public class HouseNumberInputDialog extends ExtendedDialog {
     private final String streetName;
     private final String buildingType;
     private final boolean relationExists;
-    final ArrayList<Node> housenumbers;
+    final List<Node> houseNumbers;
 
     protected static final String DEFAULT_MESSAGE = tr("Enter housenumbers or amount of segments");
     private Container jContentPane;
     private JPanel inputPanel;
-    private JLabel loLabel;
     JTextField lo;
-    private JLabel hiLabel;
     JTextField hi;
     private JLabel numbersLabel;
     JTextField numbers;
-    private JLabel streetLabel;
     AutoCompComboBox<String> streetComboBox;
-    private JLabel buildingLabel;
     AutoCompComboBox<AutoCompletionItem> buildingComboBox;
-    private JLabel segmentsLabel;
     JTextField segments;
     JTextArea messageLabel;
-    private JLabel interpolationLabel;
-    Choice interpolation;
+    JosmComboBox<String> interpolationType;
     JCheckBox handleRelationCheckBox;
     JCheckBox keepOutlineCheckBox;
 
     HouseNumberInputHandler inputHandler;
 
     /**
+     * Create a new dialog to get settings for the current operation
      * @param street If street is not null, we assume, the name of the street to be fixed
      * and just show a label. If street is null, we show a ComboBox/InputField.
      * @param streetName the name of the street, derived from either the
@@ -90,10 +87,11 @@ public class HouseNumberInputDialog extends ExtendedDialog {
      *        same name attached (may be null)
      * @param buildingType The value to add for building key
      * @param relationExists If the buildings can be added to an existing relation or not.
-     * @param housenumbers a list of house numbers in this outline (may be empty)
+     * @param houseNumbers a list of house numbers in this outline (may be empty)
+     * @param handler The callback for the inputs
      */
     public HouseNumberInputDialog(HouseNumberInputHandler handler, Way street, String streetName,
-            String buildingType, boolean relationExists, ArrayList<Node> housenumbers) {
+            String buildingType, boolean relationExists, List<Node> houseNumbers) {
         super(MainApplication.getMainFrame(),
                 tr("Terrace a house"),
                 new String[] {tr("OK"), tr("Cancel")},
@@ -104,11 +102,11 @@ public class HouseNumberInputDialog extends ExtendedDialog {
         this.streetName = streetName;
         this.buildingType = buildingType;
         this.relationExists = relationExists;
-        this.housenumbers = housenumbers;
+        this.houseNumbers = houseNumbers;
         handler.dialog = this;
         JPanel content = getInputPanel();
         setContent(content);
-        setButtonIcons(new String[] {"ok", "cancel" });
+        setButtonIcons("ok", "cancel");
         getJContentPane();
         initialize();
         setDefaultButton(1);
@@ -127,7 +125,7 @@ public class HouseNumberInputDialog extends ExtendedDialog {
         this.lo.addFocusListener(this.inputHandler);
         this.hi.addFocusListener(this.inputHandler);
         this.segments.addFocusListener(this.inputHandler);
-        this.interpolation.addItemListener(this.inputHandler);
+        this.interpolationType.addItemListener(this.inputHandler);
     }
 
     /**
@@ -164,19 +162,19 @@ public class HouseNumberInputDialog extends ExtendedDialog {
             messageLabel.setEditable(false);
             messageLabel.setFocusable(false); // Needed so that lowest number can have focus immediately
 
-            interpolationLabel = new JLabel(tr("Interpolation"));
-            segmentsLabel = new JLabel(tr("Segments"));
-            streetLabel = new JLabel(tr("Street"));
-            buildingLabel = new JLabel(tr("Building"));
-            loLabel = new JLabel(tr("Lowest Number"));
+            JLabel interpolationLabel = new JLabel(tr("Interpolation"));
+            JLabel segmentsLabel = new JLabel(tr("Segments"));
+            JLabel streetLabel = new JLabel(tr("Street"));
+            JLabel buildingLabel = new JLabel(tr("Building"));
+            JLabel loLabel = new JLabel(tr("Lowest Number"));
             loLabel.setPreferredSize(new Dimension(111, 16));
             loLabel.setToolTipText(tr("Lowest housenumber of the terraced house"));
-            hiLabel = new JLabel(tr("Highest Number"));
+            JLabel hiLabel = new JLabel(tr("Highest Number"));
             numbersLabel = new JLabel(tr("List of Numbers"));
             loLabel.setPreferredSize(new Dimension(111, 16));
             final String txt = relationExists ? tr("add to existing associatedStreet relation") : tr("create an associatedStreet relation");
 
-            handleRelationCheckBox = new JCheckBox(txt, relationExists ? Config.getPref().getBoolean(HANDLE_RELATION, true) : false);
+            handleRelationCheckBox = new JCheckBox(txt, relationExists && Config.getPref().getBoolean(HANDLE_RELATION, true));
             keepOutlineCheckBox = new JCheckBox(tr("keep outline way"), Config.getPref().getBoolean(KEEP_OUTLINE, false));
 
             inputPanel = new JPanel();
@@ -186,15 +184,15 @@ public class HouseNumberInputDialog extends ExtendedDialog {
             inputPanel.add(messageLabel, c);
 
             inputPanel.add(loLabel, GBC.std().insets(3, 3, 0, 0));
-            inputPanel.add(getLo(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 3, 0, 0));
+            inputPanel.add(getLo(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 3, 0, 0));
             inputPanel.add(hiLabel, GBC.std().insets(3, 3, 0, 0));
-            inputPanel.add(getHi(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 3, 0, 0));
+            inputPanel.add(getHi(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 3, 0, 0));
             inputPanel.add(numbersLabel, GBC.std().insets(3, 3, 0, 0));
-            inputPanel.add(getNumbers(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 3, 0, 0));
+            inputPanel.add(getNumbers(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 3, 0, 0));
             inputPanel.add(interpolationLabel, GBC.std().insets(3, 3, 0, 0));
             inputPanel.add(getInterpolation(), GBC.eol().insets(5, 3, 0, 0));
             inputPanel.add(segmentsLabel, GBC.std().insets(3, 3, 0, 0));
-            inputPanel.add(getSegments(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 3, 0, 0));
+            inputPanel.add(getSegments(), GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 3, 0, 0));
             if (streetName == null) {
                 inputPanel.add(streetLabel, GBC.std().insets(3, 3, 0, 0));
                 inputPanel.add(getStreet(), GBC.eol().insets(5, 3, 0, 0));
@@ -214,9 +212,9 @@ public class HouseNumberInputDialog extends ExtendedDialog {
                 hi.setVisible(false);
                 hi.setEnabled(false);
                 interpolationLabel.setVisible(false);
-                interpolation.setVisible(false);
-                interpolation.setEnabled(false);
-                segments.setText(String.valueOf(housenumbers.size()));
+                interpolationType.setVisible(false);
+                interpolationType.setEnabled(false);
+                segments.setText(String.valueOf(houseNumbers.size()));
                 segments.setEditable(false);
             }
         }
@@ -266,7 +264,7 @@ public class HouseNumberInputDialog extends ExtendedDialog {
         if (numbers == null) {
             numbers = new JTextField();
 
-            Iterator<Node> it = housenumbers.iterator();
+            Iterator<Node> it = houseNumbers.iterator();
             StringBuilder s = new StringBuilder(256);
             if (it.hasNext()) {
                 s.append(it.next().get("addr:housenumber"));
@@ -337,25 +335,27 @@ public class HouseNumberInputDialog extends ExtendedDialog {
      *
      * @return java.awt.Choice
      */
-    private Choice getInterpolation() {
-        if (interpolation == null) {
-            interpolation = new Choice();
-            interpolation.add(tr("All"));
-            interpolation.add(tr("Even/Odd"));
+    private JComponent getInterpolation() {
+        if (interpolationType == null) {
+            interpolationType = new JosmComboBox<>();
+            interpolationType.setEditable(false);
+            interpolationType.addItem(tr("All"));
+            interpolationType.addItem(tr("Even/Odd"));
             if (Config.getPref().getInt(INTERPOLATION, 2) == 1) {
-                interpolation.select(tr("All"));
+                interpolationType.setSelectedItemText(tr("All"));
             } else {
-                interpolation.select(tr("Even/Odd"));
+                interpolationType.setSelectedItemText(tr("Even/Odd"));
             }
         }
-        return interpolation;
+        return interpolationType;
     }
 
     /**
      * Generates a list of all visible names of highways in order to do
      * autocompletion on the road name.
+     * @return The visible names
      */
-    TreeSet<String> createAutoCompletionInfo() {
+    Set<String> createAutoCompletionInfo() {
         final TreeSet<String> names = new TreeSet<>();
         for (OsmPrimitive osm : MainApplication.getLayerManager().getEditDataSet()
                 .allNonDeletedPrimitives()) {

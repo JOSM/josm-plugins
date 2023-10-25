@@ -7,15 +7,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.actions.JosmAction;
@@ -25,28 +23,27 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The Class HouseNumberInputHandler contains all the logic
  * behind the house number input dialog.
- *
+ * <p>
  * From a refactoring viewpoint, this class is indeed more interested in the fields
  * of the HouseNumberInputDialog. This is desired design, as the HouseNumberInputDialog
  * is already cluttered with auto-generated layout code.
  *
  * @author casualwalker - Copyright 2009 CloudMade Ltd
  */
-public class HouseNumberInputHandler extends JosmAction implements ActionListener, FocusListener, ItemListener {
+public class HouseNumberInputHandler extends JosmAction implements FocusListener, ItemListener {
     private final TerracerAction terracerAction;
-    private final Way outline, street;
+    private final Way outline;
+    private final Way street;
     private final String streetName;
     private final Node init;
     private final Relation associatedStreet;
-    private final ArrayList<Node> housenumbers;
-    public HouseNumberInputDialog dialog;
+    private final List<Node> housenumbers;
+    HouseNumberInputDialog dialog;
 
     /**
      * Instantiates a new house number input handler.
@@ -66,7 +63,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
     public HouseNumberInputHandler(final TerracerAction terracerAction,
             final Way outline, final Node init, final Way street, final String streetName, final String buildingType,
             final Relation associatedStreet,
-            final ArrayList<Node> housenumbers, final String title) {
+            final List<Node> housenumbers, final String title) {
         this.terracerAction = terracerAction;
         this.outline = outline;
         this.init = init;
@@ -108,45 +105,39 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      * Validate the current input fields.
      * When the validation fails, a red message is
      * displayed and the OK button is disabled.
-     *
+     * <p>
      * Should be triggered each time the input changes.
+     * @return {@code true} if the inputs are ok
      */
     private boolean validateInput() {
         boolean isOk = true;
-        StringBuffer message = new StringBuffer();
+        final StringBuilder message = new StringBuilder();
 
-        isOk = isOk && checkNumberOrder(message);
-        isOk = isOk && checkSegmentsFromHousenumber(message);
-        isOk = isOk && checkSegments(message);
+        isOk &= checkNumberOrder(message);
+        isOk &= checkSegmentsFromHousenumber(message);
+        isOk &= checkSegments(message);
 
         // Allow non numeric characters for the low number as long as there is
         // no high number of the segmentcount is 1
         if (dialog.hi.getText().length() > 0 && (segments() != null || segments() < 1)) {
-            isOk = isOk
-                    && checkNumberStringField(dialog.lo, tr("Lowest number"),
+            isOk &= checkNumberStringField(dialog.lo, tr("Lowest number"),
                             message);
         }
-        isOk = isOk
-                && checkNumberStringField(dialog.hi, tr("Highest number"),
+        isOk &= checkNumberStringField(dialog.hi, tr("Highest number"),
                         message);
-        isOk = isOk
-                && checkNumberStringField(dialog.segments, tr("Segments"),
+        isOk &= checkNumberStringField(dialog.segments, tr("Segments"),
                         message);
 
+        JButton okButton = getButton(dialog, "OK");
+        if (okButton != null)
+            okButton.setEnabled(isOk);
         if (isOk) {
-            JButton okButton = getButton(dialog, "OK");
-            if (okButton != null)
-                okButton.setEnabled(true);
 
             // For some reason the messageLabel doesn't want to show up
             dialog.messageLabel.setForeground(Color.black);
             dialog.messageLabel.setText(tr(HouseNumberInputDialog.DEFAULT_MESSAGE));
             return true;
         } else {
-            JButton okButton = getButton(dialog, "OK");
-            if (okButton != null)
-                okButton.setEnabled(false);
-
             // For some reason the messageLabel doesn't want to show up, so a
             // MessageDialog is shown instead. Someone more knowledgeable might fix this.
             dialog.messageLabel.setForeground(Color.red);
@@ -167,13 +158,11 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      *
      * @return true, if successful
      */
-    private boolean checkNumberOrder(final StringBuffer message) {
-        if (numberFrom() != null && numberTo() != null) {
-            if (numberFrom().intValue() > numberTo().intValue()) {
-                appendMessageNewLine(message);
-                message.append(tr("Lowest housenumber cannot be higher than highest housenumber"));
-                return false;
-            }
+    private boolean checkNumberOrder(final StringBuilder message) {
+        if (numberFrom() != null && numberTo() != null && numberFrom() > numberTo()) {
+            appendMessageNewLine(message);
+            message.append(tr("Lowest housenumber cannot be higher than highest housenumber"));
+            return false;
         }
         return true;
     }
@@ -181,7 +170,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
     /**
      * Obtain the number segments from the house number fields and check,
      * if they are valid.
-     *
+     * <p>
      * Also disables the segments field, if the house numbers contain
      * valid information.
      *
@@ -189,12 +178,12 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      *
      * @return true, if successful
      */
-    private boolean checkSegmentsFromHousenumber(final StringBuffer message) {
+    private boolean checkSegmentsFromHousenumber(final StringBuilder message) {
         if (!dialog.numbers.isVisible()) {
             dialog.segments.setEditable(true);
 
             if (numberFrom() != null && numberTo() != null) {
-                int segments = numberTo().intValue() - numberFrom().intValue();
+                int segments = numberTo() - numberFrom();
 
                 if (segments % stepSize() != 0) {
                     appendMessageNewLine(message);
@@ -221,8 +210,8 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      *
      * @return true, if successful
      */
-    private boolean checkSegments(final StringBuffer message) {
-        if (segments() == null || segments().intValue() < 1) {
+    private boolean checkSegments(final StringBuilder message) {
+        if (segments() == null || segments() < 1) {
             appendMessageNewLine(message);
             message.append(tr("Segment must be a number greater 1"));
             return false;
@@ -240,8 +229,8 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      *
      * @return true, if successful
      */
-    private boolean checkNumberStringField(final JTextField field,
-            final String label, final StringBuffer message) {
+    private static boolean checkNumberStringField(final JTextField field,
+            final String label, final StringBuilder message) {
         final String content = field.getText();
         if (content != null && content.length() != 0) {
             try {
@@ -266,7 +255,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      *
      * @param message the message
      */
-    private void appendMessageNewLine(final StringBuffer message) {
+    private static void appendMessageNewLine(final StringBuilder message) {
         if (message.length() > 0) {
             message.append("\n");
         }
@@ -286,23 +275,19 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
                 if (validateInput()) {
                     saveValues();
 
-                    try {
-                        terracerAction.terraceBuilding(
-                            outline,
-                            init,
-                            street,
-                            associatedStreet,
-                            segments(),
-                            dialog.lo.getText(),
-                            dialog.hi.getText(),
-                            stepSize(),
-                            housenumbers,
-                            streetName(),
-                            doHandleRelation(),
-                            doKeepOutline(), buildingType());
-                    } catch (UserCancelException ex) {
-                        Logging.trace(ex);
-                    }
+                    terracerAction.terraceBuilding(
+                        outline,
+                        init,
+                        street,
+                        associatedStreet,
+                        segments(),
+                        dialog.lo.getText(),
+                        dialog.hi.getText(),
+                        stepSize(),
+                        housenumbers,
+                        streetName(),
+                        doHandleRelation(),
+                        doKeepOutline(), buildingType());
 
                     this.dialog.setVisible(false);
                 }
@@ -322,7 +307,7 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
      * @return the stepSize (1 for all, 2 for odd /even)
      */
     public Integer stepSize() {
-        return dialog.interpolation.getSelectedItem().equals(tr("All")) ? 1 : 2;
+        return tr("All").equals(dialog.interpolationType.getSelectedItem()) ? 1 : 2;
     }
 
     /**
@@ -404,21 +389,15 @@ public class HouseNumberInputHandler extends JosmAction implements ActionListene
     /**
      * Whether the user likes to create a relation or add to
      * an existing one.
+     * @return {@code true} if the user wants to create a relation
      */
     public boolean doHandleRelation() {
-        if (this.dialog == null) {
-            JOptionPane.showMessageDialog(null, "dialog", "alert", JOptionPane.ERROR_MESSAGE);
-        }
-        if (this.dialog.handleRelationCheckBox == null) {
-            JOptionPane.showMessageDialog(null, "checkbox", "alert", JOptionPane.ERROR_MESSAGE);
-            return true;
-        } else {
-            return this.dialog.handleRelationCheckBox.isSelected();
-        }
+        return this.dialog.handleRelationCheckBox.isSelected();
     }
 
     /**
      * Whether the user likes to keep the outline way.
+     * @return {@code true} if the user wants to keep the selected outline
      */
     public boolean doKeepOutline() {
         return dialog.keepOutlineCheckBox.isSelected();
