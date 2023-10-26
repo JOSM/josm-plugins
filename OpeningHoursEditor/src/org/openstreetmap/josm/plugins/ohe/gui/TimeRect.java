@@ -9,8 +9,6 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,19 +19,22 @@ import javax.swing.JPopupMenu;
 
 import org.openstreetmap.josm.plugins.ohe.OpeningTimeUtils;
 
+/**
+ * Rectangles for a time block
+ */
 public class TimeRect extends JPanel implements MouseListener, MouseMotionListener {
     
-    public static final int[] transformCursorTypes = new int[] {
+    static final int[] transformCursorTypes = new int[] {
             Cursor.MOVE_CURSOR, Cursor.N_RESIZE_CURSOR,
             Cursor.NE_RESIZE_CURSOR, Cursor.E_RESIZE_CURSOR,
             Cursor.SE_RESIZE_CURSOR, Cursor.S_RESIZE_CURSOR,
             Cursor.SW_RESIZE_CURSOR, Cursor.W_RESIZE_CURSOR,
             Cursor.NW_RESIZE_CURSOR };
 
-    public static final int minuteResterize = 15;
-    public static final int verticalNonDrawedPixels = 5;
+    static final int MINUTE_RASTERIZE = 15;
+    static final int VERTICAL_NON_DRAWN_PIXELS = 5;
 
-    public static final boolean[][] transformDirections = new boolean[][] {
+    static final boolean[][] transformDirections = new boolean[][] {
             {true, true, true, true}, // Drag
             {true, false, false, false}, // N
             {true, true, false, false}, // NE
@@ -45,7 +46,7 @@ public class TimeRect extends JPanel implements MouseListener, MouseMotionListen
             {true, false, false, true}, // NW
     };
 
-    public static final int roundCornerSize = 8;
+    static final int roundCornerSize = 8;
     private final int clickAreaSize = 16;
 
     private OheEditor editor;
@@ -100,7 +101,7 @@ public class TimeRect extends JPanel implements MouseListener, MouseMotionListen
     }
 
     public void reposition() {
-        setBounds(editor.getPanelBoundsForTimeinterval(dayStart, dayEnd + 1, minuteStart, minuteEnd));
+        setBounds(editor.getPanelBoundsForTimeInterval(dayStart, dayEnd + 1, minuteStart, minuteEnd));
         editor.contentPanel.repaint();
     }
 
@@ -144,7 +145,7 @@ public class TimeRect extends JPanel implements MouseListener, MouseMotionListen
         if (isZeroMinuteInterval) {
             innerColor = new Color(135, 234, 135);
             tmpRoundCornerSize = 0;
-            verticalNonFilledBorder = verticalNonDrawedPixels;
+            verticalNonFilledBorder = VERTICAL_NON_DRAWN_PIXELS;
         }
 
         g2D.setColor(innerColor);
@@ -204,24 +205,23 @@ public class TimeRect extends JPanel implements MouseListener, MouseMotionListen
         JPopupMenu menu = new JPopupMenu();
         final JCheckBoxMenuItem cbMenuItem = new JCheckBoxMenuItem(tr("open end"), isOpenEndInterval());
         menu.add(cbMenuItem);
-        cbMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (cbMenuItem.isSelected())
-                    updateTimeInterval(dayStart, dayEnd, minuteStart, 24 * 60 + 1);
-                else
-                    updateTimeInterval(dayStart, dayEnd, minuteStart, 24 * 60);
-            }
+        cbMenuItem.addActionListener(e -> {
+            if (cbMenuItem.isSelected())
+                updateTimeInterval(dayStart, dayEnd, minuteStart, 24 * 60 + 1);
+            else
+                updateTimeInterval(dayStart, dayEnd, minuteStart, 24 * 60);
         });
         menu.show(this, evt.getX(), evt.getY());
     }
 
     @Override
     public void mouseClicked(MouseEvent evt) {
+        // Do nothing
     }
 
     @Override
     public void mouseEntered(MouseEvent evt) {
+        // Do nothing
     }
 
     @Override
@@ -262,8 +262,8 @@ public class TimeRect extends JPanel implements MouseListener, MouseMotionListen
             xDiff = (int) Math.round(xDiff / editor.getDayWidth())
                     - actualDayDrag;
             yDiff = (int) Math.round(yDiff
-                    / (editor.getMinuteHeight() * minuteResterize))
-                    * minuteResterize - actualMinuteDrag;
+                    / (editor.getMinuteHeight() * MINUTE_RASTERIZE))
+                    * MINUTE_RASTERIZE - actualMinuteDrag;
 
             if (xDiff != 0) {
                 int newDayStart = dayStart;

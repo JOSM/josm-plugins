@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.ohe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openstreetmap.josm.plugins.ohe.gui.TimeRect;
 import org.openstreetmap.josm.plugins.ohe.parser.OpeningTimeCompiler;
@@ -18,7 +19,7 @@ public final class OpeningTimeUtils {
     /**
      * Implements the subtraction of daytimes in spans of days when a day in the list occurs direct afterwards 
      */
-    public static ArrayList<int[]> convert(ArrayList<DateTime> dateTimes) {
+    public static List<int[]> convert(List<DateTime> dateTimes) {
         ArrayList<int[]> ret = new ArrayList<>(); // the list which is
         // returned
         for (int i = 0; i < dateTimes.size(); ++i) { // iterate over every entry
@@ -28,15 +29,15 @@ public final class OpeningTimeUtils {
             // test if the given entry is a single dayspan
             if (dateTime.daySpans.size() == 1 && dateTime.daySpans.get(0).isSpan()) {
                 ArrayList<DaySpan> partDaySpans = new ArrayList<>();
-                int start_day = dateTime.daySpans.get(0).startDay;
+                int startDay = dateTime.daySpans.get(0).startDay;
 
                 // look in every entry behind
                 while (i + 1 < dateTimes.size()) {
-                    ArrayList<DaySpan> following = dateTimes.get(i + 1).daySpans;
+                    List<DaySpan> following = dateTimes.get(i + 1).daySpans;
                     if (following.size() == 1 && following.get(0).startDay > dateTime.daySpans.get(0).startDay
                             && following.get(0).endDay < dateTime.daySpans.get(0).endDay) {
-                        partDaySpans.add(new DaySpan(start_day, following.get(0).startDay - 1));
-                        start_day = following.get(0).endDay + 1;
+                        partDaySpans.add(new DaySpan(startDay, following.get(0).startDay - 1));
+                        startDay = following.get(0).endDay + 1;
                         newDateTimes.add(dateTimes.get(i + 1));
                         i++;
                     } else {
@@ -44,7 +45,7 @@ public final class OpeningTimeUtils {
                     }
                 }
 
-                partDaySpans.add(new DaySpan(start_day, dateTime.daySpans.get(0).endDay));
+                partDaySpans.add(new DaySpan(startDay, dateTime.daySpans.get(0).endDay));
                 newDateTimes.add(new DateTime(partDaySpans, dateTime.daytimeSpans));
             }
             if (newDateTimes.isEmpty()) {
@@ -52,13 +53,12 @@ public final class OpeningTimeUtils {
             }
 
             // create the int-array
-            for (int j = 0; j < newDateTimes.size(); ++j) {
-                DateTime dateTime2 = newDateTimes.get(j);
+            for (DateTime dateTime2 : newDateTimes) {
                 for (DaySpan dayspan : dateTime2.daySpans) {
                     for (DaytimeSpan timespan : dateTime2.daytimeSpans) {
                         if (!timespan.isOff()) {
-                            ret.add(new int[] {dayspan.startDay, dayspan.endDay, timespan.startMinute,
-                                    timespan.endMinute });
+                            ret.add(new int[]{dayspan.startDay, dayspan.endDay, timespan.startMinute,
+                                    timespan.endMinute});
                         }
                     }
                 }
@@ -67,10 +67,20 @@ public final class OpeningTimeUtils {
         return ret;
     }
 
+    /**
+     * The span of days
+     */
     public static class DaySpan {
-        public int startDay;
-        public int endDay;
+        /** The start day */
+        public final int startDay;
+        /** The end day */
+        public final int endDay;
 
+        /**
+         * Create a new day span
+         * @param startDay The weekday start
+         * @param endDay The weekday end
+         */
         public DaySpan(int startDay, int endDay) {
             this.startDay = startDay;
             this.endDay = endDay;
@@ -85,10 +95,20 @@ public final class OpeningTimeUtils {
         }
     }
 
+    /**
+     * A span of time within a day
+     */
     public static class DaytimeSpan {
-        public int startMinute;
-        public int endMinute;
+        /** The start minute of the time span */
+        public final int startMinute;
+        /** The end minute of the time span */
+        public final int endMinute;
 
+        /**
+         * Create a new time span
+         * @param startMinute The start minute
+         * @param endMinute The end minute
+         */
         public DaytimeSpan(int startMinute, int endMinute) {
             this.startMinute = startMinute;
             this.endMinute = endMinute;
@@ -103,11 +123,21 @@ public final class OpeningTimeUtils {
         }
     }
 
+    /**
+     * A collection of days and time spans
+     */
     public static class DateTime {
-        public ArrayList<DaySpan> daySpans;
-        public ArrayList<DaytimeSpan> daytimeSpans;
+        /** The weekday spans */
+        public final List<DaySpan> daySpans;
+        /** The time spans */
+        public final List<DaytimeSpan> daytimeSpans;
 
-        public DateTime(ArrayList<DaySpan> daySpans, ArrayList<DaytimeSpan> daytimeSpans) {
+        /**
+         * Create a new collection of time spans
+         * @param daySpans The weekday spans
+         * @param daytimeSpans The times for the weekday spans
+         */
+        public DateTime(List<DaySpan> daySpans, List<DaytimeSpan> daytimeSpans) {
             this.daySpans = daySpans;
             this.daytimeSpans = daytimeSpans;
         }
@@ -116,7 +146,7 @@ public final class OpeningTimeUtils {
     /**
      * Returns a String (e.g "Mo-Sa 10:00-20:00; Tu off") representing the TimeRects
      */
-    public static String makeStringFromRects(ArrayList<TimeRect> givenTimeRects) {
+    public static String makeStringFromRects(List<TimeRect> givenTimeRects) {
         // create an array of booleans representing every minute on all the days in a week
         boolean[][] minuteArray = new boolean[7][24 * 60 + 2];
         for (int day = 0; day < 7; ++day) {
@@ -132,7 +162,7 @@ public final class OpeningTimeUtils {
             }
         }
 
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         int[] days = new int[7]; // an array representing the status of the days
         // 0 means nothing done with this day yet
         // 8 means the day is off
@@ -178,20 +208,20 @@ public final class OpeningTimeUtils {
             }
 
             if (!add.isEmpty()) {
-                if (!ret.isEmpty()) {
-                    ret += "; ";
+                if (ret.length() != 0) {
+                    ret.append("; ");
                 }
-                ret += add;
+                ret.append(add);
             }
         }
-        return ret;
+        return ret.toString();
     }
 
     /**
      * Returns a String representing the openinghours on one special day (e.g. "10:00-20:00")
      */
     private static String makeStringFromMinuteArray(boolean[] minutes) {
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         for (int i = 0; i < minutes.length; ++i) {
             if (minutes[i]) {
                 int start = i;
@@ -204,25 +234,36 @@ public final class OpeningTimeUtils {
                 } else if (start != i - 1) {
                     addString += "-" + timeString(i - 1);
                 }
-                if (!ret.isEmpty()) {
-                    ret += ",";
+                if (ret.length() != 0) {
+                    ret.append(',');
                 }
-                ret += addString;
+                ret.append(addString);
             }
         }
-        return ret;
+        return ret.toString();
     }
 
+    /**
+     * Convert minutes to a string
+     * @param minutes integer in range from 0 and 24*60 inclusive
+     * @return a formatted string of the time (for example "01:45 PM" or "13:45")
+     */
     public static String timeString(int minutes) {
         return timeString(minutes, ClockSystem.TWENTYFOUR_HOURS);
     }
 
+    /**
+     * Convert minutes to a string
+     * @param minutes integer in range from 0 and 24*60 inclusive
+     * @param hourMode 12 or 24 hour clock
+     * @return a formatted string of the time (for example "01:45 PM" or "13:45")
+     */
     public static String timeString(int minutes, ClockSystem hourMode) {
         return timeString(minutes, hourMode, false);
     }
 
     /**
-     * 
+     * Convert minutes to a string
      * @param minutes integer in range from 0 and 24*60 inclusive
      * @param hourMode 12 or 24 hour clock
      * @param showPeriod if 12 hour clock is chosen, the "AM"/"PM" will be shown
@@ -249,8 +290,8 @@ public final class OpeningTimeUtils {
     }
 
     private static boolean isArrayEmpty(boolean[] bs) {
-        for (int i = 0; i < bs.length; i++) {
-            if (bs[i])
+        for (boolean b : bs) {
+            if (b)
                 return false;
         }
         return true;

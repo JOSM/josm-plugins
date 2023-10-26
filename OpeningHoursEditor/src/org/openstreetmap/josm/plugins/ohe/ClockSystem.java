@@ -28,8 +28,8 @@ public enum ClockSystem {
         String midnight = "";
         try {
             midnight = localeFormat.format(stdFormat.parse("12:00 AM"));
-        } catch (ParseException ignore) {
-            Logging.trace(ignore);
+        } catch (ParseException parseException) {
+            Logging.trace(parseException);
         }
         if (midnight.contains("12"))
             return TWELVE_HOURS;

@@ -4,10 +4,9 @@ package org.openstreetmap.josm.plugins.ohe.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -18,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.openstreetmap.josm.plugins.ohe.ClockSystem;
-import org.openstreetmap.josm.plugins.ohe.OhePlugin;
 import org.openstreetmap.josm.plugins.ohe.OpeningTimeUtils;
 import org.openstreetmap.josm.plugins.ohe.parser.OpeningTimeCompiler;
 import org.openstreetmap.josm.plugins.ohe.parser.ParseException;
@@ -27,34 +25,40 @@ import org.openstreetmap.josm.plugins.ohe.parser.TokenMgrError;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
+/** The dialog panel for editing opening hourse */
 public class OheDialogPanel extends JPanel {
 
+    /** The key we are modifying */
     private final JTextField keyField;
 
-    // The Component for showing the Time as a Text
+    /** The Component for showing the Time as a Text */
     private final JTextField valueField;
 
-    private final JButton twentyfourSevenButton;
-    private final JLabel actualPostionLabel;
+    /** The position of the mouse pointer*/
+    private final JLabel actualPositionLabel;
 
-    // The important Panel for showing/editing the Time graphical
+    /** The important Panel for showing/editing the Time graphical */
     private final OheEditor editorPanel;
 
-    private final String oldkey;
+    /** The original key for the initial timespan */
+    private final String oldKey;
 
-    private ClockSystem clockSystem;
+    /** The ClockSystem that the user wants us to use */
+    private final ClockSystem clockSystem;
 
     /**
      * The Panel for editing the time-values.
-     * 
+     *
+     * @param key The key to edit
      * @param valuesToEdit
      *            can be a String or a Map&lt;String, Integer&gt; which contains
      *            multiple values and their number of occurences
+     * @param clockSystem The clocksystem to use
      */
-    public OheDialogPanel(OhePlugin plugin, String key, Object valuesToEdit, ClockSystem clockSystem) {
+    public OheDialogPanel(String key, Object valuesToEdit, ClockSystem clockSystem) {
         this.clockSystem = clockSystem;
 
-        oldkey = key;
+        oldKey = key;
         keyField = new JTextField(key);
 
         String value = "";
@@ -68,70 +72,65 @@ public class OheDialogPanel extends JPanel {
             else if (valuesMap.size() > 1) {
                 // TODO let the user choose which value he wants to edit (e.g. with a combobox)
                 int mostOccurences = 0;
-                for (String v : valuesMap.keySet()) {
-                    if (valuesMap.get(v) > mostOccurences) {
-                        value = v;
-                        mostOccurences = valuesMap.get(v);
+                for (Map.Entry<String, Integer> entry : valuesMap.entrySet()) {
+                    if (entry.getValue() > mostOccurences) {
+                        value = entry.getKey();
+                        mostOccurences = entry.getValue();
                     }
                 }
             }
         }
         valueField = new JTextField(value);
-        valueField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                // on every action in the textfield the timeRects are reloaded
-                editorPanel.initTimeRects();
-            }
-        });
 
-        twentyfourSevenButton = new JButton(tr("apply {0}", "24/7"));
-        twentyfourSevenButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                valueField.setText("24/7");
-                editorPanel.initTimeRects();
-            }
-        });
+        JButton twentyfourSevenButton = new JButton(tr("apply {0}", "24/7"));
 
-        actualPostionLabel = new JLabel("-");
+        actualPositionLabel = new JLabel("-");
         JPanel toolsPanel = new JPanel(new GridBagLayout());
         toolsPanel.add(twentyfourSevenButton, GBC.std());
-        toolsPanel.add(Box.createGlue(), GBC.std().fill(GBC.HORIZONTAL));
-        toolsPanel.add(actualPostionLabel, GBC.eop());
+        toolsPanel.add(Box.createGlue(), GBC.std().fill(GridBagConstraints.HORIZONTAL));
+        toolsPanel.add(actualPositionLabel, GBC.eop());
         
         editorPanel = new OheEditor(this);
+
+        // on every action in the textfield the timeRects are reloaded
+        valueField.addActionListener(evt -> editorPanel.initTimeRects());
+
+        twentyfourSevenButton.addActionListener(arg0 -> {
+            valueField.setText("24/7");
+            editorPanel.initTimeRects();
+        });
 
         // adding all Components in a Gridbaglayout
         setLayout(new GridBagLayout());
         add(new JLabel(tr("Key")), GBC.std());
         add(Box.createHorizontalStrut(10), GBC.std());
-        add(keyField, GBC.eol().fill(GBC.HORIZONTAL));
+        add(keyField, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         add(new JLabel(tr("Value")), GBC.std());
         add(Box.createHorizontalStrut(10), GBC.std());
-        add(valueField, GBC.eop().fill(GBC.HORIZONTAL));
-        add(toolsPanel, GBC.eol().fill(GBC.HORIZONTAL));
+        add(valueField, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
+        add(toolsPanel, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         add(editorPanel, GBC.eol().fill());
 
         setPreferredSize(new Dimension(480, 520));
     }
 
     public String[] getChangedKeyValuePair() {
-        return new String[] {oldkey, keyField.getText(), valueField.getText()};
+        return new String[] {oldKey, keyField.getText(), valueField.getText()};
     }
 
     /**
      * Returns the compiled Time from the valueField.
      * @return the compiled Time from the valueField
+     * @throws OheException if the time value could not be parsed
      */
-    public ArrayList<int[]> getTime() throws Exception {
+    public List<int[]> getTime() throws OheException {
         String value = valueField.getText();
-        ArrayList<int[]> time = null;
+        List<int[]> time = null;
         if (value.length() > 0) {
             OpeningTimeCompiler compiler = new OpeningTimeCompiler(value);
             try {
                 time = OpeningTimeUtils.convert(compiler.startCompile());
-            } catch (Exception | TokenMgrError t) {
+            } catch (ParseException | SyntaxException | TokenMgrError t) {
                 Logging.warn(t);
                 
                 int[] tColumns = null;
@@ -151,9 +150,7 @@ public class OheDialogPanel extends JPanel {
                             int col = Integer.parseInt(info.substring(idx+"column ".length(), info.indexOf('.', idx)));
                             tColumns = new int[] {col - 1, col + 1};
                         }
-                    } catch (IndexOutOfBoundsException e) {
-                        Logging.warn(e);
-                    } catch (NumberFormatException e) {
+                    } catch (IndexOutOfBoundsException | NumberFormatException e) {
                         Logging.warn(e);
                     }
                 }
@@ -182,7 +179,7 @@ public class OheDialogPanel extends JPanel {
                     JOptionPane.showMessageDialog(this, message, tr("Error in timeformat"), JOptionPane.INFORMATION_MESSAGE);
                 }
 
-                throw new Exception("Error in the TimeValue", t);
+                throw new OheException("Error in the TimeValue", t);
             }
         }
 
@@ -190,15 +187,20 @@ public class OheDialogPanel extends JPanel {
     }
 
     /**
-     * Updates the valueField with the given timeRects.
+     * Updates the valueField with the given {@link TimeRect}s.
+     * @param timeRects The time rectangles to set the value from
      */
-    public void updateValueField(ArrayList<TimeRect> timeRects) {
+    void updateValueField(List<TimeRect> timeRects) {
         if (valueField != null && timeRects != null)
             valueField.setText(OpeningTimeUtils.makeStringFromRects(timeRects));
     }
 
-    public void setMousePositionText(String positionText) {
-        actualPostionLabel.setText(positionText);
+    /**
+     * Set the position text for the mouse
+     * @param positionText The text to use
+     */
+    void setMousePositionText(String positionText) {
+        actualPositionLabel.setText(positionText);
     }
 
     /**

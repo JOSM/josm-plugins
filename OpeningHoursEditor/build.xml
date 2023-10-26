@@ -15,9 +15,9 @@
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
 	
-	<property name="parser.dir" location="${plugin.src.dir}/org/openstreetmap/josm/plugins/ohe/parser"/>
+    <property name="parser.dir" location="${plugin.src.dir}/org/openstreetmap/josm/plugins/ohe/parser"/>
 	
-    <target name="javacc" depends="init" unless="javacc.notRequired">
+    <target name="javacc" depends="resolve-tools" unless="javacc.notRequired">
         <ivy:cachepath file="${core.tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <java classname="javacc" fork="true" failonerror="true">
             <classpath refid="javacc.classpath"/>
@@ -29,21 +29,8 @@
         </java>
     </target>
 
-	<!--
-    **********************************************************
-    ** compile - compiles the source tree
-    **********************************************************
-    -->
-    <target name="compile" depends="init, javacc">
-        <echo message="compiling sources for ${plugin.jar} ... "/>
-        <javac srcdir="src" debug="true" destdir="${plugin.build.dir}" includeAntRuntime="false" encoding="UTF-8">
-            <classpath>
-                <pathelement path="${plugin.build.dir}"/>
-                <pathelement location="${josm}"/>
-            </classpath>
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:unchecked"/>
-        </javac>
+    <target name="pre-compile" depends="javacc">
+      <!-- ensure that we build the javacc classes -->
     </target>
 
 </project>

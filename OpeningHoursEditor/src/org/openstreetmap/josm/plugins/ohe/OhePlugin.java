@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -60,7 +62,7 @@ public class OhePlugin extends Plugin {
      * edited, the order is referencing the preference of the keys, String[] -&gt;
      * {key, value, key-to-edit} key and value can contain regular expressions
      */
-    private final String[][] TAG_EDIT_STRINGS = new String[][] {
+    private static final String[][] TAG_EDIT_STRINGS = new String[][] {
             {"opening_hours", ".*", "opening_hours"},
             {"opening_hours:kitchen", ".*", "opening_hours:kitchen"},
             {"collection_times", ".*", "collection_times"},
@@ -194,8 +196,8 @@ public class OhePlugin extends Plugin {
 
             // showing the tags in a dialog
             propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            JScrollPane sp = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            JScrollPane sp = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             sp.setViewportView(propertyTable);
 
             final JComboBox<String> newTagField = new JComboBox<>(new String[]{
@@ -268,11 +270,11 @@ public class OhePlugin extends Plugin {
                     clockSystem == ClockSystem.TWELVE_HOURS);
 
             JPanel dlgPanel = new JPanel(new GridBagLayout());
-            dlgPanel.add(editButton, GBC.std().anchor(GBC.WEST));
-            dlgPanel.add(sp, GBC.eol().fill(GBC.BOTH));
-            dlgPanel.add(newButton, GBC.std().anchor(GBC.WEST));
-            dlgPanel.add(newTagField, GBC.eol().fill(GBC.HORIZONTAL));
-            dlgPanel.add(useTwelveHourClock, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
+            dlgPanel.add(editButton, GBC.std().anchor(GridBagConstraints.WEST));
+            dlgPanel.add(sp, GBC.eol().fill(GridBagConstraints.BOTH));
+            dlgPanel.add(newButton, GBC.std().anchor(GridBagConstraints.WEST));
+            dlgPanel.add(newTagField, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            dlgPanel.add(useTwelveHourClock, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 5, 0, 5));
 
             JOptionPane optionPane = new JOptionPane(dlgPanel, JOptionPane.QUESTION_MESSAGE,
                     JOptionPane.OK_CANCEL_OPTION);
@@ -285,13 +287,14 @@ public class OhePlugin extends Plugin {
             String keyToEdit = null;
             Object valuesToEdit = "";
             if (answer != null && answer != JOptionPane.UNINITIALIZED_VALUE
-                    && (answer instanceof Integer && (Integer) answer == JOptionPane.OK_OPTION))
+                    && (answer instanceof Integer && (Integer) answer == JOptionPane.OK_OPTION)) {
                 if (editButton.isSelected() && propertyTable.getSelectedRow() != -1) {
                     keyToEdit = (String) propertyData.getValueAt(propertyTable.getSelectedRow(), 0);
                     valuesToEdit = propertyData.getValueAt(propertyTable.getSelectedRow(), 1);
                 } else if (newButton.isSelected()) {
                     keyToEdit = newTagField.getSelectedItem().toString();
                 }
+            }
             if (keyToEdit == null)
                 return;
 
@@ -299,7 +302,7 @@ public class OhePlugin extends Plugin {
             Config.getPref().put("ohe.clocksystem", (useTwelveHourClock.isSelected() ? ClockSystem.TWELVE_HOURS
                     : ClockSystem.TWENTYFOUR_HOURS).toString());
 
-            OheDialogPanel panel = new OheDialogPanel(OhePlugin.this, keyToEdit, valuesToEdit,
+            OheDialogPanel panel = new OheDialogPanel(keyToEdit, valuesToEdit,
                     useTwelveHourClock.isSelected() ? ClockSystem.TWELVE_HOURS : ClockSystem.TWENTYFOUR_HOURS);
 
             optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
@@ -319,10 +322,10 @@ public class OhePlugin extends Plugin {
             String newkey = changedKeyValuePair[1].trim();
             String value = changedKeyValuePair[2].trim();
 
-            if (value.equals("")) {
+            if ("".equals(value)) {
                 value = null; // delete the key
             }
-            if (newkey.equals("")) {
+            if ("".equals(newkey)) {
                 newkey = key;
                 value = null; // delete the key instead
             }
