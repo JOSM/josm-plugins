@@ -54,6 +54,7 @@ public class KmlReader extends AbstractReader {
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     public static final Pattern COLOR_PATTERN = Pattern.compile("\\p{XDigit}{8}");
+    private static final Pattern SPACE_PATTERN = Pattern.compile("\\s", Pattern.UNICODE_CHARACTER_CLASS);
 
     private final XMLStreamReader parser;
     private final Map<LatLon, Node> nodes = new HashMap<>();
@@ -143,16 +144,17 @@ public class KmlReader extends AbstractReader {
                         relation.addMember(new RelationMember(role, way));
                     }
                 } else if (parser.getLocalName().equals(KML_LINE_STRING) || parser.getLocalName().equals(KML_EXT_TRACK)) {
-                    ds.addPrimitive(way = new Way());
+                    way = new Way();
+                    ds.addPrimitive(way);
                     wayNodes = new ArrayList<>();
                     list.add(way);
                 } else if (parser.getLocalName().equals(KML_COORDINATES)) {
-                    String[] tab = parser.getElementText().trim().split("\\s", Pattern.UNICODE_CHARACTER_CLASS);
+                    String[] tab = SPACE_PATTERN.split(parser.getElementText().trim());
                     for (String s : tab) {
                         node = parseNode(ds, wayNodes, node, s.split(","));
                     }
                 } else if (parser.getLocalName().equals(KML_EXT_COORD)) {
-                    node = parseNode(ds, wayNodes, node, parser.getElementText().trim().split("\\s", Pattern.UNICODE_CHARACTER_CLASS));
+                    node = parseNode(ds, wayNodes, node, SPACE_PATTERN.split(parser.getElementText().trim()));
                     if (node != null && when > 0) {
                         node.setRawTimestamp((int) when);
                     }
@@ -176,9 +178,11 @@ public class KmlReader extends AbstractReader {
                 }
             }
         }
-        for (OsmPrimitive p : list) {
-            p.putAll(tags);
-        }
+        ds.update(() -> {
+            for (OsmPrimitive p : list) {
+                p.putAll(tags);
+            }
+        });
     }
 
     private Node parseNode(DataSet ds, List<Node> wayNodes, Node node, String[] values) {
