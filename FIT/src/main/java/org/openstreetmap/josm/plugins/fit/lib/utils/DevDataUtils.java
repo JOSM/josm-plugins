@@ -24,6 +24,15 @@ public final class DevDataUtils {
         // Hide constructor
     }
 
+    /**
+     * Parse the dev fields
+     * @param littleEndian {@code true} if the bit ordering is little endian
+     * @param developerFieldList The current list of developer fiels
+     * @param devFields The array of developer field descriptions
+     * @param inputStream The stream to read
+     * @return The dev data record
+     * @throws IOException If something happened while reading the stream
+     */
     public static FitDevDataRecord parseDevFields(boolean littleEndian,
             Collection<FitDeveloperField> developerFieldList, FitDeveloperFieldDescriptionMessage[] devFields,
             InputStream inputStream) throws IOException {

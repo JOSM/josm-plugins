@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +34,8 @@ import org.openstreetmap.josm.plugins.fit.lib.utils.NumberUtils;
  * Read a fit file
  */
 public final class FitReader {
+    private record LastTimestamp(long lastTimestamp, int offsetAddition, byte lastOffset){}
+    private record ParseFitRecordHeader(LastTimestamp lastTimestamp, FitDeveloperFieldDescriptionMessage[] devFields){}
     private static final FitData[] EMPTY_FIT_DATA_ARRAY = new FitData[0];
 
     private FitReader() {
@@ -44,6 +47,7 @@ public final class FitReader {
      *
      * @param inputStream The stream to read
      * @param options options for reading the file
+     * @return The parsed FIT data
      * @throws FitException if there was an error reading the fit file <i>or</i> there was an {@link InputStream} read
      *                      exception.
      */
@@ -54,77 +58,7 @@ public final class FitReader {
                 : EnumSet.of(options[0], options);
         final var fitData = new ArrayList<FitData>();
         try {
-            final var header = readFitHeader(bufferedInputStream);
-            final var headerSize = bufferedInputStream.bytesRead();
-            bufferedInputStream.mark(1);
-            var localMessageHeaders = new FitDefinitionMessage[1];
-            var developerData = new FitDeveloperFieldDescriptionMessage[0];
-            long lastTimeStamp = Long.MIN_VALUE;
-            var offsetAddition = 0;
-            byte lastOffset = 0;
-            while (bufferedInputStream.read() != -1
-                    && bufferedInputStream.bytesRead() < header.dataSize() - headerSize) {
-                bufferedInputStream.reset();
-                final var nextRecordHeader = readNextRecordHeader(bufferedInputStream);
-                if (nextRecordHeader instanceof FitRecordNormalHeader normalHeader) {
-                    if (normalHeader.isDefinitionMessage()) {
-                        final var fitDefinitionMessage = readNextDefinition(normalHeader, bufferedInputStream);
-                        if (localMessageHeaders.length <= normalHeader.localMessageType()) {
-                            localMessageHeaders = Arrays.copyOf(localMessageHeaders,
-                                    normalHeader.localMessageType() + 1);
-                        }
-                        localMessageHeaders[normalHeader.localMessageType()] = fitDefinitionMessage;
-                    } else {
-                        final Object obj = readNextRecord(localMessageHeaders[normalHeader.localMessageType()],
-                                developerData, bufferedInputStream);
-                        if (obj instanceof IFitTimestamp<?> timestamp) {
-                            lastTimeStamp = timestamp.timestamp().getEpochSecond() & 0xFF_FFF_FE0L;
-                            offsetAddition = 0;
-                            lastOffset = 0;
-                        }
-                        if (obj instanceof FitData fd) {
-                            fitData.add(fd);
-                        } else if (obj instanceof FitDeveloperFieldDescriptionMessage developerFieldDescriptionMessage) {
-                            if (developerData.length <= developerFieldDescriptionMessage.developerDataIndex()) {
-                                developerData = Arrays.copyOf(developerData,
-                                        developerFieldDescriptionMessage.developerDataIndex() + 1);
-                            }
-                            developerData[developerFieldDescriptionMessage
-                                    .developerDataIndex()] = developerFieldDescriptionMessage;
-                        } else {
-                            handleException(optionsSet, new IllegalStateException("Unknown record type"));
-                        }
-                    }
-                } else if (nextRecordHeader instanceof FitRecordCompressedTimestampHeader compressedHeader) {
-                    if (lastTimeStamp == Long.MIN_VALUE) {
-                        handleException(optionsSet,
-                                new FitException("No full timestamp found before compressed timestamp header"));
-                        break;
-                    }
-                    if (compressedHeader.timeOffset() < lastOffset) {
-                        offsetAddition++;
-                    }
-                    final Object obj = readNextRecord(localMessageHeaders[compressedHeader.localMessageType()],
-                            developerData, bufferedInputStream);
-                    if (obj instanceof FitData fd) {
-                        // Note: this could be wrong
-                        long actualTimestamp = lastTimeStamp + compressedHeader.timeOffset() + (offsetAddition * 0x20L);
-                        if (fd instanceof IFitTimestamp<?> timestamp) {
-                            fitData.add((FitData) timestamp.withTimestamp(Instant.ofEpochSecond(actualTimestamp)));
-                        } else {
-                            fitData.add(fd);
-                        }
-                    } else {
-                        handleException(optionsSet, new IllegalStateException(
-                                "Cannot handle non-data types with compressed timestamp headers"));
-                    }
-                    lastOffset = compressedHeader.timeOffset();
-                } else {
-                    handleException(optionsSet,
-                            new UnsupportedOperationException("Unknown record type: " + nextRecordHeader.getClass()));
-                }
-                bufferedInputStream.mark(1);
-            }
+            parseData(bufferedInputStream, optionsSet, fitData);
         } catch (FitException fitException) {
             handleException(optionsSet, fitException);
         } catch (IllegalArgumentException | IOException ioException) {
@@ -133,7 +67,109 @@ public final class FitReader {
         return fitData.toArray(EMPTY_FIT_DATA_ARRAY);
     }
 
-    private static <T extends Throwable> void handleException(EnumSet<FitReaderOptions> options, T throwable) throws T {
+    private static void parseData(CountingInputStream bufferedInputStream,
+                                  Set<FitReaderOptions> optionsSet, List<FitData> fitData) throws IOException {
+        final var header = readFitHeader(bufferedInputStream);
+        final var headerSize = bufferedInputStream.bytesRead();
+        bufferedInputStream.mark(1);
+        var localMessageHeaders = new FitDefinitionMessage[1];
+        var developerData = new FitDeveloperFieldDescriptionMessage[0];
+        var lastTimeStamp = new LastTimestamp(Long.MIN_VALUE, 0, (byte) 0);
+        while (bufferedInputStream.read() != -1
+                && bufferedInputStream.bytesRead() < header.dataSize() + headerSize) {
+            bufferedInputStream.reset();
+            final var nextRecordHeader = readNextRecordHeader(bufferedInputStream);
+            if (nextRecordHeader instanceof FitRecordNormalHeader normalHeader) {
+                if (normalHeader.isDefinitionMessage()) {
+                    localMessageHeaders = parseFitRecordDefinitionHeader(bufferedInputStream, localMessageHeaders, normalHeader);
+                } else {
+                    final var parsed = parseFitRecordHeader(optionsSet, bufferedInputStream,
+                            localMessageHeaders, developerData, fitData, normalHeader);
+                    if (parsed.lastTimestamp() != null) {
+                        lastTimeStamp = parsed.lastTimestamp();
+                    }
+                    developerData = parsed.devFields();
+                }
+            } else if (nextRecordHeader instanceof FitRecordCompressedTimestampHeader compressedHeader) {
+                if (lastTimeStamp.lastTimestamp() == Long.MIN_VALUE) {
+                    handleException(optionsSet,
+                            new FitException("No full timestamp found before compressed timestamp header"));
+                    break;
+                }
+                if (compressedHeader.timeOffset() < lastTimeStamp.lastOffset()) {
+                    lastTimeStamp = new LastTimestamp(lastTimeStamp.lastTimestamp(), lastTimeStamp.offsetAddition() + 1,
+                            lastTimeStamp.lastOffset());
+                }
+                parseFitRecordCompressedHeader(optionsSet, bufferedInputStream, localMessageHeaders, developerData,
+                        fitData, compressedHeader, lastTimeStamp);
+                lastTimeStamp = new LastTimestamp(lastTimeStamp.lastTimestamp(), lastTimeStamp.offsetAddition(),
+                        compressedHeader.timeOffset());
+            } else {
+                handleException(optionsSet,
+                        new UnsupportedOperationException("Unknown record type: " + nextRecordHeader.getClass()));
+            }
+            bufferedInputStream.mark(1);
+        }
+    }
+
+    private static FitDefinitionMessage[] parseFitRecordDefinitionHeader(InputStream inputStream,
+                                                                         FitDefinitionMessage[] localMessageHeaders,
+                                                                         FitRecordNormalHeader normalHeader) throws IOException {
+        final var fitDefinitionMessage = readNextDefinition(normalHeader, inputStream);
+        if (localMessageHeaders.length <= normalHeader.localMessageType()) {
+            localMessageHeaders = Arrays.copyOf(localMessageHeaders,
+                    normalHeader.localMessageType() + 1);
+        }
+        localMessageHeaders[normalHeader.localMessageType()] = fitDefinitionMessage;
+        return localMessageHeaders;
+    }
+
+    private static ParseFitRecordHeader parseFitRecordHeader(Set<FitReaderOptions> optionsSet, InputStream bufferedInputStream,
+                                               FitDefinitionMessage[] localMessageHeaders, FitDeveloperFieldDescriptionMessage[] developerData,
+                                               List<FitData> fitData, FitRecordNormalHeader normalHeader) throws IOException {
+        final Object obj = readNextRecord(localMessageHeaders[normalHeader.localMessageType()],
+                developerData, bufferedInputStream);
+        LastTimestamp lastTimeStamp = null;
+        if (obj instanceof IFitTimestamp<?> timestamp) {
+            lastTimeStamp = new LastTimestamp(timestamp.timestamp().getEpochSecond() & 0xFF_FFF_FE0L, 0, (byte) 0);
+        }
+        if (obj instanceof FitData fd) {
+            fitData.add(fd);
+        } else if (obj instanceof FitDeveloperFieldDescriptionMessage developerFieldDescriptionMessage) {
+            if (developerData.length <= developerFieldDescriptionMessage.developerDataIndex()) {
+                developerData = Arrays.copyOf(developerData,
+                        developerFieldDescriptionMessage.developerDataIndex() + 1);
+            }
+            developerData[developerFieldDescriptionMessage
+                    .developerDataIndex()] = developerFieldDescriptionMessage;
+        } else {
+            handleException(optionsSet, new IllegalStateException("Unknown record type"));
+        }
+        return new ParseFitRecordHeader(lastTimeStamp, developerData);
+    }
+
+    private static void parseFitRecordCompressedHeader(Set<FitReaderOptions> optionsSet, InputStream bufferedInputStream,
+                                                       FitDefinitionMessage[] localMessageHeaders,
+                                                       FitDeveloperFieldDescriptionMessage[] developerData, List<FitData> fitData,
+                                                       FitRecordCompressedTimestampHeader compressedHeader, LastTimestamp lastTimeStamp)
+            throws IOException {
+        final Object obj = readNextRecord(localMessageHeaders[compressedHeader.localMessageType()],
+                developerData, bufferedInputStream);
+        if (obj instanceof FitData fd) {
+            // Note: this could be wrong
+            long actualTimestamp = lastTimeStamp.lastTimestamp() + compressedHeader.timeOffset() + (lastTimeStamp.offsetAddition() * 0x20L);
+            if (fd instanceof IFitTimestamp<?> timestamp) {
+                fitData.add((FitData) timestamp.withTimestamp(Instant.ofEpochSecond(actualTimestamp)));
+            } else {
+                fitData.add(fd);
+            }
+        } else {
+            handleException(optionsSet, new IllegalStateException(
+                    "Cannot handle non-data types with compressed timestamp headers"));
+        }
+    }
+
+    private static <T extends Throwable> void handleException(Set<FitReaderOptions> options, T throwable) throws T {
         if (!options.contains(FitReaderOptions.TRY_TO_FINISH)) {
             throw throwable;
         }
