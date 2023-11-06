@@ -3,7 +3,6 @@ package org.openstreetmap.josm.plugins.turnrestrictions.editor;
 
 import org.junit.platform.suite.api.SelectClasses;
 
-import junit.framework.TestCase;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
@@ -15,4 +14,4 @@ import org.junit.platform.suite.api.Suite;
     TurnRestrictionTypeTest.class,
     ExceptValueModelTest.class
 })
-public class AllEditorTests extends TestCase{}
+public class AllEditorTests {}

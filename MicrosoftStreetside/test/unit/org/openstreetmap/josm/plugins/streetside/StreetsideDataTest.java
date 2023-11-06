@@ -25,9 +25,6 @@ import org.openstreetmap.josm.testutils.annotations.Main;
 @Main
 class StreetsideDataTest {
 
-  /*@Rule
-  public JOSMTestRules rules = new StreetsideTestRules().platform();*/
-
   private StreetsideData data;
   private StreetsideImage img1;
   private StreetsideImage img2;

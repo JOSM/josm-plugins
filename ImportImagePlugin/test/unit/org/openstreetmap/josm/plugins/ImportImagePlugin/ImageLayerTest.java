@@ -8,27 +8,20 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Test that some geotiff sample files can be read.
  * Data downloaded from <a href="ftp://ftp.remotesensing.org/pub/geotiff/samples">remotesensing.org</a>.
  */
 @BasicPreferences
+@Projection
 class ImageLayerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    static JOSMTestRules rules = new JOSMTestRules().projection();
-
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/14894">#14894</a>
      * @throws Exception if an error occurs during reading

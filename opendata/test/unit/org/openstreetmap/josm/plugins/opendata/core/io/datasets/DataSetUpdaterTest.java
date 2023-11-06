@@ -12,14 +12,12 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.opendata.core.datasets.DataSetUpdater;
 import org.openstreetmap.josm.plugins.opendata.core.io.archive.ZipReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Projection;
 
@@ -27,16 +25,10 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
  * Unit tests of {@link DataSetUpdater} class.
  */
 @BasicPreferences
+@org.openstreetmap.josm.testutils.annotations.OsmApi(org.openstreetmap.josm.testutils.annotations.OsmApi.APIType.DEV)
 @Projection
 @Timeout(value = 1, unit = TimeUnit.MINUTES)
 class DataSetUpdaterTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules().devAPI();
-
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/11166">#11166</a>
      * @throws Exception if an error occurs during reading

@@ -3,20 +3,14 @@ package org.openstreetmap.josm.plugins.streetside.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.logging.Level;
 
-import org.junit.runners.model.InitializationError;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Utilities for tests.
@@ -36,9 +30,8 @@ public final class TestUtil {
       modifiers.setInt(result, modifiers.getInt(result) & ~Modifier.FINAL);
       return result;
     } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-      fail(e.getLocalizedMessage());
+      throw new JosmRuntimeException(e);
     }
-    return null;
   }
 
   /**
@@ -51,9 +44,8 @@ public final class TestUtil {
     try {
       return getAccessibleField(object.getClass(), name).get(object);
     } catch (IllegalAccessException | SecurityException e) {
-      fail(e.getLocalizedMessage());
+      throw new JosmRuntimeException(e);
     }
-    return null;
   }
 
   /**
@@ -79,18 +71,7 @@ public final class TestUtil {
         assertTrue(m.getDeclaringClass() != c || Modifier.isStatic(m.getModifiers()));
       }
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-      fail(e.getLocalizedMessage());
-    }
-  }
-
-  public static class StreetsideTestRules extends JOSMTestRules {
-    @Override
-    protected void before() throws InitializationError, ReflectiveOperationException {
-      Logging.getLogger().setFilter(record -> record.getLevel().intValue() >= Level.WARNING.intValue() || record.getSourceClassName().startsWith("org.openstreetmap.josm.plugins.streetside"));
-      Utils.updateSystemProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tL %2$s %4$s: %5$s%6$s%n");
-      final String isHeadless = Boolean.toString(GraphicsEnvironment.isHeadless());
-      super.before();
-      System.setProperty("java.awt.headless", isHeadless);
+      throw new JosmRuntimeException(e);
     }
   }
 }

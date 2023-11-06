@@ -2,11 +2,10 @@
 package org.openstreetmap.josm.plugins.streetside;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.awt.GraphicsEnvironment;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
@@ -68,7 +67,7 @@ class StreetsideLayerTest {
   @Test
   void testGetInfoComponent() {
     Object comp = StreetsideLayer.getInstance().getInfoComponent();
-    assertTrue(comp instanceof String);
+    assertInstanceOf(String.class, comp);
     assertTrue(((String) comp).length() >= 9);
   }
 

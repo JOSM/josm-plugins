@@ -11,7 +11,6 @@ import java.io.StringReader;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.PseudoCommand;
@@ -21,24 +20,15 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.TagMap;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 import net.simon04.comfort0.level0l.parsergen.Level0LParser;
 import net.simon04.comfort0.level0l.parsergen.ParseException;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 @BasicPreferences
+@Projection
 class EditLevel0LActionTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    JOSMTestRules test = new JOSMTestRules().projection();
-
     private SequenceCommand buildChangeCommands(DataSet dataSet) throws ParseException {
         final String level0l = "node 1831881213: 54.0900666, 12.2539381 #Neu Broderstorf (54.0900666, 12.2539381)\n" +
                 "  name = Neu Broderstorf\n" +
