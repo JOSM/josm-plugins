@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
@@ -36,8 +35,6 @@ public class StreetsideExportAction extends JosmAction {
 
   private static final long serialVersionUID = 6131359489725632369L;
 
-  final static Logger logger = Logger.getLogger(StreetsideExportAction.class);
-
   private StreetsideExportDialog dialog;
 
   /**
@@ -46,8 +43,8 @@ public class StreetsideExportAction extends JosmAction {
   public StreetsideExportAction() {
     super(tr("Export Streetside images"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
         tr("Export Streetside images"), Shortcut.registerShortcut("Export Streetside",
-            tr("Export Streetside images"), KeyEvent.CHAR_UNDEFINED,
-            Shortcut.NONE), false, "streetsideExport", true);
+            tr("Export Streetside images"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
+        false, "streetsideExport", true);
     setEnabled(false);
   }
 
@@ -62,16 +59,14 @@ public class StreetsideExportAction extends JosmAction {
 
     dialog = new StreetsideExportDialog(ok);
     pane.setMessage(dialog);
-    pane.setOptions(new JButton[] {ok, cancel});
+    pane.setOptions(new JButton[] { ok, cancel });
 
     JDialog dlg = pane.createDialog(MainApplication.getMainFrame(), tr("Export Streetside images"));
     dlg.setMinimumSize(new Dimension(400, 150));
     dlg.setVisible(true);
 
     // Checks if the inputs are correct and starts the export process.
-    if (pane.getValue() != null
-        && (int) pane.getValue() == JOptionPane.OK_OPTION
-        && dialog.chooser != null) {
+    if (pane.getValue() != null && (int) pane.getValue() == JOptionPane.OK_OPTION && dialog.chooser != null) {
       if (dialog.group.isSelected(dialog.all.getModel())) {
         export(StreetsideLayer.getInstance().getData().getImages());
       } else if (dialog.group.isSelected(dialog.sequence.getModel())) {
@@ -96,12 +91,11 @@ public class StreetsideExportAction extends JosmAction {
   /**
    * Exports the given images from the database.
    *
-   * @param images
-   *          The set of images to be exported.
+   * @param images The set of images to be exported.
    */
   public void export(Set<StreetsideAbstractImage> images) {
-    MainApplication.worker.execute(new StreetsideExportManager(images,
-        dialog.chooser.getSelectedFile().toString()));
+    MainApplication.worker
+        .execute(new StreetsideExportManager(images, dialog.chooser.getSelectedFile().toString()));
   }
 
   @Override

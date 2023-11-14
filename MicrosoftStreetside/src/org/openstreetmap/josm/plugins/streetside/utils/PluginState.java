@@ -3,11 +3,13 @@ package org.openstreetmap.josm.plugins.streetside.utils;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * @author nokutu
@@ -15,14 +17,18 @@ import org.openstreetmap.josm.tools.I18n;
  */
 public final class PluginState {
 
-  final static Logger logger = Logger.getLogger(PluginState.class);
+  private static final Logger LOGGER = Logger.getLogger(PluginState.class.getCanonicalName());
 
   private static boolean submittingChangeset;
 
   private static int runningDownloads;
-  /** Images that have to be uploaded. */
+  /**
+   * Images that have to be uploaded.
+   */
   private static int imagesToUpload;
-  /** Images that have been uploaded. */
+  /**
+   * Images that have been uploaded.
+   */
   private static int imagesUploaded;
 
   private PluginState() {
@@ -41,7 +47,7 @@ public final class PluginState {
    */
   public static void finishDownload() {
     if (runningDownloads == 0) {
-      logger.warn(I18n.tr("The amount of running downloads is equal to 0"));
+      LOGGER.log(Logging.LEVEL_WARN, I18n.tr("The amount of running downloads is equal to 0"));
       return;
     }
     runningDownloads--;
@@ -64,7 +70,12 @@ public final class PluginState {
   public static boolean isSubmittingChangeset() {
     return submittingChangeset;
   }
-   /**
+
+  public static void setSubmittingChangeset(boolean isSubmitting) {
+    submittingChangeset = isSubmitting;
+  }
+
+  /**
    * Checks if there is any running upload.
    *
    * @return true if the plugin is uploading; false otherwise.
@@ -76,8 +87,7 @@ public final class PluginState {
   /**
    * Sets the amount of images that are going to be uploaded.
    *
-   * @param amount
-   *          The amount of images that are going to be uploaded.
+   * @param amount The amount of images that are going to be uploaded.
    */
   public static void addImagesToUpload(int amount) {
     if (imagesToUpload <= imagesUploaded) {
@@ -101,26 +111,20 @@ public final class PluginState {
   public static void imageUploaded() {
     imagesUploaded++;
     if (imagesToUpload == imagesUploaded) {
-        finishedUploadDialog(imagesUploaded);
+      finishedUploadDialog(imagesUploaded);
     }
   }
 
   private static void finishedUploadDialog(int numImages) {
-    JOptionPane.showMessageDialog(
-      MainApplication.getMainFrame(),
-      tr("You have successfully uploaded {0} images to Bing.com", numImages),
-      tr("Finished upload"),
-      JOptionPane.INFORMATION_MESSAGE
-    );
+    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+        tr("You have successfully uploaded {0} images to Bing.com", numImages), tr("Finished upload"),
+        JOptionPane.INFORMATION_MESSAGE);
   }
 
   public static void notLoggedInToMapillaryDialog() {
-    JOptionPane.showMessageDialog(
-        MainApplication.getMainFrame(),
+    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
         tr("You are not logged in, please log in to Streetside in the preferences"),
-        tr("Not Logged in to Streetside"),
-        JOptionPane.WARNING_MESSAGE
-    );
+        tr("Not Logged in to Streetside"), JOptionPane.WARNING_MESSAGE);
   }
 
   /**
@@ -130,9 +134,5 @@ public final class PluginState {
    */
   public static String getUploadString() {
     return tr("Uploading: {0}", "(" + imagesUploaded + "/" + imagesToUpload + ")");
-  }
-
-  public static void setSubmittingChangeset(boolean isSubmitting) {
-      submittingChangeset = isSubmitting;
   }
 }

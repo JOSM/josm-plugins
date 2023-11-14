@@ -26,10 +26,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ChooseGeoImageLayersDialog extends JDialog {
   private static final long serialVersionUID = -1793622345412435234L;
-  private static final String QUESTION = I18n.marktr("Which image layers do you want to import into the Streetside layer?");
+  private static final String QUESTION = I18n
+      .marktr("Which image layers do you want to import into the Streetside layer?");
 
   public ChooseGeoImageLayersDialog(final Component parent, final List<GeoImageLayer> layers) {
-      super(GuiHelper.getFrameForComponent(parent), I18n.tr(QUESTION));
+    super(GuiHelper.getFrameForComponent(parent), I18n.tr(QUESTION));
     final Container c = getContentPane();
     c.setLayout(new BorderLayout(10, 10));
 
@@ -63,16 +64,16 @@ public class ChooseGeoImageLayersDialog extends JDialog {
 
   protected static class GeoImageLayerListCellRenderer implements ListCellRenderer<GeoImageLayer> {
     @Override
-    public Component getListCellRendererComponent(
-      JList<? extends GeoImageLayer> list, GeoImageLayer value, int index, boolean isSelected, boolean cellHasFocus
-    ) {
-      final JLabel result = value == null
-          ? null
+    public Component getListCellRendererComponent(JList<? extends GeoImageLayer> list, GeoImageLayer value,
+        int index, boolean isSelected, boolean cellHasFocus) {
+      final JLabel result = value == null ? null
           /* i18n: {0} is the layer name, {1} the number of images in it */
-          : new JLabel(I18n.tr("{0} ({1} images)", value.getName(), value.getImages().size()), value.getIcon(), SwingConstants.LEADING);
+          : new JLabel(I18n.tr("{0} ({1} images)", value.getName(), value.getImages().size()),
+              value.getIcon(), SwingConstants.LEADING);
       if (result != null) {
         result.setOpaque(true);
-        result.setBackground(isSelected ? UIManager.getColor("List.selectionBackground") : UIManager.getColor("List.background"));
+        result.setBackground(isSelected ? UIManager.getColor("List.selectionBackground")
+            : UIManager.getColor("List.background"));
       }
       return result;
     }

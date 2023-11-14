@@ -26,7 +26,7 @@ public class CommandJoin extends StreetsideExecutableCommand {
    * @param a the first image, that is joined with the second one
    * @param b the second image, that is joined with the first one
    * @throws IllegalArgumentException if the images are already in the same sequence
-   * @throws NullPointerException if {@code a} or {@code b} is null
+   * @throws NullPointerException   if {@code a} or {@code b} is null
    */
   public CommandJoin(final StreetsideAbstractImage a, final StreetsideAbstractImage b) {
     super(new ConcurrentSkipListSet<>(Arrays.asList(a, b))); // throws NPE if a or b is null

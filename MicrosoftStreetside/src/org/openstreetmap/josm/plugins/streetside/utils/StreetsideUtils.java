@@ -15,7 +15,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -30,8 +29,6 @@ import org.openstreetmap.josm.tools.I18n;
  * @author nokutu
  */
 public final class StreetsideUtils {
-
-  final static Logger logger = Logger.getLogger(StreetsideUtils.class);
 
   private static final double MIN_ZOOM_SQUARE_SIDE = 0.002;
 
@@ -100,24 +97,24 @@ public final class StreetsideUtils {
    * degrees-minutes-seconds-format
    *
    * @param degMinSec an array of length 3, the values in there are (in this order)
-   *                  degrees, minutes and seconds
-   * @param ref       the latitude or longitude reference determining if the given value
-   *                  is:
-   *                  <ul>
-   *                  <li>north (
-   *                  {@link GpsTagConstants#GPS_TAG_GPS_LATITUDE_REF_VALUE_NORTH}) or
-   *                  south (
-   *                  {@link GpsTagConstants#GPS_TAG_GPS_LATITUDE_REF_VALUE_SOUTH}) of
-   *                  the equator</li>
-   *                  <li>east (
-   *                  {@link GpsTagConstants#GPS_TAG_GPS_LONGITUDE_REF_VALUE_EAST}) or
-   *                  west ({@link GpsTagConstants#GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST}
-   *                  ) of the equator</li>
-   *                  </ul>
+   *          degrees, minutes and seconds
+   * @param ref     the latitude or longitude reference determining if the given value
+   *          is:
+   *          <ul>
+   *          <li>north (
+   *          {@link GpsTagConstants#GPS_TAG_GPS_LATITUDE_REF_VALUE_NORTH}) or
+   *          south (
+   *          {@link GpsTagConstants#GPS_TAG_GPS_LATITUDE_REF_VALUE_SOUTH}) of
+   *          the equator</li>
+   *          <li>east (
+   *          {@link GpsTagConstants#GPS_TAG_GPS_LONGITUDE_REF_VALUE_EAST}) or
+   *          west ({@link GpsTagConstants#GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST}
+   *          ) of the equator</li>
+   *          </ul>
    * @return the decimal degree-value for the given input, negative when west of
    * 0-meridian or south of equator, positive otherwise
    * @throws IllegalArgumentException if {@code degMinSec} doesn't have length 3 or if {@code ref} is
-   *                                  not one of the values mentioned above
+   *                  not one of the values mentioned above
    */
   public static double degMinSecToDouble(RationalNumber[] degMinSec, String ref) {
     if (degMinSec == null || degMinSec.length != 3) {
@@ -129,13 +126,13 @@ public final class StreetsideUtils {
     }
 
     switch (ref) {
-      case GpsTagConstants.GPS_TAG_GPS_LATITUDE_REF_VALUE_NORTH:
-      case GpsTagConstants.GPS_TAG_GPS_LATITUDE_REF_VALUE_SOUTH:
-      case GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_EAST:
-      case GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST:
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid ref.");
+    case GpsTagConstants.GPS_TAG_GPS_LATITUDE_REF_VALUE_NORTH:
+    case GpsTagConstants.GPS_TAG_GPS_LATITUDE_REF_VALUE_SOUTH:
+    case GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_EAST:
+    case GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST:
+      break;
+    default:
+      throw new IllegalArgumentException("Invalid ref.");
     }
 
     double result = degMinSec[0].doubleValue(); // degrees
@@ -143,7 +140,7 @@ public final class StreetsideUtils {
     result += degMinSec[2].doubleValue() / 3600; // seconds
 
     if (GpsTagConstants.GPS_TAG_GPS_LATITUDE_REF_VALUE_SOUTH.equals(ref)
-            || GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST.equals(ref)) {
+        || GpsTagConstants.GPS_TAG_GPS_LONGITUDE_REF_VALUE_WEST.equals(ref)) {
       result *= -1;
     }
 
@@ -165,7 +162,8 @@ public final class StreetsideUtils {
       throw new IllegalArgumentException("You can only join images of different sequences.");
     }
     if ((imgA.next() != null || imgB.previous() != null) && (imgB.next() != null || imgA.previous() != null)) {
-      throw new IllegalArgumentException("You can only join an image at the end of a sequence with one at the beginning of another sequence.");
+      throw new IllegalArgumentException(
+          "You can only join an image at the end of a sequence with one at the beginning of another sequence.");
     }
     if (imgA.next() != null || imgB.previous() != null) {
       join(imgB, imgA);
@@ -222,7 +220,8 @@ public final class StreetsideUtils {
 
   /**
    * Separates two images belonging to the same sequence. The two images have to be consecutive in the same sequence.
-   * Two new sequences are created and all images up to (and including) either {@code imgA} or {@code imgB} (whichever appears first in the sequence) are put into the first of the two sequences.
+   * Two new sequences are created and all images up to (and including) either {@code imgA} or {@code imgB}
+   * (whichever appears first in the sequence) are put into the first of the two sequences.
    * All others are put into the second new sequence.
    *
    * @param imgA one of the images marking where to split the sequence
@@ -236,7 +235,8 @@ public final class StreetsideUtils {
       throw new IllegalArgumentException("You can only unjoin with two images from the same sequence.");
     }
     if (imgB.equals(imgA.next()) && imgA.equals(imgB.next())) {
-      throw new IllegalArgumentException("When unjoining with two images these must be consecutive in one sequence.");
+      throw new IllegalArgumentException(
+          "When unjoining with two images these must be consecutive in one sequence.");
     }
 
     if (imgA.equals(imgB.next())) {
@@ -272,7 +272,7 @@ public final class StreetsideUtils {
     } else if (StreetsideLayer.hasInstance() && !StreetsideLayer.getInstance().getData().getImages().isEmpty()) {
       ret.append(I18n.tr("Total Streetside images: {0}", StreetsideLayer.getInstance().getToolTipText()));
     } else if (PluginState.isSubmittingChangeset()) {
-        ret.append(I18n.tr("Submitting Streetside Changeset"));
+      ret.append(I18n.tr("Submitting Streetside Changeset"));
     } else {
       ret.append(I18n.tr("No images found"));
     }

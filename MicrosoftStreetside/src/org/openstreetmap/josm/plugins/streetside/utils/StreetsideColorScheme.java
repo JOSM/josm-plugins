@@ -50,8 +50,9 @@ public final class StreetsideColorScheme {
 
   /**
    * Styles the given components as default panels (currently only the background is set to white)
+   *
    * @param components the components to style as default panels (e.g. checkboxes also, that's why
-   *   not only JPanels are accepted)
+   *           not only JPanels are accepted)
    */
   public static void styleAsDefaultPanel(JComponent... components) {
     if (components != null && components.length >= 1) {

@@ -5,10 +5,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
@@ -16,6 +16,7 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
 import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
 import org.openstreetmap.josm.plugins.streetside.cache.CacheUtils;
 import org.openstreetmap.josm.plugins.streetside.cache.StreetsideCache;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the thread that downloads one of the images that are going to be
@@ -25,10 +26,9 @@ import org.openstreetmap.josm.plugins.streetside.cache.StreetsideCache;
  * @see StreetsideExportManager
  * @see StreetsideExportWriterThread
  */
-public class StreetsideExportDownloadThread extends Thread implements
-    ICachedLoaderListener {
+public class StreetsideExportDownloadThread extends Thread implements ICachedLoaderListener {
 
-  final static Logger logger = Logger.getLogger(StreetsideExportDownloadThread.class);
+  private static final Logger LOGGER = Logger.getLogger(StreetsideExportDownloadThread.class.getCanonicalName());
 
   private final ArrayBlockingQueue<BufferedImage> queue;
   private final ArrayBlockingQueue<StreetsideAbstractImage> queueImages;
@@ -38,17 +38,13 @@ public class StreetsideExportDownloadThread extends Thread implements
   /**
    * Main constructor.
    *
-   * @param image
-   *          Image to be downloaded.
-   * @param queue
-   *          Queue of {@link BufferedImage} objects for the
+   * @param image     Image to be downloaded.
+   * @param queue     Queue of {@link BufferedImage} objects for the
    *          {@link StreetsideExportWriterThread}.
-   * @param queueImages
-   *          Queue of {@link StreetsideAbstractImage} objects for the
+   * @param queueImages Queue of {@link StreetsideAbstractImage} objects for the
    *          {@link StreetsideExportWriterThread}.
    */
-  public StreetsideExportDownloadThread(StreetsideImage image,
-      ArrayBlockingQueue<BufferedImage> queue,
+  public StreetsideExportDownloadThread(StreetsideImage image, ArrayBlockingQueue<BufferedImage> queue,
       ArrayBlockingQueue<StreetsideAbstractImage> queueImages) {
     this.queue = queue;
     this.image = image;
@@ -62,16 +58,14 @@ public class StreetsideExportDownloadThread extends Thread implements
   }
 
   @Override
-  public synchronized void loadingFinished(CacheEntry data,
-      CacheEntryAttributes attributes, LoadResult result) {
+  public synchronized void loadingFinished(CacheEntry data, CacheEntryAttributes attributes, LoadResult result) {
     try {
       synchronized (StreetsideExportDownloadThread.class) {
-        queue
-            .put(ImageIO.read(new ByteArrayInputStream(data.getContent())));
+        queue.put(ImageIO.read(new ByteArrayInputStream(data.getContent())));
         queueImages.put(image);
       }
     } catch (InterruptedException | IOException e) {
-      logger.error(e);
+      LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
     }
   }
 }

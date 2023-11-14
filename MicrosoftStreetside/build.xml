@@ -14,11 +14,9 @@
   <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
     <include name="apache-commons.jar"/>
     <include name="apache-http.jar"/>
-    <include name="jackson.jar"/>
     <include name="javafx-osx.jar" if:set="isMac"/>
     <include name="javafx-unixoid.jar" if:set="isUnix"/>
     <include name="javafx-windows.jar" if:set="isWindows"/>
-    <include name="log4j.jar"/>
     <include name="utilsplugin2.jar"/>
   </fileset>
   <target name="pre-compile" depends="fetch_dependencies">

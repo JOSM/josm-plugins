@@ -17,33 +17,18 @@ import org.openstreetmap.josm.plugins.streetside.model.UserProfile;
  * @see StreetsideData
  */
 public class StreetsideImage extends StreetsideAbstractImage {
-  /**
-   * Rn is a Bing Streetside image attribute - currently not
-   * used, mapped or supported in the Streetside plugin -
-   * left out initially because it's an unrequired complex object.
-   */
-  public static class Rn {
-	  // placeholder for Rn attribute (undocumented streetside complex inner type)
-  }
-
   // latitude of the Streetside image
   private double la;
-
   //longitude of the Streetside image
   private double lo;
-
   // The bubble altitude, in meters above the WGS84 ellipsoid
   private double al;
-
   // Roll
   private double ro;
-
   // Pitch
   private double pi;
-
   // Blurring instructions - not currently used by the plugin
   private String bl;
-
   // Undocumented Attributes
   private int ml;
   private List<String> nbn;
@@ -54,20 +39,20 @@ public class StreetsideImage extends StreetsideAbstractImage {
   /**
    * Main constructor of the class StreetsideImage
    *
-   * @param id     The unique identifier of the image.
+   * @param id   The unique identifier of the image.
    * @param latLon The latitude and longitude where it is positioned.
-   * @param he     The direction of the images in degrees, meaning 0 north.
+   * @param he   The direction of the images in degrees, meaning 0 north.
    */
   public StreetsideImage(String id, LatLon latLon, double he) {
     super(id, latLon, he);
   }
 
   public StreetsideImage(String id, double la, double lo) {
-    super(id, new LatLon(la,lo), 0.0);
+    super(id, new LatLon(la, lo), 0.0);
   }
 
   public StreetsideImage(String id) {
-	    super(id);
+    super(id);
   }
 
   // Default constructor for Jackson/JSON Deserializattion
@@ -81,19 +66,25 @@ public class StreetsideImage extends StreetsideAbstractImage {
    * @return A {@code String} containing the unique identifier of the object.
    */
   @Override
-public String getId() {
+  public String getId() {
     return String.valueOf(id);
   }
 
+  /**
+   * @param id the id to set
+   */
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public UserProfile getUser() {
-	    return getSequence().getUser();
+    return getSequence().getUser();
   }
 
   @Override
   public String toString() {
-    return String.format(
-      "Image[id=%s,lat=%f,lon=%f,he=%f,user=%s]",
-      id, latLon.lat(), latLon.lon(), he, "null"//, cd
+    return String.format("Image[id=%s,lat=%f,lon=%f,he=%f,user=%s]", id, latLon.lat(), latLon.lon(), he, "null"//, cd
     );
   }
 
@@ -105,7 +96,7 @@ public String getId() {
   @Override
   public int compareTo(StreetsideAbstractImage image) {
     if (image instanceof StreetsideImage) {
-      return id.compareTo(((StreetsideImage) image).getId());
+      return id.compareTo(image.getId());
     }
     return hashCode() - image.hashCode();
   }
@@ -272,14 +263,6 @@ public String getId() {
   }
 
   /**
-   * @param id the id to set
-   */
-  @Override
-public void setId(String id) {
-    this.id = id;
-  }
-
-  /**
    * @return the rn
    */
   public Rn getRn() {
@@ -291,5 +274,14 @@ public void setId(String id) {
    */
   public void setRn(Rn rn) {
     this.rn = rn;
+  }
+
+  /**
+   * Rn is a Bing Streetside image attribute - currently not
+   * used, mapped or supported in the Streetside plugin -
+   * left out initially because it's an unrequired complex object.
+   */
+  public static class Rn {
+    // placeholder for Rn attribute (undocumented streetside complex inner type)
   }
 }

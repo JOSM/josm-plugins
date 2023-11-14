@@ -8,11 +8,11 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 
 public final class JsonUtil {
-  private JsonUtil() {
-    // Private constructor to avoid instantiation
-  }
+    private JsonUtil() {
+        // Private constructor to avoid instantiation
+    }
 
-  public static JsonObject string2jsonObject(String s) {
-    return Json.createReader(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8))).readObject();
-  }
+    public static JsonObject string2jsonObject(String s) {
+        return Json.createReader(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8))).readObject();
+    }
 }

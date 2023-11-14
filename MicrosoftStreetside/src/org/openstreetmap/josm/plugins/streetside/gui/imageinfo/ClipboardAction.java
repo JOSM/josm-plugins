@@ -66,6 +66,7 @@ public class ClipboardAction extends AbstractAction {
 
   /**
    * Sets the component, under which the popup will be shown, which indicates that the key was copied to the clipboard.
+   *
    * @param popupParent the component to set as parent of the popup
    */
   public void setPopupParent(Component popupParent) {

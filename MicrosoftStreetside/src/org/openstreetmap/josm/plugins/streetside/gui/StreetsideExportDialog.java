@@ -19,7 +19,6 @@ import javax.swing.JRadioButton;
 import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
 import org.openstreetmap.josm.plugins.streetside.StreetsideLayer;
 
-
 /**
  * GUI for exporting images.
  *
@@ -29,7 +28,9 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideLayer;
 public class StreetsideExportDialog extends JPanel implements ActionListener {
 
   private static final long serialVersionUID = -2746815082016025516L;
-  /** Button to export all downloaded images. */
+  /**
+   * Button to export all downloaded images.
+   */
   public final JRadioButton all;
   /**
    * Button to export all images in the sequence of the selected StreetsideImage.
@@ -40,19 +41,22 @@ public class StreetsideExportDialog extends JPanel implements ActionListener {
    * {@link StreetsideImage} objects.
    */
   public final JRadioButton selected;
-  /** Group of button containing all the options. */
+  /**
+   * Group of button containing all the options.
+   */
   public final ButtonGroup group;
   private final JButton choose;
   private final JLabel path;
-  /** File chooser. */
-  public JFileChooser chooser;
   private final JButton ok;
+  /**
+   * File chooser.
+   */
+  public JFileChooser chooser;
 
   /**
    * Main constructor.
    *
-   * @param ok
-   *          The button for to OK option.
+   * @param ok The button for to OK option.
    */
   public StreetsideExportDialog(JButton ok) {
     this.ok = ok;
@@ -74,7 +78,7 @@ public class StreetsideExportDialog extends JPanel implements ActionListener {
     // Some options are disabled depending on the circumstances
     sequence.setEnabled(StreetsideLayer.getInstance().getData().getSelectedImage() instanceof StreetsideImage);
     if (StreetsideLayer.getInstance().getData().getMultiSelectedImages().isEmpty()) {
-     selected.setEnabled(false);
+      selected.setEnabled(false);
     }
 
     path = new JLabel(tr("Select a directory"));
@@ -102,8 +106,7 @@ public class StreetsideExportDialog extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     chooser = new JFileChooser();
-    chooser.setCurrentDirectory(new java.io.File(System
-        .getProperty("user.home")));
+    chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
     chooser.setDialogTitle(tr("Select a directory"));
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     chooser.setAcceptAllFileFilterUsed(false);
@@ -120,20 +123,17 @@ public class StreetsideExportDialog extends JPanel implements ActionListener {
    * active.
    *
    * @author nokutu
-   *
    */
   public class RewriteButtonAction extends AbstractAction {
 
     private static final long serialVersionUID = 1035332841101190301L;
-
-	private String lastPath;
     private final StreetsideExportDialog dlg;
+    private String lastPath;
 
     /**
      * Main constructor.
      *
-     * @param dlg
-     *          Parent dialog.
+     * @param dlg Parent dialog.
      */
     public RewriteButtonAction(StreetsideExportDialog dlg) {
       this.dlg = dlg;
@@ -142,8 +142,7 @@ public class StreetsideExportDialog extends JPanel implements ActionListener {
     @SuppressWarnings("synthetic-access")
     @Override
     public void actionPerformed(ActionEvent arg0) {
-      choose
-          .setEnabled(true);
+      choose.setEnabled(true);
       if (lastPath != null) {
         dlg.path.setText(lastPath);
       }

@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.utils.api;
 
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -17,20 +16,20 @@ import org.openstreetmap.josm.plugins.streetside.utils.TestUtil;
 
 class JsonDecoderTest {
 
-  @Test
-  void testUtilityClass() {
-    TestUtil.testUtilityClass(JsonDecoder.class);
-  }
+    @Test
+    void testUtilityClass() {
+        TestUtil.testUtilityClass(JsonDecoder.class);
+    }
 
-  @Test
-  void testDecodeDoublePair() {
-    assertArrayEquals(new double[0], JsonDecoder.decodeDoublePair(null));
-  }
+    @Test
+    void testDecodeDoublePair() {
+        assertArrayEquals(new double[0], JsonDecoder.decodeDoublePair(null));
+    }
 
-  static void assertDecodesToNull(Function<JsonObject, ?> function, String...parts) {
-    assertNull(function.apply(
-      Json.createReader(new ByteArrayInputStream(String.join(" ", parts).getBytes(StandardCharsets.UTF_8))).readObject()
-    ));
-  }
+    static void assertDecodesToNull(Function<JsonObject, ?> function, String... parts) {
+        assertNull(function.apply(
+                Json.createReader(new ByteArrayInputStream(String.join(" ", parts).getBytes(StandardCharsets.UTF_8)))
+                        .readObject()));
+    }
 
 }

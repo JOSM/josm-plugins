@@ -10,7 +10,8 @@ public class ImageDetection extends SpecialImageArea {
   private final double score;
   private final String value;
 
-  public ImageDetection(final Path2D shape, final String imageKey, final String key, final double score, final String packag, final String value) {
+  public ImageDetection(final Path2D shape, final String imageKey, final String key, final double score,
+      final String packag, final String value) {
     super(shape, imageKey, key);
     this.packag = packag;
     this.score = score;

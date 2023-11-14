@@ -12,7 +12,6 @@ import javax.swing.JButton;
 
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideColorScheme;
 
-
 public class StreetsideButton extends JButton {
 
   private static final long serialVersionUID = -3060978712233067368L;

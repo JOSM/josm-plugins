@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 
 class StreetsideColorSchemeTest {
 
-  @Test
-  void testUtilityClass() {
-    TestUtil.testUtilityClass(StreetsideColorScheme.class);
-  }
+    @Test
+    void testUtilityClass() {
+        TestUtil.testUtilityClass(StreetsideColorScheme.class);
+    }
 
-  @Test
-  void testStyleAsDefaultPanel() {
-    assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel());
-    assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel((JComponent[]) null));
-  }
+    @Test
+    void testStyleAsDefaultPanel() {
+        assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel());
+        assertDoesNotThrow(() -> StreetsideColorScheme.styleAsDefaultPanel((JComponent[]) null));
+    }
 }

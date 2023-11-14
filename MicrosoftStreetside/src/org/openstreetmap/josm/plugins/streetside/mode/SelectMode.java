@@ -34,9 +34,9 @@ import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
  * @author nokutu
  */
 public class SelectMode extends AbstractMode {
+  private final StreetsideRecord record;
   private StreetsideAbstractImage closest;
   private StreetsideAbstractImage lastClicked;
-  private final StreetsideRecord record;
   private boolean nothingHighlighted;
   private boolean imageHighlighted;
 
@@ -53,8 +53,8 @@ public class SelectMode extends AbstractMode {
       return;
     }
     StreetsideAbstractImage closest = getClosest(e.getPoint());
-    if (!(MainApplication.getLayerManager().getActiveLayer() instanceof StreetsideLayer)
-            && closest != null && MainApplication.getMap().mapMode == MainApplication.getMap().mapModeSelect) {
+    if (!(MainApplication.getLayerManager().getActiveLayer() instanceof StreetsideLayer) && closest != null
+        && MainApplication.getMap().mapMode == MainApplication.getMap().mapModeSelect) {
       lastClicked = this.closest;
       StreetsideLayer.getInstance().getData().setSelectedImage(closest);
       return;
@@ -62,7 +62,8 @@ public class SelectMode extends AbstractMode {
       return;
     }
     // Double click
-    if (e.getClickCount() == 2 && StreetsideLayer.getInstance().getData().getSelectedImage() != null && closest != null) {
+    if (e.getClickCount() == 2 && StreetsideLayer.getInstance().getData().getSelectedImage() != null
+        && closest != null) {
       closest.getSequence().getImages().forEach(StreetsideLayer.getInstance().getData()::addMultiSelectedImage);
     }
     lastClicked = this.closest;
@@ -74,19 +75,14 @@ public class SelectMode extends AbstractMode {
     if (e.getModifiers() == (InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK) && closest != null) {
       StreetsideLayer.getInstance().getData().addMultiSelectedImage(closest);
       // shift + click
-    } else if (
-            e.getModifiers() == (InputEvent.BUTTON1_MASK | InputEvent.SHIFT_MASK)
-                    && lastClicked instanceof StreetsideImage
-            ) {
-      if (this.closest != null
-              && this.closest.getSequence() == lastClicked.getSequence()) {
+    } else if (e.getModifiers() == (InputEvent.BUTTON1_MASK | InputEvent.SHIFT_MASK)
+        && lastClicked instanceof StreetsideImage) {
+      if (this.closest != null && this.closest.getSequence() == lastClicked.getSequence()) {
         int i = this.closest.getSequence().getImages().indexOf(this.closest);
         int j = lastClicked.getSequence().getImages().indexOf(lastClicked);
-        StreetsideLayer.getInstance().getData().addMultiSelectedImage(
-                i < j
-                        ? new ConcurrentSkipListSet<>(this.closest.getSequence().getImages().subList(i, j + 1))
-                        : new ConcurrentSkipListSet<>(this.closest.getSequence().getImages().subList(j, i + 1))
-        );
+        StreetsideLayer.getInstance().getData().addMultiSelectedImage(i < j
+            ? new ConcurrentSkipListSet<>(this.closest.getSequence().getImages().subList(i, j + 1))
+            : new ConcurrentSkipListSet<>(this.closest.getSequence().getImages().subList(j, i + 1)));
       }
       // click
     } else {
@@ -97,20 +93,23 @@ public class SelectMode extends AbstractMode {
   @Override
   public void mouseDragged(MouseEvent e) {
     StreetsideAbstractImage highlightImg = StreetsideLayer.getInstance().getData().getHighlightedImage();
-    if (
-            MainApplication.getLayerManager().getActiveLayer() == StreetsideLayer.getInstance()
-                && SwingUtilities.isLeftMouseButton(e)
-                && highlightImg != null && highlightImg.getLatLon() != null
-            ) {
+    if (MainApplication.getLayerManager().getActiveLayer() == StreetsideLayer.getInstance()
+        && SwingUtilities.isLeftMouseButton(e) && highlightImg != null && highlightImg.getLatLon() != null) {
       Point highlightImgPoint = MainApplication.getMap().mapView.getPoint(highlightImg.getTempLatLon());
       if (e.isShiftDown()) { // turn
-        StreetsideLayer.getInstance().getData().getMultiSelectedImages().parallelStream().filter(img -> !(img instanceof StreetsideImage) || StreetsideProperties.DEVELOPER.get())
-                .forEach(img -> img.turn(Math.toDegrees(Math.atan2(e.getX() - highlightImgPoint.getX(), -e.getY() + highlightImgPoint.getY())) - highlightImg.getTempHe()));
+        StreetsideLayer.getInstance().getData().getMultiSelectedImages().parallelStream()
+            .filter(img -> !(img instanceof StreetsideImage) || StreetsideProperties.DEVELOPER.get())
+            .forEach(img -> img.turn(Math.toDegrees(
+                Math.atan2(e.getX() - highlightImgPoint.getX(), -e.getY() + highlightImgPoint.getY()))
+                - highlightImg.getTempHe()));
       } else { // move
         LatLon eventLatLon = MainApplication.getMap().mapView.getLatLon(e.getX(), e.getY());
-        LatLon imgLatLon = MainApplication.getMap().mapView.getLatLon(highlightImgPoint.getX(), highlightImgPoint.getY());
-        StreetsideLayer.getInstance().getData().getMultiSelectedImages().parallelStream().filter(img -> !(img instanceof StreetsideImage) || StreetsideProperties.DEVELOPER.get())
-                .forEach(img -> img.move(eventLatLon.getX() - imgLatLon.getX(), eventLatLon.getY() - imgLatLon.getY()));
+        LatLon imgLatLon = MainApplication.getMap().mapView.getLatLon(highlightImgPoint.getX(),
+            highlightImgPoint.getY());
+        StreetsideLayer.getInstance().getData().getMultiSelectedImages().parallelStream()
+            .filter(img -> !(img instanceof StreetsideImage) || StreetsideProperties.DEVELOPER.get())
+            .forEach(img -> img.move(eventLatLon.getX() - imgLatLon.getX(),
+                eventLatLon.getY() - imgLatLon.getY()));
       }
       StreetsideLayer.invalidateInstance();
     }
@@ -126,12 +125,15 @@ public class SelectMode extends AbstractMode {
       double from = data.getSelectedImage().getTempHe();
       double to = data.getSelectedImage().getMovingHe();
       record.addCommand(new CommandTurn(data.getMultiSelectedImages(), to - from));
-    } else if (!Objects.equals(data.getSelectedImage().getTempLatLon(), data.getSelectedImage().getMovingLatLon())) {
+    } else if (!Objects.equals(data.getSelectedImage().getTempLatLon(),
+        data.getSelectedImage().getMovingLatLon())) {
       LatLon from = data.getSelectedImage().getTempLatLon();
       LatLon to = data.getSelectedImage().getMovingLatLon();
-      record.addCommand(new CommandMove(data.getMultiSelectedImages(), to.getX() - from.getX(), to.getY() - from.getY()));
+      record.addCommand(
+          new CommandMove(data.getMultiSelectedImages(), to.getX() - from.getX(), to.getY() - from.getY()));
     }
-    data.getMultiSelectedImages().parallelStream().filter(Objects::nonNull).forEach(StreetsideAbstractImage::stopMoving);
+    data.getMultiSelectedImages().parallelStream().filter(Objects::nonNull)
+        .forEach(StreetsideAbstractImage::stopMoving);
     StreetsideLayer.invalidateInstance();
   }
 
@@ -141,10 +143,10 @@ public class SelectMode extends AbstractMode {
   @Override
   public void mouseMoved(MouseEvent e) {
     if (MainApplication.getLayerManager().getActiveLayer() instanceof OsmDataLayer
-            && MainApplication.getMap().mapMode != MainApplication.getMap().mapModeSelect) {
+        && MainApplication.getMap().mapMode != MainApplication.getMap().mapModeSelect) {
       return;
     }
-    if (!StreetsideProperties.HOVER_ENABLED.get()) {
+    if (Boolean.FALSE.equals(StreetsideProperties.HOVER_ENABLED.get())) {
       return;
     }
 
@@ -176,7 +178,8 @@ public class SelectMode extends AbstractMode {
       StreetsideMainDialog.getInstance().setImage(closestTemp);
       StreetsideMainDialog.getInstance().updateImage(false);
 
-    } else if (StreetsideLayer.getInstance().getData().getHighlightedImage() != closestTemp && closestTemp == null) {
+    } else if (StreetsideLayer.getInstance().getData().getHighlightedImage() != closestTemp
+        && closestTemp == null) {
       StreetsideLayer.getInstance().getData().setHighlightedImage(null);
       StreetsideMainDialog.getInstance().setImage(StreetsideLayer.getInstance().getData().getSelectedImage());
       StreetsideMainDialog.getInstance().updateImage();

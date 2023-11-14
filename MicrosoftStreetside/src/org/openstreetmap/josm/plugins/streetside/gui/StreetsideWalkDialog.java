@@ -20,13 +20,21 @@ public class StreetsideWalkDialog extends JPanel {
 
   private static final long serialVersionUID = 7974881240732957573L;
 
-  /** Spin containing the interval value. */
+  /**
+   * Spin containing the interval value.
+   */
   public SpinnerModel spin;
-  /** Whether it must wait for the picture to be downloaded */
+  /**
+   * Whether it must wait for the picture to be downloaded
+   */
   public JCheckBox waitForPicture;
-  /** Whether the view must follow the selected image. */
+  /**
+   * Whether the view must follow the selected image.
+   */
   public JCheckBox followSelection;
-  /** Go forward or backwards */
+  /**
+   * Go forward or backwards
+   */
   public JCheckBox goForward;
 
   /**

@@ -10,8 +10,8 @@ package org.openstreetmap.josm.plugins.streetside.history;
 @FunctionalInterface
 public interface StreetsideRecordListener {
 
-/**
-* Fired when any command is undone or redone.
-*/
-void recordChanged();
+  /**
+   * Fired when any command is undone or redone.
+   */
+  void recordChanged();
 }

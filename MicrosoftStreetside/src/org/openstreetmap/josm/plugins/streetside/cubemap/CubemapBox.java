@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.cubemap;
 
 import java.awt.image.BufferedImage;
@@ -28,14 +23,24 @@ import javafx.scene.transform.Transform;
 @SuppressWarnings("restriction")
 public class CubemapBox extends Group {
 
-  public enum CubemapBoxImageType {
-    MULTIPLE, SINGLE
-  }
-
   private final Affine affine = new Affine();
-
-  private final ImageView front = new ImageView(), right = new ImageView(), back = new ImageView(),
-    left = new ImageView(), up = new ImageView(), down = new ImageView();
+  private final ImageView front = new ImageView();
+  private final ImageView right = new ImageView();
+  private final ImageView back = new ImageView();
+  private final ImageView left = new ImageView();
+  private final ImageView up = new ImageView();
+  private final ImageView down = new ImageView();
+  private final ImageView[] views = new ImageView[] { front, right, back, left, up, down };
+  private final Image frontImg;
+  private final Image rightImg;
+  private final Image backImg;
+  private final Image leftImg;
+  private final Image upImg;
+  private final Image downImg;
+  private final PerspectiveCamera camera;
+  private final CubemapBoxImageType imageType;
+  private Image singleImg;
+  private AnimationTimer timer;
 
   {
     front.setId(CubemapUtils.CubemapFaces.FRONT.getValue());
@@ -46,17 +51,9 @@ public class CubemapBox extends Group {
     down.setId(CubemapUtils.CubemapFaces.DOWN.getValue());
 
   }
-  private final ImageView[] views = new ImageView[] { front, right, back, left, up, down };
 
-  private Image frontImg, rightImg, backImg, leftImg, upImg, downImg, singleImg;
-
-  private final PerspectiveCamera camera;
-  private AnimationTimer timer;
-  private final CubemapBoxImageType imageType;
-
- public CubemapBox(
-    Image frontImg, Image rightImg, Image backImg, Image leftImg, Image upImg, Image downImg, double size,
-    PerspectiveCamera camera) {
+  public CubemapBox(Image frontImg, Image rightImg, Image backImg, Image leftImg, Image upImg, Image downImg,
+      double size, PerspectiveCamera camera) {
 
     super();
 
@@ -147,7 +144,8 @@ public class CubemapBox extends Group {
 
   private void loadSingleImageViewports() {
     layoutViews();
-    double width = singleImg.getWidth(), height = singleImg.getHeight();
+    double width = singleImg.getWidth();
+    double height = singleImg.getHeight();
 
     // simple check to see if cells will be square
     if (width / 4 != height / 3) {
@@ -157,17 +155,18 @@ public class CubemapBox extends Group {
 
     recalculateSize(cellSize);
 
-    double topx = cellSize, topy = 0,
-
-      botx = cellSize, boty = cellSize * 2,
-
-      leftx = 0, lefty = cellSize,
-
-      rightx = cellSize * 2, righty = cellSize,
-
-      fwdx = cellSize, fwdy = cellSize,
-
-      backx = cellSize * 3, backy = cellSize;
+    double topx = cellSize;
+    double topy = 0;
+    double botx = cellSize;
+    double boty = cellSize * 2;
+    double leftx = 0;
+    double lefty = cellSize;
+    double rightx = cellSize * 2;
+    double righty = cellSize;
+    double fwdx = cellSize;
+    double fwdy = cellSize;
+    double backx = cellSize * 3;
+    double backy = cellSize;
 
     // add top padding x+, y+, width-, height
     up.setViewport(new Rectangle2D(topx, topy, cellSize, cellSize));
@@ -230,9 +229,16 @@ public class CubemapBox extends Group {
     timer.start();
   }
 
-  /*
-   * Properties
-   */
+  public final double getSize() {
+    return size.get();
+  }
+
+  public final void setSize(double value) {
+    size.set(value);
+  } /*
+    * Properties
+    */
+
   private final DoubleProperty size = new SimpleDoubleProperty() {
     @Override
     protected void invalidated() {
@@ -247,14 +253,6 @@ public class CubemapBox extends Group {
     }
   };
 
-  public final double getSize() {
-    return size.get();
-  }
-
-  public final void setSize(double value) {
-    size.set(value);
-  }
-
   public DoubleProperty sizeProperty() {
     return size;
   }
@@ -262,4 +260,9 @@ public class CubemapBox extends Group {
   public ImageView[] getViews() {
     return views;
   }
+
+  public enum CubemapBoxImageType {
+    MULTIPLE, SINGLE
+  }
+
 }

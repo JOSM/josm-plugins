@@ -31,31 +31,26 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 public class StreetsideWalkAction extends JosmAction implements StreetsideDataListener {
 
   private static final long serialVersionUID = 3454223919402245818L;
-
-  private WalkThread thread;
   private final List<WalkListener> listeners = new ArrayList<>();
+  private WalkThread thread;
 
   /**
    *
    */
   public StreetsideWalkAction() {
-    super(tr("Walk mode"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
-        tr("Walk mode"), null,
-        false, "streetsideWalk", true);
+    super(tr("Walk mode"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT), tr("Walk mode"),
+        null, false, "streetsideWalk", true);
   }
 
   @Override
   public void actionPerformed(ActionEvent arg0) {
     StreetsideWalkDialog dialog = new StreetsideWalkDialog();
-    JOptionPane pane = new JOptionPane(dialog, JOptionPane.PLAIN_MESSAGE,
-        JOptionPane.OK_CANCEL_OPTION);
+    JOptionPane pane = new JOptionPane(dialog, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
     JDialog dlg = pane.createDialog(MainApplication.getMainFrame(), tr("Walk mode"));
     dlg.setMinimumSize(new Dimension(400, 150));
     dlg.setVisible(true);
-    if (pane.getValue() != null
-        && (int) pane.getValue() == JOptionPane.OK_OPTION) {
-      thread = new WalkThread((int) dialog.spin.getValue(),
-          dialog.waitForPicture.isSelected(),
+    if (pane.getValue() != null && (int) pane.getValue() == JOptionPane.OK_OPTION) {
+      thread = new WalkThread((int) dialog.spin.getValue(), dialog.waitForPicture.isSelected(),
           dialog.followSelection.isSelected(), dialog.goForward.isSelected());
       fireWalkStarted();
       thread.start();
@@ -71,8 +66,7 @@ public class StreetsideWalkAction extends JosmAction implements StreetsideDataLi
   /**
    * Adds a listener.
    *
-   * @param lis
-   *          The listener to be added.
+   * @param lis The listener to be added.
    */
   public void addListener(WalkListener lis) {
     listeners.add(lis);
@@ -82,7 +76,7 @@ public class StreetsideWalkAction extends JosmAction implements StreetsideDataLi
    * Removes a listener.
    *
    * @param lis
-   *          The listener to be added.
+   *      The listener to be added.
    */
   public void removeListener(WalkListener lis) {
     listeners.remove(lis);

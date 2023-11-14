@@ -4,14 +4,14 @@ package org.openstreetmap.josm.plugins.streetside.utils.api;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 
+import org.openstreetmap.josm.plugins.streetside.model.ImageDetection;
+import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
+import org.openstreetmap.josm.tools.Logging;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-
-import org.openstreetmap.josm.plugins.streetside.model.ImageDetection;
-import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Decodes the JSON returned by {@link APIv3} into Java objects.
@@ -37,7 +37,8 @@ public final class JsonImageDetectionDecoder {
       final JsonValue scoreVal = ((JsonObject) properties).get("score");
       final Double score = scoreVal instanceof JsonNumber ? ((JsonNumber) scoreVal).doubleValue() : null;
       final Shape shape = decodeShape(((JsonObject) properties).get("shape"));
-      if (shape instanceof Path2D && imageKey != null && key != null && score != null && packag != null && value != null) {
+      if (shape instanceof Path2D && imageKey != null && key != null && score != null && packag != null
+          && value != null) {
         return new ImageDetection((Path2D) shape, imageKey, key, score, packag, value);
       }
     }
@@ -47,10 +48,8 @@ public final class JsonImageDetectionDecoder {
   private static Shape decodeShape(JsonValue json) {
     if (json instanceof JsonObject) {
       if (!"Polygon".equals(((JsonObject) json).getString("type", null))) {
-        Logging.warn(
-          String.format("Image detections using shapes with type=%s are currently not supported!",
-          ((JsonObject) json).getString("type", "‹no type set›"))
-        );
+        Logging.warn(String.format("Image detections using shapes with type=%s are currently not supported!",
+            ((JsonObject) json).getString("type", "‹no type set›")));
       } else {
         final JsonValue coordinates = ((JsonObject) json).get("coordinates");
         if (coordinates instanceof JsonArray && !((JsonArray) coordinates).isEmpty()) {
@@ -63,6 +62,7 @@ public final class JsonImageDetectionDecoder {
 
   /**
    * Decodes a polygon (may be a multipolygon) from JSON
+   *
    * @param json the json array to decode, must not be <code>null</code>
    * @return the decoded polygon as {@link Path2D.Double}
    */
@@ -82,6 +82,7 @@ public final class JsonImageDetectionDecoder {
 
   /**
    * Decodes a simple polygon (consisting of only one continuous path) from JSON
+   *
    * @param json the json array to decode, must not be <code>null</code>
    * @return the decoded polygon as {@link Path2D.Double}
    * @throws NullPointerException if parameter is <code>null</code>

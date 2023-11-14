@@ -13,19 +13,18 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
 */
 public abstract class StreetsideExecutableCommand extends StreetsideCommand {
 
-/**
-* Main constructor.
-*
-* @param images
-*          The set of images affected by the command.
-*/
-public StreetsideExecutableCommand(Set<StreetsideAbstractImage> images) {
- super(images);
-}
+  /**
+   * Main constructor.
+   *
+   * @param images The set of images affected by the command.
+   */
+  protected StreetsideExecutableCommand(Set<StreetsideAbstractImage> images) {
+    super(images);
+  }
 
-/**
-* Executes the command. It is run when the command is added to the history
-* record.
-*/
-public abstract void execute();
+  /**
+   * Executes the command. It is run when the command is added to the history
+   * record.
+   */
+  public abstract void execute();
 }

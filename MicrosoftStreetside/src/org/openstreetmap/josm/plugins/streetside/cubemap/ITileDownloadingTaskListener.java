@@ -1,4 +1,4 @@
-//License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.cubemap;
 
 /**
@@ -9,10 +9,11 @@ package org.openstreetmap.josm.plugins.streetside.cubemap;
 */
 public interface ITileDownloadingTaskListener {
 
- /**
- * Fired when a cubemap tile image is downloaded by a download worker.
- * @param imageId image id
- */
- void tileAdded(String imageId);
+  /**
+   * Fired when a cubemap tile image is downloaded by a download worker.
+   *
+   * @param imageId image id
+   */
+  void tileAdded(String imageId);
 
 }

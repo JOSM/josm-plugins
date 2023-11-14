@@ -32,15 +32,10 @@ public class StreetsideDownloadViewAction extends JosmAction implements ValueCha
    * Main constructor.
    */
   public StreetsideDownloadViewAction() {
-    super(
-      I18n.tr(DESCRIPTION),
-      new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
-      I18n.tr(DESCRIPTION),
-      Shortcut.registerShortcut("Streetside area", I18n.tr(DESCRIPTION), KeyEvent.VK_PERIOD, Shortcut.SHIFT),
-      false,
-      "streetsideArea",
-      true
-    );
+    super(I18n.tr(DESCRIPTION), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
+        I18n.tr(DESCRIPTION),
+        Shortcut.registerShortcut("Streetside area", I18n.tr(DESCRIPTION), KeyEvent.VK_PERIOD, Shortcut.SHIFT),
+        false, "streetsideArea", true);
     StreetsideProperties.DOWNLOAD_MODE.addListener(this);
     initEnabledState();
   }
@@ -61,12 +56,9 @@ public class StreetsideDownloadViewAction extends JosmAction implements ValueCha
   @Override
   protected void updateEnabledState() {
     super.updateEnabledState();
-    setEnabled(
-      StreetsideLayer.hasInstance() && (
-        StreetsideDownloader.getMode() == StreetsideDownloader.DOWNLOAD_MODE.OSM_AREA
-        || StreetsideDownloader.getMode() == StreetsideDownloader.DOWNLOAD_MODE.MANUAL_ONLY
-      )
-    );
+    setEnabled(StreetsideLayer.hasInstance()
+        && (StreetsideDownloader.getMode() == StreetsideDownloader.DOWNLOAD_MODE.OSM_AREA
+            || StreetsideDownloader.getMode() == StreetsideDownloader.DOWNLOAD_MODE.MANUAL_ONLY));
   }
 
   @Override

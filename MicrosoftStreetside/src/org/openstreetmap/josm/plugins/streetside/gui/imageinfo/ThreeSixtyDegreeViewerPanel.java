@@ -1,4 +1,4 @@
-//License: GPL. For details, see LICENSE file.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.gui.imageinfo;
 
 import org.openstreetmap.josm.plugins.streetside.cubemap.CameraTransformer;
@@ -10,8 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -25,26 +25,21 @@ import javafx.scene.text.FontWeight;
 public class ThreeSixtyDegreeViewerPanel extends JFXPanel {
 
   private static final long serialVersionUID = -4940350009018422000L;
-
+  private static final CameraTransformer cameraTransform = new CameraTransformer();
+  private static final double cameraDistance = 5000;
   private static Scene cubemapScene;
-
   private static Scene defaultScene;
   private static Scene loadingScene;
-
   private static Group root;
   private static Group subGroup;
   private static CubemapBox cubemapBox;
   private static PerspectiveCamera camera;
-  private static CameraTransformer cameraTransform = new CameraTransformer();
-
   private static double mousePosX;
   private static double mousePosY;
   private static double mouseOldX;
   private static double mouseOldY;
   private static double mouseDeltaX;
   private static double mouseDeltaY;
-  private static double cameraDistance = 5000;
-
   private static Image front;
   private static Image right;
   private static Image back;
@@ -54,43 +49,6 @@ public class ThreeSixtyDegreeViewerPanel extends JFXPanel {
 
   public ThreeSixtyDegreeViewerPanel() {
 
-  }
-
-  public void initialize() {
-
-    root = new Group();
-
-    camera = new PerspectiveCamera(true);
-    cameraTransform.setTranslate(0, 0, 0);
-    cameraTransform.getChildren().addAll(camera);
-    camera.setNearClip(0.1);
-    camera.setFarClip(1000000.0);
-    camera.setFieldOfView(42);
-    camera.setTranslateZ(-cameraDistance);
-    final PointLight light = new PointLight(Color.WHITE);
-
-    cameraTransform.getChildren().add(light);
-    light.setTranslateX(camera.getTranslateX());
-    light.setTranslateY(camera.getTranslateY());
-    light.setTranslateZ(camera.getTranslateZ());
-
-    root.getChildren().add(cameraTransform);
-
-    final double size = 100000D;
-
-    cubemapBox = new CubemapBox(front, right, back, left, up, down, size, camera);
-
-    subGroup = new Group();
-    subGroup.getChildren().add(cameraTransform);
-
-    createLoadingScene();
-
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        setScene(createDefaultScene());
-      }
-    });
   }
 
   private static Scene createDefaultScene() {
@@ -176,11 +134,11 @@ public class ThreeSixtyDegreeViewerPanel extends JFXPanel {
       }
       if (me.isPrimaryButtonDown()) {
         cameraTransform.ry.setAngle(
-          ((cameraTransform.ry.getAngle() + mouseDeltaX * modifierFactor * modifier * 2.0) % 360 + 540) % 360 - 180
-        ); // +
+            ((cameraTransform.ry.getAngle() + mouseDeltaX * modifierFactor * modifier * 2.0) % 360 + 540)
+                % 360 - 180); // +
         cameraTransform.rx.setAngle(
-          ((cameraTransform.rx.getAngle() - mouseDeltaY * modifierFactor * modifier * 2.0) % 360 + 540) % 360 - 180
-        ); // -
+            ((cameraTransform.rx.getAngle() - mouseDeltaY * modifierFactor * modifier * 2.0) % 360 + 540)
+                % 360 - 180); // -
 
       } else if (me.isSecondaryButtonDown()) {
         final double z = camera.getTranslateZ();
@@ -209,6 +167,38 @@ public class ThreeSixtyDegreeViewerPanel extends JFXPanel {
     label.setFont(Font.font(null, FontWeight.BOLD, 14));
     VBox vbox = new VBox(label);
     loadingScene = new Scene(vbox, 200, 100);
+  }
+
+  public void initialize() {
+
+    root = new Group();
+
+    camera = new PerspectiveCamera(true);
+    cameraTransform.setTranslate(0, 0, 0);
+    cameraTransform.getChildren().addAll(camera);
+    camera.setNearClip(0.1);
+    camera.setFarClip(1000000.0);
+    camera.setFieldOfView(42);
+    camera.setTranslateZ(-cameraDistance);
+    final PointLight light = new PointLight(Color.WHITE);
+
+    cameraTransform.getChildren().add(light);
+    light.setTranslateX(camera.getTranslateX());
+    light.setTranslateY(camera.getTranslateY());
+    light.setTranslateZ(camera.getTranslateZ());
+
+    root.getChildren().add(cameraTransform);
+
+    final double size = 100000D;
+
+    cubemapBox = new CubemapBox(front, right, back, left, up, down, size, camera);
+
+    subGroup = new Group();
+    subGroup.getChildren().add(cameraTransform);
+
+    createLoadingScene();
+
+    Platform.runLater(() -> setScene(createDefaultScene()));
   }
 
   public CubemapBox getCubemapBox() {

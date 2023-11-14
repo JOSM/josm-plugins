@@ -23,11 +23,9 @@ public class CommandUnjoin extends StreetsideExecutableCommand {
   /**
    * Main constructor.
    *
-   * @param images
-   *          The two images that are going to be unjoined. Must be of exactly
-   *          size 2.
-   * @throws IllegalArgumentException
-   *           if the List size is different from 2.
+   * @param images The two images that are going to be unjoined. Must be of exactly
+   *         size 2.
+   * @throws IllegalArgumentException if the List size is different from 2.
    */
   public CommandUnjoin(List<StreetsideAbstractImage> images) {
     super(new ConcurrentSkipListSet<>(images));

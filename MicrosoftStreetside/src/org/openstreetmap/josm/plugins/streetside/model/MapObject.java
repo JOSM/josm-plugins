@@ -17,10 +17,8 @@ public class MapObject extends KeyIndexedObject {
   private final long lastSeenTime;
   private final long updatedTime;
 
-  public MapObject(
-    final LatLon coordinate, final String key, final String objPackage, final String value,
-    long firstSeenTime, long lastSeenTime, long updatedTime
-  ) {
+  public MapObject(final LatLon coordinate, final String key, final String objPackage, final String value,
+      long firstSeenTime, long lastSeenTime, long updatedTime) {
     super(key);
     if (objPackage == null || value == null || coordinate == null) {
       throw new IllegalArgumentException("The fields of a MapObject must not be null!");
@@ -33,13 +31,9 @@ public class MapObject extends KeyIndexedObject {
     this.updatedTime = updatedTime;
   }
 
-  public LatLon getCoordinate() {
-    return coordinate;
-  }
-
   /**
    * @param objectTypeID the {@link String} representing the type of map object. This ID can be retrieved via
-   *   {@link #getValue()} for any given {@link MapObject}.
+   *           {@link #getValue()} for any given {@link MapObject}.
    * @return the icon, which represents the given objectTypeID
    */
   public static ImageIcon getIcon(final String objectTypeID) {
@@ -50,6 +44,10 @@ public class MapObject extends KeyIndexedObject {
       // downloading of map icons is not currently supported by Streetside
     }
     return cachedIcon;
+  }
+
+  public LatLon getCoordinate() {
+    return coordinate;
   }
 
   public String getPackage() {

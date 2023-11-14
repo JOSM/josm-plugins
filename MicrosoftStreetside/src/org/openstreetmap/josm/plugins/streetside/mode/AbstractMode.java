@@ -21,8 +21,7 @@ import org.openstreetmap.josm.plugins.streetside.io.download.StreetsideDownloade
  * @author nokutu
  * @see StreetsideLayer
  */
-public abstract class AbstractMode extends MouseAdapter implements
-  ZoomChangeListener {
+public abstract class AbstractMode extends MouseAdapter implements ZoomChangeListener {
 
   private static final int DOWNLOAD_COOLDOWN = 2000;
   private static SemiautomaticThread semiautomaticThread = new SemiautomaticThread();
@@ -32,6 +31,14 @@ public abstract class AbstractMode extends MouseAdapter implements
    */
   public int cursor = Cursor.DEFAULT_CURSOR;
 
+  /**
+   * Resets the semiautomatic mode thread.
+   */
+  public static void resetThread() {
+    semiautomaticThread.interrupt();
+    semiautomaticThread = new SemiautomaticThread();
+  }
+
   protected StreetsideAbstractImage getClosest(Point clickPoint) {
     double snapDistance = 10;
     double minDistance = Double.MAX_VALUE;
@@ -40,8 +47,7 @@ public abstract class AbstractMode extends MouseAdapter implements
       Point imagePoint = MainApplication.getMap().mapView.getPoint(image.getMovingLatLon());
       imagePoint.setLocation(imagePoint.getX(), imagePoint.getY());
       double dist = clickPoint.distanceSq(imagePoint);
-      if (minDistance > dist && clickPoint.distance(imagePoint) < snapDistance
-        && image.isVisible()) {
+      if (minDistance > dist && clickPoint.distance(imagePoint) < snapDistance && image.isVisible()) {
         minDistance = dist;
         closest = image;
       }
@@ -52,8 +58,8 @@ public abstract class AbstractMode extends MouseAdapter implements
   /**
    * Paint the dataset using the engine set.
    *
-   * @param g {@link Graphics2D} used for painting
-   * @param mv The object that can translate GeoPoints to screen coordinates.
+   * @param g   {@link Graphics2D} used for painting
+   * @param mv  The object that can translate GeoPoints to screen coordinates.
    * @param box Area where painting is going to be performed
    */
   public abstract void paint(Graphics2D g, MapView mv, Bounds box);
@@ -67,17 +73,11 @@ public abstract class AbstractMode extends MouseAdapter implements
     }
   }
 
-  /**
-   * Resets the semiautomatic mode thread.
-   */
-  public static void resetThread() {
-    semiautomaticThread.interrupt();
-    semiautomaticThread = new SemiautomaticThread();
-  }
-
   private static class SemiautomaticThread extends Thread {
 
-    /** If in semiautomatic mode, the last Epoch time when there was a download */
+    /**
+     * If in semiautomatic mode, the last Epoch time when there was a download
+     */
     private long lastDownload;
 
     private boolean moved;

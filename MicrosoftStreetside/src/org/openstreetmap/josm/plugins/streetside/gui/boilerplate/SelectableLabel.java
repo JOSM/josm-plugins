@@ -9,10 +9,9 @@ import javax.swing.UIManager;
 
 public class SelectableLabel extends JTextPane {
 
-  private static final long serialVersionUID = 5432480892000739831L;
-
   public static final Font DEFAULT_FONT = UIManager.getFont("Label.font").deriveFont(Font.PLAIN);
   public static final Color DEFAULT_BACKGROUND = UIManager.getColor("Panel.background");
+  private static final long serialVersionUID = 5432480892000739831L;
 
   public SelectableLabel() {
     super();

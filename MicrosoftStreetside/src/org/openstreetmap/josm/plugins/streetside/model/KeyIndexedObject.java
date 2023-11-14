@@ -45,10 +45,7 @@ public class KeyIndexedObject {
       return false;
     }
     KeyIndexedObject other = (KeyIndexedObject) obj;
-    if (!key.equals(other.key)) {
-      return false;
-    }
-    return true;
+    return key.equals(other.key);
   }
 
 }

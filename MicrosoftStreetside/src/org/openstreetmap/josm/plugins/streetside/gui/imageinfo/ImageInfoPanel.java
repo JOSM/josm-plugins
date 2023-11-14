@@ -6,12 +6,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.datatransfer.StringSelection;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -26,11 +26,12 @@ import org.openstreetmap.josm.plugins.streetside.gui.boilerplate.StreetsideButto
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 
 public final class ImageInfoPanel extends ToggleDialog implements StreetsideDataListener, DataSelectionListener {
   private static final long serialVersionUID = 4141847503072417190L;
 
-  final static Logger logger = Logger.getLogger(ImageInfoPanel.class);
+  private static final Logger LOGGER = Logger.getLogger(ImageInfoPanel.class.getCanonicalName());
 
   private static ImageInfoPanel instance;
 
@@ -43,13 +44,8 @@ public final class ImageInfoPanel extends ToggleDialog implements StreetsideData
   private ValueChangeListener<Boolean> imageLinkChangeListener;
 
   private ImageInfoPanel() {
-    super(
-      I18n.tr("Streetside 360° image info"),
-      "streetside-info",
-      I18n.tr("Displays detail information on the currently selected Streetside image"),
-      null,
-      150
-    );
+    super(I18n.tr("Streetside 360° image info"), "streetside-info",
+        I18n.tr("Displays detail information on the currently selected Streetside image"), null, 150);
     SelectionEventManager.getInstance().addSelectionListener(this);
 
     imgKeyValue = new SelectableLabel();
@@ -152,19 +148,16 @@ public final class ImageInfoPanel extends ToggleDialog implements StreetsideData
    * @see org.openstreetmap.josm.plugins.streetside.StreetsideDataListener#selectedImageChanged(org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage, org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage)
    */
   @Override
-  public synchronized void selectedImageChanged(final StreetsideAbstractImage oldImage, final StreetsideAbstractImage newImage) {
-    logger.info(String.format(
-      "Selected Streetside image changed from %s to %s.",
-      oldImage instanceof StreetsideImage ? ((StreetsideImage) oldImage).getId() : "‹none›",
-      newImage instanceof StreetsideImage ? ((StreetsideImage) newImage).getId() : "‹none›"
-    ));
+  public synchronized void selectedImageChanged(final StreetsideAbstractImage oldImage,
+      final StreetsideAbstractImage newImage) {
+    LOGGER.info(String.format("Selected Streetside image changed from %s to %s.",
+        oldImage instanceof StreetsideImage ? oldImage.getId() : "‹none›",
+        newImage instanceof StreetsideImage ? newImage.getId() : "‹none›"));
 
     imgKeyValue.setEnabled(newImage instanceof StreetsideImage);
-    final String newImageKey = newImage instanceof StreetsideImage ? ((StreetsideImage) newImage).getId(): null;
+    final String newImageKey = newImage instanceof StreetsideImage ? newImage.getId() : null;
     if (newImageKey != null) {
-      imageLinkChangeListener = b -> imgLinkAction.setURL(
-        StreetsideURL.MainWebsite.browseImage(newImageKey)
-      );
+      imageLinkChangeListener = b -> imgLinkAction.setURL(StreetsideURL.MainWebsite.browseImage(newImageKey));
       imageLinkChangeListener.valueChanged(null);
       StreetsideProperties.IMAGE_LINK_TO_BLUR_EDITOR.addListener(imageLinkChangeListener);
 
@@ -183,7 +176,8 @@ public final class ImageInfoPanel extends ToggleDialog implements StreetsideData
       addStreetsideTagAction.setTag(null);
     }
 
-    final boolean partOfSequence = newImage != null && newImage.getSequence() != null && newImage.getSequence().getId() != null;
+    final boolean partOfSequence = newImage != null && newImage.getSequence() != null
+        && newImage.getSequence().getId() != null;
     seqKeyValue.setEnabled(partOfSequence);
     if (partOfSequence) {
       seqKeyValue.setText(newImage.getSequence().getId());
@@ -198,8 +192,9 @@ public final class ImageInfoPanel extends ToggleDialog implements StreetsideData
   @Override
   public synchronized void selectionChanged(final SelectionChangeEvent event) {
     final Collection<? extends OsmPrimitive> sel = event.getSelection();
-    if (StreetsideProperties.DEBUGING_ENABLED.get()) {
-      logger.debug(String.format("Selection changed. %d primitives are selected.", sel == null ? 0 : sel.size()));
+    if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
+      LOGGER.log(Logging.LEVEL_DEBUG,
+          String.format("Selection changed. %d primitives are selected.", sel == null ? 0 : sel.size()));
     }
     addStreetsideTagAction.setTarget(sel != null && sel.size() == 1 ? sel.iterator().next() : null);
   }

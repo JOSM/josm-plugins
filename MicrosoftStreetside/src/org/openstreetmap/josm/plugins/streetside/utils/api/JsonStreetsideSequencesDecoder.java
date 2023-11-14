@@ -4,16 +4,16 @@ package org.openstreetmap.josm.plugins.streetside.utils.api;
 import java.lang.reflect.Array;
 import java.util.function.Function;
 
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
+import org.openstreetmap.josm.plugins.streetside.StreetsideSequence;
+import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
+
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
-import org.openstreetmap.josm.plugins.streetside.StreetsideSequence;
-import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
 
 /**
  * Decodes the JSON returned by {@link APIv3} into Java objects.
@@ -26,10 +26,11 @@ public final class JsonStreetsideSequencesDecoder {
 
   /**
    * Parses a given {@link JsonObject} as a GeoJSON Feature into a {@link StreetsideSequence}.
+   *
    * @param json the {@link JsonObject} to be parsed
    * @return a {@link StreetsideSequence} that is parsed from the given {@link JsonObject}. If mandatory information is
-   *         missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
-   *         returned.
+   * missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
+   * returned.
    */
   public static StreetsideSequence decodeSequence(final JsonObject json) {
     if (json == null || !"Feature".equals(json.getString("type", null))) {
@@ -41,18 +42,10 @@ public final class JsonStreetsideSequencesDecoder {
     if (properties != null && properties.getString("id", null) != null && ca != null) {
       result = new StreetsideSequence(properties.getString("id", null), ca);
 
-      final Double[] cas = decodeCoordinateProperty(
-        properties,
-        "hes",
-        val ->  val instanceof JsonNumber ? ((JsonNumber) val).doubleValue() : null,
-        Double.class
-      );
-      final String[] imageIds = decodeCoordinateProperty(
-        properties,
-        "image_ids",
-        val -> val instanceof JsonString ? ((JsonString) val).getString() : null,
-        String.class
-      );
+      final Double[] cas = decodeCoordinateProperty(properties, "hes",
+          val -> val instanceof JsonNumber ? ((JsonNumber) val).doubleValue() : null, Double.class);
+      final String[] imageIds = decodeCoordinateProperty(properties, "image_ids",
+          val -> val instanceof JsonString ? ((JsonString) val).getString() : null, String.class);
       final LatLon[] geometry = decodeLatLons(json.getJsonObject("geometry"));
       final int sequenceLength = Math.min(Math.min(cas.length, imageIds.length), geometry.length);
       for (int i = 0; i < sequenceLength; i++) {
@@ -72,8 +65,8 @@ public final class JsonStreetsideSequencesDecoder {
    * Parses a given {@link StreetsideImage} as a GeoJSON Feature into a {@link StreetsideSequence}.
    * @param image the {@link StreetsideImage} to be parsed
    * @return a {@link StreetsideSequence} that is parsed from the given {@link JsonObject}. If mandatory information is
-   *         missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
-   *         returned.
+   *     missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
+   *     returned.
    */
   public static StreetsideImage decodeBubbleData(final StreetsideImage image) {
     if (image == null) {
@@ -81,7 +74,7 @@ public final class JsonStreetsideSequencesDecoder {
     }
     // Declare and instantiate new Streetside object to ensure proper setting of superclass attributes
     StreetsideImage result = null;
-    if(image.getId() != null ) {
+    if (image.getId() != null) {
       result = new StreetsideImage(image.getId(), new LatLon(image.getLa(), image.getLo()), 0.0);
       result.setAl(image.getAl());
       result.setRo(image.getRo());
@@ -102,8 +95,8 @@ public final class JsonStreetsideSequencesDecoder {
    * Parses a given {@link JsonObject} as a GeoJSON Feature into a {@link StreetsideSequence}.
    * @param json the {@link JsonObject} to be parsed
    * @return a {@link StreetsideSequence} that is parsed from the given {@link JsonObject}. If mandatory information is
-   *         missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
-   *         returned.
+   *     missing from the JSON or it's not meeting the expecting format in another way, <code>null</code> will be
+   *     returned.
    */
   public static StreetsideSequence decodeStreetsideSequence(final JsonObject json) {
     if (json == null) {
@@ -111,9 +104,10 @@ public final class JsonStreetsideSequencesDecoder {
     }
     StreetsideSequence result = null;
 
-    if (json.getString("id", null) != null && json.getString("la", null) != null && json.getString("lo", null) != null) {
-        result = new StreetsideSequence(json.getString("id", null),
-                json.getJsonNumber("la").doubleValue(), json.getJsonNumber("lo").doubleValue(), json.getJsonNumber("cd").longValue());
+    if (json.getString("id", null) != null && json.getString("la", null) != null
+        && json.getString("lo", null) != null) {
+      result = new StreetsideSequence(json.getString("id", null), json.getJsonNumber("la").doubleValue(),
+          json.getJsonNumber("lo").doubleValue(), json.getJsonNumber("cd").longValue());
     }
 
     return result;
@@ -127,13 +121,14 @@ public final class JsonStreetsideSequencesDecoder {
    * @param decodeValueFunction the function used for conversion from {@link JsonValue} to the desired type.
    * @param clazz the desired type that the elements of the resulting array should have
    * @return the supplied array converted from {@link JsonArray} to a java array of the supplied type, converted using
-   *         the supplied function. Never <code>null</code>, in case of array==null, an array of length 0 is returned.
+   *     the supplied function. Never <code>null</code>, in case of array==null, an array of length 0 is returned.
    */
   @SuppressWarnings("unchecked")
-  private static <T> T[] decodeJsonArray(final JsonArray array, final Function<JsonValue, T> decodeValueFunction, final Class<T> clazz) {
+  private static <T> T[] decodeJsonArray(final JsonArray array, final Function<JsonValue, T> decodeValueFunction,
+      final Class<T> clazz) {
     final T[] result;
     if (array == null) {
-      result =  (T[]) Array.newInstance(clazz, 0);
+      result = (T[]) Array.newInstance(clazz, 0);
     } else {
       result = (T[]) Array.newInstance(clazz, array.size());
       for (int i = 0; i < result.length; i++) {
@@ -153,16 +148,15 @@ public final class JsonStreetsideSequencesDecoder {
    * @param json the JSON object representing the `properties` of a sequence
    * @param key the key, which identifies the desired array inside the `coordinateProperties` object to be converted
    * @param decodeValueFunction a function that converts the {@link JsonValue}s in the JSON array to java objects of the
-   *        desired type
+   *    desired type
    * @param clazz the {@link Class} object of the desired type, that the entries of the resulting array should have
    * @return the resulting array, when converting the desired entry of the `coordinateProperties`.
-   *         Never <code>null</code>. If no `coordinateProperties` are set, or if the desired key is not set or is not
-   *         an array, then an empty array of the desired type is returned.
+   *     Never <code>null</code>. If no `coordinateProperties` are set, or if the desired key is not set or is not
+   *     an array, then an empty array of the desired type is returned.
    */
   @SuppressWarnings("unchecked")
-  private static <T> T[] decodeCoordinateProperty(
-    final JsonObject json, final String key, final Function<JsonValue, T> decodeValueFunction, final Class<T> clazz
-  ) {
+  private static <T> T[] decodeCoordinateProperty(final JsonObject json, final String key,
+      final Function<JsonValue, T> decodeValueFunction, final Class<T> clazz) {
     final JsonValue coordinateProperties = json == null ? null : json.get("coordinateProperties");
     if (coordinateProperties instanceof JsonObject) {
       JsonValue valueArray = ((JsonObject) coordinateProperties).get(key);

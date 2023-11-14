@@ -6,9 +6,6 @@
     <conf name="provided" description="Needed for compile, but will be present at runtime"/>
   </configurations>
   <dependencies>
-    <dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.15.3" conf="default->default"/>
-    <dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.15.3" conf="default->default"/>
-    <dependency org="us.monoid.web" name="resty" rev="0.3.2" conf="default->default"/>
     <dependency org="org.openjfx" name="javafx-swing" rev="19" conf="provided">
       <artifact name="javafx-swing" type="jar" m:classifier="linux"/>
       <artifact name="javafx-swing" type="jar" m:classifier="mac"/>
@@ -37,9 +34,5 @@
       <artifact name="javafx-graphics" type="jar" m:classifier="sources"/>
       <artifact name="javafx-graphics" type="jar" m:classifier="javadoc"/>
     </dependency>
-    <!-- from jackson plugin -->
-    <exclude org="com.fasterxml.jackson.core" module="jackson-core"/>
-    <!-- not needed at runtime -->
-    <exclude org="net.java.dev.javacc" module="javacc"/>
   </dependencies>
 </ivy-module>

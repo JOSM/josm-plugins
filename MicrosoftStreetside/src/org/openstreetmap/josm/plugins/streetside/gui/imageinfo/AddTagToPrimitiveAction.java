@@ -43,19 +43,13 @@ public class AddTagToPrimitiveAction extends AbstractAction {
     if (target != null && tag != null) {
       int conflictResolution = JOptionPane.YES_OPTION;
       if (target.hasKey(tag.getKey()) && !target.hasTag(tag.getKey(), tag.getValue())) {
-        conflictResolution = JOptionPane.showConfirmDialog(
-          MainApplication.getMainFrame(),
-          "<html>" +
-            I18n.tr("A tag with key <i>{0}</i> is already present on the selected OSM object.", tag.getKey()) + "<br>" +
-            I18n.tr(
-              "Do you really want to replace the current value <i>{0}</i> with the new value <i>{1}</i>?",
-              target.get(tag.getKey()),
-              tag.getValue()
-            ) + "</html>",
-          I18n.tr("Tag conflict"),
-          JOptionPane.YES_NO_OPTION,
-          JOptionPane.WARNING_MESSAGE
-        );
+        conflictResolution = JOptionPane.showConfirmDialog(MainApplication.getMainFrame(), "<html>" + I18n
+            .tr("A tag with key <i>{0}</i> is already present on the selected OSM object.", tag.getKey())
+            + "<br>"
+            + I18n.tr(
+                "Do you really want to replace the current value <i>{0}</i> with the new value <i>{1}</i>?",
+                target.get(tag.getKey()), tag.getValue())
+            + "</html>", I18n.tr("Tag conflict"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
       }
       if (JOptionPane.YES_OPTION == conflictResolution) {
         target.put(tag);

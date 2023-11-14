@@ -13,38 +13,38 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
 *
 */
 public abstract class StreetsideCommand {
-/** Set of {@link StreetsideAbstractImage} objects affected by the command */
-public Set<StreetsideAbstractImage> images;
+  /**
+   * Set of {@link StreetsideAbstractImage} objects affected by the command
+   */
+  public Set<StreetsideAbstractImage> images;
 
-/**
-* Main constructor.
-*
-* @param images
-*          The images that are affected by the command.
-*/
-public StreetsideCommand(Set<StreetsideAbstractImage> images) {
- this.images = new ConcurrentSkipListSet<>(images);
-}
+  /**
+   * Main constructor.
+   *
+   * @param images The images that are affected by the command.
+   */
+  protected StreetsideCommand(Set<StreetsideAbstractImage> images) {
+    this.images = new ConcurrentSkipListSet<>(images);
+  }
 
-/**
-* Undoes the action.
-*/
-public abstract void undo();
+  /**
+   * Undoes the action.
+   */
+  public abstract void undo();
 
-/**
-* Redoes the action.
-*/
-public abstract void redo();
+  /**
+   * Redoes the action.
+   */
+  public abstract void redo();
 
-/**
-* If two equal commands are applied consecutively to the same set of images,
-* they are summed in order to reduce them to just one command.
-*
-* @param command
-*          The command to be summed to last command.
-*/
-public abstract void sum(StreetsideCommand command);
+  /**
+   * If two equal commands are applied consecutively to the same set of images,
+   * they are summed in order to reduce them to just one command.
+   *
+   * @param command The command to be summed to last command.
+   */
+  public abstract void sum(StreetsideCommand command);
 
-@Override
-public abstract String toString();
+  @Override
+  public abstract String toString();
 }

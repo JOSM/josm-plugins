@@ -10,12 +10,13 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.plugins.streetside.StreetsideAbstractImage;
 import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Export main thread. Exportation works by creating a
@@ -31,14 +32,14 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
  */
 public class StreetsideExportManager extends PleaseWaitRunnable {
 
-  final static Logger logger = Logger.getLogger(StreetsideExportManager.class);
+  private static final Logger LOGGER = Logger.getLogger(StreetsideExportManager.class.getCanonicalName());
 
   private final ArrayBlockingQueue<BufferedImage> queue = new ArrayBlockingQueue<>(10);
   private final ArrayBlockingQueue<StreetsideAbstractImage> queueImages = new ArrayBlockingQueue<>(10);
 
-  private int amount;
-  private Set<StreetsideAbstractImage> images;
-  private String path;
+  private final int amount;
+  private final Set<StreetsideAbstractImage> images;
+  private final String path;
 
   private Thread writer;
   private ThreadPoolExecutor ex;
@@ -47,14 +48,10 @@ public class StreetsideExportManager extends PleaseWaitRunnable {
    * Main constructor.
    *
    * @param images Set of {@link StreetsideAbstractImage} objects to be exported.
-   * @param path Export path.
+   * @param path   Export path.
    */
   public StreetsideExportManager(Set<StreetsideAbstractImage> images, String path) {
-    super(
-      tr("Downloading") + "…",
-      new PleaseWaitProgressMonitor(tr("Exporting Streetside Images")),
-      true
-    );
+    super(tr("Downloading") + "…", new PleaseWaitProgressMonitor(tr("Exporting Streetside Images")), true);
     this.images = images == null ? new HashSet<>() : images;
     this.path = path;
     amount = this.images.size();
@@ -69,26 +66,23 @@ public class StreetsideExportManager extends PleaseWaitRunnable {
   @Override
   protected void realRun() throws IOException {
     // Starts a writer thread in order to write the pictures on the disk.
-    writer = new StreetsideExportWriterThread(path, queue,
-        queueImages, amount, getProgressMonitor());
+    writer = new StreetsideExportWriterThread(path, queue, queueImages, amount, getProgressMonitor());
     writer.start();
     if (path == null) {
       try {
         writer.join();
       } catch (InterruptedException e) {
-        logger.error(e);
+        LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
       }
       return;
     }
-    ex = new ThreadPoolExecutor(20, 35, 25, TimeUnit.SECONDS,
-      new ArrayBlockingQueue<>(10));
+    ex = new ThreadPoolExecutor(20, 35, 25, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
     for (StreetsideAbstractImage image : images) {
       if (image instanceof StreetsideImage) {
         try {
-          ex.execute(new StreetsideExportDownloadThread(
-              (StreetsideImage) image, queue, queueImages));
+          ex.execute(new StreetsideExportDownloadThread((StreetsideImage) image, queue, queueImages));
         } catch (Exception e) {
-          logger.error(e);
+          LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
         }
       }
       try {
@@ -98,13 +92,13 @@ public class StreetsideExportManager extends PleaseWaitRunnable {
           Thread.sleep(100);
         }
       } catch (Exception e) {
-        logger.error(e);
+        LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
       }
     }
     try {
       writer.join();
     } catch (InterruptedException e) {
-      logger.error(e);
+      LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
     }
   }
 

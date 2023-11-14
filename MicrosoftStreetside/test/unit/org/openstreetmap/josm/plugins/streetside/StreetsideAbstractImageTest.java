@@ -8,21 +8,21 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 class StreetsideAbstractImageTest {
-  @Test
-  void testIsModified() {
-    StreetsideImage img = new StreetsideImage("key___________________", new LatLon(0, 0), 0);
-    assertFalse(img.isModified());
-    img.turn(1e-4);
-    img.stopMoving();
-    assertTrue(img.isModified());
-    img.turn(-1e-4);
-    img.stopMoving();
-    assertFalse(img.isModified());
-    img.move(1e-4, 1e-4);
-    img.stopMoving();
-    assertTrue(img.isModified());
-    img.move(-1e-4, -1e-4);
-    img.stopMoving();
-    assertFalse(img.isModified());
-  }
+    @Test
+    void testIsModified() {
+        StreetsideImage img = new StreetsideImage("key___________________", new LatLon(0, 0), 0);
+        assertFalse(img.isModified());
+        img.turn(1e-4);
+        img.stopMoving();
+        assertTrue(img.isModified());
+        img.turn(-1e-4);
+        img.stopMoving();
+        assertFalse(img.isModified());
+        img.move(1e-4, 1e-4);
+        img.stopMoving();
+        assertTrue(img.isModified());
+        img.move(-1e-4, -1e-4);
+        img.stopMoving();
+        assertFalse(img.isModified());
+    }
 }

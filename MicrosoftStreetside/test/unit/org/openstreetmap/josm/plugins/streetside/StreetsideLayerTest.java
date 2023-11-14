@@ -23,62 +23,63 @@ import org.openstreetmap.josm.testutils.annotations.Projection;
 @Main
 @Projection
 class StreetsideLayerTest {
-  private static Layer getDummyLayer() {
-    return ImageryLayer.create(new ImageryInfo("dummy", "https://example.org"));
-  }
-
-  @Test
-  void testGetIcon() {
-    assertNotNull(StreetsideLayer.getInstance().getIcon());
-  }
-
-  @Test
-  void testIsMergable() {
-    assertFalse(StreetsideLayer.getInstance().isMergable(getDummyLayer()));
-  }
-
-  @Test
-  void testMergeFrom() {
-    StreetsideLayer layer = StreetsideLayer.getInstance();
-    Layer dummyLayer = getDummyLayer();
-    assertThrows(UnsupportedOperationException.class, () -> layer.mergeFrom(dummyLayer));
-  }
-
-  @Test
-  void testSetVisible() {
-    StreetsideLayer.getInstance().getData().add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
-    StreetsideLayer.getInstance().getData().add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
-    StreetsideImage invisibleImage = new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0);
-    invisibleImage.setVisible(false);
-    StreetsideLayer.getInstance().getData().add(invisibleImage);
-
-    StreetsideLayer.getInstance().setVisible(false);
-    for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
-      assertFalse(img.isVisible());
+    private static Layer getDummyLayer() {
+        return ImageryLayer.create(new ImageryInfo("dummy", "https://example.org"));
     }
 
-
-    StreetsideLayer.getInstance().setVisible(true);
-    for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
-      assertTrue(img.isVisible());
+    @Test
+    void testGetIcon() {
+        assertNotNull(StreetsideLayer.getInstance().getIcon());
     }
-  }
 
-  @Test
-  void testGetInfoComponent() {
-    Object comp = StreetsideLayer.getInstance().getInfoComponent();
-    assertInstanceOf(String.class, comp);
-    assertTrue(((String) comp).length() >= 9);
-  }
+    @Test
+    void testIsMergable() {
+        assertFalse(StreetsideLayer.getInstance().isMergable(getDummyLayer()));
+    }
 
-  @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless", disabledReason = "Listener for destruction is only registered in non-headless environments")
-  @Test
-  void testClearInstance() {
-    StreetsideLayer.getInstance();
-    assertTrue(StreetsideLayer.hasInstance());
-    JOSMTestRules.cleanLayerEnvironment();
-    assertFalse(StreetsideLayer.hasInstance());
-    StreetsideLayer.getInstance();
-    assertTrue(StreetsideLayer.hasInstance());
-  }
+    @Test
+    void testMergeFrom() {
+        StreetsideLayer layer = StreetsideLayer.getInstance();
+        Layer dummyLayer = getDummyLayer();
+        assertThrows(UnsupportedOperationException.class, () -> layer.mergeFrom(dummyLayer));
+    }
+
+    @Test
+    void testSetVisible() {
+        StreetsideLayer.getInstance().getData()
+                .add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
+        StreetsideLayer.getInstance().getData()
+                .add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
+        StreetsideImage invisibleImage = new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0);
+        invisibleImage.setVisible(false);
+        StreetsideLayer.getInstance().getData().add(invisibleImage);
+
+        StreetsideLayer.getInstance().setVisible(false);
+        for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
+            assertFalse(img.isVisible());
+        }
+
+        StreetsideLayer.getInstance().setVisible(true);
+        for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
+            assertTrue(img.isVisible());
+        }
+    }
+
+    @Test
+    void testGetInfoComponent() {
+        Object comp = StreetsideLayer.getInstance().getInfoComponent();
+        assertInstanceOf(String.class, comp);
+        assertTrue(((String) comp).length() >= 9);
+    }
+
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless", disabledReason = "Listener for destruction is only registered in non-headless environments")
+    @Test
+    void testClearInstance() {
+        StreetsideLayer.getInstance();
+        assertTrue(StreetsideLayer.hasInstance());
+        JOSMTestRules.cleanLayerEnvironment();
+        assertFalse(StreetsideLayer.hasInstance());
+        StreetsideLayer.getInstance();
+        assertTrue(StreetsideLayer.hasInstance());
+    }
 }

@@ -20,10 +20,8 @@ public class CommandTurn extends StreetsideCommand {
   /**
    * Main constructor.
    *
-   * @param images
-   *          Set of images that is turned.
-   * @param ca
-   *          How much the images turn.
+   * @param images Set of images that is turned.
+   * @param ca   How much the images turn.
    */
   public CommandTurn(Set<StreetsideAbstractImage> images, double ca) {
     super(images);
@@ -50,8 +48,7 @@ public class CommandTurn extends StreetsideCommand {
 
   @Override
   public String toString() {
-    return trn("Turned {0} image", "Turned {0} images", images.size(),
-        images.size());
+    return trn("Turned {0} image", "Turned {0} images", images.size(), images.size());
   }
 
   @Override

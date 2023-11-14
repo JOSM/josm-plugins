@@ -19,9 +19,8 @@ public class StreetsideImageTreeCellRenderer extends DefaultTreeCellRenderer {
   private static final Icon ICON = new ImageProvider("mapicon").setMaxSize(16).get();
 
   @Override
-  public Component getTreeCellRendererComponent(
-    JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus
-  ) {
+  public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
+      int row, boolean hasFocus) {
     super.getTreeCellRendererComponent(tree, value.toString(), sel, expanded, leaf, row, hasFocus);
     setIcon(ICON);
     return this;

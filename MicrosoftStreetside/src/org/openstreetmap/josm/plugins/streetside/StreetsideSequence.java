@@ -16,28 +16,24 @@ import org.openstreetmap.josm.plugins.streetside.model.UserProfile;
 
 public class StreetsideSequence {
 
-
+  /**
+   * The images in the sequence.
+   */
+  private final List<StreetsideAbstractImage> images;
   /**
    * Unique identifier. Used only for {@link StreetsideImage} sequences.
    */
   private String id;
   private UserProfile user;
-
   private double la;
   private double lo;
-
   /**
    * Epoch time when the sequence was created
    */
   private long cd;
 
-  /**
-   * The images in the sequence.
-   */
-  private List<StreetsideAbstractImage> images;
-
   public StreetsideSequence(String id, Long ca) {
-	this.id = id;
+    this.id = id;
     cd = ca;
     images = new CopyOnWriteArrayList<>();
   }
@@ -53,21 +49,21 @@ public class StreetsideSequence {
    * No argument constructor for StreetsideSequence - necessary for JSON serialization
    */
   public StreetsideSequence() {
-	  images = new CopyOnWriteArrayList<>();
+    images = new CopyOnWriteArrayList<>();
   }
 
   public StreetsideSequence(String id, double la, double lo, long ca) {
-	this.id = id;
-	this.la = la;
-	this.lo = lo;
-	cd = ca;
-	images = new CopyOnWriteArrayList<>();
-}
+    this.id = id;
+    this.la = la;
+    this.lo = lo;
+    cd = ca;
+    images = new CopyOnWriteArrayList<>();
+  }
 
-public StreetsideSequence(String id) {
-	this.id = id;
-	images = new CopyOnWriteArrayList<>();
-}
+  public StreetsideSequence(String id) {
+    this.id = id;
+    images = new CopyOnWriteArrayList<>();
+  }
 
   /**
    * Adds a new {@link StreetsideAbstractImage} object to the database.
@@ -94,12 +90,10 @@ public StreetsideSequence(String id) {
    * {@link StreetsideAbstractImage} object.
    *
    * @param image The {@link StreetsideAbstractImage} object whose next image is
-   * going to be returned.
-   *
+   *        going to be returned.
    * @return The next {@link StreetsideAbstractImage} object in the sequence.
-   *
    * @throws IllegalArgumentException if the given {@link StreetsideAbstractImage} object doesn't belong
-   * the this sequence.
+   *                  in this sequence.
    */
   public StreetsideAbstractImage next(StreetsideAbstractImage image) {
     int i = images.indexOf(image);
@@ -117,12 +111,10 @@ public StreetsideSequence(String id) {
    * given {@link StreetsideAbstractImage} object.
    *
    * @param image The {@link StreetsideAbstractImage} object whose previous image is
-   * going to be returned.
-   *
+   *        going to be returned.
    * @return The previous {@link StreetsideAbstractImage} object in the sequence.
-   *
    * @throws IllegalArgumentException if the given {@link StreetsideAbstractImage} object doesn't belong
-   * the this sequence.
+   *                  the this sequence.
    */
   public StreetsideAbstractImage previous(StreetsideAbstractImage image) {
     int i = images.indexOf(image);
@@ -142,13 +134,6 @@ public StreetsideSequence(String id) {
    */
   public void remove(StreetsideAbstractImage image) {
     images.remove(image);
-  }
-
-  /**
-   * @param id the id to set
-   */
-  public void setId(String id) {
-    this.id = id;
   }
 
   /**
@@ -213,7 +198,14 @@ public StreetsideSequence(String id) {
     return id;
   }
 
+  /**
+   * @param id the id to set
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public UserProfile getUser() {
-	return user;
+    return user;
   }
 }

@@ -36,14 +36,6 @@ import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 public class StreetsideData implements Data {
   private final Set<StreetsideAbstractImage> images = ConcurrentHashMap.newKeySet();
   /**
-   * The image currently selected, this is the one being shown.
-   */
-  private StreetsideAbstractImage selectedImage;
-  /**
-   * The image under the cursor.
-   */
-  private StreetsideAbstractImage highlightedImage;
-  /**
    * All the images selected, can be more than one.
    */
   private final Set<StreetsideAbstractImage> multiSelectedImages = ConcurrentHashMap.newKeySet();
@@ -55,6 +47,14 @@ public class StreetsideData implements Data {
    * The bounds of the areas for which the pictures have been downloaded.
    */
   private final List<Bounds> bounds;
+  /**
+   * The image currently selected, this is the one being shown.
+   */
+  private StreetsideAbstractImage selectedImage;
+  /**
+   * The image under the cursor.
+   */
+  private StreetsideAbstractImage highlightedImage;
 
   /**
    * Creates a new object and adds the initial set of listeners.
@@ -63,11 +63,71 @@ public class StreetsideData implements Data {
     selectedImage = null;
     bounds = new CopyOnWriteArrayList<>();
 
-  // Adds the basic set of listeners.
-  Arrays.stream(StreetsidePlugin.getStreetsideDataListeners()).forEach(this::addListener);
-      addListener(StreetsideViewerDialog.getInstance().getStreetsideViewerPanel());
-      addListener(StreetsideMainDialog.getInstance());
-      addListener(ImageInfoPanel.getInstance());
+    // Adds the basic set of listeners.
+    Arrays.stream(StreetsidePlugin.getStreetsideDataListeners()).forEach(this::addListener);
+    addListener(StreetsideViewerDialog.getInstance().getStreetsideViewerPanel());
+    addListener(StreetsideMainDialog.getInstance());
+    addListener(ImageInfoPanel.getInstance());
+  }
+
+  /**
+   * Downloads surrounding images of this mapillary image in background threads
+   *
+   * @param streetsideImage the image for which the surrounding images should be downloaded
+   */
+  private static void downloadSurroundingImages(StreetsideImage streetsideImage) {
+    MainApplication.worker.execute(() -> {
+      final int prefetchCount = StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get();
+      CacheAccess<String, BufferedImageCacheEntry> imageCache = Caches.ImageCache.getInstance().getCache();
+
+      StreetsideAbstractImage nextImage = streetsideImage.next();
+      StreetsideAbstractImage prevImage = streetsideImage.previous();
+
+      for (int i = 0; i < prefetchCount; i++) {
+        if (nextImage != null) {
+          if (nextImage instanceof StreetsideImage && imageCache.get(nextImage.getId()) == null) {
+            CacheUtils.downloadPicture((StreetsideImage) nextImage);
+          }
+          nextImage = nextImage.next();
+        }
+        if (prevImage != null) {
+          if (prevImage instanceof StreetsideImage && imageCache.get(prevImage.getId()) == null) {
+            CacheUtils.downloadPicture((StreetsideImage) prevImage);
+          }
+          prevImage = prevImage.previous();
+        }
+      }
+    });
+  }
+
+  /**
+   * Downloads surrounding images of this mapillary image in background threads
+   *
+   * @param streetsideImage the image for which the surrounding images should be downloaded
+   */
+  public static void downloadSurroundingCubemaps(StreetsideImage streetsideImage) {
+    MainApplication.worker.execute(() -> {
+      final int prefetchCount = StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get();
+      CacheAccess<String, BufferedImageCacheEntry> imageCache = Caches.ImageCache.getInstance().getCache();
+
+      StreetsideAbstractImage nextImage = streetsideImage.next();
+      StreetsideAbstractImage prevImage = streetsideImage.previous();
+
+      for (int i = 0; i < prefetchCount; i++) {
+        if (nextImage != null) {
+          if (nextImage instanceof StreetsideImage && imageCache.get(nextImage.getId()) == null) {
+            CacheUtils.downloadCubemap((StreetsideImage) nextImage);
+          }
+          nextImage = nextImage.next();
+        }
+        if (prevImage != null) {
+          if (prevImage instanceof StreetsideImage && imageCache.get(prevImage.getId()) == null) {
+            CacheUtils.downloadCubemap((StreetsideImage) prevImage);
+          }
+          prevImage = prevImage.previous();
+        }
+      }
+    });
   }
 
   /**
@@ -85,14 +145,14 @@ public class StreetsideData implements Data {
    *
    * @param image  The image to be added.
    * @param update Whether the map must be updated or not
-   *        (updates are currently unsupported by Streetside).
+   *         (updates are currently unsupported by Streetside).
    */
   public void add(StreetsideAbstractImage image, boolean update) {
-    	images.add(image);
-    	if (update) {
-    		StreetsideLayer.invalidateInstance();
-    	}
-    	fireImagesAdded();
+    images.add(image);
+    if (update) {
+      StreetsideLayer.invalidateInstance();
+    }
+    fireImagesAdded();
   }
 
   /**
@@ -108,7 +168,7 @@ public class StreetsideData implements Data {
    * Adds a set of {link StreetsideAbstractImage} objects to this object.
    *
    * @param newImages The set of images to be added.
-   * @param update Whether the map must be updated or not.
+   * @param update  Whether the map must be updated or not.
    */
   public void addAll(Collection<? extends StreetsideAbstractImage> newImages, boolean update) {
     images.addAll(newImages);
@@ -118,7 +178,7 @@ public class StreetsideData implements Data {
     fireImagesAdded();
   }
 
- /**
+  /**
    * Adds a new listener.
    *
    * @param lis Listener to be added.
@@ -175,21 +235,21 @@ public class StreetsideData implements Data {
   }
 
   /**
-   * Highlights the image under the cursor.
-   *
-   * @param image The image under the cursor.
-   */
-  public void setHighlightedImage(StreetsideAbstractImage image) {
-    highlightedImage = image;
-  }
-
-  /**
    * Returns the image under the mouse cursor.
    *
    * @return The image under the mouse cursor.
    */
   public StreetsideAbstractImage getHighlightedImage() {
     return highlightedImage;
+  }
+
+  /**
+   * Highlights the image under the cursor.
+   *
+   * @param image The image under the cursor.
+   */
+  public void setHighlightedImage(StreetsideAbstractImage image) {
+    highlightedImage = image;
   }
 
   /**
@@ -202,7 +262,21 @@ public class StreetsideData implements Data {
   }
 
   /**
+   * Sets a new {@link Collection} object as the used set of images.
+   * Any images that are already present, are removed.
+   *
+   * @param newImages the new image list (previously set images are completely replaced)
+   */
+  public void setImages(Collection<StreetsideAbstractImage> newImages) {
+    synchronized (this) {
+      images.clear();
+      images.addAll(newImages);
+    }
+  }
+
+  /**
    * Returns a Set of all sequences, that the images are part of.
+   *
    * @return all sequences that are contained in the Streetside data
    */
   public Set<StreetsideSequence> getSequences() {
@@ -218,6 +292,15 @@ public class StreetsideData implements Data {
     return selectedImage;
   }
 
+  /**
+   * Selects a new image.If the user does ctrl + click, this isn't triggered.
+   *
+   * @param image The StreetsideImage which is going to be selected
+   */
+  public void setSelectedImage(StreetsideAbstractImage image) {
+    setSelectedImage(image, false);
+  }
+
   private void fireImagesAdded() {
     listeners.stream().filter(Objects::nonNull).forEach(StreetsideDataListener::imagesAdded);
   }
@@ -228,7 +311,7 @@ public class StreetsideData implements Data {
    * nothing.
    *
    * @throws IllegalStateException if the selected image is null or the selected image doesn't
-   *                               belong to a sequence.
+   *                 belong to a sequence.
    */
   public void selectNext() {
     selectNext(StreetsideProperties.MOVE_TO_IMG.get());
@@ -241,7 +324,7 @@ public class StreetsideData implements Data {
    *
    * @param moveToPicture True if the view must me moved to the next picture.
    * @throws IllegalStateException if the selected image is null or the selected image doesn't
-   *                               belong to a sequence.
+   *                 belong to a sequence.
    */
   public void selectNext(boolean moveToPicture) {
     StreetsideAbstractImage tempImage = selectedImage;
@@ -262,7 +345,7 @@ public class StreetsideData implements Data {
    * nothing.
    *
    * @throws IllegalStateException if the selected image is null or the selected image doesn't
-   *                               belong to a sequence.
+   *                 belong to a sequence.
    */
   public void selectPrevious() {
     selectPrevious(StreetsideProperties.MOVE_TO_IMG.get());
@@ -276,7 +359,7 @@ public class StreetsideData implements Data {
    *
    * @param moveToPicture True if the view must me moved to the previous picture.
    * @throws IllegalStateException if the selected image is null or the selected image doesn't
-   *                               belong to a sequence.
+   *                 belong to a sequence.
    */
   public void selectPrevious(boolean moveToPicture) {
     if (selectedImage != null && selectedImage.getSequence() != null) {
@@ -289,15 +372,6 @@ public class StreetsideData implements Data {
         }
       }
     }
-  }
-
-  /**
-   * Selects a new image.If the user does ctrl + click, this isn't triggered.
-   *
-   * @param image The StreetsideImage which is going to be selected
-   */
-  public void setSelectedImage(StreetsideAbstractImage image) {
-    setSelectedImage(image, false);
   }
 
   /**
@@ -328,68 +402,8 @@ public class StreetsideData implements Data {
     StreetsideLayer.invalidateInstance();
   }
 
-  /**
-   * Downloads surrounding images of this mapillary image in background threads
-   * @param streetsideImage the image for which the surrounding images should be downloaded
-   */
-  private static void downloadSurroundingImages (StreetsideImage streetsideImage) {
-    MainApplication.worker.execute(() -> {
-      final int prefetchCount = StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get();
-      CacheAccess <String, BufferedImageCacheEntry> imageCache = Caches.ImageCache.getInstance().getCache();
-
-      StreetsideAbstractImage nextImage = streetsideImage.next();
-      StreetsideAbstractImage prevImage = streetsideImage.previous();
-
-      for (int i = 0; i < prefetchCount; i++) {
-        if (nextImage != null) {
-          if (nextImage instanceof StreetsideImage &&
-            imageCache.get(((StreetsideImage) nextImage).getId()) == null) {
-            CacheUtils.downloadPicture((StreetsideImage) nextImage);
-          }
-          nextImage = nextImage.next();
-        }
-        if (prevImage != null) {
-          if (prevImage instanceof StreetsideImage &&
-            imageCache.get(((StreetsideImage) prevImage).getId()) == null) {
-            CacheUtils.downloadPicture((StreetsideImage) prevImage);
-          }
-          prevImage = prevImage.previous();
-        }
-      }
-    });
-  }
-
-  /**
-   * Downloads surrounding images of this mapillary image in background threads
-   * @param streetsideImage the image for which the surrounding images should be downloaded
-   */
-  public static void downloadSurroundingCubemaps(StreetsideImage streetsideImage) {
-      MainApplication.worker.execute(() -> {
-        final int prefetchCount = StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get();
-        CacheAccess<String, BufferedImageCacheEntry> imageCache = Caches.ImageCache.getInstance().getCache();
-
-        StreetsideAbstractImage nextImage = streetsideImage.next();
-        StreetsideAbstractImage prevImage = streetsideImage.previous();
-
-        for (int i = 0; i < prefetchCount; i++) {
-          if (nextImage != null) {
-            if (nextImage instanceof StreetsideImage && imageCache.get(((StreetsideImage) nextImage).getId()) == null) {
-              CacheUtils.downloadCubemap((StreetsideImage) nextImage);
-            }
-            nextImage = nextImage.next();
-          }
-          if (prevImage != null) {
-            if (prevImage instanceof StreetsideImage && imageCache.get(((StreetsideImage) prevImage).getId()) == null) {
-              CacheUtils.downloadCubemap((StreetsideImage) prevImage);
-            }
-            prevImage = prevImage.previous();
-          }
-        }
-      });
-  }
-
   private void fireSelectedImageChanged(StreetsideAbstractImage oldImage, StreetsideAbstractImage newImage) {
-	listeners.stream().filter(Objects::nonNull).forEach(lis -> lis.selectedImageChanged(oldImage, newImage));
+    listeners.stream().filter(Objects::nonNull).forEach(lis -> lis.selectedImageChanged(oldImage, newImage));
   }
 
   /**
@@ -402,21 +416,8 @@ public class StreetsideData implements Data {
     return multiSelectedImages;
   }
 
-  /**
-   * Sets a new {@link Collection} object as the used set of images.
-   * Any images that are already present, are removed.
-   *
-   * @param newImages the new image list (previously set images are completely replaced)
-   */
-  public void setImages(Collection<StreetsideAbstractImage> newImages) {
-    synchronized (this) {
-      images.clear();
-      images.addAll(newImages);
-    }
-  }
-
   @Override
   public Collection<DataSource> getDataSources() {
-	return Collections.emptyList();
+    return Collections.emptyList();
   }
 }

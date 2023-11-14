@@ -28,15 +28,8 @@ public class StreetsideZoomAction extends JosmAction implements StreetsideDataLi
    * Main constructor.
    */
   public StreetsideZoomAction() {
-    super(
-      tr("Zoom to selected image"),
-      new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
-      tr("Zoom to the currently selected Streetside image"),
-      null,
-      false,
-      "mapillaryZoom",
-      true
-    );
+    super(tr("Zoom to selected image"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT),
+        tr("Zoom to the currently selected Streetside image"), null, false, "mapillaryZoom", true);
   }
 
   @Override
@@ -44,8 +37,8 @@ public class StreetsideZoomAction extends JosmAction implements StreetsideDataLi
     if (StreetsideLayer.getInstance().getData().getSelectedImage() == null) {
       throw new IllegalStateException();
     }
-    MainApplication.getMap().mapView.zoomTo(StreetsideLayer.getInstance().getData()
-        .getSelectedImage().getMovingLatLon());
+    MainApplication.getMap().mapView
+        .zoomTo(StreetsideLayer.getInstance().getData().getSelectedImage().getMovingLatLon());
   }
 
   @Override
@@ -53,7 +46,7 @@ public class StreetsideZoomAction extends JosmAction implements StreetsideDataLi
     // Nothing
   }
 
-    @Override
+  @Override
   protected boolean listenToSelectionChange() {
     return false;
   }

@@ -30,16 +30,19 @@ public class StreetsidePlugin extends Plugin {
 
   public static final ImageProvider LOGO = new ImageProvider("streetside-logo");
 
-  /** Zoom action */
+  /**
+   * Zoom action
+   */
   private static final StreetsideZoomAction ZOOM_ACTION = new StreetsideZoomAction();
-  /** Walk action */
+  /**
+   * Walk action
+   */
   private static final StreetsideWalkAction WALK_ACTION = new StreetsideWalkAction();
 
   /**
    * Main constructor.
    *
-   * @param info
-   *          Required information of the plugin. Obtained from the jar file.
+   * @param info Required information of the plugin. Obtained from the jar file.
    */
   public StreetsidePlugin(PluginInformation info) {
     super(info);
@@ -55,15 +58,25 @@ public class StreetsidePlugin extends Plugin {
   }
 
   static StreetsideDataListener[] getStreetsideDataListeners() {
-	return new StreetsideDataListener[]{WALK_ACTION, ZOOM_ACTION, CubemapBuilder.getInstance()};
+    return new StreetsideDataListener[] { WALK_ACTION, ZOOM_ACTION, CubemapBuilder.getInstance() };
   }
-
 
   /**
    * @return the {@link StreetsideWalkAction} for the plugin
    */
   public static StreetsideWalkAction getStreetsideWalkAction() {
     return WALK_ACTION;
+  }
+
+  /**
+   * @return the current {@link MapView} without throwing a {@link NullPointerException}
+   */
+  public static MapView getMapView() {
+    final MapFrame mf = MainApplication.getMap();
+    if (mf != null) {
+      return mf.mapView;
+    }
+    return null;
   }
 
   /**
@@ -74,8 +87,7 @@ public class StreetsidePlugin extends Plugin {
     if (oldFrame == null && newFrame != null) { // map frame added
       MainApplication.getMap().addToggleDialog(StreetsideMainDialog.getInstance(), false);
       StreetsideMainDialog.getInstance().setImageInfoHelp(new ImageInfoHelpPopup(
-    	  MainApplication.getMap().addToggleDialog(ImageInfoPanel.getInstance(), false)
-      ));
+          MainApplication.getMap().addToggleDialog(ImageInfoPanel.getInstance(), false)));
       MainApplication.getMap().addToggleDialog(StreetsideViewerDialog.getInstance(), false);
     }
     if (oldFrame != null && newFrame == null) { // map frame destroyed
@@ -89,16 +101,5 @@ public class StreetsidePlugin extends Plugin {
   @Override
   public PreferenceSetting getPreferenceSetting() {
     return new StreetsidePreferenceSetting();
-  }
-
-  /**
-   * @return the current {@link MapView} without throwing a {@link NullPointerException}
-   */
-  public static MapView getMapView() {
-    final MapFrame mf = MainApplication.getMap();
-    if (mf != null) {
-      return mf.mapView;
-    }
-    return null;
   }
 }

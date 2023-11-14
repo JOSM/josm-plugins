@@ -19,67 +19,69 @@ import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 @BasicPreferences
 class ImageDisplayTest {
 
-  private static final BufferedImage DUMMY_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    private static final BufferedImage DUMMY_IMAGE = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
-  @Test
-  void testImagePersistence() {
-    StreetsideImageDisplay display = new StreetsideImageDisplay();
-    display.setImage(DUMMY_IMAGE, null);
-    assertEquals(DUMMY_IMAGE, display.getImage());
-  }
-
-  /**
-   * This test does not check if the scroll events result in the correct changes in the {@link StreetsideImageDisplay},
-   * it only checks if the tested method runs through.
-   */
-
-  @Test
-  void testMouseWheelMoved() {
-    if (GraphicsEnvironment.isHeadless()) {
-      return;
+    @Test
+    void testImagePersistence() {
+        StreetsideImageDisplay display = new StreetsideImageDisplay();
+        display.setImage(DUMMY_IMAGE, null);
+        assertEquals(DUMMY_IMAGE, display.getImage());
     }
-    StreetsideImageDisplay display = new StreetsideImageDisplay();
-    final MouseWheelEvent dummyScroll = new MouseWheelEvent(display, 42, System.currentTimeMillis(), 0, 0, 0, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, 3);
-    display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
 
-    display.setImage(DUMMY_IMAGE, null);
+    /**
+     * This test does not check if the scroll events result in the correct changes in the {@link StreetsideImageDisplay},
+     * it only checks if the tested method runs through.
+     */
 
-    display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
+    @Test
+    void testMouseWheelMoved() {
+        if (GraphicsEnvironment.isHeadless()) {
+            return;
+        }
+        StreetsideImageDisplay display = new StreetsideImageDisplay();
+        final MouseWheelEvent dummyScroll = new MouseWheelEvent(display, 42, System.currentTimeMillis(), 0, 0, 0, 0,
+                false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, 3);
+        display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
 
-    // This is necessary to make the size of the component > 0. If you know a more elegant solution, feel free to change it.
-    JFrame frame = new JFrame();
-    frame.setSize(42, 42);
-    frame.getContentPane().add(display);
-    frame.pack();
+        display.setImage(DUMMY_IMAGE, null);
 
-    display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
-  }
+        display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
 
-  /**
-   * This test does not check if the scroll events result in the correct changes in the {@link StreetsideImageDisplay},
-   * it only checks if the tested method runs through.
-   */
-  @Test
-  void testMouseClicked() {
-    if (GraphicsEnvironment.isHeadless()) {
-      return;
+        // This is necessary to make the size of the component > 0. If you know a more elegant solution, feel free to change it.
+        JFrame frame = new JFrame();
+        frame.setSize(42, 42);
+        frame.getContentPane().add(display);
+        frame.pack();
+
+        display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
     }
-    for (int button = 1; button <= 3; button++) {
-      StreetsideImageDisplay display = new StreetsideImageDisplay();
-      final MouseEvent dummyClick = new MouseEvent(display, 42, System.currentTimeMillis(), 0, 0, 0, 1, false, button);
-      display.getMouseListeners()[0].mouseClicked(dummyClick);
 
-      display.setImage(DUMMY_IMAGE, null);
+    /**
+     * This test does not check if the scroll events result in the correct changes in the {@link StreetsideImageDisplay},
+     * it only checks if the tested method runs through.
+     */
+    @Test
+    void testMouseClicked() {
+        if (GraphicsEnvironment.isHeadless()) {
+            return;
+        }
+        for (int button = 1; button <= 3; button++) {
+            StreetsideImageDisplay display = new StreetsideImageDisplay();
+            final MouseEvent dummyClick = new MouseEvent(display, 42, System.currentTimeMillis(), 0, 0, 0, 1, false,
+                    button);
+            display.getMouseListeners()[0].mouseClicked(dummyClick);
 
-      display.getMouseListeners()[0].mouseClicked(dummyClick);
+            display.setImage(DUMMY_IMAGE, null);
 
-      // This is necessary to make the size of the component > 0. If you know a more elegant solution, feel free to change it.
-      JFrame frame = new JFrame();
-      frame.setSize(42, 42);
-      frame.getContentPane().add(display);
-      frame.pack();
+            display.getMouseListeners()[0].mouseClicked(dummyClick);
 
-      display.getMouseListeners()[0].mouseClicked(dummyClick);
+            // This is necessary to make the size of the component > 0. If you know a more elegant solution, feel free to change it.
+            JFrame frame = new JFrame();
+            frame.setSize(42, 42);
+            frame.getContentPane().add(display);
+            frame.pack();
+
+            display.getMouseListeners()[0].mouseClicked(dummyClick);
+        }
     }
-  }
 }

@@ -21,15 +21,11 @@ public class CommandMove extends StreetsideCommand {
   /**
    * Main constructor.
    *
-   * @param images
-   *          Set of images that are going to be moved.
-   * @param x
-   *          How much the x coordinate increases.
-   * @param y
-   *          How much the y coordinate increases.
+   * @param images Set of images that are going to be moved.
+   * @param x    How much the x coordinate increases.
+   * @param y    How much the y coordinate increases.
    */
-  public CommandMove(Set<StreetsideAbstractImage> images, double x,
-                     double y) {
+  public CommandMove(Set<StreetsideAbstractImage> images, double x, double y) {
     super(images);
     this.x = x;
     this.y = y;
@@ -55,8 +51,7 @@ public class CommandMove extends StreetsideCommand {
 
   @Override
   public String toString() {
-    return trn("Moved {0} image", "Moved {0} images", images.size(),
-        images.size());
+    return trn("Moved {0} image", "Moved {0} images", images.size(), images.size());
   }
 
   @Override

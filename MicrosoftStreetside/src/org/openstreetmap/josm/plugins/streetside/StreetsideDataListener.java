@@ -18,11 +18,8 @@ public interface StreetsideDataListener {
    * Fired when the selected image is changed by something different from
    * manually clicking on the icon.
    *
-   * @param oldImage
-   *          Old selected {@link StreetsideAbstractImage}
-   * @param newImage
-   *          New selected {@link StreetsideAbstractImage}
+   * @param oldImage Old selected {@link StreetsideAbstractImage}
+   * @param newImage New selected {@link StreetsideAbstractImage}
    */
-  void selectedImageChanged(StreetsideAbstractImage oldImage,
-      StreetsideAbstractImage newImage);
+  void selectedImageChanged(StreetsideAbstractImage oldImage, StreetsideAbstractImage newImage);
 }

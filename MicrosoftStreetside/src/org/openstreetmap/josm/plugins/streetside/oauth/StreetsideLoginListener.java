@@ -10,9 +10,11 @@ public interface StreetsideLoginListener {
   /**
    * Should be called whenever the user logs into a mapillary account.
    * E.g. for updating the GUI to reflect the login status.
+   *
    * @param username the username that the user is now logged in with
    */
   void onLogin(final String username);
+
   /**
    * Should be called whenever the user logs out of a mapillary account.
    * E.g. for updating the GUI to reflect the login status.

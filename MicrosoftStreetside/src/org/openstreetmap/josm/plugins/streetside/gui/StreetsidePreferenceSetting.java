@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -25,7 +26,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
-import org.apache.log4j.Logger;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
@@ -40,6 +40,7 @@ import org.openstreetmap.josm.plugins.streetside.utils.StreetsideColorScheme;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Creates the preferences panel for the plugin.
@@ -49,37 +50,29 @@ import org.openstreetmap.josm.tools.I18n;
  */
 public class StreetsidePreferenceSetting implements SubPreferenceSetting, StreetsideLoginListener {
 
-  final static Logger logger = Logger.getLogger(StreetsidePreferenceSetting.class);
+  private static final Logger logger = Logger.getLogger(StreetsidePreferenceSetting.class.getCanonicalName());
 
-  private final JComboBox<String> downloadModeComboBox = new JComboBox<>(new String[]{
-      DOWNLOAD_MODE.VISIBLE_AREA.getLabel(),
-      DOWNLOAD_MODE.OSM_AREA.getLabel(),
-      DOWNLOAD_MODE.MANUAL_ONLY.getLabel()
-  });
+  private final JComboBox<String> downloadModeComboBox = new JComboBox<>(
+      new String[] { DOWNLOAD_MODE.VISIBLE_AREA.getLabel(), DOWNLOAD_MODE.OSM_AREA.getLabel(),
+          DOWNLOAD_MODE.MANUAL_ONLY.getLabel() });
 
-  private final JCheckBox displayHour =
-    new JCheckBox(I18n.tr("Display hour when the picture was taken"), StreetsideProperties.DISPLAY_HOUR.get());
-  private final JCheckBox format24 =
-    new JCheckBox(I18n.tr("Use 24 hour format"), StreetsideProperties.TIME_FORMAT_24.get());
-  private final JCheckBox moveTo =
-    new JCheckBox(I18n.tr("Move to picture''s location with next/previous buttons"), StreetsideProperties.MOVE_TO_IMG.get());
-  private final JCheckBox hoverEnabled =
-    new JCheckBox(I18n.tr("Preview images when hovering its icon"), StreetsideProperties.HOVER_ENABLED.get());
-  private final JCheckBox cutOffSeq =
-    new JCheckBox(I18n.tr("Cut off sequences at download bounds"), StreetsideProperties.CUT_OFF_SEQUENCES_AT_BOUNDS.get());
-  private final JCheckBox imageLinkToBlurEditor =
-    new JCheckBox(
+  private final JCheckBox displayHour = new JCheckBox(I18n.tr("Display hour when the picture was taken"),
+      StreetsideProperties.DISPLAY_HOUR.get());
+  private final JCheckBox format24 = new JCheckBox(I18n.tr("Use 24 hour format"),
+      StreetsideProperties.TIME_FORMAT_24.get());
+  private final JCheckBox moveTo = new JCheckBox(I18n.tr("Move to picture''s location with next/previous buttons"),
+      StreetsideProperties.MOVE_TO_IMG.get());
+  private final JCheckBox hoverEnabled = new JCheckBox(I18n.tr("Preview images when hovering its icon"),
+      StreetsideProperties.HOVER_ENABLED.get());
+  private final JCheckBox cutOffSeq = new JCheckBox(I18n.tr("Cut off sequences at download bounds"),
+      StreetsideProperties.CUT_OFF_SEQUENCES_AT_BOUNDS.get());
+  private final JCheckBox imageLinkToBlurEditor = new JCheckBox(
       I18n.tr("When opening Streetside image in web browser, show the blur editor instead of the image viewer"),
-      StreetsideProperties.IMAGE_LINK_TO_BLUR_EDITOR.get()
-    );
-  private final JCheckBox developer =
-    new JCheckBox(I18n.tr("Enable experimental beta-features (might be unstable)"), StreetsideProperties.DEVELOPER.get());
+      StreetsideProperties.IMAGE_LINK_TO_BLUR_EDITOR.get());
+  private final JCheckBox developer = new JCheckBox(I18n.tr("Enable experimental beta-features (might be unstable)"),
+      StreetsideProperties.DEVELOPER.get());
   private final SpinnerNumberModel preFetchSize = new SpinnerNumberModel(
-    StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get().intValue(),
-    0,
-    Integer.MAX_VALUE,
-    1
-  );
+      StreetsideProperties.PRE_FETCH_IMAGE_COUNT.get().intValue(), 0, Integer.MAX_VALUE, 1);
   private final JButton loginButton = new StreetsideButton(new LoginAction(this));
   private final JButton logoutButton = new StreetsideButton(new LogoutAction());
   private final JLabel loginLabel = new JLabel();
@@ -98,14 +91,15 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
     loginPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     loginPanel.setBackground(StreetsideColorScheme.TOOLBAR_DARK_GREY);
     JLabel brandImage = new JLabel();
-    try (InputStream is = StreetsidePreferenceSetting.class.getResourceAsStream("/images/streetside-logo-white.png")) {
+    try (InputStream is = StreetsidePreferenceSetting.class
+        .getResourceAsStream("/images/streetside-logo-white.png")) {
       if (is != null) {
         brandImage.setIcon(new ImageIcon(ImageIO.read(is)));
       } else {
-        logger.warn("Could not load Streetside brand image!");
+        logger.log(Logging.LEVEL_WARN, "Could not load Streetside brand image!");
       }
     } catch (IOException e) {
-      logger.warn("While reading Streetside brand image, an IO-exception occured!");
+      logger.log(Logging.LEVEL_WARN, "While reading Streetside brand image, an IO-exception occured!", e);
     }
     loginPanel.add(brandImage, 0);
     loginPanel.add(Box.createHorizontalGlue(), 1);
@@ -120,7 +114,8 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
     mainPanel.setLayout(new GridBagLayout());
     mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    downloadModeComboBox.setSelectedItem(DOWNLOAD_MODE.fromPrefId(StreetsideProperties.DOWNLOAD_MODE.get()).getLabel());
+    downloadModeComboBox
+        .setSelectedItem(DOWNLOAD_MODE.fromPrefId(StreetsideProperties.DOWNLOAD_MODE.get()).getLabel());
 
     JPanel downloadModePanel = new JPanel();
     downloadModePanel.add(new JLabel(I18n.tr("Download mode")));
@@ -146,16 +141,16 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
     if (ExpertToggleAction.isExpert() || developer.isSelected()) {
       mainPanel.add(developer, GBC.eol());
     }
-    StreetsideColorScheme.styleAsDefaultPanel(
-      mainPanel, downloadModePanel, displayHour, format24, moveTo, hoverEnabled, cutOffSeq, imageLinkToBlurEditor, developer, preFetchPanel
-    );
+    StreetsideColorScheme.styleAsDefaultPanel(mainPanel, downloadModePanel, displayHour, format24, moveTo,
+        hoverEnabled, cutOffSeq, imageLinkToBlurEditor, developer, preFetchPanel);
     mainPanel.add(Box.createVerticalGlue(), GBC.eol().fill(GridBagConstraints.BOTH));
 
     container.add(mainPanel, BorderLayout.CENTER);
 
     synchronized (gui.getDisplayPreference().getTabPane()) {
       gui.getDisplayPreference().addSubTab(this, "Streetside", new JScrollPane(container));
-      gui.getDisplayPreference().getTabPane().setIconAt(gui.getDisplayPreference().getTabPane().getTabCount()-1, StreetsidePlugin.LOGO.setSize(12, 12).get());
+      gui.getDisplayPreference().getTabPane().setIconAt(gui.getDisplayPreference().getTabPane().getTabCount() - 1,
+          StreetsidePlugin.LOGO.setSize(12, 12).get());
     }
 
     new Thread(() -> {
@@ -187,7 +182,8 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
   @SuppressWarnings("PMD.ShortMethodName")
   @Override
   public boolean ok() {
-    StreetsideProperties.DOWNLOAD_MODE.put(DOWNLOAD_MODE.fromLabel(downloadModeComboBox.getSelectedItem().toString()).getPrefId());
+    StreetsideProperties.DOWNLOAD_MODE
+        .put(DOWNLOAD_MODE.fromLabel(downloadModeComboBox.getSelectedItem().toString()).getPrefId());
     StreetsideProperties.DISPLAY_HOUR.put(displayHour.isSelected());
     StreetsideProperties.TIME_FORMAT_24.put(format24.isSelected());
     StreetsideProperties.MOVE_TO_IMG.put(moveTo.isSelected());
@@ -210,13 +206,12 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
    * Opens the StreetsideOAuthUI window and lets the user log in.
    *
    * @author nokutu
-   *
    */
   private static class LoginAction extends AbstractAction {
 
     private static final long serialVersionUID = 8743119160917296506L;
 
-	private final transient StreetsideLoginListener callback;
+    private final transient StreetsideLoginListener callback;
 
     LoginAction(StreetsideLoginListener loginCallback) {
       super(I18n.tr("Login"));
@@ -241,7 +236,7 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting, Street
 
     private static final long serialVersionUID = -4146587895393766981L;
 
-	private LogoutAction() {
+    private LogoutAction() {
       super(I18n.tr("Logout"));
     }
 

@@ -32,7 +32,6 @@ import org.openstreetmap.josm.plugins.streetside.model.MapObject;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideColorScheme;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 
-
 /**
  * This object is a responsible JComponent which lets you zoom and drag. It is
  * included in a {@link StreetsideMainDialog} object.
@@ -47,7 +46,9 @@ public class StreetsideImageDisplay extends JComponent {
 
   private final Collection<ImageDetection> detections = new ArrayList<>();
 
-  /** The image currently displayed */
+  /**
+   * The image currently displayed
+   */
   private volatile BufferedImage image;
 
   /**
@@ -61,6 +62,207 @@ public class StreetsideImageDisplay extends JComponent {
    * coordinates)
    */
   private Rectangle selectedRect;
+
+  /**
+   * Main constructor.
+   */
+  public StreetsideImageDisplay() {
+    ImgDisplayMouseListener mouseListener = new ImgDisplayMouseListener();
+    addMouseListener(mouseListener);
+    addMouseWheelListener(mouseListener);
+    addMouseMotionListener(mouseListener);
+
+    StreetsideProperties.SHOW_DETECTED_SIGNS.addListener(valChanged -> repaint());
+  }
+
+  private static Point getCenterImgCoord(Rectangle visibleRect) {
+    return new Point(visibleRect.x + visibleRect.width / 2, visibleRect.y + visibleRect.height / 2);
+  }
+
+  /**
+   * calculateDrawImageRectangle
+   *
+   * @param imgRect  the part of the image that should be drawn (in image coordinates)
+   * @param compRect the part of the component where the image should be drawn (in
+   *         component coordinates)
+   * @return the part of compRect with the same width/height ratio as the image
+   */
+  private static Rectangle calculateDrawImageRectangle(Rectangle imgRect, Rectangle compRect) {
+    int x = 0;
+    int y = 0;
+    int w = compRect.width;
+    int h = compRect.height;
+    int wFact = w * imgRect.height;
+    int hFact = h * imgRect.width;
+    if (wFact != hFact) {
+      if (wFact > hFact) {
+        w = hFact / imgRect.height;
+        x = (compRect.width - w) / 2;
+      } else {
+        h = wFact / imgRect.width;
+        y = (compRect.height - h) / 2;
+      }
+    }
+    return new Rectangle(x + compRect.x, y + compRect.y, w, h);
+  }
+
+  private static void checkVisibleRectPos(Image image, Rectangle visibleRect) {
+    if (visibleRect.x < 0) {
+      visibleRect.x = 0;
+    }
+    if (visibleRect.y < 0) {
+      visibleRect.y = 0;
+    }
+    if (visibleRect.x + visibleRect.width > image.getWidth(null)) {
+      visibleRect.x = image.getWidth(null) - visibleRect.width;
+    }
+    if (visibleRect.y + visibleRect.height > image.getHeight(null)) {
+      visibleRect.y = image.getHeight(null) - visibleRect.height;
+    }
+  }
+
+  private static void checkVisibleRectSize(Image image, Rectangle visibleRect) {
+    if (visibleRect.width > image.getWidth(null)) {
+      visibleRect.width = image.getWidth(null);
+    }
+    if (visibleRect.height > image.getHeight(null)) {
+      visibleRect.height = image.getHeight(null);
+    }
+  }
+
+  /**
+   * Sets a new picture to be displayed.
+   *
+   * @param image    The picture to be displayed.
+   * @param detections image detections
+   */
+  public void setImage(BufferedImage image, Collection<ImageDetection> detections) {
+    synchronized (this) {
+      this.image = image;
+      this.detections.clear();
+      if (detections != null) {
+        this.detections.addAll(detections);
+      }
+      selectedRect = null;
+      if (image != null)
+        visibleRect = new Rectangle(0, 0, image.getWidth(null), image.getHeight(null));
+    }
+    repaint();
+  }
+
+  /**
+   * Returns the picture that is being displayed
+   *
+   * @return The picture that is being displayed.
+   */
+  public BufferedImage getImage() {
+    return image;
+  }
+
+  /**
+   * Paints the visible part of the picture.
+   */
+  @Override
+  public void paintComponent(Graphics g) {
+    Image image;
+    Rectangle visibleRect;
+    synchronized (this) {
+      image = this.image;
+      visibleRect = this.visibleRect;
+    }
+    if (image == null) {
+      g.setColor(Color.black);
+      String noImageStr = StreetsideLayer.hasInstance() ? tr("No image selected")
+          : tr("Press \"{0}\" to download images", StreetsideDownloadAction.SHORTCUT.getKeyText());
+      Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(noImageStr, g);
+      Dimension size = getSize();
+      g.drawString(noImageStr, (int) ((size.width - noImageSize.getWidth()) / 2),
+          (int) ((size.height - noImageSize.getHeight()) / 2));
+    } else {
+      Rectangle target = calculateDrawImageRectangle(visibleRect);
+      g.drawImage(image, target.x, target.y, target.x + target.width, target.y + target.height, visibleRect.x,
+          visibleRect.y, visibleRect.x + visibleRect.width, visibleRect.y + visibleRect.height, null);
+      if (selectedRect != null) {
+        Point topLeft = img2compCoord(visibleRect, selectedRect.x, selectedRect.y);
+        Point bottomRight = img2compCoord(visibleRect, selectedRect.x + selectedRect.width,
+            selectedRect.y + selectedRect.height);
+        g.setColor(new Color(128, 128, 128, 180));
+        g.fillRect(target.x, target.y, target.width, topLeft.y - target.y);
+        g.fillRect(target.x, target.y, topLeft.x - target.x, target.height);
+        g.fillRect(bottomRight.x, target.y, target.x + target.width - bottomRight.x, target.height);
+        g.fillRect(target.x, bottomRight.y, target.width, target.y + target.height - bottomRight.y);
+        g.setColor(Color.black);
+        g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+      }
+
+      if (Boolean.TRUE.equals(StreetsideProperties.SHOW_DETECTED_SIGNS.get())) {
+        Point upperLeft = img2compCoord(visibleRect, 0, 0);
+        Point lowerRight = img2compCoord(visibleRect, getImage().getWidth(), getImage().getHeight());
+
+        // Transformation, which can convert you a Shape relative to the unit square to a Shape relative to the Component
+        AffineTransform unit2compTransform = AffineTransform.getTranslateInstance(upperLeft.getX(),
+            upperLeft.getY());
+        unit2compTransform.concatenate(AffineTransform.getScaleInstance(lowerRight.getX() - upperLeft.getX(),
+            lowerRight.getY() - upperLeft.getY()));
+
+        final Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(2));
+        for (ImageDetection d : detections) {
+          final Shape shape = d.getShape().createTransformedShape(unit2compTransform);
+          g2d.setColor(d.isTrafficSign() ? StreetsideColorScheme.IMAGEDETECTION_TRAFFICSIGN
+              : StreetsideColorScheme.IMAGEDETECTION_UNKNOWN);
+          g2d.draw(shape);
+          if (d.isTrafficSign()) {
+            g2d.drawImage(MapObject.getIcon(d.getValue()).getImage(), shape.getBounds().x,
+                shape.getBounds().y, shape.getBounds().width, shape.getBounds().height, null);
+          }
+        }
+      }
+    }
+  }
+
+  private Point img2compCoord(Rectangle visibleRect, int xImg, int yImg) {
+    Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
+    return new Point(drawRect.x + ((xImg - visibleRect.x) * drawRect.width) / visibleRect.width,
+        drawRect.y + ((yImg - visibleRect.y) * drawRect.height) / visibleRect.height);
+  }
+
+  private Point comp2imgCoord(Rectangle visibleRect, int xComp, int yComp) {
+    Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
+    return new Point(visibleRect.x + ((xComp - drawRect.x) * visibleRect.width) / drawRect.width,
+        visibleRect.y + ((yComp - drawRect.y) * visibleRect.height) / drawRect.height);
+  }
+
+  private Rectangle calculateDrawImageRectangle(Rectangle visibleRect) {
+    return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, getSize().width, getSize().height));
+  }
+
+  /**
+   * Zooms to 1:1 and, if it is already in 1:1, to best fit.
+   */
+  public void zoomBestFitOrOne() {
+    Image image;
+    Rectangle visibleRect;
+    synchronized (this) {
+      image = this.image;
+      visibleRect = this.visibleRect;
+    }
+    if (image == null)
+      return;
+    if (visibleRect.width != image.getWidth(null) || visibleRect.height != image.getHeight(null)) {
+      // The display is not at best fit. => Zoom to best fit
+      visibleRect = new Rectangle(0, 0, image.getWidth(null), image.getHeight(null));
+    } else {
+      // The display is at best fit => zoom to 1:1
+      Point center = getCenterImgCoord(visibleRect);
+      visibleRect = new Rectangle(center.x - getWidth() / 2, center.y - getHeight() / 2, getWidth(), getHeight());
+      checkVisibleRectPos(image, visibleRect);
+    }
+    synchronized (this) {
+      this.visibleRect = visibleRect;
+    }
+    repaint();
+  }
 
   private class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
     private boolean mouseIsDragging;
@@ -120,10 +322,8 @@ public class StreetsideImageDisplay extends JComponent {
         // Set the position of the visible rectangle, so that the mouse
         // cursor doesn't move on the image.
         Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
-        visibleRect.x = mousePointInImg.x
-            + ((drawRect.x - e.getX()) * visibleRect.width) / drawRect.width;
-        visibleRect.y = mousePointInImg.y
-            + ((drawRect.y - e.getY()) * visibleRect.height) / drawRect.height;
+        visibleRect.x = mousePointInImg.x + ((drawRect.x - e.getX()) * visibleRect.width) / drawRect.width;
+        visibleRect.y = mousePointInImg.y + ((drawRect.y - e.getY()) * visibleRect.height) / drawRect.height;
         // The position is also limited by the image size
         checkVisibleRectPos(image, visibleRect);
         synchronized (StreetsideImageDisplay.this) {
@@ -133,7 +333,9 @@ public class StreetsideImageDisplay extends JComponent {
       }
     }
 
-    /** Center the display on the point that has been clicked */
+    /**
+     * Center the display on the point that has been clicked
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
       // Move the center to the clicked point.
@@ -145,18 +347,16 @@ public class StreetsideImageDisplay extends JComponent {
       }
       if (image != null && Math.min(getSize().getWidth(), getSize().getHeight()) > 0) {
         if (e.getButton() == StreetsideProperties.PICTURE_OPTION_BUTTON.get()) {
-          if (!StreetsideImageDisplay.this.visibleRect.equals(new Rectangle(0, 0, image.getWidth(null), image.getHeight(null)))) {
+          if (!StreetsideImageDisplay.this.visibleRect
+              .equals(new Rectangle(0, 0, image.getWidth(null), image.getHeight(null)))) {
             // Zooms to 1:1
-            StreetsideImageDisplay.this.visibleRect = new Rectangle(0, 0,
-                image.getWidth(null), image.getHeight(null));
+            StreetsideImageDisplay.this.visibleRect = new Rectangle(0, 0, image.getWidth(null),
+                image.getHeight(null));
           } else {
             // Zooms to best fit.
-            StreetsideImageDisplay.this.visibleRect = new Rectangle(
-                0,
+            StreetsideImageDisplay.this.visibleRect = new Rectangle(0,
                 (image.getHeight(null) - (image.getWidth(null) * getHeight()) / getWidth()) / 2,
-                image.getWidth(null),
-                (image.getWidth(null) * getHeight()) / getWidth()
-            );
+                image.getWidth(null), (image.getWidth(null) * getHeight()) / getWidth());
           }
           StreetsideImageDisplay.this.repaint();
           return;
@@ -239,12 +439,10 @@ public class StreetsideImageDisplay extends JComponent {
       } else if (selectedRect != null) {
         Point p = comp2imgCoord(visibleRect, e.getX(), e.getY());
         checkPointInVisibleRect(p, visibleRect);
-        Rectangle rect = new Rectangle(p.x < mousePointInImg.x ? p.x
-            : mousePointInImg.x, p.y < mousePointInImg.y ? p.y
-            : mousePointInImg.y, p.x < mousePointInImg.x ? mousePointInImg.x
-            - p.x : p.x - mousePointInImg.x,
-            p.y < mousePointInImg.y ? mousePointInImg.y - p.y : p.y
-                - mousePointInImg.y);
+        Rectangle rect = new Rectangle(p.x < mousePointInImg.x ? p.x : mousePointInImg.x,
+            p.y < mousePointInImg.y ? p.y : mousePointInImg.y,
+            p.x < mousePointInImg.x ? mousePointInImg.x - p.x : p.x - mousePointInImg.x,
+            p.y < mousePointInImg.y ? mousePointInImg.y - p.y : p.y - mousePointInImg.y);
         checkVisibleRectSize(image, rect);
         checkVisibleRectPos(image, rect);
         selectedRect = rect;
@@ -272,10 +470,10 @@ public class StreetsideImageDisplay extends JComponent {
         int oldHeight = selectedRect.height;
         // Check that the zoom doesn't exceed 2:1
         if (selectedRect.width < getSize().width / 2) {
-        	selectedRect.width = getSize().width / 2;
+          selectedRect.width = getSize().width / 2;
         }
         if (selectedRect.height < getSize().height / 2) {
-        	selectedRect.height = getSize().height / 2;
+          selectedRect.height = getSize().height / 2;
         }
         // Set the same ratio for the visible rectangle and the display
         // area
@@ -288,10 +486,10 @@ public class StreetsideImageDisplay extends JComponent {
         }
         // Keep the center of the selection
         if (selectedRect.width != oldWidth) {
-        	selectedRect.x -= (selectedRect.width - oldWidth) / 2;
+          selectedRect.x -= (selectedRect.width - oldWidth) / 2;
         }
         if (selectedRect.height != oldHeight) {
-        	selectedRect.y -= (selectedRect.height - oldHeight) / 2;
+          selectedRect.y -= (selectedRect.height - oldHeight) / 2;
         }
         checkVisibleRectSize(image, selectedRect);
         checkVisibleRectPos(image, selectedRect);
@@ -331,223 +529,6 @@ public class StreetsideImageDisplay extends JComponent {
       if (p.y > visibleRect.y + visibleRect.height) {
         p.y = visibleRect.y + visibleRect.height;
       }
-    }
-  }
-
-  /**
-   * Main constructor.
-   */
-  public StreetsideImageDisplay() {
-    ImgDisplayMouseListener mouseListener = new ImgDisplayMouseListener();
-    addMouseListener(mouseListener);
-    addMouseWheelListener(mouseListener);
-    addMouseMotionListener(mouseListener);
-
-    StreetsideProperties.SHOW_DETECTED_SIGNS.addListener(valChanged -> repaint());
-  }
-
-  /**
-   * Sets a new picture to be displayed.
-   *
-   * @param image The picture to be displayed.
-   * @param detections image detections
-   */
-  public void setImage(BufferedImage image, Collection<ImageDetection> detections) {
-    synchronized (this) {
-      this.image = image;
-      this.detections.clear();
-      if (detections != null) {
-        this.detections.addAll(detections);
-      }
-      selectedRect = null;
-      if (image != null)
-        visibleRect = new Rectangle(0, 0, image.getWidth(null),
-            image.getHeight(null));
-    }
-    repaint();
-  }
-
-  /**
-   * Returns the picture that is being displayed
-   *
-   * @return The picture that is being displayed.
-   */
-  public BufferedImage getImage() {
-    return image;
-  }
-
-  /**
-   * Paints the visible part of the picture.
-   */
-  @Override
-  public void paintComponent(Graphics g) {
-    Image image;
-    Rectangle visibleRect;
-    synchronized (this) {
-      image = this.image;
-      visibleRect = this.visibleRect;
-    }
-    if (image == null) {
-      g.setColor(Color.black);
-      String noImageStr = StreetsideLayer.hasInstance() ? tr("No image selected") : tr("Press \"{0}\" to download images", StreetsideDownloadAction.SHORTCUT.getKeyText());
-      Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(
-          noImageStr, g);
-      Dimension size = getSize();
-      g.drawString(noImageStr,
-          (int) ((size.width - noImageSize.getWidth()) / 2),
-          (int) ((size.height - noImageSize.getHeight()) / 2));
-    } else {
-      Rectangle target = calculateDrawImageRectangle(visibleRect);
-      g.drawImage(image, target.x, target.y, target.x + target.width, target.y
-          + target.height, visibleRect.x, visibleRect.y, visibleRect.x
-          + visibleRect.width, visibleRect.y + visibleRect.height, null);
-      if (selectedRect != null) {
-        Point topLeft = img2compCoord(visibleRect, selectedRect.x,
-            selectedRect.y);
-        Point bottomRight = img2compCoord(visibleRect, selectedRect.x
-            + selectedRect.width, selectedRect.y + selectedRect.height);
-        g.setColor(new Color(128, 128, 128, 180));
-        g.fillRect(target.x, target.y, target.width, topLeft.y - target.y);
-        g.fillRect(target.x, target.y, topLeft.x - target.x, target.height);
-        g.fillRect(bottomRight.x, target.y, target.x + target.width
-            - bottomRight.x, target.height);
-        g.fillRect(target.x, bottomRight.y, target.width, target.y
-            + target.height - bottomRight.y);
-        g.setColor(Color.black);
-        g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x,
-            bottomRight.y - topLeft.y);
-      }
-
-      if (StreetsideProperties.SHOW_DETECTED_SIGNS.get()) {
-        Point upperLeft = img2compCoord(visibleRect, 0, 0);
-        Point lowerRight = img2compCoord(visibleRect, getImage().getWidth(), getImage().getHeight());
-
-        // Transformation, which can convert you a Shape relative to the unit square to a Shape relative to the Component
-        AffineTransform unit2compTransform = AffineTransform.getTranslateInstance(upperLeft.getX(), upperLeft.getY());
-        unit2compTransform.concatenate(AffineTransform.getScaleInstance(lowerRight.getX() - upperLeft.getX(), lowerRight.getY() - upperLeft.getY()));
-
-        final Graphics2D g2d = (Graphics2D) g;
-        g2d.setStroke(new BasicStroke(2));
-        for (ImageDetection d : detections) {
-          final Shape shape = d.getShape().createTransformedShape(unit2compTransform);
-          g2d.setColor(d.isTrafficSign() ? StreetsideColorScheme.IMAGEDETECTION_TRAFFICSIGN : StreetsideColorScheme.IMAGEDETECTION_UNKNOWN);
-          g2d.draw(shape);
-          if (d.isTrafficSign()) {
-            g2d.drawImage(
-              MapObject.getIcon(d.getValue()).getImage(),
-              shape.getBounds().x, shape.getBounds().y,
-              shape.getBounds().width, shape.getBounds().height,
-              null
-            );
-          }
-        }
-      }
-    }
-  }
-
-  private Point img2compCoord(Rectangle visibleRect, int xImg, int yImg) {
-    Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
-    return new Point(drawRect.x + ((xImg - visibleRect.x) * drawRect.width)
-        / visibleRect.width, drawRect.y
-        + ((yImg - visibleRect.y) * drawRect.height) / visibleRect.height);
-  }
-
-  private Point comp2imgCoord(Rectangle visibleRect, int xComp, int yComp) {
-    Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
-    return new Point(
-        visibleRect.x + ((xComp - drawRect.x) * visibleRect.width) / drawRect.width,
-        visibleRect.y + ((yComp - drawRect.y) * visibleRect.height) / drawRect.height
-    );
-  }
-
-  private static Point getCenterImgCoord(Rectangle visibleRect) {
-    return new Point(visibleRect.x + visibleRect.width / 2, visibleRect.y + visibleRect.height / 2);
-  }
-
-  private Rectangle calculateDrawImageRectangle(Rectangle visibleRect) {
-    return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, getSize().width, getSize().height));
-  }
-
-  /**
-   * calculateDrawImageRectangle
-   *
-   * @param imgRect
-   *          the part of the image that should be drawn (in image coordinates)
-   * @param compRect
-   *          the part of the component where the image should be drawn (in
-   *          component coordinates)
-   * @return the part of compRect with the same width/height ratio as the image
-   */
-  private static Rectangle calculateDrawImageRectangle(Rectangle imgRect, Rectangle compRect) {
-    int x = 0;
-    int y = 0;
-    int w = compRect.width;
-    int h = compRect.height;
-    int wFact = w * imgRect.height;
-    int hFact = h * imgRect.width;
-    if (wFact != hFact) {
-      if (wFact > hFact) {
-        w = hFact / imgRect.height;
-        x = (compRect.width - w) / 2;
-      } else {
-        h = wFact / imgRect.width;
-        y = (compRect.height - h) / 2;
-      }
-    }
-    return new Rectangle(x + compRect.x, y + compRect.y, w, h);
-  }
-
-  /**
-   * Zooms to 1:1 and, if it is already in 1:1, to best fit.
-   */
-  public void zoomBestFitOrOne() {
-    Image image;
-    Rectangle visibleRect;
-    synchronized (this) {
-      image = this.image;
-      visibleRect = this.visibleRect;
-    }
-    if (image == null)
-      return;
-    if (visibleRect.width != image.getWidth(null)
-        || visibleRect.height != image.getHeight(null)) {
-      // The display is not at best fit. => Zoom to best fit
-      visibleRect = new Rectangle(0, 0, image.getWidth(null),
-          image.getHeight(null));
-    } else {
-      // The display is at best fit => zoom to 1:1
-      Point center = getCenterImgCoord(visibleRect);
-      visibleRect = new Rectangle(center.x - getWidth() / 2, center.y
-          - getHeight() / 2, getWidth(), getHeight());
-      checkVisibleRectPos(image, visibleRect);
-    }
-    synchronized (this) {
-      this.visibleRect = visibleRect;
-    }
-    repaint();
-  }
-
-  private static void checkVisibleRectPos(Image image, Rectangle visibleRect) {
-    if (visibleRect.x < 0) {
-      visibleRect.x = 0;
-    }
-    if (visibleRect.y < 0) {
-      visibleRect.y = 0;
-    }
-    if (visibleRect.x + visibleRect.width > image.getWidth(null)) {
-      visibleRect.x = image.getWidth(null) - visibleRect.width;
-    }
-    if (visibleRect.y + visibleRect.height > image.getHeight(null)) {
-      visibleRect.y = image.getHeight(null) - visibleRect.height;
-    }
-  }
-
-  private static void checkVisibleRectSize(Image image, Rectangle visibleRect) {
-    if (visibleRect.width > image.getWidth(null)) {
-      visibleRect.width = image.getWidth(null);
-    }
-    if (visibleRect.height > image.getHeight(null)) {
-      visibleRect.height = image.getHeight(null);
     }
   }
 }
