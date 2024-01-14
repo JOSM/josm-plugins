@@ -215,34 +215,34 @@ class RuianRecord {
             JsonObject stavebniObjekt = getSafeJsonObject(obj, "stavebni_objekt");
 
             try {
-                mObjektRuianId = Long.parseLong(stavebniObjekt.getString("ruian_id", null));
+                mObjektRuianId = Long.parseLong(stavebniObjekt.getString("ruian_id", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "stavebni_objekt.ruian_id:", e);
             }
 
             try {
-                mObjektPodlazi = Integer.parseInt(stavebniObjekt.getString("pocet_podlazi", null));
+                mObjektPodlazi = Integer.parseInt(stavebniObjekt.getString("pocet_podlazi", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "stavebni_objekt.pocet_podlazi:", e);
             }
 
             try {
-                mObjektByty = Integer.parseInt(stavebniObjekt.getString("pocet_bytu", null));
+                mObjektByty = Integer.parseInt(stavebniObjekt.getString("pocet_bytu", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "stavebni_objekt.pocet_bytu:", e);
             }
 
-            mObjektZpusobVyuziti = stavebniObjekt.getString("zpusob_vyuziti", null);
+            mObjektZpusobVyuziti = stavebniObjekt.getString("zpusob_vyuziti", "");
 
-            mObjektZpusobVyuzitiKod = stavebniObjekt.getString("zpusob_vyuziti_kod", null);
+            mObjektZpusobVyuzitiKod = stavebniObjekt.getString("zpusob_vyuziti_kod", "");
 
-            mObjektZpusobVyuzitiKey = stavebniObjekt.getString("zpusob_vyuziti_key", null);
+            mObjektZpusobVyuzitiKey = stavebniObjekt.getString("zpusob_vyuziti_key", "");
 
-            mObjektZpusobVyuzitiVal = stavebniObjekt.getString("zpusob_vyuziti_val", null);
+            mObjektZpusobVyuzitiVal = stavebniObjekt.getString("zpusob_vyuziti_val", "");
 
-            mObjektPlatiOd = stavebniObjekt.getString("plati_od", null);
+            mObjektPlatiOd = stavebniObjekt.getString("plati_od", "");
 
-            mObjektDokonceni = stavebniObjekt.getString("dokonceni", null);
+            mObjektDokonceni = stavebniObjekt.getString("dokonceni", "");
 
         } catch (IllegalArgumentException e) {
             Logging.warn("stavebni_objekt: {0}", e);
@@ -253,13 +253,13 @@ class RuianRecord {
         try {
             JsonObject errObjekt = getSafeJsonObject(obj, "nahlaseny_problem");
 
-            mErrUser = errObjekt.getString("uzivatel", null);
+            mErrUser = errObjekt.getString("uzivatel", "");
 
-            mErrDate = errObjekt.getString("datum", null);
+            mErrDate = errObjekt.getString("datum", "");
 
-            mErrType = errObjekt.getString("duvod", null);
+            mErrType = errObjekt.getString("duvod", "");
 
-            mErrNote = errObjekt.getString("poznamka", null);
+            mErrNote = errObjekt.getString("poznamka", "");
 
         } catch (IllegalArgumentException e) {
             Logging.warn("nahlaseny_problem: {0}", e);
@@ -275,37 +275,37 @@ class RuianRecord {
                 ObjectWithoutGeometry so = new ObjectWithoutGeometry();
 
                 try {
-                    so.setRuianID(Long.parseLong(soBezGeom.getString("ruian_id", null)));
+                    so.setRuianID(Long.parseLong(soBezGeom.getString("ruian_id", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "so_bez_geometrie.ruian_id:", e);
                 }
 
                 try {
-                    so.setPodlazi(Integer.parseInt(soBezGeom.getString("pocet_podlazi", null)));
+                    so.setPodlazi(Integer.parseInt(soBezGeom.getString("pocet_podlazi", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "so_bez_geometrie.pocet_podlazi:", e);
                 }
 
                 try {
-                    so.setByty(Integer.parseInt(soBezGeom.getString("pocet_bytu", null)));
+                    so.setByty(Integer.parseInt(soBezGeom.getString("pocet_bytu", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "so_bez_geometrie.pocet_bytu:", e);
                 }
 
-                so.setZpusobVyuziti(soBezGeom.getString("zpusob_vyuziti", null));
+                so.setZpusobVyuziti(soBezGeom.getString("zpusob_vyuziti", ""));
 
-                so.setZpusobVyuzitiKod(soBezGeom.getString("zpusob_vyuziti_kod", null));
+                so.setZpusobVyuzitiKod(soBezGeom.getString("zpusob_vyuziti_kod", ""));
 
-                so.setZpusobVyuzitiKey(soBezGeom.getString("zpusob_vyuziti_key", null));
+                so.setZpusobVyuzitiKey(soBezGeom.getString("zpusob_vyuziti_key", ""));
 
-                so.setZpusobVyuzitiVal(soBezGeom.getString("zpusob_vyuziti_val", null));
+                so.setZpusobVyuzitiVal(soBezGeom.getString("zpusob_vyuziti_val", ""));
 
-                so.setDokonceni(soBezGeom.getString("dokonceni", null));
+                so.setDokonceni(soBezGeom.getString("dokonceni", ""));
 
-                so.setPlatiOd(soBezGeom.getString("plati_od", null));
+                so.setPlatiOd(soBezGeom.getString("plati_od", ""));
 
                 try {
-                    so.setVzdalenost(Float.parseFloat(soBezGeom.getString("vzdalenost", null)));
+                    so.setVzdalenost(Float.parseFloat(soBezGeom.getString("vzdalenost", "")));
                 } catch (NumberFormatException e) {
                     Logging.warn("so_bez_geometrie.vzdalenost: {0}", e);
                 }
@@ -326,7 +326,7 @@ class RuianRecord {
                 AddrPlaces am = new AddrPlaces();
 
                 try {
-                    am.setRuianID(Long.parseLong(adresniMisto.getString("ruian_id", null)));
+                    am.setRuianID(Long.parseLong(adresniMisto.getString("ruian_id", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.ruian_id:", e);
                 }
@@ -344,69 +344,69 @@ class RuianRecord {
                 }
 
                 try {
-                    am.setBudovaID(Long.parseLong(adresniMisto.getString("budova_kod", null)));
+                    am.setBudovaID(Long.parseLong(adresniMisto.getString("budova_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.budova_kod:", e);
                 }
 
-                am.setCisloTyp(adresniMisto.getString("cislo_typ", null));
+                am.setCisloTyp(adresniMisto.getString("cislo_typ", ""));
 
-                am.setCisloDomovni(adresniMisto.getString("cislo_domovni", null));
+                am.setCisloDomovni(adresniMisto.getString("cislo_domovni", ""));
 
-                am.setCisloOrientacni(adresniMisto.getString("cislo_orientacni", null));
+                am.setCisloOrientacni(adresniMisto.getString("cislo_orientacni", ""));
 
                 try {
-                    am.setUliceID(Long.parseLong(adresniMisto.getString("ulice_kod", null)));
+                    am.setUliceID(Long.parseLong(adresniMisto.getString("ulice_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.ulice_kod:", e);
                 }
 
-                am.setUlice(adresniMisto.getString("ulice", null));
+                am.setUlice(adresniMisto.getString("ulice", ""));
 
                 try {
-                    am.setCastObceID(Long.parseLong(adresniMisto.getString("cast_obce_kod", null)));
+                    am.setCastObceID(Long.parseLong(adresniMisto.getString("cast_obce_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.cast_obce_kod:", e);
                 }
 
-                am.setCastObce(adresniMisto.getString("cast_obce", null));
+                am.setCastObce(adresniMisto.getString("cast_obce", ""));
 
                 try {
-                    am.setMestskaCastID(Long.parseLong(adresniMisto.getString("mestska_cast_kod", null)));
+                    am.setMestskaCastID(Long.parseLong(adresniMisto.getString("mestska_cast_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.mestska_cast_kod:", e);
                 }
 
-                am.setMestskaCast(adresniMisto.getString("mestska_cast", null));
+                am.setMestskaCast(adresniMisto.getString("mestska_cast", ""));
 
                 try {
-                    am.setObecID(Long.parseLong(adresniMisto.getString("obec_kod", null)));
+                    am.setObecID(Long.parseLong(adresniMisto.getString("obec_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.obec_kod:", e);
                 }
 
-                am.setObec(adresniMisto.getString("obec", null));
+                am.setObec(adresniMisto.getString("obec", ""));
 
                 try {
-                    am.setOkresID(Long.parseLong(adresniMisto.getString("okres_kod", null)));
+                    am.setOkresID(Long.parseLong(adresniMisto.getString("okres_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.okres_kod:", e);
                 }
 
-                am.setOkres(adresniMisto.getString("okres", null));
+                am.setOkres(adresniMisto.getString("okres", ""));
 
                 try {
-                    am.setKrajID(Long.parseLong(adresniMisto.getString("kraj_kod", null)));
+                    am.setKrajID(Long.parseLong(adresniMisto.getString("kraj_kod", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.kraj_kod:", e);
                 }
 
-                am.setKraj(adresniMisto.getString("kraj", null));
+                am.setKraj(adresniMisto.getString("kraj", ""));
 
-                am.setPsc(adresniMisto.getString("psc", null));
+                am.setPsc(adresniMisto.getString("psc", ""));
 
                 try {
-                    am.setVzdalenost(Float.parseFloat(adresniMisto.getString("vzdalenost", null)));
+                    am.setVzdalenost(Float.parseFloat(adresniMisto.getString("vzdalenost", "")));
                 } catch (NumberFormatException e) {
                     Logging.log(Level.WARNING, "adresni_mista.vzdalenost:", e);
                 }
@@ -423,16 +423,16 @@ class RuianRecord {
             JsonObject parcela = getSafeJsonObject(obj, "parcela");
 
             try {
-                mParcelaRuianId = Long.parseLong(parcela.getString("ruian_id", null));
+                mParcelaRuianId = Long.parseLong(parcela.getString("ruian_id", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "parcela.ruian_id:", e);
             }
 
-            mParcelaDruhPozemku = parcela.getString("druh_pozemku", null);
+            mParcelaDruhPozemku = parcela.getString("druh_pozemku", "");
 
-            mParcelaZpusobVyuziti = parcela.getString("zpusob_vyuziti", null);
+            mParcelaZpusobVyuziti = parcela.getString("zpusob_vyuziti", "");
 
-            mParcelaPlatiOd = parcela.getString("plati_od", null);
+            mParcelaPlatiOd = parcela.getString("plati_od", "");
         } catch (InvalidArgumentException e) {
             Logging.log(Level.WARNING, "parcela:", e);
         }
@@ -443,12 +443,12 @@ class RuianRecord {
             JsonObject ulice = getSafeJsonObject(obj, "ulice");
 
             try {
-                mUliceRuianId = Long.parseLong(ulice.getString("ruian_id", null));
+                mUliceRuianId = Long.parseLong(ulice.getString("ruian_id", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "ulice.ruian_id:", e);
             }
 
-            mUliceJmeno = ulice.getString("jmeno", null);
+            mUliceJmeno = ulice.getString("jmeno", "");
 
         } catch (IllegalArgumentException e) {
             Logging.log(Level.WARNING, "ulice:", e);
@@ -460,36 +460,36 @@ class RuianRecord {
             JsonObject katastr = getSafeJsonObject(obj, "katastr");
 
             try {
-                mKatastrRuianId = Long.parseLong(katastr.getString("ruian_id", null));
+                mKatastrRuianId = Long.parseLong(katastr.getString("ruian_id", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "katastr.ruian_id:", e);
             }
 
-            mKatastrNazev = katastr.getString("nazev", null);
+            mKatastrNazev = katastr.getString("nazev", "");
 
             try {
-                mKatastrObecKod = Long.parseLong(katastr.getString("obec_kod", null));
+                mKatastrObecKod = Long.parseLong(katastr.getString("obec_kod", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "katastr.obec_kod:", e);
             }
 
-            mKatastrObec = katastr.getString("obec", null);
+            mKatastrObec = katastr.getString("obec", "");
 
             try {
-                mKatastrOkresKod = Long.parseLong(katastr.getString("okres_kod", null));
+                mKatastrOkresKod = Long.parseLong(katastr.getString("okres_kod", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "katastr.okres_kod:", e);
             }
 
-            mKatastrOkres = katastr.getString("okres", null);
+            mKatastrOkres = katastr.getString("okres", "");
 
             try {
-                mKatastrKrajKod = Long.parseLong(katastr.getString("kraj_kod", null));
+                mKatastrKrajKod = Long.parseLong(katastr.getString("kraj_kod", ""));
             } catch (NumberFormatException e) {
                 Logging.log(Level.WARNING, "katastr.kraj_kod:", e);
             }
 
-            mKatastrKraj = katastr.getString("kraj", null);
+            mKatastrKraj = katastr.getString("kraj", "");
 
         } catch (IllegalArgumentException e) {
             Logging.log(Level.WARNING, "katastr:", e);
