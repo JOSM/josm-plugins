@@ -126,6 +126,7 @@ public class Road {
             if (rel == null) {
                 if (other == null || !TurnlanesUtils.getMemberNode(other, "end").equals(n)) {
                     target = createLengthsRelation();
+                    cmd.add(target);
                 } else {
                     target = other;
                 }
@@ -154,9 +155,6 @@ public class Road {
             for (Route.Segment s : isFromEnd() ? route.getSegments() : CollectionUtils.reverse(route.getSegments())) {
                 r.addMember(new RelationMember(Constants.LENGTHS_ROLE_WAYS, s.getWay()));
             }
-
-            n.getDataSet().addPrimitive(r);
-
             return r;
         }
 
