@@ -17,7 +17,6 @@
     <property name="josm.ivysettings"       location="../../core/ivysettings.xml"/>
     <property name="josm.test.build.dir"    location="../../core/test/build"/>
     <property name="jmockit.jar"            location="../00_core_test_lib/jmockit.jar"/>
-    <property name="checkstyle-build.dir"   location="../00_core_tools/checkstyle/build"/>
     <property name="annotations.jar"        location="../00_core_tools/spotbugs/spotbugs-annotations.jar"/>
     <property name="core.tools.ivy"         location="../00_core_tools/ivy.xml"/>
     <property name="plugin.tools.dir"       location="../00_tools"/>
@@ -410,7 +409,6 @@
     <target name="clean">
         <delete dir="${plugin.build.dir}"/>
         <delete dir="${plugin.doc.dir}"/>
-        <delete dir="${checkstyle-build.dir}"/>
         <delete file="${plugin.jar}"/>
         <delete file="${plugin.sources.jar}"/>
         <delete file="${plugin.javadoc.jar}"/>
@@ -647,18 +645,9 @@
         </sequential>
     </target>
 
-    <target name="checkstyle-compile" depends="resolve-tools">
-        <mkdir dir="${checkstyle-build.dir}"/>
-        <javac sourcepath="" srcdir="../00_core_tools/checkstyle/src" failonerror="true"
-            destdir="${checkstyle-build.dir}" release="${java.lang.version}" debug="on"
-            includeantruntime="false" createMissingPackageInfoClass="false"
-            encoding="UTF-8" classpathref="checkstyle.classpath">
-        </javac>
-    </target>
-    <target name="checkstyle" depends="checkstyle-compile">
+    <target name="checkstyle" depends="resolve-tools">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties">
             <classpath refid="checkstyle.classpath"/>
-            <classpath path="${checkstyle-build.dir}"/>
         </taskdef>
         <checkstyle config="${basedir}/../checkstyle-config.xml">
             <fileset dir="${basedir}/src" includes="**/*.java" excludes="boofcv/**/*.java,
