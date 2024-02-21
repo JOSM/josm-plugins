@@ -24,7 +24,6 @@ import org.openstreetmap.josm.data.oauth.IOAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuth20Exception;
 import org.openstreetmap.josm.data.oauth.OAuth20Parameters;
 import org.openstreetmap.josm.data.oauth.OAuth20Token;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OAuthVersion;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -51,7 +50,7 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
      * In contrast, this cache avoids read request the backend in general.
      */
     private final Map<RequestorType, PasswordAuthentication> credentialsCache = new EnumMap<>(RequestorType.class);
-    private OAuthToken oauthCache;
+
 
     /**
      * Create a new {@link NPMCredentialsAgent}
@@ -189,16 +188,6 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
     }
 
     @Override
-    public OAuthToken lookupOAuthAccessToken() {
-        if (oauthCache != null)
-            return oauthCache;
-        String prolog = getOAuthDescriptor();
-        char[] key = getProvider().read(prolog+".key");
-        char[] secret = getProvider().read(prolog+".secret");
-        return new OAuthToken(stringNotNull(key), stringNotNull(secret));
-    }
-
-    @Override
     public IOAuthToken lookupOAuthAccessToken(String host) throws CredentialsAgentException {
         String prolog = getOAuthDescriptor();
         OAuthVersion[] versions = OAuthVersion.values();
@@ -219,28 +208,6 @@ public class NPMCredentialsAgent extends AbstractCredentialsAgent {
             }
         }
         return null;
-    }
-
-    @Override
-    public void storeOAuthAccessToken(OAuthToken oat) {
-        String key, secret;
-        if (oat == null) {
-            key = null;
-            secret = null;
-        } else {
-            key = oat.getKey();
-            secret = oat.getSecret();
-        }
-        String prolog = getOAuthDescriptor();
-        if (key == null || key.isEmpty() || secret == null || secret.isEmpty()) {
-            getProvider().delete(prolog+".key");
-            getProvider().delete(prolog+".secret");
-            oauthCache = null;
-        } else {
-            getProvider().save(prolog+".key", key.toCharArray(), tr("JOSM/OAuth/OSM API/Key"));
-            getProvider().save(prolog+".secret", secret.toCharArray(), tr("JOSM/OAuth/OSM API/Secret"));
-            oauthCache = new OAuthToken(key, secret);
-        }
     }
 
     @Override

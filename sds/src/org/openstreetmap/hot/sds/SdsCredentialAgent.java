@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.data.oauth.IOAuthToken;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -82,21 +81,6 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
         }
     }
 
-    /**
-     * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
-     * Access Token is currently managed by this CredentialManager.
-     *
-     * @return the current OAuth Access Token to access the OSM server.
-     */
-    @Override
-    public OAuthToken lookupOAuthAccessToken() {
-        String accessTokenKey = Config.getPref().get("oauth.access-token.key", null);
-        String accessTokenSecret = Config.getPref().get("oauth.access-token.secret", null);
-        if (accessTokenKey == null && accessTokenSecret == null)
-            return null;
-        return new OAuthToken(accessTokenKey, accessTokenSecret);
-    }
-
     @Override
     public IOAuthToken lookupOAuthAccessToken(String host) {
         throw new UnsupportedOperationException("SDS does not support OAuth tokens");
@@ -124,11 +108,6 @@ public class SdsCredentialAgent extends AbstractCredentialsAgent {
     @Override
     public String getSaveUsernameAndPasswordCheckboxText() {
         return tr("Save user and password (unencrypted)");
-    }
-
-    @Override
-    public void storeOAuthAccessToken(OAuthToken accessToken) {
-        // no-op
     }
 
     @Override

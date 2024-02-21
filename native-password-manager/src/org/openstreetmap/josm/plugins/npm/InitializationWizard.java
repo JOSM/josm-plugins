@@ -40,12 +40,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.netbeans.spi.keyring.KeyringProvider;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -55,7 +53,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
 
 public class InitializationWizard extends JDialog {
 
-    protected boolean canceled = false;
+    protected boolean canceled;
     protected JButton btnCancel, btnBack, btnNext;
     protected Action nextAction, finishAction;
     protected JPanel cardPanel;
@@ -66,7 +64,8 @@ public class InitializationWizard extends JDialog {
     private CardLayout cardLayout;
     
     public InitializationWizard() {
-        super(JOptionPane.getFrameForComponent(MainApplication.getMainFrame()), tr("Native password manager plugin"), ModalityType.DOCUMENT_MODAL);
+        super(JOptionPane.getFrameForComponent(MainApplication.getMainFrame()),
+                tr("Native password manager plugin"), ModalityType.DOCUMENT_MODAL);
         build();
         NPMType npm = detectNativePasswordManager();
         WizardPanel firstPanel;
@@ -145,8 +144,8 @@ public class InitializationWizard extends JDialog {
         /* The action to execute, when the user finall hits 'OK' and not 'Cancel' */
         void onOkAction();
     }
-    
-    abstract private static class AbstractWizardPanel implements WizardPanel {
+
+    private abstract static class AbstractWizardPanel implements WizardPanel {
         
         /**
          * Put a logo to the left, as is customary for wizard dialogs
@@ -174,7 +173,7 @@ public class InitializationWizard extends JDialog {
             return getClass().getCanonicalName();
         }
 
-        abstract protected JPanel getContentPanel();
+        protected abstract JPanel getContentPanel();
     }
     
     private static class NothingFoundPanel extends AbstractWizardPanel {
@@ -228,8 +227,8 @@ public class InitializationWizard extends JDialog {
     
     private static class SelectionPanel extends AbstractWizardPanel implements ActionListener {
         
-        private NPMType type;
-        private InitializationWizard wizard;
+        private final NPMType type;
+        private final InitializationWizard wizard;
         
         private JRadioButton rbManage, rbPlain;
                 
@@ -349,27 +348,13 @@ public class InitializationWizard extends JDialog {
         public void onOkAction() {
             
             CredentialsManager cm = CredentialsManager.getInstance();
-            
-            String server_username = Config.getPref().get("osm-server.username", null);
-            String server_password = Config.getPref().get("osm-server.password", null);
-            if (server_username != null || server_password != null) {
+
+            String proxyUsername = Config.getPref().get(DefaultProxySelector.PROXY_USER, null);
+            String proxyPassword = Config.getPref().get(DefaultProxySelector.PROXY_PASS, null);
+            String proxyHost = Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST, null);
+            if (proxyUsername != null || proxyPassword != null) {
                 try {
-                    cm.store(RequestorType.SERVER, OsmApi.getOsmApi().getHost(), new PasswordAuthentication(string(server_username), toCharArray(server_password)));
-                    if (rbClear.isSelected()) {
-                        Config.getPref().put("osm-server.username", null);
-                        Config.getPref().put("osm-server.password", null);
-                    }
-                } catch (CredentialsAgentException ex) {
-                    Logging.error(ex);
-                }
-            }
-            
-            String proxy_username = Config.getPref().get(DefaultProxySelector.PROXY_USER, null);
-            String proxy_password = Config.getPref().get(DefaultProxySelector.PROXY_PASS, null);
-            String proxy_host = Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST, null);
-            if (proxy_username != null || proxy_password != null) {
-                try {
-                    cm.store(RequestorType.PROXY, proxy_host, new PasswordAuthentication(string(proxy_username), toCharArray(proxy_password)));
+                    cm.store(RequestorType.PROXY, proxyHost, new PasswordAuthentication(string(proxyUsername), toCharArray(proxyPassword)));
                     if (rbClear.isSelected()) {
                         Config.getPref().put(DefaultProxySelector.PROXY_USER, null);
                         Config.getPref().put(DefaultProxySelector.PROXY_PASS, null);
@@ -378,24 +363,10 @@ public class InitializationWizard extends JDialog {
                     Logging.error(ex);
                 }
             }
-            
-            String oauth_key = Config.getPref().get("oauth.access-token.key", null);
-            String oauth_secret = Config.getPref().get("oauth.access-token.secret", null);
-            if (oauth_key != null || oauth_secret != null) {
-                try {
-                    cm.storeOAuthAccessToken(new OAuthToken(string(oauth_key), string(oauth_secret)));
-                    if (rbClear.isSelected()) {
-                        Config.getPref().put("oauth.access-token.key", null);
-                        Config.getPref().put("oauth.access-token.secret", null);
-                    }
-                } catch (CredentialsAgentException ex) {
-                    Logging.error(ex);
-                }
-            }
         }
     }
 
-    private final static String NPM = "Native Password Manager Plugin: ";
+    private static final String NPM = "Native Password Manager Plugin: ";
 
     private static NPMType detectNativePasswordManager() {
         NPMType[] potentialManagers;
@@ -444,7 +415,7 @@ public class InitializationWizard extends JDialog {
                             new Dimension(600,400)
                     )
             ).applySafe(this);
-        } else if (!visible && isShowing()){
+        } else if (isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
@@ -492,7 +463,8 @@ public class InitializationWizard extends JDialog {
         @Override
         public void actionPerformed(ActionEvent evt) {
             if (panelIndex <= 0)
-                throw new RuntimeException();
+                // Java 9 will let us pass the panelIndex by itself
+                throw new IndexOutOfBoundsException("Index out of range: " + panelIndex);
             panelIndex--;
             cardLayout.show(cardPanel, panels.get(panelIndex).getId());
             updateButtons();
