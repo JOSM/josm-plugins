@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,12 +22,11 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -40,7 +40,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 
 public final class SimplifyAreaAction extends JosmAction {
 
@@ -48,19 +47,6 @@ public final class SimplifyAreaAction extends JosmAction {
         super(tr("Simplify Area"), "simplify", tr("Delete unnecessary nodes from an area."),
                 Shortcut.registerShortcut("tools:simplifyArea", tr("More tools: {0}", tr("Simplify Area")), KeyEvent.VK_Y, Shortcut.CTRL_SHIFT),
                 true, "simplifyarea", true);
-    }
-
-    private List<Bounds> getCurrentEditBounds() {
-        return MainApplication.getLayerManager().getEditLayer().data.getDataSourceBounds();
-    }
-
-    private static boolean isInBounds(final Node node, final List<Bounds> bounds) {
-        for (final Bounds b : bounds) {
-            if (b.contains(node)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static boolean confirmWayWithNodesOutsideBoundingBox() {
@@ -90,26 +76,13 @@ public final class SimplifyAreaAction extends JosmAction {
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        final Collection<OsmPrimitive> selection = getLayerManager().getEditDataSet().getSelected();
-
-        final List<Bounds> bounds = getCurrentEditBounds();
-        for (final OsmPrimitive prim : selection) {
-            if (prim instanceof Way && bounds.size() > 0) {
-                final Way way = (Way) prim;
-                // We check if each node of each way is at least in one download
-                // bounding box. Otherwise nodes may get deleted that are necessary by
-                // unloaded ways (see Ticket #1594)
-                for (final Node node : way.getNodes()) {
-                    if (!isInBounds(node, bounds)) {
-                        if (!confirmWayWithNodesOutsideBoundingBox()) {
-                            return;
-                        }
-                        break;
-                    }
-                }
-            }
+        final Collection<Way> ways = new LinkedHashSet<>(getLayerManager().getEditDataSet().getSelectedWays());
+        ways.removeIf(w -> !w.isUsable());
+        int checkRes = Command.checkOutlyingOrIncompleteOperation(ways, null);
+        if ((checkRes & Command.IS_OUTSIDE) != 0) {
+            if (!confirmWayWithNodesOutsideBoundingBox())
+                return;
         }
-        final Collection<Way> ways = Utils.filteredCollection(selection, Way.class);
         if (ways.isEmpty()) {
             alertSelectAtLeastOneWay();
             return;
@@ -146,6 +119,7 @@ public final class SimplifyAreaAction extends JosmAction {
         }
 
         final Collection<Command> allCommands = new ArrayList<>();
+        Map<Way, List<Node>> modifiedWays = new HashMap<>();
 
         if (!nodesReallyToRemove.isEmpty()) {
             for (final Way way : ways) {
@@ -159,23 +133,21 @@ public final class SimplifyAreaAction extends JosmAction {
                     if (closed) {
                         nodes.add(nodes.get(0));
                     }
-
-                    final Way newWay = new Way(way);
-                    newWay.setNodes(nodes);
-                    allCommands.add(new ChangeCommand(way, newWay));
+                    allCommands.add(new ChangeNodesCommand(way, nodes));
+                    modifiedWays.put(way, nodes);
                 }
             }
 
             allCommands.add(new DeleteCommand(nodesReallyToRemove));
         }
 
-        final Collection<Command> avgCommands = averageNearbyNodes(ways, nodesReallyToRemove);
+        final Collection<Command> avgCommands = averageNearbyNodes(ways, nodesReallyToRemove, modifiedWays);
         if (avgCommands != null && !avgCommands.isEmpty()) {
             allCommands.add(new SequenceCommand(tr("average nearby nodes"), avgCommands));
         }
 
         if (!allCommands.isEmpty()) {
-            final SequenceCommand rootCommand = new SequenceCommand(trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()), allCommands);
+            final SequenceCommand rootCommand = new SequenceCommand(trn("Simplify {0} way", "Simplify {0} ways", modifiedWays.size(), modifiedWays.size()), allCommands);
             UndoRedoHandler.getInstance().add(rootCommand);
             MainApplication.getMap().repaint();
         }
@@ -199,7 +171,7 @@ public final class SimplifyAreaAction extends JosmAction {
     }
 
     // average nearby nodes
-    private static Collection<Command> averageNearbyNodes(final Collection<Way> ways, final Collection<Node> nodesAlreadyDeleted) {
+    private static Collection<Command> averageNearbyNodes(final Collection<Way> ways, final Collection<Node> nodesAlreadyDeleted, Map<Way, List<Node>> modifiedWays) {
         final double mergeThreshold = Config.getPref().getDouble(SimplifyAreaPreferenceSetting.MERGE_THRESHOLD, 0.2);
 
         final Map<Node, LatLon> coordMap = new HashMap<>();
@@ -253,7 +225,7 @@ public final class SimplifyAreaAction extends JosmAction {
                     }
 
                     // test if both nodes have same parents
-                    if (!referrers.containsAll(referrers2) || !referrers2.containsAll(referrers)) {
+                    if (referrers.size() != referrers2.size() || !referrers2.containsAll(referrers)) {
                         continue;
                     }
 
@@ -289,7 +261,6 @@ public final class SimplifyAreaAction extends JosmAction {
             nodesToDelete.removeAll(nodesAlreadyDeleted);
             if (nodesToDelete.removeAll(coordMap.keySet())) {
                 nodesToDelete2.addAll(nodesToDelete);
-                final Way newWay = new Way(way);
                 final List<Node> nodes = way.getNodes();
                 final boolean closed = nodes.get(0).equals(nodes.get(nodes.size() - 1));
                 if (closed) {
@@ -300,9 +271,12 @@ public final class SimplifyAreaAction extends JosmAction {
                     nodes.add(nodes.get(0));
                 }
 
-                newWay.setNodes(nodes);
                 if (!way.getNodes().equals(nodes)) {
-                    commands.add(new ChangeCommand(way, newWay));
+                    List<Node> nodes1 = modifiedWays.get(way);
+                    if (nodes1 == null || !nodes.equals(nodes1)) {
+                        commands.add(new ChangeNodesCommand(way, nodes));
+                        modifiedWays.put(way, nodes);
+                    }
                 }
             }
         }
@@ -420,7 +394,7 @@ public final class SimplifyAreaAction extends JosmAction {
     }
 
     public static double computeConvectAngle(final ILatLon coord1, final ILatLon coord2, final ILatLon coord3) {
-        final double angle =  Math.abs(heading(coord2, coord3) - heading(coord1, coord2));
+        final double angle = Math.abs(heading(coord2, coord3) - heading(coord1, coord2));
         return Math.toDegrees(angle < Math.PI ? angle : 2 * Math.PI - angle);
     }
 
@@ -435,7 +409,7 @@ public final class SimplifyAreaAction extends JosmAction {
         return q < 0.0 ? 0.0 : Math.sqrt(q);
     }
 
-    public static double R = 6378135;
+    public static final double R = 6378135;
 
     public static double crossTrackError(final ILatLon l1, final ILatLon l2, final ILatLon l3) {
         return R * Math.asin(sin(l1.greatCircleDistance(l2) / R) * sin(heading(l1, l2) - heading(l1, l3)));
