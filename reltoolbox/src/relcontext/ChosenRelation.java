@@ -40,7 +40,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * @author Zverik
  */
 public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintable, DataSetListener {
-    protected Relation chosenRelation = null;
+    protected Relation chosenRelation;
     private final Set<ChosenRelationListener> chosenRelationListeners = new HashSet<>();
 
     public void set(Relation rel) {
@@ -161,7 +161,7 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
             visitedRelations.add(rel);
             for (OsmPrimitive element : rel.getMemberPrimitives()) {
                 if (null != element.getType()) {
-                    switch(element.getType()) {
+                    switch (element.getType()) {
                     case NODE:
                         Node node = (Node) element;
                         Point center = mv.getPoint(node);
@@ -211,7 +211,10 @@ public class ChosenRelation implements ActiveLayerChangeListener, MapViewPaintab
     @Override
     public void dataChanged(DataChangedEvent event) {
         if (chosenRelation != null) {
-            fireRelationChanged(chosenRelation);
+            if (chosenRelation.getDataSet() == null)
+                clear();
+            else
+                fireRelationChanged(chosenRelation);
         }
     }
 
