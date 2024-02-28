@@ -1,32 +1,32 @@
 fr.datagouvfr.jar;https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/dist/fr.datagouvfr.jar
-	Ant-Version: Apache Ant 1.10.3
+	Manifest-Version: 1.0
+	Ant-Version: Apache Ant 1.10.14
+	Created-By: 11.0.22+7 (Eclipse Adoptium)
+	Author: Don-vip
 	Module-Class: org.openstreetmap.josm.plugins.opendata.modules.fr.datagouvfr.DataGouvFrModule
+	Module-Date: 2023-07-20T15:16:40.766390Z
 	Module-Description: data.gouv.fr
-	Author: Don-vip
 	Module-Icon: images/fr24.png
-	Module-Version: 34095
-	Created-By: 1.8.0_181-b13 (Oracle Corporation)
-	Manifest-Version: 1.0
-	Module-Date: 2018-03-24T17:17:57.572233Z
 	Module-Link: https://wiki.openstreetmap.org/wiki/WikiProject_France/data.gouv.fr
+	Module-Version: 36101
 fr.paris.jar;https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/dist/fr.paris.jar
-	Ant-Version: Apache Ant 1.10.5
+	Manifest-Version: 1.0
+	Ant-Version: Apache Ant 1.10.14
+	Created-By: 11.0.22+7 (Eclipse Adoptium)
+	Author: Don-vip
 	Module-Class: org.openstreetmap.josm.plugins.opendata.modules.fr.paris.ParisModule
+	Module-Date: 2020-03-21T07:41:40.209850Z
 	Module-Description: Paris
-	Author: Don-vip
 	Module-Icon: images/data.fr.paris_24.png
-	Module-Version: 35244
-	Created-By: 1.8.0_212-b03 ()
-	Manifest-Version: 1.0
-	Module-Date: 2019-12-08T15:04:09.283577Z
+	Module-Version: 35386
 fr.toulouse.jar;https://svn.openstreetmap.org/applications/editors/josm/plugins/opendata/dist/fr.toulouse.jar
-	Ant-Version: Apache Ant 1.10.7
-	Module-Class: org.openstreetmap.josm.plugins.opendata.modules.fr.toulouse.ToulouseModule
-	Module-Description: Toulouse
-	Author: Don-vip
-	Module-Icon: images/data.fr.toulouse_24.png
-	Module-Version: 35279
-	Created-By: 1.8.0_232-b09 ()
 	Manifest-Version: 1.0
-	Module-Date: 2020-01-12T17:25:16.012344Z
+	Ant-Version: Apache Ant 1.10.14
+	Created-By: 11.0.22+7 (Eclipse Adoptium)
+	Author: Don-vip
+	Module-Class: org.openstreetmap.josm.plugins.opendata.modules.fr.toulouse.ToulouseModule
+	Module-Date: 2023-03-21T13:49:10.299613Z
+	Module-Description: Toulouse
+	Module-Icon: images/data.fr.toulouse_24.png
 	Module-Link: https://wiki.openstreetmap.org/wiki/Toulouse/ToulouseMetropoleData
+	Module-Version: 36064
