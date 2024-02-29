@@ -89,8 +89,8 @@ class SplitObjectActionTest {
 
         DeleteCommand.setDeletionCallback(new AlwaysDeleteCallback());
 
-        Config.getPref().putBoolean("message.combine_tags", false);
-        Config.getPref().putInt("message.combine_tags.value", JOptionPane.YES_OPTION);
+        Config.getPref().putBoolean("message.combine_relation_member", false);
+        Config.getPref().putInt("message.combine_relation_member.value", JOptionPane.YES_OPTION);
         new CombineWayAction().actionPerformed(null);
         GuiHelper.runInEDTAndWait(() -> { /* sync edt */ });
 
