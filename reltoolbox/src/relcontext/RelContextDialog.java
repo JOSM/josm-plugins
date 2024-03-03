@@ -17,8 +17,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,8 +48,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -110,7 +106,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
     public static final String PREF_PREFIX = "reltoolbox";
 
     private final DefaultTableModel relationsData;
-    private final ChosenRelation chosenRelation;
+    private final transient ChosenRelation chosenRelation;
     private final JPanel chosenRelationPanel;
     private final ChosenRelationPopupMenu popupMenu;
     private final MultipolygonSettingsPopup multiPopupMenu;
@@ -412,6 +408,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
 
     @Override
     public void destroy() {
+        chosenRelation.removeChosenRelationListener(this);
         enterRoleAction.destroy();
         findRelationAction.destroy();
         createMultipolygonAction.destroy();
@@ -486,6 +483,7 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();
+        dlg.dispose();
         if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE
                 || (answer instanceof Integer && (Integer) answer != JOptionPane.OK_OPTION))
             return null;
@@ -544,14 +542,11 @@ public class RelContextDialog extends ToggleDialog implements ActiveLayerChangeL
             List<Command> commands = new ArrayList<>();
             for (int i = 0; i < r.getMembersCount(); i++) {
                 RelationMember m = r.getMember(i);
-                if (selected.contains(m.getMember())) {
-                    if (!role.equals(m.getRole())) {
-                        commands.add(new ChangeRelationMemberRoleCommand(r, i, role));
-                    }
+                if (selected.contains(m.getMember()) && !role.equals(m.getRole())) {
+                    commands.add(new ChangeRelationMemberRoleCommand(r, i, role));
                 }
             }
             if (!commands.isEmpty()) {
-                //                UndoRedoHandler.getInstance().add(new ChangeCommand(chosenRelation.get(), r));
                 UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Change relation member roles to {0}", role), commands));
             }
         }

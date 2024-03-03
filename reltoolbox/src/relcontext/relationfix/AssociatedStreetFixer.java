@@ -4,11 +4,13 @@ package relcontext.relationfix;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -22,6 +24,11 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class AssociatedStreetFixer extends RelationFixer {
 
+    private static final String ADDR_HOUSENUMBER = "addr:housenumber";
+    private static final String BUILDING = "building";
+    private static final String HOUSE = "house";
+    private static final String STREET = "street";
+
     public AssociatedStreetFixer() {
         super("associatedStreet");
     }
@@ -29,15 +36,15 @@ public class AssociatedStreetFixer extends RelationFixer {
     @Override
     public boolean isRelationGood(Relation rel) {
         for (RelationMember m : rel.getMembers()) {
-            if (m.getType().equals(OsmPrimitiveType.NODE) && !"house".equals(m.getRole())) {
+            if (m.getType() == OsmPrimitiveType.NODE && !HOUSE.equals(m.getRole())) {
                 setWarningMessage(tr("Node without ''house'' role found"));
                 return false;
             }
-            if (m.getType().equals(OsmPrimitiveType.WAY) && !("house".equals(m.getRole()) || "street".equals(m.getRole()))) {
+            if (m.getType() == OsmPrimitiveType.WAY && !(HOUSE.equals(m.getRole()) || STREET.equals(m.getRole()))) {
                 setWarningMessage(tr("Way without ''house'' or ''street'' role found"));
                 return false;
             }
-            if (m.getType().equals(OsmPrimitiveType.RELATION) && !"house".equals(m.getRole())) {
+            if (m.getType() == OsmPrimitiveType.RELATION && !HOUSE.equals(m.getRole())) {
                 setWarningMessage(tr("Relation without ''house'' role found"));
                 return false;
             }
@@ -53,7 +60,7 @@ public class AssociatedStreetFixer extends RelationFixer {
             streetName = "";
         }
         for (RelationMember m : rel.getMembers()) {
-            if ("street".equals(m.getRole()) && !streetName.equals(m.getWay().get("name"))) {
+            if (STREET.equals(m.getRole()) && !streetName.equals(m.getWay().get("name"))) {
                 String anotherName = m.getWay().get("name");
                 if (anotherName != null && !anotherName.isEmpty()) {
                     setWarningMessage(tr("Relation has streets with different names"));
@@ -71,50 +78,47 @@ public class AssociatedStreetFixer extends RelationFixer {
         // any way/point/relation with addr:housenumber=* or building=* or type=multipolygon -> house
         // name - check which name is most used in street members and add to relation
         // copy this name to the other street members (???)
-        Relation rel = new Relation(source);
+        List<RelationMember> members = source.getMembers();
         boolean fixed = false;
 
-        for (int i = 0; i < rel.getMembersCount(); i++) {
-            RelationMember m = rel.getMember(i);
-
+        for (int i = 0; i < members.size(); i++) {
+            RelationMember m = members.get(i);
             if (m.isNode()) {
                 Node node = m.getNode();
-                if (!"house".equals(m.getRole()) &&
-                        (node.hasKey("building") || node.hasKey("addr:housenumber"))) {
+                if (!HOUSE.equals(m.getRole()) &&
+                        (node.hasKey(BUILDING) || node.hasKey(ADDR_HOUSENUMBER))) {
                     fixed = true;
-                    rel.setMember(i, new RelationMember("house", node));
+                    members.set(i, new RelationMember(HOUSE, node));
                 }
             } else if (m.isWay()) {
                 Way way = m.getWay();
-                if (!"street".equals(m.getRole()) && way.hasKey("highway")) {
+                if (!STREET.equals(m.getRole()) && way.hasKey("highway")) {
                     fixed = true;
-                    rel.setMember(i, new RelationMember("street", way));
-                } else if (!"house".equals(m.getRole()) &&
-                        (way.hasKey("building") || way.hasKey("addr:housenumber"))) {
+                    members.set(i, new RelationMember(STREET, way));
+                } else if (!HOUSE.equals(m.getRole()) &&
+                        (way.hasKey(BUILDING) || way.hasKey(ADDR_HOUSENUMBER))) {
                     fixed = true;
-                    rel.setMember(i, new RelationMember("house", way));
+                    members.set(i, new RelationMember(HOUSE, way));
                 }
             } else if (m.isRelation()) {
                 Relation relation = m.getRelation();
-                if (!"house".equals(m.getRole()) &&
-                        (relation.hasKey("building") || relation.hasKey("addr:housenumber") || "multipolygon".equals(relation.get("type")))) {
+                if (!HOUSE.equals(m.getRole()) &&
+                        (relation.hasKey(BUILDING) || relation.hasKey(ADDR_HOUSENUMBER) || "multipolygon".equals(relation.get("type")))) {
                     fixed = true;
-                    rel.setMember(i, new RelationMember("house", relation));
+                    members.set(i, new RelationMember(HOUSE, relation));
                 }
             }
         }
 
         // fill relation name
         Map<String, Integer> streetNames = new HashMap<>();
-        for (RelationMember m : rel.getMembers()) {
-            if ("street".equals(m.getRole()) && m.isWay()) {
+        for (RelationMember m : members) {
+            if (STREET.equals(m.getRole()) && m.isWay()) {
                 String name = m.getWay().get("name");
                 if (name == null || name.isEmpty()) {
                     continue;
                 }
-
                 Integer count = streetNames.get(name);
-
                 streetNames.put(name, count != null ? count + 1 : 1);
             }
         }
@@ -127,39 +131,23 @@ public class AssociatedStreetFixer extends RelationFixer {
             }
         }
 
-        if (!rel.hasKey("name") && !commonName.isEmpty()) {
-            fixed = true;
-            rel.put("name", commonName);
-        } else {
-            commonName = ""; // set empty common name - if we already have name on relation, do not overwrite it
+        Map<String, String> nameTag = new HashMap<>();
+        if (!source.hasKey("name") && !commonName.isEmpty()) {
+            nameTag.put("name", commonName);
         }
 
         List<Command> commandList = new ArrayList<>();
+        final DataSet ds = Utils.firstNonNull(source.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
         if (fixed) {
-            final DataSet ds = Utils.firstNonNull(source.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
-            commandList.add(new ChangeCommand(ds, source, rel));
+            commandList.add(new ChangeMembersCommand(ds, source, members));
+        }
+        if (!nameTag.isEmpty()) {
+            commandList.add(new ChangePropertyCommand(ds, Collections.singleton(source), nameTag));
         }
 
-        /*if (!commonName.isEmpty())
-        // fill common name to streets
-        for (RelationMember m : rel.getMembers())
-            if ("street".equals(m.getRole()) && m.isWay()) {
-                String name = m.getWay().get("name");
-                if (commonName.equals(name)) continue;
-
-                // TODO: ask user if he really wants to overwrite street name??
-
-                Way oldWay = m.getWay();
-                Way newWay = new Way(oldWay);
-                newWay.put("name", commonName);
-
-                commandList.add(new ChangeCommand(MainApplication.getLayerManager().getEditDataSet(), oldWay, newWay));
-            }
-         */
         // return results
-        if (commandList.isEmpty()) {
+        if (commandList.isEmpty())
             return null;
-        }
         return SequenceCommand.wrapIfNeeded(tr("fix associatedStreet relation"), commandList);
     }
 }

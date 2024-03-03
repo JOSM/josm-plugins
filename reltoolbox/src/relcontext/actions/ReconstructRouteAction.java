@@ -12,8 +12,7 @@ import java.util.Objects;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.command.ChangeCommand;
-import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,8 +33,12 @@ import relcontext.ChosenRelationListener;
  * @author freeExec
  */
 public class ReconstructRouteAction extends AbstractAction implements ChosenRelationListener {
-    private final ChosenRelation rel;
+    private final transient ChosenRelation rel;
 
+    /**
+     * Reconstruct route relation to scheme of public_transport.
+     * @param rel chosen relation
+     */
     public ReconstructRouteAction(ChosenRelation rel) {
         super(tr("Reconstruct route"));
         putValue(SMALL_ICON, ImageProvider.get("dialogs", "filter"));
@@ -48,8 +51,7 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
     @Override
     public void actionPerformed(ActionEvent e) {
         Relation r = rel.get();
-        Relation recRel = new Relation(r);
-        recRel.removeMembersFor(recRel.getMemberPrimitives());
+        List<RelationMember> recMembers = new ArrayList<>();
 
         Map<OsmPrimitive, RelationMember> stopMembers = new LinkedHashMap<>();
         Map<String, List<RelationMember>> platformMembers = new LinkedHashMap<>();
@@ -117,42 +119,40 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
                     nIndex != wayNodeEndIndex;
                     nIndex += increment) {
                 Node refNode = w.getNode(nIndex);
-                if (PublicTransportHelper.isNodeStop(refNode)) {
-                    if (stopMembers.containsKey(refNode)) {
-                        recRel.addMember(stopMembers.get(refNode));
-                        stopMembers.remove(refNode);
-                        String stopName = PublicTransportHelper.getNameViaStoparea(refNode);
-                        if (stopName == null) {
-                            stopName = "";
+                if (!(PublicTransportHelper.isNodeStop(refNode) && stopMembers.containsKey(refNode))) 
+                    continue;
+                recMembers.add(stopMembers.get(refNode));
+                stopMembers.remove(refNode);
+                String stopName = PublicTransportHelper.getNameViaStoparea(refNode);
+                if (stopName == null) {
+                    stopName = "";
+                }
+                boolean existsPlatform = platformMembers.containsKey(stopName);
+                if (!existsPlatform) {
+                    stopName = ""; // find of the nameless
+                }
+                if (existsPlatform || platformMembers.containsKey(stopName)) {
+                    List<RelationMember> lMember = platformMembers.get(stopName);
+                    if (lMember.size() == 1) {
+                        recMembers.add(lMember.get(0));
+                        lMember.remove(0);
+                    } else {
+                        // choose closest
+                        RelationMember candidat = getClosestPlatform(lMember, refNode);
+                        if (candidat != null) {
+                            recMembers.add(candidat);
+                            lMember.remove(candidat);
                         }
-                        boolean existsPlatform = platformMembers.containsKey(stopName);
-                        if (!existsPlatform) {
-                            stopName = ""; // find of the nameless
-                        }
-                        if (existsPlatform || platformMembers.containsKey(stopName)) {
-                            List<RelationMember> lMember = platformMembers.get(stopName);
-                            if (lMember.size() == 1) {
-                                recRel.addMember(lMember.get(0));
-                                lMember.remove(0);
-                            } else {
-                                // choose closest
-                                RelationMember candidat = getClosestPlatform(lMember, refNode);
-                                if (candidat != null) {
-                                    recRel.addMember(candidat);
-                                    lMember.remove(candidat);
-                                }
-                            }
-                            if (lMember.isEmpty()) {
-                                platformMembers.remove(stopName);
-                            }
-                        }
+                    }
+                    if (lMember.isEmpty()) {
+                        platformMembers.remove(stopName);
                     }
                 }
             }
         }
 
         for (RelationMember stop : stopMembers.values()) {
-            recRel.addMember(stop);
+            recMembers.add(stop);
             String stopName = PublicTransportHelper.getNameViaStoparea(stop);
             boolean existsPlatform = platformMembers.containsKey(stopName);
             if (!existsPlatform) {
@@ -161,13 +161,13 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
             if (existsPlatform || platformMembers.containsKey(stopName)) {
                 List<RelationMember> lMember = platformMembers.get(stopName);
                 if (lMember.size() == 1) {
-                    recRel.addMember(lMember.get(0));
+                    recMembers.add(lMember.get(0));
                     lMember.remove(0);
                 } else {
                     // choose closest
                     RelationMember candidat = getClosestPlatform(lMember, stop.getNode());
                     if (candidat != null) {
-                        recRel.addMember(candidat);
+                        recMembers.add(candidat);
                         lMember.remove(candidat);
                     }
                 }
@@ -179,22 +179,22 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
 
         for (List<RelationMember> lPlatforms : platformMembers.values()) {
             for (RelationMember platform : lPlatforms) {
-                recRel.addMember(platform);
+                recMembers.add(platform);
             }
         }
 
         for (RelationMember route : routeMembers) {
-            recRel.addMember(route);
+            recMembers.add(route);
         }
         for (RelationMember wtf : wtfMembers) {
-            recRel.addMember(wtf);
+            recMembers.add(wtf);
         }
-        Command command = new ChangeCommand(r, recRel);
-        UndoRedoHandler.getInstance().add(command);
+        UndoRedoHandler.getInstance().add(new ChangeMembersCommand(r, recMembers));
     }
 
     private static final double maxSqrDistBetweenStopAndPlatform = 2000; // ~ 26m
-    private RelationMember getClosestPlatform(List<RelationMember> members, Node stop) {
+    
+    private static RelationMember getClosestPlatform(List<RelationMember> members, Node stop) {
         if (stop == null || members.isEmpty()) return null;
         double maxDist = maxSqrDistBetweenStopAndPlatform;
         RelationMember result = null;
@@ -228,7 +228,7 @@ public class ReconstructRouteAction extends AbstractAction implements ChosenRela
         setEnabled(isSuitableRelation(newRelation));
     }
 
-    private boolean isSuitableRelation(Relation newRelation) {
+    private static boolean isSuitableRelation(Relation newRelation) {
         return !(newRelation == null || !"route".equals(newRelation.get("type")) || newRelation.getMembersCount() == 0);
     }
 }

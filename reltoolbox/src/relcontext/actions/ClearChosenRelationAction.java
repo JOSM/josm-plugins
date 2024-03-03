@@ -15,7 +15,7 @@ import relcontext.ChosenRelation;
 import relcontext.ChosenRelationListener;
 
 public class ClearChosenRelationAction extends AbstractAction implements ChosenRelationListener {
-    private final ChosenRelation rel;
+    private final transient ChosenRelation rel;
 
     public ClearChosenRelationAction(ChosenRelation rel) {
         super();

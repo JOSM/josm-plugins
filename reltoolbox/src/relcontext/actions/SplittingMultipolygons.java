@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.openstreetmap.josm.command.AddCommand;
@@ -350,7 +351,7 @@ public final class SplittingMultipolygons {
             for (OsmPrimitive p : n.getReferrers()) {
                 if (p instanceof Way && !p.equals(ring)) {
                     for (OsmPrimitive r : p.getReferrers()) {
-                        if (r instanceof Relation && r.hasKey("type") && r.get("type").equals("multipolygon")) {
+                        if (r instanceof Relation && "multipolygon".equals(r.get("type"))) {
                             if (touchingWays.containsKey(p)) {
                                 touchingWays.put((Way) p, Boolean.TRUE);
                             } else {
@@ -364,9 +365,9 @@ public final class SplittingMultipolygons {
         }
 
         List<TheRing> otherWays = new ArrayList<>();
-        for (Way w : touchingWays.keySet()) {
-            if (touchingWays.get(w)) {
-                otherWays.add(new TheRing(w));
+        for (Entry<Way, Boolean> e : touchingWays.entrySet()) {
+            if (Boolean.TRUE.equals(e.getValue())) {
+                otherWays.add(new TheRing(e.getKey()));
             }
         }
 

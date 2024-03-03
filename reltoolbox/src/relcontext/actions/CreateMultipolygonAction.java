@@ -6,15 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dialog.ModalityType;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,7 +28,6 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -55,7 +56,7 @@ import relcontext.ChosenRelation;
  */
 public class CreateMultipolygonAction extends JosmAction {
     private static final String PREF_MULTIPOLY = "reltoolbox.multipolygon.";
-    protected ChosenRelation chRel;
+    protected transient ChosenRelation chRel;
 
     public CreateMultipolygonAction(ChosenRelation chRel) {
         super("Multi", "data/multipolygon", tr("Create a multipolygon from selected objects"),
@@ -71,19 +72,19 @@ public class CreateMultipolygonAction extends JosmAction {
 
     public static boolean getDefaultPropertyValue(String property) {
         switch (property) {
-            case "boundary":
-            case "alltags":
-            case "allowsplit":
-                return false;
-            case "boundaryways":
-            case "tags":
-            case "single":
-                return true;
+        case "boundary":
+        case "alltags":
+        case "allowsplit":
+            return false;
+        case "boundaryways":
+        case "tags":
+        case "single":
+            return true;
         }
         throw new IllegalArgumentException(property);
     }
 
-    private boolean getPref(String property) {
+    private static boolean getPref(String property) {
         return Config.getPref().getBoolean(PREF_MULTIPOLY + property, getDefaultPropertyValue(property));
     }
 
@@ -96,7 +97,7 @@ public class CreateMultipolygonAction extends JosmAction {
             List<Relation> rels = null;
             if (getPref("allowsplit") || selectedWays.size() == 1) {
                 if (SplittingMultipolygons.canProcess(selectedWays)) {
-                    rels = SplittingMultipolygons.process(ds.getSelectedWays());
+                    rels = SplittingMultipolygons.process(selectedWays);
                 }
             } else {
                 if (TheRing.areAllOfThoseRings(selectedWays)) {
@@ -200,9 +201,9 @@ public class CreateMultipolygonAction extends JosmAction {
     private void addBoundaryMembers(Relation rel) {
         for (OsmPrimitive p : getLayerManager().getEditDataSet().getSelected()) {
             String role = null;
-            if (p.getType().equals(OsmPrimitiveType.RELATION)) {
+            if (p.getType() == OsmPrimitiveType.RELATION) {
                 role = "subarea";
-            } else if (p.getType().equals(OsmPrimitiveType.NODE)) {
+            } else if (p.getType() == OsmPrimitiveType.NODE) {
                 Node n = (Node) p;
                 if (!n.isIncomplete()) {
                     if (n.hasKey("place")) {
@@ -318,7 +319,7 @@ public class CreateMultipolygonAction extends JosmAction {
         boolean isBoundary = getPref("boundary");
         if (isBoundary || !getPref("alltags")) {
             for (RelationMember m : relation.getMembers()) {
-                if (m.hasRole() && m.getRole().equals("outer") && m.isWay()) {
+                if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay()) {
                     for (String key : values.keySet()) {
                         if (!m.getWay().hasKey(key) && !relation.hasKey(key)) {
                             conflictingKeys.add(key);
@@ -336,7 +337,7 @@ public class CreateMultipolygonAction extends JosmAction {
             values.remove(linearTag);
         }
 
-        if (values.containsKey("natural") && values.get("natural").equals("coastline")) {
+        if ("coastline".equals(values.get("natural"))) {
             values.remove("natural");
         }
 
@@ -355,9 +356,10 @@ public class CreateMultipolygonAction extends JosmAction {
         List<Command> commands = new ArrayList<>();
         boolean moveTags = getPref("tags");
 
-        for (String key : values.keySet()) {
+        for (Entry<String, String> entry : values.entrySet()) {
+            String key = entry.getKey();
             List<OsmPrimitive> affectedWays = new ArrayList<>();
-            String value = values.get(key);
+            String value = entry.getValue();
 
             for (Way way : innerWays) {
                 if (way.hasKey(key) && (isBoundary || value.equals(way.get(key)))) {
@@ -374,7 +376,7 @@ public class CreateMultipolygonAction extends JosmAction {
                 }
             }
 
-            if (affectedWays.size() > 0) {
+            if (!affectedWays.isEmpty()) {
                 commands.add(new ChangePropertyCommand(affectedWays, key, null));
             }
         }
@@ -385,20 +387,22 @@ public class CreateMultipolygonAction extends JosmAction {
                 values.put("name", name);
             }
             boolean fixed = false;
-            Relation r2 = new Relation(relation);
-            for (String key : values.keySet()) {
-                if (!r2.hasKey(key) && !key.equals("area")
-                        && (!isBoundary || key.equals("admin_level") || key.equals("name"))) {
-                    if (relation.isNew()) {
-                        relation.put(key, values.get(key));
+            TagMap tags = relation.getKeys();
+            for (Entry<String, String> e: values.entrySet()) {
+                final String key = e.getKey();
+                final String val = e.getValue();
+                if (!tags.containsKey(key) && !"area".equals(key)
+                        && (!isBoundary || "admin_level".equals(key) || "name".equals(key))) {
+                    if (relation.getDataSet() == null) {
+                        relation.put(key, val);
                     } else {
-                        r2.put(key, values.get(key));
+                        tags.put(key, val);
                     }
                     fixed = true;
                 }
             }
-            if (fixed && !relation.isNew()) {
-                commands.add(new ChangeCommand(relation, r2));
+            if (fixed && relation.getDataSet() != null) {
+                commands.add(new ChangePropertyCommand(Collections.singleton(relation), tags));
             }
         }
 
@@ -443,29 +447,27 @@ public class CreateMultipolygonAction extends JosmAction {
         final JDialog dlg = optionPane.createDialog(MainApplication.getMainFrame(), tr("Create a new relation"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
 
-        name.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dlg.setVisible(false);
-                optionPane.setValue(JOptionPane.OK_OPTION);
-            }
+        name.addActionListener(e -> {
+            dlg.setVisible(false);
+            optionPane.setValue(JOptionPane.OK_OPTION);
         });
 
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();
+        dlg.dispose();
         if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE
                 || (answer instanceof Integer && (Integer) answer != JOptionPane.OK_OPTION))
             return false;
 
-        String admin_level = admin.getText().trim();
-        String new_name = name.getText().trim();
-        if (admin_level.equals("10") || (admin_level.length() == 1 && Character.isDigit(admin_level.charAt(0)))) {
-            rel.put("admin_level", admin_level);
-            Config.getPref().put(PREF_MULTIPOLY + "lastadmin", admin_level);
+        String adminLevel = admin.getText().trim();
+        String newName = name.getText().trim();
+        if ("10".equals(adminLevel) || (adminLevel.length() == 1 && Character.isDigit(adminLevel.charAt(0)))) {
+            rel.put("admin_level", adminLevel);
+            Config.getPref().put(PREF_MULTIPOLY + "lastadmin", adminLevel);
         }
-        if (new_name.length() > 0) {
-            rel.put("name", new_name);
+        if (!newName.isEmpty()) {
+            rel.put("name", newName);
         }
         return true;
     }

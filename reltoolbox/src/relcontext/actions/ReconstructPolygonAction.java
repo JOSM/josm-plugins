@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -42,15 +44,19 @@ import relcontext.ChosenRelationListener;
  * @author Zverik
  */
 public class ReconstructPolygonAction extends JosmAction implements ChosenRelationListener {
-    private final ChosenRelation rel;
+    private final transient ChosenRelation rel;
 
     private static final List<String> IRRELEVANT_KEYS = Arrays.asList("source", "created_by", "note");
 
+    /**
+     * Reconstruct one or more polygons from multipolygon relation.
+     * @param rel the multipolygon relation
+     */
     public ReconstructPolygonAction(ChosenRelation rel) {
         super(tr("Reconstruct polygon"), "dialogs/filter", tr("Reconstruct polygon from multipolygon relation"),
                 Shortcut.registerShortcut("reltoolbox:reconstructpoly", tr("Relation Toolbox: {0}",
                         tr("Reconstruct polygon from multipolygon relation")),
-                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false);
+                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false, false);
         this.rel = rel;
         rel.addChosenRelationListener(this);
         setEnabled(isSuitableRelation(rel.get()));
@@ -71,7 +77,7 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
         }
         if (wont) {
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                    tr("Multipolygon must consist only of ways with one referring relation"),
+                    tr("Multipolygon must consist only of ways"),
                     tr("Reconstruct polygon"), JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -84,7 +90,6 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
         }
 
         rel.clear();
-        List<OsmPrimitive> newSelection = new ArrayList<>();
         List<Command> commands = new ArrayList<>();
         Command relationDeleteCommand = DeleteCommand.delete(Collections.singleton(r), true, true);
         if (relationDeleteCommand == null)
@@ -107,29 +112,25 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
             if (!myInnerWays.isEmpty()) {
                 // this ring has inner rings, so we leave a multipolygon in
                 // place and don't reconstruct the rings.
+                List<RelationMember> members = new ArrayList<>();
                 Relation n;
-                if (relationReused) {
-                    n = new Relation();
-                    n.setKeys(r.getKeys());
-                } else {
-                    n = new Relation(r);
-                    n.setMembers(null);
-                }
                 for (Way w : p.ways) {
-                    n.addMember(new RelationMember("outer", w));
+                    members.add(new RelationMember("outer", w));
                 }
                 for (JoinedPolygon i : myInnerWays) {
                     for (Way w : i.ways) {
-                        n.addMember(new RelationMember("inner", w));
+                        members.add(new RelationMember("inner", w));
                     }
                 }
                 if (relationReused) {
+                    n = new Relation();
+                    n.setKeys(r.getKeys());
+                    n.setMembers(members);
                     commands.add(new AddCommand(ds, n));
                 } else {
                     relationReused = true;
-                    commands.add(new ChangeCommand(r, n));
+                    commands.add(new ChangeMembersCommand(r, members));
                 }
-                newSelection.add(n);
                 continue;
             }
 
@@ -185,7 +186,6 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
             result.setNodes(p.nodes);
             result.addNode(result.firstNode());
             result.setKeys(tags);
-            newSelection.add(candidateWay == null ? result : candidateWay);
             commands.add(candidateWay == null ? new AddCommand(ds, result) : new ChangeCommand(candidateWay, result));
         }
 
@@ -194,9 +194,10 @@ public class ReconstructPolygonAction extends JosmAction implements ChosenRelati
             // The relation needs to be deleted first, so that undo/redo continue to work properly
             commands.add(0, relationDeleteCommand);
         }
-
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Reconstruct polygons from relation {0}",
                 r.getDisplayName(DefaultNameFormatter.getInstance())), commands));
+        Collection<? extends OsmPrimitive> newSelection = UndoRedoHandler.getInstance().getLastCommand().getParticipatingPrimitives();
+        newSelection.removeIf(p -> p.isDeleted());
         ds.setSelected(newSelection);
     }
 

@@ -3,7 +3,10 @@ package relcontext.relationfix;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -36,15 +39,15 @@ public class BoundaryFixer extends MultipolygonFixer {
     @Override
     public boolean isRelationGood(Relation rel) {
         for (RelationMember m : rel.getMembers()) {
-            if (m.getType().equals(OsmPrimitiveType.RELATION) && !"subarea".equals(m.getRole())) {
+            if (m.getType() == OsmPrimitiveType.RELATION && !"subarea".equals(m.getRole())) {
                 setWarningMessage(tr("Relation without ''subarea'' role found"));
                 return false;
             }
-            if (m.getType().equals(OsmPrimitiveType.NODE) && !("label".equals(m.getRole()) || "admin_centre".equals(m.getRole()))) {
+            if (m.getType() == OsmPrimitiveType.NODE && !("label".equals(m.getRole()) || "admin_centre".equals(m.getRole()))) {
                 setWarningMessage(tr("Node without ''label'' or ''admin_centre'' role found"));
                 return false;
             }
-            if (m.getType().equals(OsmPrimitiveType.WAY) && !("outer".equals(m.getRole()) || "inner".equals(m.getRole()))) {
+            if (m.getType() == OsmPrimitiveType.WAY && !("outer".equals(m.getRole()) || "inner".equals(m.getRole()))) {
                 setWarningMessage(tr("Way without ''inner'' or ''outer'' role found"));
                 return false;
             }
@@ -55,54 +58,51 @@ public class BoundaryFixer extends MultipolygonFixer {
 
     @Override
     public Command fixRelation(Relation rel) {
-        Relation r = rel;
-        Relation rr = fixMultipolygonRoles(r);
-        boolean fixed = false;
-        if (rr != null) {
-            fixed = true;
-            r = rr;
+        List<RelationMember> members = fixMultipolygonRoles(rel.getMembers());
+        if (members.isEmpty()) {
+            members = rel.getMembers();
         }
-        rr = fixBoundaryRoles(r);
-        if (rr != null) {
-            fixed = true;
-            r = rr;
-        }
-        if (fixed) {
+        members = fixBoundaryRoles(members);
+        if (!members.equals(rel.getMembers())) {
             final DataSet ds = Utils.firstNonNull(rel.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
-            return new ChangeCommand(ds, rel, r);
+            return new ChangeMembersCommand(ds, rel, members);
         }
         return null;
     }
 
-    private Relation fixBoundaryRoles(Relation source) {
-        Relation r = new Relation(source);
-        boolean fixed = false;
-        for (int i = 0; i < r.getMembersCount(); i++) {
-            RelationMember m = r.getMember(i);
+    /**
+     * Possibly change roles of non-way members.
+     * @param origMembers original list of relation members
+     * @return either the original and unmodified list or a new one with at least one new item
+     */
+    private static List<RelationMember> fixBoundaryRoles(List<RelationMember> origMembers) {
+        List<RelationMember> members = origMembers;
+        for (int i = 0; i < members.size(); i++) {
+            RelationMember m = members.get(i);
             String role = null;
             if (m.isRelation()) {
                 role = "subarea";
-            } else if (m.isNode()) {
+            } else if (m.isNode() && !m.getMember().isIncomplete()) {
                 Node n = (Node) m.getMember();
-                if (!n.isIncomplete()) {
-                    if (n.hasKey("place")) {
-                        String place = n.get("place");
-                        if (place.equals("state") || place.equals("country") ||
-                                place.equals("county") || place.equals("region")) {
-                            role = "label";
-                        } else {
-                            role = "admin_centre";
-                        }
-                    } else {
+                if (n.hasKey("place")) {
+                    String place = n.get("place");
+                    if ("state".equals(place) || "country".equals(place) ||
+                            "county".equals(place) || "region".equals(place)) {
                         role = "label";
+                    } else {
+                        role = "admin_centre";
                     }
+                } else {
+                    role = "label";
                 }
             }
             if (role != null && !role.equals(m.getRole())) {
-                r.setMember(i, new RelationMember(role, m.getMember()));
-                fixed = true;
+                if (members == origMembers) {
+                    members = new ArrayList<>(origMembers); // don't modify original list
+                }
+                members.set(i, new RelationMember(role, m.getMember()));
             }
         }
-        return fixed ? r : null;
+        return members;
     }
 }

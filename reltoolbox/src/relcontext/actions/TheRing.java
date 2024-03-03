@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -329,20 +332,20 @@ public class TheRing {
      */
     public List<Command> getCommands(boolean createMultipolygon, Map<Relation, Relation> relationChangeMap) {
         Way sourceCopy = new Way(source);
+        Map<String, String> tagsToRemove = new HashMap<>();
         if (createMultipolygon) {
             Collection<String> linearTags = Config.getPref().getList(PREF_MULTIPOLY + "lineartags",
                     CreateMultipolygonAction.DEFAULT_LINEAR_TAGS);
             relation = new Relation();
             relation.put("type", "multipolygon");
-            for (String key : sourceCopy.keySet()) {
-                if (linearTags.contains(key)) {
+            for (String key : source.keySet()) {
+                if (linearTags.contains(key)
+                        || ("natural".equals(key) && "coastline".equals(source.get("natural"))))
                     continue;
-                }
-                if ("natural".equals(key) && "coastline".equals(sourceCopy.get("natural"))) {
-                    continue;
-                }
-                relation.put(key, sourceCopy.get(key));
+                
+                relation.put(key, source.get(key));
                 sourceCopy.remove(key);
+                tagsToRemove.put(key, null);
             }
         }
 
@@ -353,15 +356,14 @@ public class TheRing {
             if (p instanceof Relation) {
                 Relation rel;
                 if (relationChangeMap != null) {
-                    if (relationChangeMap.containsKey(p)) {
-                        rel = relationChangeMap.get(p);
-                    } else {
+                    rel = relationChangeMap.get(p);
+                    if (rel == null) {
                         rel = new Relation((Relation) p);
                         relationChangeMap.put((Relation) p, rel);
                     }
                 } else {
                     rel = new Relation((Relation) p);
-                    relationCommands.add(new ChangeCommand(p, rel));
+                    relationCommands.add(new ChangeCommand(p, rel)); // should not happen 
                 }
                 for (int i = 0; i < rel.getMembersCount(); i++) {
                     if (rel.getMember(i).getMember().equals(source)) {
@@ -383,7 +385,11 @@ public class TheRing {
             if (w.equals(source)) {
                 if (createMultipolygon || !seg.getWayNodes().equals(source.getNodes())) {
                     sourceCopy.setNodes(seg.getWayNodes());
-                    commands.add(new ChangeCommand(source, sourceCopy));
+                    if (!tagsToRemove.isEmpty()) {
+                        commands.add(new ChangePropertyCommand(Collections.singleton(source), tagsToRemove));
+                    }
+                    if (!sourceCopy.getNodes().equals(source.getNodes()))
+                        commands.add(new ChangeNodesCommand(source, sourceCopy.getNodes()));
                 }
                 foundOwnWay = true;
             } else {
@@ -397,6 +403,7 @@ public class TheRing {
                 relation.addMember(new RelationMember("outer", w));
             }
         }
+        sourceCopy.setNodes(null); // see #19885
         if (!foundOwnWay) {
             final Command deleteCommand = DeleteCommand.delete(Collections.singleton(source));
             if (deleteCommand != null) {
@@ -412,7 +419,14 @@ public class TheRing {
 
     public static void updateCommandsWithRelations(List<Command> commands, Map<Relation, Relation> relationCache) {
         for (Map.Entry<Relation, Relation> entry : relationCache.entrySet()) {
-            commands.add(new ChangeCommand(entry.getKey(), entry.getValue()));
+            Relation oldRel = entry.getKey();
+            Relation newRel = entry.getValue();
+            if (oldRel.getKeys().equals(newRel.getKeys())) {
+                commands.add(new ChangeMembersCommand(oldRel, newRel.getMembers()));
+                newRel.setMembers(null); // see #19885
+            } else {
+                commands.add(new ChangeCommand(oldRel, newRel)); // should not happen
+            }
         }
     }
 

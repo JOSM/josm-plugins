@@ -3,15 +3,18 @@ package relcontext.relationfix;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
-
 import org.openstreetmap.josm.tools.Utils;
+
 import relcontext.actions.PublicTransportHelper;
 
 /**
@@ -25,19 +28,15 @@ public class PublicTransportFixer extends RelationFixer {
         super("route", "public_transport");
     }
 
-    /*protected PublicTransportFixer(String...types) {
-        super(types);
-    }*/
-
     @Override
     public boolean isRelationGood(Relation rel) {
         for (RelationMember m : rel.getMembers()) {
-            if (m.getType().equals(OsmPrimitiveType.NODE)
+            if (m.getType() == OsmPrimitiveType.NODE
                     && !(m.getRole().startsWith(PublicTransportHelper.STOP) || m.getRole().startsWith(PublicTransportHelper.PLATFORM))) {
                 setWarningMessage(tr("Node without ''stop'' or ''platform'' role found"));
                 return false;
             }
-            if (m.getType().equals(OsmPrimitiveType.WAY)
+            if (m.getType() == OsmPrimitiveType.WAY
                     && PublicTransportHelper.isWayPlatform(m)
                     && !m.getRole().startsWith(PublicTransportHelper.PLATFORM)) {
                 setWarningMessage(tr("Way platform without ''platform'' role found") + " r" + m.getUniqueId());
@@ -48,39 +47,34 @@ public class PublicTransportFixer extends RelationFixer {
         return true;
     }
 
-    /*@Override
-    public boolean isFixerApplicable(Relation rel) {
-        return true;
-    }*/
-
     @Override
     public Command fixRelation(Relation rel) {
-        Relation r = rel;
-        Relation rr = fixStopPlatformRole(r);
-        boolean fixed = false;
-        if (rr != null) {
-            fixed = true;
-            r = rr;
-        }
-        if (fixed) {
+        List<RelationMember> members = fixStopPlatformRole(rel.getMembers());
+        if (!members.equals(rel.getMembers())) {
             final DataSet ds = Utils.firstNonNull(rel.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
-            return new ChangeCommand(ds, rel, r);
+            return new ChangeMembersCommand(ds, rel, rel.getMembers());
         }
         return null;
     }
 
-    private Relation fixStopPlatformRole(Relation source) {
-        Relation r = new Relation(source);
-        boolean fixed = false;
-        for (int i = 0; i < r.getMembersCount(); i++) {
-            RelationMember m = r.getMember(i);
+    /**
+     * Fix roles of members.
+     * @param origMembers original list of relation members
+     * @return either the original and unmodified list or a new one with at least one new item
+     */
+    private static List<RelationMember> fixStopPlatformRole(List<RelationMember> origMembers) {
+        List<RelationMember> members = origMembers;
+        for (int i = 0; i < members.size(); i++) {
+            RelationMember m = members.get(i);
             String role = PublicTransportHelper.getRoleByMember(m);
 
             if (role != null && !m.getRole().startsWith(role)) {
-                r.setMember(i, new RelationMember(role, m.getMember()));
-                fixed = true;
+                if (members == origMembers) {
+                    members = new ArrayList<>(origMembers);
+                }
+                members.set(i, new RelationMember(role, m.getMember()));
             }
         }
-        return fixed ? r : null;
+        return members;
     }
 }

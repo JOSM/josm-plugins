@@ -122,6 +122,8 @@ public class FindRelationAction extends JosmAction {
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();
+        dlg.dispose();
+        
         if (answer == null || answer == JOptionPane.UNINITIALIZED_VALUE
                 || (answer instanceof Integer && (Integer) answer != JOptionPane.OK_OPTION))
             return;
