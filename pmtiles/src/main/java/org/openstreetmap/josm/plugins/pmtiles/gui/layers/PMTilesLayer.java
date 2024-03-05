@@ -3,7 +3,17 @@ package org.openstreetmap.josm.plugins.pmtiles.gui.layers;
 
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 import org.openstreetmap.josm.tools.TextUtils;
 import org.openstreetmap.josm.tools.Utils;
@@ -11,7 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A common interface for layers using PMTiles as a source
  */
-interface PMTilesLayer {
+interface PMTilesLayer extends MapViewPaintable {
 
     /**
      * Returns imagery info.
@@ -48,6 +58,42 @@ interface PMTilesLayer {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Get info information
+     * @return The information to add to the info panel
+     */
+    default String[][] getInfoContent() {
+        final var info = getInfo();
+        final var content = new String[3][];
+        content[0] = new String[] {"Maximum zoom", String.valueOf(info.getMaxZoom())};
+        content[1] = new String[] {"Minimum zoom", String.valueOf(info.getMinZoom())};
+        content[2] = new String[] {"Bounds", info.getBounds().toBBox().toStringCSV(",")};
+        return content;
+    }
+
+    @Override
+    default void paint(Graphics2D g, MapView mv, Bounds box) {
+        final var info = getInfo();
+        g.setStroke(new BasicStroke());
+        g.setColor(Color.DARK_GRAY);
+        if (info.getBounds().getShapes().isEmpty()) {
+            final var lowerLeft = mv.getPoint(info.getBounds().getMin());
+            final var upperRight = mv.getPoint(info.getBounds().getMax());
+            g.drawRect(lowerLeft.x, upperRight.y, upperRight.x - lowerLeft.x, lowerLeft.y - upperRight.y);
+        } else {
+            for (var shape : info.getBounds().getShapes()) {
+                Point last = null;
+                for (ICoordinate coord : shape.getPoints()) {
+                    final var point = mv.getPoint(new LatLon(coord.getLat(), coord.getLon()));
+                    if (last != null) {
+                        g.drawLine(last.x, last.y, point.x, point.y);
+                    }
+                    last = point;
+                }
+            }
+        }
     }
 
     /**

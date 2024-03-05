@@ -26,8 +26,10 @@ import jakarta.json.JsonObject;
  * The entry point for PMTiles
  */
 public final class PMTiles {
+    /** An empty byte array for reuse */
     private static final byte[] EMPTY_BYTE = new byte[0];
 
+    /** The constructor for this class. Hidden, so we don't have instances of this class. */
     private PMTiles() {/* hide the constructor */}
 
     /**
@@ -179,22 +181,22 @@ public final class PMTiles {
             throw new IllegalArgumentException("x or y out of bounds: " + z + " (x = " + x + ", y = " + y);
         }
         // We need to sum up the previous z levels
-        var start = 0;
+        long start = 0L;
         var currentZoom = z;
         // TODO profile this and the integral form (4^x)/(log(4)). Might not be as accurate though due to fp issues.
         // Maybe also profile Math.pow(4, currentZoom)
         while (currentZoom > 0) {
             currentZoom--;
-            start += (1 << currentZoom) * (1 << currentZoom);
+            start += (1L << currentZoom) * (1L << currentZoom);
         }
         // Now we need to calculate the coordinates inside the specified zoom level
         long d = 0;
-        var n = 1 << z;
+        int n = 1 << z;
         final var xy = new int[]{x, y};
-        for (var s = n / 2; s > 0; s /= 2) {
-            var rx = (xy[0] & s) > 0 ? 1 : 0;
-            var ry = (xy[1] & s) > 0 ? 1 : 0;
-            d += s * s * ((3 * rx) ^ ry);
+        for (int s = n / 2; s > 0; s /= 2) {
+            int rx = (xy[0] & s) > 0 ? 1 : 0;
+            int ry = (xy[1] & s) > 0 ? 1 : 0;
+            d += ((long) s) * s * ((3 * rx) ^ ry);
             rotate(n, xy, rx, ry);
         }
         return start + d;
@@ -209,7 +211,7 @@ public final class PMTiles {
         var z = 0;
         var start = 0;
         while (true) {
-            final var zTiles = Math.pow(4, z);
+            final var zTiles = Math.toIntExact(Math.round(Math.pow(4, z)));
             if (start + zTiles > hilbert) {
                 break;
             }
@@ -249,6 +251,13 @@ public final class PMTiles {
         }
     }
 
+    /**
+     * Decompress a stream
+     * @param compression The compression the stream uses
+     * @param inputStream The stream to decompress
+     * @return The decompressed stream
+     * @throws IOException if one of the decompressors had an issue
+     */
     private static InputStream decompressInputStream(InternalCompression compression, InputStream inputStream) throws IOException {
         return switch (compression) {
             case GZIP -> new GzipCompressorInputStream(inputStream);
@@ -259,6 +268,14 @@ public final class PMTiles {
         };
     }
 
+    /**
+     * Get the stream for a given range and location
+     * @param location The location of the data
+     * @param start The start byte
+     * @param length The end byte (exclusive)
+     * @return The stream to read for the data
+     * @throws IOException If there is something that prevents reading the stream from the given location.
+     */
     private static InputStream getInputStream(URI location, long start, long length) throws IOException {
         if (Utils.isLocalUrl(location.toString())) {
             final var file = Path.of(location);

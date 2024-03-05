@@ -29,10 +29,22 @@ import org.openstreetmap.josm.tools.Logging;
  * A job for loading a PMTile.
  */
 class PMTileJob extends JCSCachedTileLoaderJob<String, CacheEntry> implements TileJob, ICachedLoaderListener {
+    /** The tile we are fetching */
     private final Tile tile;
+    /** The tiles information */
     private final Header header;
+    /** The directory cache */
     private final DirectoryCache directoryCache;
 
+    /**
+     * Create a new job
+     * @param cache cache instance that we will work on
+     * @param options options of the request
+     * @param downloadJobExecutor that will be executing the jobs
+     * @param header The header for the tiles
+     * @param tile The tile to fetch
+     * @param directoryCache The cache of directories
+     */
     PMTileJob(ICacheAccess<String, CacheEntry> cache,
               TileJobOptions options,
               ThreadPoolExecutor downloadJobExecutor, Header header, Tile tile,

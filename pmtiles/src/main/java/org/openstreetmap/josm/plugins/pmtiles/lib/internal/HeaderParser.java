@@ -13,6 +13,7 @@ import org.openstreetmap.josm.plugins.pmtiles.lib.TileType;
  * The implementation for headers
  */
 public final class HeaderParser {
+    /** Hide the constructor */
     private HeaderParser() { /* Hide constructor */ }
 
     /** This is so that we can read the first 7 bytes and determine if we are reading a pmtiles file */
@@ -46,14 +47,32 @@ public final class HeaderParser {
                 nextDegrees(inputStream));
     }
 
+    /**
+     * Read the next degrees from a stream
+     * @param inputStream The stream to read
+     * @return The degrees read
+     * @throws IOException See {@link InputStream#read()}
+     */
     private static double nextDegrees(InputStream inputStream) throws IOException {
         return Util.nextInt(inputStream, 4) / 10_000_000d;
     }
 
+    /**
+     * Get the next int
+     * @param inputStream The stream to read
+     * @return The next (unsigned) int
+     * @throws IOException See {@link InputStream#read()}
+     */
     private static long nextInt(InputStream inputStream) throws IOException {
         return Util.nextInt(inputStream, 8);
     }
 
+    /**
+     * Get the next compression type
+     * @param inputStream The stream to read
+     * @return The compression type
+     * @throws IOException See {@link InputStream#read()}
+     */
     private static InternalCompression nextCompressionType(InputStream inputStream) throws IOException {
         final var type = inputStream.read();
         return switch (type) {
@@ -66,6 +85,12 @@ public final class HeaderParser {
         };
     }
 
+    /**
+     * Get the tile type for the next tile
+     * @param inputStream The stream to read
+     * @return The tile type
+     * @throws IOException See {@link InputStream#read()}
+     */
     private static TileType nextTileType(InputStream inputStream) throws IOException {
         final var type = inputStream.read();
         return switch (type) {

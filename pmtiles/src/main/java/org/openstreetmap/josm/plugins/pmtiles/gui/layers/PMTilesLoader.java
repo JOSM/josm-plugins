@@ -24,23 +24,27 @@ import org.openstreetmap.josm.plugins.pmtiles.lib.PMTiles;
  * The loader class for PMTiles
  */
 public class PMTilesLoader implements TileLoader {
+    /** The executor for fetching the tiles. */
     private static final ThreadPoolExecutor EXECUTOR = TMSCachedTileLoader.getNewThreadPoolExecutor("pmtiles");
+    /** The current jobs for the loader */
     private final Collection<PMTileJob> jobs = new HashSet<>();
+    /** The cache for downloaded tiles */
     private final ICacheAccess<String, CacheEntry> cache;
+    /** The options for the tile loader */
     private final TileJobOptions options;
-    private final TileLoaderListener listener;
+    /** The PMTiles header */
     private Header header;
+    /** The cache of PMTiles directories */
     private DirectoryCache directoryCache;
 
     /**
      * Create a new tile loader
-     * @param listener The listener to notify
+     * @param ignored The listener to notify
      * @param cache The cache to use
      * @param options The options to use
      */
-    public PMTilesLoader(TileLoaderListener listener, ICacheAccess<String, CacheEntry> cache,
+    public PMTilesLoader(TileLoaderListener ignored, ICacheAccess<String, CacheEntry> cache,
                          TileJobOptions options) {
-        this.listener = listener;
         this.cache = cache;
         this.options = options;
     }
@@ -63,6 +67,10 @@ public class PMTilesLoader implements TileLoader {
         return this.jobs.isEmpty();
     }
 
+    /**
+     * Set the PMTiles info for this loader
+     * @param info The info to use
+     */
     void setInfo(PMTilesImageryInfo info) {
         this.header = info.header();
         try {

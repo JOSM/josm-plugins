@@ -1,22 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.pmtiles.gui.layers;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MapboxVectorTileSource;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.style.MapboxVectorStyle;
 import org.openstreetmap.josm.plugins.pmtiles.data.imagery.PMTilesImageryInfo;
 import org.openstreetmap.josm.plugins.pmtiles.lib.Header;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+
 /**
  * The tile source for MVT tiles in PMTiles
  */
 public class PMTilesMVTTileSource extends MapboxVectorTileSource implements PMTilesTileSource {
+    /** The metadata for the source */
     private final JsonObject metadata;
+    /** The PMTiles header information */
     private final Header header;
+    /** The style source for the vector tiles */
     private final MapboxVectorStyle styleSource;
 
     /**

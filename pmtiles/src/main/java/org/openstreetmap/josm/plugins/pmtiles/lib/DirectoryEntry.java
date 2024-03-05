@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @param runLength The number of times the tile is repeated. 0 means that it is a leaf directory where the tileid is the first entry.
  */
 public record DirectoryEntry(long tileId, long offset, long length, long runLength) implements Serializable {
+    /** Create a new entry with some basic validation */
     public DirectoryEntry {
         if (length <= 0) {
             throw new IllegalArgumentException("length must be > 0");

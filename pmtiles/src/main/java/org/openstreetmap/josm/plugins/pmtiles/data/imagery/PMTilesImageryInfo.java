@@ -5,16 +5,19 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 
-import jakarta.json.JsonObject;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.plugins.pmtiles.lib.Header;
 import org.openstreetmap.josm.plugins.pmtiles.lib.PMTiles;
+
+import jakarta.json.JsonObject;
 
 /**
  * An {@link ImageryInfo} object for PMTiles
  */
 public class PMTilesImageryInfo extends ImageryInfo {
+    /** The PMTiles header for this info */
     private final Header header;
+    /** The metadata for this info */
     private final JsonObject meta;
 
     /**

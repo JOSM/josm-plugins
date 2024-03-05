@@ -11,8 +11,15 @@ import org.openstreetmap.josm.plugins.pmtiles.lib.DirectoryEntry;
  * Parse directories from PMTiles
  */
 public final class DirectoryParser {
+    /** Hide the constructor */
     private DirectoryParser() { /* Hide the constructor */ }
 
+    /**
+     * Parse a directory
+     * @param inputStream The stream to read
+     * @return The parsed directory
+     * @throws IOException See {@link InputStream#read()}
+     */
     public static Directory parse(InputStream inputStream) throws IOException {
         int lastByte = inputStream.read();
         var currentInt = lastByte & 0x7F;

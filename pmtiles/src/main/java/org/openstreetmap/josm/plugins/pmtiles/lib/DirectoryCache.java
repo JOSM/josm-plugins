@@ -9,6 +9,7 @@ import java.util.Objects;
  * A cache for directories
  */
 public final class DirectoryCache implements Iterable<Directory> {
+    /** The cached directories; [0] is the root, [1] is the last read directory */
     private final Directory[] directories = new Directory[2];
     /**
      * Create a new cache

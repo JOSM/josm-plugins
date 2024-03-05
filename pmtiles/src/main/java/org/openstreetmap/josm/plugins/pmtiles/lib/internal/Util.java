@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
  * Utils for reading pmtiles
  */
 final class Util {
+    /** The private constructor to avoid instantiation */
     private Util() {/* Hide constructor */}
 
     /**

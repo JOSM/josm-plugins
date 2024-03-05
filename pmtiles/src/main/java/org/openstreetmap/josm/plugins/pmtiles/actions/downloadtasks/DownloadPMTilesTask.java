@@ -27,12 +27,20 @@ import org.openstreetmap.josm.plugins.pmtiles.lib.TileType;
  * "Download" a PMTiles file. Really, this just adds a PMTiles layer.
  */
 public class DownloadPMTilesTask implements DownloadTask {
+    /** Zoom to the PMTiles bounds after download */
     private boolean zoomAfterDownload;
+    /** Cancel adding the layer if this is true */
     private boolean cancel;
+    /** The URL for the tiles */
     private String url;
+    /** Any recoverable errors from reading the PMTiles */
     private final List<Object> errorObjects = new ArrayList<>();
+    /** The bounds for the layer */
     private Bounds bounds;
 
+    /**
+     * Add the appropriate layer to JOSM
+     */
     private void addLayer() {
         if (this.cancel) {
             return;
