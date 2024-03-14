@@ -13,6 +13,7 @@
     <!-- Specific plugins -->
     <property name="java21_plugins" value="FIT/build.xml" />
     <property name="java17_plugins" value="maproulette/build.xml
+                                            MicrosoftStreetside/build.xml
                                             imageio/build.xml
                                             pmtiles/build.xml
                                             todo/build.xml"/>
@@ -31,8 +32,7 @@
                                             apache-commons/build.xml
                                             apache-http/build.xml
                                             austriaaddresshelper/build.xml"/>
-    <property name="javafx_plugins" value="javafx/build.xml
-                                           MicrosoftStreetside/build.xml"/>
+    <property name="javafx_plugins" value="javafx/build.xml"/>
 
     <!-- We are dropping Java 8 support in January 2024 - these have issues compiling with Java 8, but not with Java 11+ targeting Java 8 -->
     <!-- Note: Mapillary was in ordered_plugins -->

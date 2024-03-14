@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learn.microsoft.com/en-us/bingmaps/rest-services/imagery/imagery-metadata",
+  "title": "Microsoft Streetside",
+  "description": "Microsoft Streetside Imagery",
+  "type": "object",
+  "properties": {
+    "authenticationResultCode": {
+      "description": "Status code for additional information about authentication success or failure",
+      "type": "string",
+      "enum": [
+        "ValidCredentials",
+        "InvalidCredentials",
+        "CredentialsExpired",
+        "NotAuthorized",
+        "NoCredentials",
+        "None"
+      ]
+    },
+    "brandLogoUri": {
+      "description": "The brand image to use for branding requirements",
+      "type": "string"
+    },
+    "copyright": {
+      "description": "Copyright notice",
+      "type": "string"
+    },
+    "resourceSets": {
+      "description": "A collection of resource set objects",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "estimatedTotal": {
+            "description": "An estimate of the total number of resources in the resource set",
+            "type": "integer"
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "imageUrl": {
+                  "type": "string"
+                },
+                "imageUrlSubdomains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "imageWidth": {
+                  "type": "integer"
+                },
+                "imageHeight": {
+                  "type": "integer"
+                },
+                "vintageStart": {
+                  "type": "string"
+                },
+                "vintageEnd": {
+                  "type": "string"
+                },
+                "zoomMin": {
+                  "type": "integer"
+                },
+                "zoomMax": {
+                  "type": "integer"
+                },
+                "lat": {
+                  "description": "The latitude of the image",
+                  "type": "number"
+                },
+                "lon": {
+                  "description": "The longitude of the image",
+                  "type": "number"
+                },
+                "pi": {
+                  "description": "The pitch of the image",
+                  "type": "number"
+                },
+                "ro": {
+                  "description": "The roll of the image",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "statusCode": {
+      "description": "HTTP status code for the request",
+      "type": "integer"
+    },
+    "statusDescription": {
+      "description": "A description of the HTTP status code",
+      "type": "string"
+    },
+    "traceId": {
+      "description": "Unique identifier for the request",
+      "type": "string"
+    },
+    "errorDetails": {
+      "description": "A collection of error descriptions",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

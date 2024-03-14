@@ -1,315 +1,192 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside;
 
-import org.openstreetmap.josm.data.coor.LatLon;
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+import org.openstreetmap.gui.jmapviewer.TileXY;
+import org.openstreetmap.josm.data.IQuadBucketType;
+import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.plugins.streetside.cubemap.CubemapUtils;
+import org.openstreetmap.josm.tools.Pair;
+
+import jakarta.annotation.Nonnull;
 
 /**
- * Abstract superclass for all image objects. At the moment there are 2,
- * {@link StreetsideImage}, {@link StreetsideCubemap}.
+ * Abstract superclass for all image objects. At the moment there is one,
+ * {@link StreetsideImage}.
  *
  * @author nokutu
  * @author renerr18
  *
  */
-public abstract class StreetsideAbstractImage implements Comparable<StreetsideAbstractImage> {
-  /**
-   * If two values for field cd differ by less than EPSILON both values are
-   * considered equal.
-   */
-  private static final float EPSILON = 1e-5f;
+public sealed
 
-  protected String id;
-  /**
-   * Position of the picture.
-   */
-  protected LatLon latLon;
-  //Image id of previous image in sequence (decimal)
-  private long pr;
-  /**
-   * Direction of the picture in degrees from true north.
-   */
-  protected double he;
-  /**
-   * When the object direction is being moved in the map, the temporal direction
-   * is stored here
-   */
-  protected double movingHe;
-  // Image id of next image in sequence (decimal)
-  private long ne;
-  /**
-   * Sequence of pictures containing this object.
-   */
-  private StreetsideSequence sequence;
-  /**
-   * Temporal position of the picture until it is uploaded.
-   */
-  private LatLon tempLatLon;
-  /**
-   * When the object is being dragged in the map, the temporal position is stored
-   * here.
-   */
-  private LatLon movingLatLon;
-  /**
-   * Temporal direction of the picture until it is uploaded
-   */
-  private double tempHe;
-  /**
-   * Whether the image must be drown in the map or not
-   */
-  private boolean visible;
+interface StreetsideAbstractImage extends ILatLon, IQuadBucketType, Comparable<StreetsideAbstractImage>, Serializable
+permits StreetsideImage
+{
 
-  /**
-   * Creates a new object in the given position and with the given direction.
-   * {@link LatLon}
-   *
-   * @param id   - the Streetside image id
-   * @param latLon The latitude and longitude of the image.
-   * @param he   The direction of the picture (0 means north im Mapillary
-   *         camera direction is not yet supported in the Streetside plugin).
-   */
-  protected StreetsideAbstractImage(final String id, final LatLon latLon, final double he) {
-    this.id = id;
-    this.latLon = latLon;
-    tempLatLon = this.latLon;
-    movingLatLon = this.latLon;
-    this.he = he;
-    tempHe = he;
-    movingHe = he;
-    visible = true;
-  }
+    /**
+     * Get the ID for this image
+     * @return the id
+     */
+    String id();
 
-  /**
-   * Creates a new object with the given id.
-   *
-   * @param id - the image id (All images require ids in Streetside)
-   */
-  protected StreetsideAbstractImage(final String id) {
-    this.id = id;
+    /**
+     * Get the subdomains that can be used for this image
+     * @return The valid subdomains
+     */
+    List<String> imageUrlSubdomains();
 
-    visible = true;
-  }
+    /**
+     * Returns the original direction towards the image has been taken.
+     *
+     * @return The direction of the image (0 means north and goes clockwise).
+     */
+    double heading();
 
-  /**
-   * @return the id
-   */
-  public String getId() {
-    return id;
-  }
+    /**
+     * The maximum zoom for this image
+     * @return The max zoom
+     */
+    int zoomMax();
 
-  /**
-   * @param id the id to set
-   */
-  public void setId(String id) {
-    this.id = id;
-  }
+    /**
+     * The minimum zoom for this image
+     * @return The min zoom
+     */
+    int zoomMin();
 
-  /**
-   * Returns the original direction towards the image has been taken.
-   *
-   * @return The direction of the image (0 means north and goes clockwise).
-   */
-  public double getHe() {
-    return he;
-  }
-
-  public void setHe(final double he) {
-    this.he = he;
-  }
-
-  /**
-   * Returns a LatLon object containing the original coordinates of the object.
-   *
-   * @return The LatLon object with the position of the object.
-   */
-  public LatLon getLatLon() {
-    return latLon;
-  }
-
-  public void setLatLon(final LatLon latLon) {
-    if (latLon != null) {
-      this.latLon = latLon;
+    /**
+     * Get the number of x columns
+     * @param zoom The zoom level
+     * @return The columns for the x-axis
+     */
+    default int xCols(int zoom) {
+        return yCols(zoom);
     }
-  }
 
-  /**
-   * Returns the direction towards the image has been taken.
-   *
-   * @return The direction of the image (0 means north and goes clockwise).
-   */
-  public double getMovingHe() {
-    return movingHe;
-  }
-
-  /**
-   * Returns a LatLon object containing the current coordinates of the object.
-   * When you are dragging the image this changes.
-   *
-   * @return The LatLon object with the position of the object.
-   */
-  public LatLon getMovingLatLon() {
-    return movingLatLon;
-  }
-
-  /**
-   * Returns the sequence which contains this image. Never null.
-   *
-   * @return The StreetsideSequence object that contains this StreetsideImage.
-   */
-
-  public StreetsideSequence getSequence() {
-    synchronized (this) {
-      if (sequence == null) {
-        sequence = new StreetsideSequence();
-        sequence.add(this);
-      }
-      return sequence;
+    /**
+     * Get the number of y columns
+     * @param zoom The zoom level
+     * @return The columns for the y-axis
+     */
+    default int yCols(int zoom) {
+        return 1 << zoom;
     }
-  }
 
-  /**
-   * Sets the StreetsideSequence object which contains the StreetsideImage.
-   *
-   * @param sequence
-   *      The StreetsideSequence that contains the StreetsideImage.
-   * @throws IllegalArgumentException
-   *       if the image is not already part of the
-   *       {@link StreetsideSequence}. Call
-   *       {@link StreetsideSequence#add(StreetsideAbstractImage)} first.
-   */
-  public void setSequence(final StreetsideSequence sequence) {
-    synchronized (this) {
-      if (sequence != null && !sequence.getImages().contains(this)) {
-        throw new IllegalArgumentException();
-      }
-      this.sequence = sequence;
+    /**
+     * Check if the image is visible
+     * @return {@code true} if the image is visible
+     */
+    default boolean visible() {
+        return true;
     }
-  }
 
-  /**
-   * Returns the last fixed direction of the object.
-   *
-   * @return The last fixed direction of the object. 0 means north.
-   */
-  public double getTempHe() {
-    return tempHe;
-  }
-
-  /**
-   * Returns the last fixed coordinates of the object.
-   *
-   * @return A LatLon object containing.
-   */
-  public LatLon getTempLatLon() {
-    return tempLatLon;
-  }
-
-  /**
-   * Returns whether the object has been modified or not.
-   *
-   * @return true if the object has been modified; false otherwise.
-   */
-  public boolean isModified() {
-    return !getMovingLatLon().equals(latLon) || Math.abs(getMovingHe() - he) > EPSILON;
-  }
-
-  /**
-   * Returns whether the image is visible on the map or not.
-   *
-   * @return True if the image is visible; false otherwise.
-   */
-  public boolean isVisible() {
-    return visible;
-  }
-
-  /**
-   * Set's whether the image should be visible on the map or not.
-   *
-   * @param visible
-   *      true if the image is set to be visible; false otherwise.
-   */
-  public void setVisible(final boolean visible) {
-    this.visible = visible;
-  }
-
-  /**
-   * Moves the image temporally to another position
-   *
-   * @param x The movement of the image in longitude units.
-   * @param y The movement of the image in latitude units.
-   */
-  public void move(final double x, final double y) {
-    movingLatLon = new LatLon(tempLatLon.getY() + y, tempLatLon.getX() + x);
-  }
-
-  /**
-   * If the StreetsideImage belongs to a StreetsideSequence, returns the next
-   * image in the sequence.
-   *
-   * @return The following StreetsideImage, or null if there is none.
-   */
-  public StreetsideAbstractImage next() {
-    synchronized (this) {
-      return getSequence().next(this);
+    @Override
+    default BBox getBBox() {
+        return new BBox(this);
     }
-  }
 
-  /**
-   * If the StreetsideImage belongs to a StreetsideSequence, returns the previous
-   * image in the sequence.
-   *
-   * @return The previous StreetsideImage, or null if there is none.
-   */
-  public StreetsideAbstractImage previous() {
-    synchronized (this) {
-      return getSequence().previous(this);
+    /**
+     * Get a thumbnail for the image
+     * @return The URL for the thumbnail
+     */
+    default String getThumbnail() {
+        // This is the "front" min zoom image
+        return getTile(Integer.toString(0), Integer.toString(1));
     }
-  }
 
-  /**
-   * Called when the mouse button is released, meaning that the picture has
-   * stopped being dragged, so the temporal values are saved.
-   */
-  public void stopMoving() {
-    tempLatLon = movingLatLon;
-    tempHe = movingHe;
-  }
+    /**
+     * Get the tiles for a face
+     * @param face The id of the face
+     * @param zoom The zoom level for the face
+     * @return A stream of tile location + URL pairs
+     */
+    default Stream<Pair<CubeMapTileXY, String>> getFaceTiles(CubemapUtils.CubemapFaces face, int zoom) {
+        if (zoom > this.zoomMax() || zoom < this.zoomMin()) {
+            throw new IndexOutOfBoundsException(zoom);
+        }
+        final var faceId = face.faceId();
+        final var startingTileId = face.startingTileId();
+        // The {tileId} is chainable after the starting tile id
+        // ---------------
+        // | 0, 0 | 1, 0 |
+        // | 0, 1 | 1, 1 |
+        // ---------------
+        // (0, 0) is 0
+        // (1, 0) is 1
+        // (0, 1) is 2
+        // (1, 1) is 3
+        // Zoom starts at 1
+        int currentZoom = this.zoomMin();
+        Stream<String> level = IntStream.range(0, 4).mapToObj(String::valueOf).map(startingTileId::concat);
+        while (currentZoom < zoom) {
+            level = level.flatMap(s -> IntStream.range(0, 4).mapToObj(String::valueOf).map(s::concat));
+            currentZoom++;
+        }
+        return level.map(s -> new Pair<>(mapToTiles(face, zoom, s), getTile(faceId, s)));
+    }
 
-  /**
-   * Turns the image direction.
-   *
-   * @param he
-   *      The angle the image is moving.
-   */
-  public void turn(final double he) {
-    movingHe = tempHe + he;
-  }
+    /**
+     * Convert a tileId to a TileXY coordinate
+     * @param face The cubemap face
+     * @param zoom the zoom level
+     * @param tileId The tile id (quadkey)
+     * @return The xy coordinate
+     */
+    private static CubeMapTileXY mapToTiles(CubemapUtils.CubemapFaces face, int zoom, String tileId) {
+        // Given a z level, the quadkey is the last z characters
+        final var xy = quadKeyToTile(tileId.subSequence(tileId.length() - zoom, tileId.length()));
+        return new CubeMapTileXY(face, xy.getXIndex(), xy.getYIndex());
+    }
 
-  /**
-   * @return the ne
-   */
-  public long getNe() {
-    return ne;
-  }
+    /**
+     * Convert a quadkey to a tile
+     * @param quadkey The quadkey to convert
+     * @return The tile for that quadkey
+     */
+    @Nonnull
+    static TileXY quadKeyToTile(@Nonnull CharSequence quadkey) {
+        final int z = quadkey.length();
+        var x = 0;
+        var y = 0;
+        for (int i = z; i > 0; i--) {
+            final var mask = 1 << (i - 1);
+            switch (quadkey.charAt(z - i)) {
+            case '0':
+                break;
+            case '1':
+                x |= mask;
+                break;
+            case '2':
+                y |= mask;
+                break;
+            case '3':
+                x |= mask;
+                y |= mask;
+                break;
+            default:
+                throw new IllegalArgumentException("Bad quadtile character at " + (i - 1) + " for '" + quadkey + "'");
+            }
+        }
+        return new TileXY(x, y);
+    }
 
-  /**
-   * @param ne the ne to set
-   */
-  public void setNe(long ne) {
-    this.ne = ne;
-  }
-
-  /**
-   * @return the pr
-   */
-  public long getPr() {
-    return pr;
-  }
-
-  /**
-   * @param pr the pr to set
-   */
-  public void setPr(long pr) {
-    this.pr = pr;
-  }
-
+    /**
+     * Get a tile for an image
+     * @param faceId The face id
+     * @param tileId The tile id
+     * @return The URL for the face and tile
+     * @see <a href="https://learn.microsoft.com/en-us/bingmaps/articles/getting-streetside-tiles-from-imagery-metadata">
+     *     Getting Streetside Tiles from Imagery Metadata
+     * </a>
+     */
+    default String getTile(String faceId, String tileId) {
+        return this.id().replace("{subdomain}", this.imageUrlSubdomains().get(0)).replace("{faceId}", faceId)
+                .replace("{tileId}", tileId);
+    }
 }

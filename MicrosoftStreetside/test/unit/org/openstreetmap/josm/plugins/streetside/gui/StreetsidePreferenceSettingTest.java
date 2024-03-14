@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openstreetmap.josm.plugins.streetside.utils.TestUtil.getPrivateFieldValue;
 
 import java.awt.GraphicsEnvironment;
+import java.util.Objects;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -98,13 +99,14 @@ class StreetsidePreferenceSettingTest {
             ((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox")).setSelectedIndex(i);
             settings.ok();
             assertEquals(new StringProperty("streetside.download-mode", "default").get(),
-                    DOWNLOAD_MODE.fromLabel(((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox"))
-                            .getSelectedItem().toString()).getPrefId());
+                    DOWNLOAD_MODE.fromLabel(Objects.requireNonNull(((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox"))
+                            .getSelectedItem()).toString()).getPrefId());
         }
     }
 
     /**
-     * Checks, if a certain {@link BooleanProperty} (identified by the {@code propName} attribute) matches the selected-state of the given {@link JCheckBox}
+     * Checks, if a certain {@link BooleanProperty} (identified by the {@code propName} attribute)
+     * matches the selected-state of the given {@link JCheckBox}
      * @param cb the {@link JCheckBox}, which should be checked against the {@link BooleanProperty}
      * @param propName the name of the property against which the selected-state of the given {@link JCheckBox} should be checked
      */

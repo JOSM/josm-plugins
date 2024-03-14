@@ -9,11 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.plugins.streetside.cubemap.CubemapUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.Main;
@@ -42,27 +40,6 @@ class StreetsideLayerTest {
         StreetsideLayer layer = StreetsideLayer.getInstance();
         Layer dummyLayer = getDummyLayer();
         assertThrows(UnsupportedOperationException.class, () -> layer.mergeFrom(dummyLayer));
-    }
-
-    @Test
-    void testSetVisible() {
-        StreetsideLayer.getInstance().getData()
-                .add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
-        StreetsideLayer.getInstance().getData()
-                .add(new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0));
-        StreetsideImage invisibleImage = new StreetsideImage(CubemapUtils.TEST_IMAGE_ID, new LatLon(0.0, 0.0), 0.0);
-        invisibleImage.setVisible(false);
-        StreetsideLayer.getInstance().getData().add(invisibleImage);
-
-        StreetsideLayer.getInstance().setVisible(false);
-        for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
-            assertFalse(img.isVisible());
-        }
-
-        StreetsideLayer.getInstance().setVisible(true);
-        for (StreetsideAbstractImage img : StreetsideLayer.getInstance().getData().getImages()) {
-            assertTrue(img.isVisible());
-        }
     }
 
     @Test

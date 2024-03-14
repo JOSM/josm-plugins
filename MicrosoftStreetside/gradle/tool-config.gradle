@@ -1,55 +1,25 @@
-def pmdVersion = "6.36.0"
-def spotbugsVersion = "4.3.0"
-def jacocoVersion = "0.8.7"
-def errorproneVersion = "2.7.1"
-
-// Set up ErrorProne (currently only for JDK8, until JDK9 is supported)
-dependencies.errorprone "com.google.errorprone:error_prone_core:$errorproneVersion"
-/*
-tasks.withType(JavaCompile) {
-options.compilerArgs += ['-Xep:DefaultCharset:ERROR',
-  '-Xep:ClassCanBeStatic:ERROR',
-  '-Xep:StringEquality:ERROR',
-  '-Xep:MethodCanBeStatic:WARN',
-  '-Xep:RemoveUnusedImports:WARN',
-  '-Xep:PrivateConstructorForUtilityClass:WARN',
-  '-Xep:WildcardImport:WARN',
-  '-Xep:LambdaFunctionalInterface:WARN',
-  '-Xep:ConstantField:WARN']
-}
-*/
-
-// Spotbugs config
-spotbugs {
-  toolVersion = spotbugsVersion
-  ignoreFailures = true
-  effort = "max"
-  reportLevel = "low"
-  //sourceSets = [sourceSets.main, sourceSets.test]
-}
-
 // JaCoCo config
 jacoco {
-  toolVersion = jacocoVersion
+  toolVersion = libs.versions.jacoco.get()
 }
 jacocoTestReport {
   reports {
-    xml.enabled = true
-    html.destination file("$buildDir/reports/jacoco")
+    xml.required = true
   }
+  dependsOn test
 }
 build.dependsOn jacocoTestReport
 
 // PMD config
 pmd {
-  toolVersion pmdVersion
+  toolVersion libs.versions.pmd.get()
   ignoreFailures true
   ruleSetConfig = resources.text.fromFile('config/pmd/ruleset.xml')
   sourceSets = [sourceSets.main, sourceSets.test]
 }
 
 // SonarQube config
-sonarqube {
+sonar {
   properties {
     property 'sonar.forceAuthentication', 'true'
     property 'sonar.host.url', 'https://sonarqube.com'

@@ -4,143 +4,157 @@ package org.openstreetmap.josm.plugins.streetside.utils;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.plugins.streetside.CubeMapTileXY;
 import org.openstreetmap.josm.tools.Logging;
 
 import javafx.application.Platform;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 
-public class GraphicsUtils {
+/**
+ * Various graphic utilities, mostly for images.
+ */
+public final class GraphicsUtils {
 
-  private static final Logger LOGGER = Logger.getLogger(GraphicsUtils.class.getCanonicalName());
+    private static final Logger LOGGER = Logger.getLogger(GraphicsUtils.class.getCanonicalName());
 
-  private GraphicsUtils() {
-    // Private constructor to avoid instantiation
-  }
+    private GraphicsUtils() {
+        // Private constructor to avoid instantiation
+    }
 
-  public static javafx.scene.image.Image convertBufferedImage2JavaFXImage(BufferedImage bf) {
-    WritableImage res = null;
-    if (bf != null) {
-      res = new WritableImage(bf.getWidth(), bf.getHeight());
-      PixelWriter pw = res.getPixelWriter();
-      for (int x = 0; x < bf.getWidth(); x++) {
-        for (int y = 0; y < bf.getHeight(); y++) {
-          pw.setArgb(x, y, bf.getRGB(x, y));
+    /**
+     * Build the face given the tiles
+     * @param tiles The tile images
+     * @param zoom The zoom level
+     * @return The rendered image
+     */
+    public static BufferedImage buildMultiTiledCubemapFaceImage(Map<CubeMapTileXY, BufferedImage> tiles, int zoom) {
+        var faceTileImages = new BufferedImage[tiles.size()];
+        for (var entry : tiles.entrySet()) {
+            final var index = cubeMapTileToIndex(entry.getKey(), zoom);
+            if (index >= faceTileImages.length) { // Due to some null tiles during loading... TODO: How is this happening?
+                faceTileImages = Arrays.copyOf(faceTileImages, index + 1);
+            }
+            faceTileImages[index] = entry.getValue();
         }
-      }
+        return buildMultiTiledCubemapFaceImage(faceTileImages);
     }
-    return res;
-  }
 
-  public static BufferedImage buildMultiTiledCubemapFaceImage(final BufferedImage[] tiles) {
+    /**
+     * Convert a tile to an index for painting
+     * @param tile The tile to convert
+     * @param zoom The zoom
+     * @return The index for the array
+     */
+    static int cubeMapTileToIndex(CubeMapTileXY tile, int zoom) {
+        return (1 << zoom) * tile.y() + tile.x();
+    }
 
-    long start = System.currentTimeMillis();
+    /**
+     * Build an image given a list of tiles
+     * @param tiles The tiles to use (note: there should be a factor of 4 images, e.g. 1, 4, 16, 64, ...)
+     * @return The rendered image
+     */
+    public static BufferedImage buildMultiTiledCubemapFaceImage(final BufferedImage[] tiles) {
 
-    BufferedImage res = null;
+        long start = System.currentTimeMillis();
 
-    int pixelBuffer = Boolean.TRUE.equals(StreetsideProperties.SHOW_HIGH_RES_STREETSIDE_IMAGERY.get()) ? 2 : 1;
+        final int zoom = Math.toIntExact(Math.round(Math.log(tiles.length) / Math.log(4)));
+        int pixelBuffer = zoom >= 1 ? 2 : 1;
 
-    BufferedImage[] croppedTiles = cropMultiTiledImages(tiles, pixelBuffer);
+        BufferedImage[] croppedTiles = cropMultiTiledImages(tiles, pixelBuffer);
 
-    // we assume the no. of rows and cols are known and each chunk has equal width and height
-    int rows = Boolean.TRUE.equals(StreetsideProperties.SHOW_HIGH_RES_STREETSIDE_IMAGERY.get()) ? 4 : 2;
-    int cols = Boolean.TRUE.equals(StreetsideProperties.SHOW_HIGH_RES_STREETSIDE_IMAGERY.get()) ? 4 : 2;
+        // we assume the no. of rows and cols are known and each chunk has equal width and height
+        final int rows = Math.toIntExact(Math.round(Math.pow(2, zoom)));
+        final int cols = rows;
 
-    int chunkWidth;
-    int chunkHeight;
+        int chunkWidth;
+        int chunkHeight;
 
-    chunkWidth = croppedTiles[0].getWidth();
-    chunkHeight = croppedTiles[0].getHeight();
+        chunkWidth = Arrays.stream(croppedTiles).filter(Objects::nonNull).findFirst().orElseThrow().getWidth();
+        chunkHeight = Arrays.stream(croppedTiles).filter(Objects::nonNull).findFirst().orElseThrow().getHeight();
 
-    //Initializing the final image
-    BufferedImage img = new BufferedImage(chunkWidth * cols, chunkHeight * rows, BufferedImage.TYPE_INT_ARGB);
+        //Initializing the final image
+        final var img = new BufferedImage(chunkWidth * cols, chunkHeight * rows, BufferedImage.TYPE_INT_ARGB);
 
-    int num = 0;
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        // TODO: unintended mirror image created with draw call - requires
-        // extra reversal step - fix!
-        img.createGraphics().drawImage(croppedTiles[num], chunkWidth * j, (chunkHeight * i), null);
-
-        int width = Boolean.TRUE.equals(StreetsideProperties.SHOW_HIGH_RES_STREETSIDE_IMAGERY.get()) ? 1014
-            : 510;
-        int height = width;
-
-        // BufferedImage for mirror image
-        res = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        // Create mirror image pixel by pixel
-        for (int y = 0; y < height; y++) {
-          for (int lx = 0, rx = width - 1; lx < width; lx++, rx--) {
-            // lx starts from the left side of the image
-            // rx starts from the right side of the image
-            // lx is used since we are getting pixel from left side
-            // rx is used to set from right side
-            // get source pixel value
-            int p = img.getRGB(lx, y);
-
-            // set mirror image pixel value
-            res.setRGB(rx, y, p);
-          }
+        int num = 0;
+        final var g2d = img.createGraphics();
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < cols; j++) {
+                final var tile = croppedTiles[num++];
+                if (tile != null) {
+                    // TODO: unintended mirror image created with draw call - requires
+                    // extra reversal step - fix!
+                    g2d.drawImage(tile, chunkWidth * j, (chunkHeight * i), null);
+                }
+            }
         }
-        num++;
-      }
+        g2d.dispose();
+
+        if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
+            LOGGER.log(Logging.LEVEL_DEBUG, "Image concatenated in {0} millisecs.",
+                    (System.currentTimeMillis() - start));
+        }
+        return img;
     }
 
-    if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
-      LOGGER.log(Logging.LEVEL_DEBUG,
-          MessageFormat.format("Image concatenated in {0} millisecs.", (System.currentTimeMillis() - start)));
-    }
-    return res;
-  }
-
-  public static BufferedImage rotateImage(BufferedImage bufImg) {
-    AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
-    tx.translate(-bufImg.getWidth(null), -bufImg.getHeight(null));
-    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-    bufImg = op.filter(bufImg, null);
-    return bufImg;
-  }
-
-  private static BufferedImage[] cropMultiTiledImages(BufferedImage[] tiles, int pixelBuffer) {
-
-    long start = System.currentTimeMillis();
-
-    BufferedImage[] res = new BufferedImage[tiles.length];
-
-    for (int i = 0; i < tiles.length; i++) {
-      if (Boolean.TRUE.equals(StreetsideProperties.SHOW_HIGH_RES_STREETSIDE_IMAGERY.get())) {
-        res[i] = tiles[i].getSubimage(pixelBuffer, pixelBuffer, 256 - pixelBuffer, 256 - pixelBuffer);
-      } else {
-        res[i] = tiles[i].getSubimage(pixelBuffer, pixelBuffer, 256 - pixelBuffer, 256 - pixelBuffer);
-      }
+    /**
+     * Rotate an image by 180 degrees
+     * @param bufImg The image to rotate
+     * @return The rotated image
+     */
+    public static BufferedImage rotateImage(BufferedImage bufImg) {
+        // FIXME: Does AffineTransform.getRotateInstance(Math.PI) work? (docs indicate that this is optimized)
+        final var tx = AffineTransform.getScaleInstance(-1, -1);
+        tx.translate(-bufImg.getWidth(null), -bufImg.getHeight(null));
+        final var op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        bufImg = op.filter(bufImg, null);
+        return bufImg;
     }
 
-    if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
-      LOGGER.log(Logging.LEVEL_DEBUG,
-          MessageFormat.format("Images cropped in {0} millisecs.", (System.currentTimeMillis() - start)));
+    private static BufferedImage[] cropMultiTiledImages(BufferedImage[] tiles, int pixelBuffer) {
+
+        final long start = System.currentTimeMillis();
+
+        final var res = new BufferedImage[tiles.length];
+
+        for (var i = 0; i < tiles.length; i++) {
+            if (tiles[i] != null) {
+                res[i] = tiles[i].getSubimage(pixelBuffer, pixelBuffer, 256 - pixelBuffer, 256 - pixelBuffer);
+            }
+        }
+
+        if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
+            LOGGER.log(Logging.LEVEL_DEBUG, "Images cropped in {0} millisecs.", (System.currentTimeMillis() - start));
+        }
+
+        return res;
     }
 
-    return res;
-  }
+    /**
+     * Utilities for running in the JavaFX platform thread
+     */
+    public static final class PlatformHelper {
 
-  public static class PlatformHelper {
+        private PlatformHelper() {
+            // Private constructor to avoid instantiation
+        }
 
-    private PlatformHelper() {
-      // Private constructor to avoid instantiation
+        /**
+         * Run a job in the JavaFX UI thread
+         * @param treatment The runnable to run
+         */
+        public static void run(Runnable treatment) {
+            if (treatment == null)
+                throw new IllegalArgumentException("The treatment to perform can not be null");
+
+            if (Platform.isFxApplicationThread())
+                treatment.run();
+            else
+                Platform.runLater(treatment);
+        }
     }
-
-    public static void run(Runnable treatment) {
-      if (treatment == null)
-        throw new IllegalArgumentException("The treatment to perform can not be null");
-
-      if (Platform.isFxApplicationThread())
-        treatment.run();
-      else
-        Platform.runLater(treatment);
-    }
-  }
 }

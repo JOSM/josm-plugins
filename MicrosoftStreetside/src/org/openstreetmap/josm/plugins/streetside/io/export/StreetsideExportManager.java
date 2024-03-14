@@ -32,77 +32,77 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class StreetsideExportManager extends PleaseWaitRunnable {
 
-  private static final Logger LOGGER = Logger.getLogger(StreetsideExportManager.class.getCanonicalName());
+    private static final Logger LOGGER = Logger.getLogger(StreetsideExportManager.class.getCanonicalName());
 
-  private final ArrayBlockingQueue<BufferedImage> queue = new ArrayBlockingQueue<>(10);
-  private final ArrayBlockingQueue<StreetsideAbstractImage> queueImages = new ArrayBlockingQueue<>(10);
+    private final ArrayBlockingQueue<BufferedImage> queue = new ArrayBlockingQueue<>(10);
+    private final ArrayBlockingQueue<StreetsideAbstractImage> queueImages = new ArrayBlockingQueue<>(10);
 
-  private final int amount;
-  private final Set<StreetsideAbstractImage> images;
-  private final String path;
+    private final int amount;
+    private final Set<StreetsideAbstractImage> images;
+    private final String path;
 
-  private Thread writer;
-  private ThreadPoolExecutor ex;
+    private Thread writer;
+    private ThreadPoolExecutor ex;
 
-  /**
-   * Main constructor.
-   *
-   * @param images Set of {@link StreetsideAbstractImage} objects to be exported.
-   * @param path   Export path.
-   */
-  public StreetsideExportManager(Set<StreetsideAbstractImage> images, String path) {
-    super(tr("Downloading") + "…", new PleaseWaitProgressMonitor(tr("Exporting Streetside Images")), true);
-    this.images = images == null ? new HashSet<>() : images;
-    this.path = path;
-    amount = this.images.size();
-  }
-
-  @Override
-  protected void cancel() {
-    writer.interrupt();
-    ex.shutdown();
-  }
-
-  @Override
-  protected void realRun() throws IOException {
-    // Starts a writer thread in order to write the pictures on the disk.
-    writer = new StreetsideExportWriterThread(path, queue, queueImages, amount, getProgressMonitor());
-    writer.start();
-    if (path == null) {
-      try {
-        writer.join();
-      } catch (InterruptedException e) {
-        LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
-      }
-      return;
+    /**
+     * Main constructor.
+     *
+     * @param images Set of {@link StreetsideAbstractImage} objects to be exported.
+     * @param path   Export path.
+     */
+    public StreetsideExportManager(Set<StreetsideAbstractImage> images, String path) {
+        super(tr("Downloading") + "…", new PleaseWaitProgressMonitor(tr("Exporting Streetside Images")), true);
+        this.images = images == null ? new HashSet<>() : images;
+        this.path = path;
+        amount = this.images.size();
     }
-    ex = new ThreadPoolExecutor(20, 35, 25, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
-    for (StreetsideAbstractImage image : images) {
-      if (image instanceof StreetsideImage) {
+
+    @Override
+    protected void cancel() {
+        writer.interrupt();
+        ex.shutdown();
+    }
+
+    @Override
+    protected void realRun() throws IOException {
+        // Starts a writer thread in order to write the pictures on the disk.
+        writer = new StreetsideExportWriterThread(path, queue, queueImages, amount, getProgressMonitor());
+        writer.start();
+        if (path == null) {
+            try {
+                writer.join();
+            } catch (InterruptedException e) {
+                LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
+            }
+            return;
+        }
+        ex = new ThreadPoolExecutor(20, 35, 25, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+        for (StreetsideAbstractImage image : images) {
+            if (image instanceof StreetsideImage) {
+                try {
+                    ex.execute(new StreetsideExportDownloadThread((StreetsideImage) image, queue, queueImages));
+                } catch (Exception e) {
+                    LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
+                }
+            }
+            try {
+                // If the queue is full, waits for it to have more space
+                // available before executing anything else.
+                while (ex.getQueue().remainingCapacity() == 0) {
+                    Thread.sleep(100);
+                }
+            } catch (Exception e) {
+                LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
+            }
+        }
         try {
-          ex.execute(new StreetsideExportDownloadThread((StreetsideImage) image, queue, queueImages));
-        } catch (Exception e) {
-          LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
+            writer.join();
+        } catch (InterruptedException e) {
+            LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
         }
-      }
-      try {
-        // If the queue is full, waits for it to have more space
-        // available before executing anything else.
-        while (ex.getQueue().remainingCapacity() == 0) {
-          Thread.sleep(100);
-        }
-      } catch (Exception e) {
-        LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
-      }
     }
-    try {
-      writer.join();
-    } catch (InterruptedException e) {
-      LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
-    }
-  }
 
-  @Override
-  protected void finish() {
-  }
+    @Override
+    protected void finish() {
+    }
 }

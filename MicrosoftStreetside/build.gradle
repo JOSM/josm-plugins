@@ -1,18 +1,21 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
 import com.github.spotbugs.snom.SpotBugsTask
-import net.ltgt.gradle.errorprone.CheckSeverity
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
   id 'java'
   id 'eclipse'
   id 'jacoco'
   id 'pmd'
-  id("com.github.ben-manes.versions").version("0.49.0")
-  id("net.ltgt.errorprone").version("3.1.0")
-  id("org.kordamp.markdown.convert").version("1.2.0")
-  id("org.sonarqube").version("3.3")
-  id('com.github.spotbugs').version('5.2.3')
-  id('org.openstreetmap.josm').version("0.8.2")
-  id("com.diffplug.spotless").version("6.22.0")
+  alias(libs.plugins.spotless)
+  alias(libs.plugins.versions)
+  alias(libs.plugins.errorprone)
+  alias(libs.plugins.markdown)
+  alias(libs.plugins.javafx)
+  alias(libs.plugins.sonarqube)
+  alias(libs.plugins.spotbugs)
+  alias(libs.plugins.josm)
 }
 
 apply from: 'gradle/tool-config.gradle'
@@ -20,7 +23,7 @@ apply from: 'gradle/tool-config.gradle'
 // error with subdir build/markdown
 //apply from: 'gradle/markdown.gradle'
 
-sourceCompatibility = '1.8'
+sourceCompatibility = '21'
 
 def versionProcess = new ProcessBuilder("git", "describe", "--always", "--dirty").start()
 versionProcess.waitFor()
@@ -39,25 +42,19 @@ repositories {
   }
 }
 
-def versions = [
-  awaitility: "4.2.0",
-  jmockit: "1.49.a",
-  junit: "5.10.1",
-  wiremock: "2.27.2"
-]
+javafx {
+    modules = [ 'javafx.graphics', 'javafx.controls', 'javafx.swing' ]
+}
 
 dependencies {
-  if (!JavaVersion.current().isJava9Compatible()) {
-    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
-  }
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${versions.junit}")
-  testImplementation("org.junit.jupiter:junit-jupiter-params:${versions.junit}")
-  testImplementation("org.junit.jupiter:junit-jupiter-api:${versions.junit}")
-  testImplementation("org.junit.vintage:junit-vintage-engine:${versions.junit}")
-  testImplementation ("org.openstreetmap.josm:josm-unittest"){changing=true}
-  testImplementation "com.github.tomakehurst:wiremock:${versions.wiremock}"
-  testImplementation("org.jmockit:jmockit:${versions.jmockit}")
-  testImplementation("org.awaitility:awaitility:${versions.awaitility}")
+  errorprone(libs.errorprone)
+  spotbugsPlugins(libs.findsecbugsPlugin)
+  testRuntimeOnly libs.junit.jupiter.engine
+  testImplementation libs.bundles.junit
+  testImplementation libs.josm.unittest
+  testImplementation libs.wiremock
+  testImplementation libs.jmockit
+  testImplementation libs.awaitility
 }
 
 sourceSets {
@@ -81,6 +78,15 @@ sourceSets {
       srcDirs = ['test/data']
     }
   }
+}
+
+// Spotbugs config
+spotbugs {
+    toolVersion = libs.versions.spotbugs.get()
+    ignoreFailures = true
+    effort = Effort.valueOf('MAX')
+    reportLevel = Confidence.valueOf('LOW')
+    //sourceSets = [sourceSets.main, sourceSets.test]
 }
 
 spotless {
@@ -131,8 +137,6 @@ tasks.withType(SpotBugsTask) {
     html.enabled = true
   }
 }
-
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 test {
   project.afterEvaluate {

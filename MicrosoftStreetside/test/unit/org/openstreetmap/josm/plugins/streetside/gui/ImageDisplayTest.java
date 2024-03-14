@@ -24,7 +24,7 @@ class ImageDisplayTest {
     @Test
     void testImagePersistence() {
         StreetsideImageDisplay display = new StreetsideImageDisplay();
-        display.setImage(DUMMY_IMAGE, null);
+        display.setImage(DUMMY_IMAGE);
         assertEquals(DUMMY_IMAGE, display.getImage());
     }
 
@@ -43,7 +43,7 @@ class ImageDisplayTest {
                 false, MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, 3);
         display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
 
-        display.setImage(DUMMY_IMAGE, null);
+        display.setImage(DUMMY_IMAGE);
 
         display.getMouseWheelListeners()[0].mouseWheelMoved(dummyScroll);
 
@@ -71,7 +71,7 @@ class ImageDisplayTest {
                     button);
             display.getMouseListeners()[0].mouseClicked(dummyClick);
 
-            display.setImage(DUMMY_IMAGE, null);
+            display.setImage(DUMMY_IMAGE);
 
             display.getMouseListeners()[0].mouseClicked(dummyClick);
 

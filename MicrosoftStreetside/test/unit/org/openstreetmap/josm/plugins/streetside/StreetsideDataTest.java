@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.plugins.streetside.utils.TestUtil;
 import org.openstreetmap.josm.testutils.annotations.Main;
 
 /**
@@ -30,21 +30,18 @@ class StreetsideDataTest {
     private StreetsideImage img4;
 
     /**
-     * Creates a sample {@link StreetsideData} objects, 4 {@link StreetsideImage}
-     * objects and a {@link StreetsideSequence} object.
+     * Creates a sample {@link StreetsideData} object and 4 {@link StreetsideImage}
+     * objects.
      */
     @BeforeEach
     public void setUp() {
-        img1 = new StreetsideImage("id1__________________", new LatLon(0.1, 0.1), 90);
-        img2 = new StreetsideImage("id2__________________", new LatLon(0.2, 0.2), 90);
-        img3 = new StreetsideImage("id3__________________", new LatLon(0.3, 0.3), 90);
-        img4 = new StreetsideImage("id4__________________", new LatLon(0.4, 0.4), 90);
-        final StreetsideSequence seq = new StreetsideSequence();
-
-        seq.add(Arrays.asList(img1, img2, img3, img4));
+        img1 = TestUtil.generateImage("1", 0.1, 0.1);
+        img2 = TestUtil.generateImage("2", 0.2, 0.2);
+        img3 = TestUtil.generateImage("3", 0.3, 0.3);
+        img4 = TestUtil.generateImage("4", 0.4, 0.4);
 
         data = new StreetsideData();
-        data.addAll(new ConcurrentSkipListSet<>(seq.getImages()));
+        data.addAll(Arrays.asList(img1, img2, img3, img4));
     }
 
     /**
@@ -71,12 +68,12 @@ class StreetsideDataTest {
     @Test
     void testSize() {
         assertEquals(4, data.getImages().size());
-        data.add(new StreetsideImage("id5__________________", new LatLon(0.1, 0.1), 90));
+        data.add(TestUtil.generateImage("5", 0.1, 0.1));
         assertEquals(5, data.getImages().size());
     }
 
     /**
-     * Test the {@link StreetsideData#setHighlightedImage(StreetsideAbstractImage)}
+     * Test the {@link StreetsideData#setHighlightedImage(StreetsideImage)}
      * and {@link StreetsideData#getHighlightedImage()} methods.
      */
     @Test
@@ -135,21 +132,5 @@ class StreetsideDataTest {
     void testPreviousOfNullImg() {
         data.setSelectedImage(null);
         assertThrows(IllegalStateException.class, data::selectPrevious);
-    }
-
-    /**
-     * Test the multiselection of images. When a new image is selected, the
-     * multiselected List should reset.
-     */
-    @Disabled("The imgs have non-int identifiers while the code expects the identifiers to be int in string form")
-    @Test
-    void testMultiSelect() {
-        assertEquals(0, data.getMultiSelectedImages().size());
-        data.setSelectedImage(img1);
-        assertEquals(1, data.getMultiSelectedImages().size());
-        data.addMultiSelectedImage(img2);
-        assertEquals(2, data.getMultiSelectedImages().size());
-        data.setSelectedImage(img1);
-        assertEquals(1, data.getMultiSelectedImages().size());
     }
 }

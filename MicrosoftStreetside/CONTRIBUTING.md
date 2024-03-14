@@ -13,7 +13,7 @@ All contributions to this repository are licensed under the GNU General Public L
 ## Code formatting
 
 The following format of source code files is preferred in this repository:
-* Indentation with 2 spaces per indentation level
+* Indentation with 4 spaces per indentation level
 * line endings should be UNIX-style line endings (LF)
 * one newline (LF) at the end of the file
 * where possible don't make lines longer than 120 characters

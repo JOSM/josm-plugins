@@ -25,7 +25,7 @@ Checkout the JOSM source, compile it and checkout the plugin source (the last gr
     ant dist
     gradle build
     
-Now Restart JOSM and activate the MicrosoftStreeside plugin in your preferences. 
+Now Restart JOSM and activate the MicrosoftStreetside plugin in your preferences. 
 The MicrosoftStreetside menu items will appear in the JOSM main menu after JOSM is
 restarted.
 
@@ -33,7 +33,7 @@ Details about plugin development can be found [in the JOSM wiki](https://josm.op
 
 ## License
 
-This plugin is based on the Mapilary developed by developed and maintained by nokutu (nokutu@openmailbox.org) and extended to display Streetside imagery by Rene Rhodes (renerr18) You can contact Rene on github.
+This plugin is based on the Mapillary developed by developed and maintained by nokutu (nokutu@openmailbox.org) and extended to display Streetside imagery by Rene Rhodes (renerr18) You can contact Rene on GitHub.
 
 This software is licensed under [GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html). 
 
@@ -42,4 +42,4 @@ This software is licensed under [GPL v3](https://www.gnu.org/licenses/gpl-3.0.en
 The MicrosoftStreetside plugin used JavaFX to implement the Streetside 360 degree viewer [JavaFX](https://en.wikipedia.org/wiki/JavaFX), which, while bundled in the Oracle Java SE 1.8, is not an official part of the 
 Java SE 1.8 specification, and may not function properly with alternative JDKs (e.g. OpenJDK is not currently supported). JavaFX is licensed under the same terms as Java SE (http://www.oracle.com/technetwork/java/javase/terms/license/index.html).
 
-The plugin also makes use of the compact Resty libary for communicating with RESTful web services from Java (https://beders.github.io/Resty/Resty/Overview.html). Resty is licensed under the MIT license (https://github.com/go-resty/resty/blob/master/LICENSE).
+Third-party JDKs such as Azul have versions with JavaFX included. Please use those.

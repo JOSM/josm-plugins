@@ -8,7 +8,6 @@
 bin/
 javadoc/
 build/
-bin/
 doc/
 logs/
 
@@ -20,6 +19,3 @@ logs/
 
 # OS X metadata
 .DS_Store
-
-
-/bin/

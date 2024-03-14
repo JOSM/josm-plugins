@@ -9,15 +9,14 @@
   <property file="${basedir}/gradle.properties"/>
   <property name="josm" location="../../core/dist/josm-custom.jar"/>
   <property name="plugin.dist.dir" value="../../dist"/>
+  <property name="java.lang.version" value="21"/>
   <!--** include targets that all plugins have in common **-->
   <import file="../build-common.xml"/>
   <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
     <include name="apache-commons.jar"/>
-    <include name="apache-http.jar"/>
     <include name="javafx-osx.jar" if:set="isMac"/>
     <include name="javafx-unixoid.jar" if:set="isUnix"/>
     <include name="javafx-windows.jar" if:set="isWindows"/>
-    <include name="utilsplugin2.jar"/>
   </fileset>
   <target name="pre-compile" depends="fetch_dependencies">
     <!-- include fetch_dependencies task -->
