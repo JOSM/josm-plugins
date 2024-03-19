@@ -42,8 +42,25 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
             progressMonitor.finishTask();
         }
     }
+
+    /**
+     * Generate query strings
+     * @param type The type of the object to get
+     * @param list The map of ids to versions
+     * @return The queries to make
+     */
     private static List<String> makeQueryStrings(OsmPrimitiveType type, Map<Long,Integer> list) {
-        List<String> result = new ArrayList<>((list.size()+maxQueryIds-1)/maxQueryIds);
+        // This is a "worst-case" calculation. Keep it fast (and err higher rather than lower), not accurate.
+        final int expectedSize = (int) (list.entrySet().stream().mapToLong(entry ->
+                // Keep in mind that 0-3 is 0, 3-32 is 1, 32-316 is 2, and so on when rounding log10.
+                // First the key.
+                Math.round(Math.log10(entry.getKey())) + 1 +
+                // Then the value
+                Math.round(Math.log10(entry.getValue())) + 1 +
+                // And finally the "static" size (',' + 'v')
+                2
+                ).sum() / MAX_QUERY_LENGTH);
+        List<String> result = new ArrayList<>(expectedSize + 1);
         StringBuilder sb = new StringBuilder();
         int cnt=0;
         for (Map.Entry<Long,Integer> entry : list.entrySet()) {
@@ -59,7 +76,7 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
             sb.append("v");
             sb.append(entry.getValue());
             cnt++;
-            if (cnt >=maxQueryIds) {
+            if (cnt >= MAX_QUERY_IDS || sb.length() > MAX_QUERY_LENGTH) {
                 result.add(sb.toString());
                 sb.setLength(0);
                 cnt = 0;
@@ -71,7 +88,32 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
         return result;
     }
 
-    protected static final int maxQueryIds = 128;
+    /**
+     * The maximum ids we want to query. API docs indicate 725 is "safe" for non-versioned objects with 10-digit ids.
+     * Since we use {@link #MAX_QUERY_LENGTH} to avoid issues where we go over the permitted length, we can have a
+     * bigger number here.
+     * @see <a href="https://wiki.openstreetmap.org/wiki/API_v0.6#Multi_fetch:_GET_/api/0.6/[nodes|ways|relations]?#parameters">
+     *     API_v0.6#Multi_fetch
+     * </a>
+     */
+    protected static final int MAX_QUERY_IDS = 2000;
+    /**
+     * The maximum query length. Docs indicate 8213 characters in the URI is safe. The maximum base length before
+     * query parameters is for relations at 59 characters for 8154 characters in the query parameters. We round down to
+     * 8000 characters.
+     * @see <a href="https://wiki.openstreetmap.org/wiki/API_v0.6#Multi_fetch:_GET_/api/0.6/[nodes|ways|relations]?#parameters">
+     *     API_v0.6#Multi_fetch
+     * </a>
+     */
+    protected static final int MAX_QUERY_LENGTH = 8000;
+
+    /**
+     * Parse many objects
+     * @param type The object type (<i>must</i> be common between all objects)
+     * @param list The map of object id to object version
+     * @param progressMonitor The progress monitor to update
+     * @throws OsmTransferException If there is an issue getting the data
+     */
     public void readMultiObjects(OsmPrimitiveType type, Map<Long,Integer> list, ProgressMonitor progressMonitor) throws OsmTransferException {
         for (String query : makeQueryStrings(type,list)) {
             if (progressMonitor.isCanceled()) {

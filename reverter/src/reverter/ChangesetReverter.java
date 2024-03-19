@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
@@ -21,6 +22,7 @@ import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetDataSetEntry;
@@ -272,22 +274,24 @@ public class ChangesetReverter {
             }
             if (progressMonitor.isCanceled()) return;
             nds = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
-            for (OsmPrimitive p : nds.allPrimitives()) {
-                if (!p.isIncomplete()) {
-                    addMissingId(p);
-                } else {
-                    if (ds.getPrimitiveById(p.getPrimitiveId()) == null) {
-                        switch (p.getType()) {
-                        case NODE: ds.addPrimitive(new Node(p.getUniqueId())); break;
-                        case CLOSEDWAY:
-                        case WAY: ds.addPrimitive(new Way(p.getUniqueId())); break;
-                        case MULTIPOLYGON:
-                        case RELATION: ds.addPrimitive(new Relation(p.getUniqueId())); break;
-                        default: throw new AssertionError();
+            ds.update(() -> {
+                for (OsmPrimitive p : nds.allPrimitives()) {
+                    if (!p.isIncomplete()) {
+                        addMissingId(p);
+                    } else {
+                        if (ds.getPrimitiveById(p.getPrimitiveId()) == null) {
+                            switch (p.getType()) {
+                            case NODE: ds.addPrimitive(new Node(p.getUniqueId())); break;
+                            case CLOSEDWAY:
+                            case WAY: ds.addPrimitive(new Way(p.getUniqueId())); break;
+                            case MULTIPOLYGON:
+                            case RELATION: ds.addPrimitive(new Relation(p.getUniqueId())); break;
+                            default: throw new AssertionError();
+                            }
                         }
                     }
                 }
-            }
+            });
         } finally {
             progressMonitor.finishTask();
         }
@@ -502,34 +506,44 @@ public class ChangesetReverter {
         Collection<Node> nodes = nds.getNodes();
         int num = nodes.size();
         progressMonitor.beginTask(addChangesetIdPrefix(
-                trn("Checking coordinates of {0} node", "Checking coordinates of {0} nodes", num, num)), num);
+                trn("Checking coordinates of {0} node", "Checking coordinates of {0} nodes", num, num)),
+                // downloads == num ticks, then we get the downloaded data (1 tick), then we process the nodes (num ticks)
+                2 * num + 1);
 
+        // Do bulk version fetches first
+        // The objects to get next
+        final Map<Long, Integer> versionMap = nodes.stream()
+                .collect(Collectors.toMap(AbstractPrimitive::getUniqueId,
+                        id -> Math.max(1, Optional.ofNullable(ds.getPrimitiveById(id)).orElse(id).getVersion() - 1)));
         try {
-            for (Node n : nodes) {
-                if (!n.isDeleted() && !n.isLatLonKnown()) {
-                    PrimitiveId id = n.getPrimitiveId();
-                    OsmPrimitive p = ds.getPrimitiveById(id);
-                    if (p instanceof Node && !((Node) p).isLatLonKnown()) {
-                        int version = p.getVersion();
-                        while (version > 1) {
-                            // find the version that was in use when the current changeset was closed
-                            --version;
-                            final OsmServerMultiObjectReader rdr = new OsmServerMultiObjectReader();
-                            readObjectVersion(rdr, id, version, progressMonitor);
-                            DataSet history = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
-                            if (!history.isEmpty()) {
-                                Node historyNode = (Node) history.allPrimitives().iterator().next();
-                                if (historyNode.isLatLonKnown() && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
-                                    n.load(historyNode.save());
-                                    break;
-                                }
+            while (!versionMap.isEmpty()) {
+                final OsmServerMultiObjectReader rds = new OsmServerMultiObjectReader();
+                final ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(num, false);
+                subMonitor.beginTask(tr("Fetching multi-objects"), versionMap.size());
+                rds.readMultiObjects(OsmPrimitiveType.NODE, versionMap, subMonitor);
+                subMonitor.finishTask();
+                final DataSet history = rds.parseOsm(progressMonitor.createSubTaskMonitor(0, false));
+                versionMap.replaceAll((key, value) -> value - 1);
+                versionMap.values().removeIf(i -> i <= 0);
+                ds.update(() -> {
+                    for (Node n : nodes) {
+                        if (!n.isDeleted() && !n.isLatLonKnown()) {
+                            final Node historyNode = (Node) history.getPrimitiveById(n);
+                            if (historyNode != null && historyNode.isLatLonKnown()
+                                    && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
+                                n.load(historyNode.save());
+                                versionMap.remove(n.getUniqueId());
+                                progressMonitor.worked(1);
                             }
                         }
+                        if (progressMonitor.isCanceled()) {
+                            break;
+                        }
                     }
+                });
+                if (progressMonitor.isCanceled()) {
+                    break;
                 }
-                if (progressMonitor.isCanceled())
-                    return;
-                progressMonitor.worked(1);
             }
         } finally {
             progressMonitor.finishTask();

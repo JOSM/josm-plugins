@@ -6,10 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -37,8 +39,8 @@ final class DataSetCommandMerger {
     private final DataSet sourceDataSet;
     private final DataSet targetDataSet;
 
-    private final List<Command> cmds = new LinkedList<>();
-    private final List<OsmPrimitive> nominalRevertedPrimitives = new LinkedList<>();
+    private final List<Command> cmds = new ArrayList<>();
+    private final Set<OsmPrimitive> nominalRevertedPrimitives = new HashSet<>();
 
     /**
      * constructor
@@ -59,7 +61,7 @@ final class DataSetCommandMerger {
             if (nominal) {
                 nominalRevertedPrimitives.add(target);
             }
-            Logging.debug("Reverting " + target + " to " + newTarget);
+            Logging.debug("Reverting {0} to {1}", target, newTarget);
         }
     }
 
@@ -125,7 +127,7 @@ final class DataSetCommandMerger {
                 newNodes.add(targetNode);
             // Target node has been deleted by a more recent changeset -> conflict
             } else if (sourceNode.isIncomplete() && !conflicts.hasConflictForMy(targetNode)) {
-                localConflicts.add(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
+                localConflicts.add(new Conflict<>(targetNode, sourceNode, true));
             } else {
                Logging.info("Skipping target node "+targetNode+" for source node "+sourceNode+" while reverting way "+source);
             }
