@@ -11,9 +11,9 @@
     <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
     <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
     <!-- Specific plugins -->
-    <property name="java21_plugins" value="FIT/build.xml" />
+    <property name="java21_plugins" value="FIT/build.xml
+                                            MicrosoftStreetside/build.xml" />
     <property name="java17_plugins" value="maproulette/build.xml
-                                            MicrosoftStreetside/build.xml
                                             imageio/build.xml
                                             pmtiles/build.xml
                                             todo/build.xml"/>
