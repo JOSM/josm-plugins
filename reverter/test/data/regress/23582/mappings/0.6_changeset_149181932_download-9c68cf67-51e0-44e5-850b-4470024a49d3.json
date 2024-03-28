@@ -1,0 +1,23 @@
+{
+  "id": "9c68cf67-51e0-44e5-850b-4470024a49d3",
+  "name": "0.6_changeset_149181932_download",
+  "request": {
+    "url": "/0.6/changeset/149181932/download",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<osmChange version=\"0.6\" generator=\"CGImap 0.9.0 (1934400 spike-06.openstreetmap.org)\" copyright=\"OpenStreetMap and contributors\" attribution=\"http://www.openstreetmap.org/copyright\" license=\"http://opendatacommons.org/licenses/odbl/1-0/\">\n <modify>\n  <way id=\"40487768\" visible=\"true\" version=\"7\" changeset=\"149181932\" timestamp=\"2024-03-26T14:55:59Z\" user=\"bxl-forever\" uid=\"2644288\">\n   <nd ref=\"257553745\"/>\n   <nd ref=\"4031338294\"/>\n   <nd ref=\"490699158\"/>\n   <nd ref=\"4031337541\"/>\n   <nd ref=\"4031337542\"/>\n   <nd ref=\"4031337543\"/>\n   <nd ref=\"4031337551\"/>\n   <nd ref=\"142038322\"/>\n   <tag k=\"highway\" v=\"service\"/>\n   <tag k=\"lit\" v=\"yes\"/>\n   <tag k=\"maxspeed\" v=\"30\"/>\n   <tag k=\"name\" v=\"Boulevard de Waterloo - Waterloolaan\"/>\n   <tag k=\"name:fr\" v=\"Boulevard de Waterloo\"/>\n   <tag k=\"name:nl\" v=\"Waterloolaan\"/>\n   <tag k=\"oneway\" v=\"yes\"/>\n   <tag k=\"service\" v=\"parking_aisle\"/>\n   <tag k=\"source:maxspeed\" v=\"BE-BRU:urban\"/>\n   <tag k=\"surface\" v=\"asphalt\"/>\n  </way>\n </modify>\n</osmChange>\n",
+    "headers": {
+      "Keep-Alive": "timeout=5, max=100",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+      "Cache-Control": "private, max-age=0, must-revalidate",
+      "Server": "Apache/2.4.54 (Ubuntu)",
+      "Upgrade": "h2,h2c",
+      "Date": "Thu, 28 Mar 2024 12:00:39 GMT",
+      "Content-Type": "application/xml; charset=utf-8"
+    }
+  },
+  "uuid": "9c68cf67-51e0-44e5-850b-4470024a49d3",
+  "insertionIndex": 9
+}

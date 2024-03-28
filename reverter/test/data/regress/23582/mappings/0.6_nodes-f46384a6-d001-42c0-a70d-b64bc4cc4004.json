@@ -1,0 +1,23 @@
+{
+  "id": "f46384a6-d001-42c0-a70d-b64bc4cc4004",
+  "name": "0.6_nodes",
+  "request": {
+    "url": "/0.6/nodes?nodes=142038322,4031337551,257553745,490699158,4031337541,4031337543,4031338294,4031337542",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<osm version=\"0.6\" generator=\"CGImap 0.9.0 (3829092 spike-06.openstreetmap.org)\" copyright=\"OpenStreetMap and contributors\" attribution=\"http://www.openstreetmap.org/copyright\" license=\"http://opendatacommons.org/licenses/odbl/1-0/\">\n <node id=\"142038322\" visible=\"true\" version=\"5\" changeset=\"37500705\" timestamp=\"2016-02-28T15:23:08Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364706\" lon=\"4.3559661\"/>\n <node id=\"257553745\" visible=\"true\" version=\"3\" changeset=\"37500705\" timestamp=\"2016-02-28T15:23:09Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8372364\" lon=\"4.3581014\"/>\n <node id=\"490699158\" visible=\"true\" version=\"2\" changeset=\"37500705\" timestamp=\"2016-02-28T15:23:10Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364215\" lon=\"4.3560923\"/>\n <node id=\"4031337541\" visible=\"true\" version=\"1\" changeset=\"37500705\" timestamp=\"2016-02-28T15:22:49Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364152\" lon=\"4.3560587\"/>\n <node id=\"4031337542\" visible=\"true\" version=\"1\" changeset=\"37500705\" timestamp=\"2016-02-28T15:22:49Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364178\" lon=\"4.3560372\"/>\n <node id=\"4031337543\" visible=\"true\" version=\"1\" changeset=\"37500705\" timestamp=\"2016-02-28T15:22:49Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364246\" lon=\"4.3560198\"/>\n <node id=\"4031337551\" visible=\"true\" version=\"1\" changeset=\"37500705\" timestamp=\"2016-02-28T15:22:49Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8364563\" lon=\"4.3559820\">\n  <tag k=\"highway\" v=\"give_way\"/>\n </node>\n <node id=\"4031338294\" visible=\"true\" version=\"1\" changeset=\"37500705\" timestamp=\"2016-02-28T15:22:50Z\" user=\"AtonX\" uid=\"383309\" lat=\"50.8372120\" lon=\"4.3579899\"/>\n</osm>\n",
+    "headers": {
+      "Keep-Alive": "timeout=5, max=100",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+      "Cache-Control": "private, max-age=0, must-revalidate",
+      "Server": "Apache/2.4.54 (Ubuntu)",
+      "Upgrade": "h2,h2c",
+      "Date": "Thu, 28 Mar 2024 12:00:40 GMT",
+      "Content-Type": "application/xml; charset=utf-8"
+    }
+  },
+  "uuid": "f46384a6-d001-42c0-a70d-b64bc4cc4004",
+  "insertionIndex": 7
+}

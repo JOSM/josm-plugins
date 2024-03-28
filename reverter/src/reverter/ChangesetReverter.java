@@ -503,12 +503,20 @@ public class ChangesetReverter {
     }
 
     public void fixNodesWithoutCoordinates(ProgressMonitor progressMonitor) throws OsmTransferException {
-        Collection<Node> nodes = nds.getNodes();
+        Collection<Node> nodes = new ArrayList<>(nds.getNodes());
         int num = nodes.size();
         progressMonitor.beginTask(addChangesetIdPrefix(
                 trn("Checking coordinates of {0} node", "Checking coordinates of {0} nodes", num, num)),
                 // downloads == num ticks, then we get the downloaded data (1 tick), then we process the nodes (num ticks)
                 2 * num + 1);
+
+        // Remove primitives where we already know the LatLon.
+        nodes.removeIf(n -> {
+            PrimitiveId id = n.getPrimitiveId();
+            OsmPrimitive p = ds.getPrimitiveById(id);
+            return !(p instanceof Node) || ((Node) p).isLatLonKnown();
+        });
+        progressMonitor.worked(num - nodes.size());
 
         // Do bulk version fetches first
         // The objects to get next
@@ -525,28 +533,37 @@ public class ChangesetReverter {
                 final DataSet history = rds.parseOsm(progressMonitor.createSubTaskMonitor(0, false));
                 versionMap.replaceAll((key, value) -> value - 1);
                 versionMap.values().removeIf(i -> i <= 0);
-                ds.update(() -> {
-                    for (Node n : nodes) {
-                        if (!n.isDeleted() && !n.isLatLonKnown()) {
-                            final Node historyNode = (Node) history.getPrimitiveById(n);
-                            if (historyNode != null && historyNode.isLatLonKnown()
-                                    && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
-                                n.load(historyNode.save());
-                                versionMap.remove(n.getUniqueId());
-                                progressMonitor.worked(1);
-                            }
-                        }
-                        if (progressMonitor.isCanceled()) {
-                            break;
-                        }
-                    }
-                });
+                ds.update(() -> updateNodes(progressMonitor, nodes, versionMap, history));
                 if (progressMonitor.isCanceled()) {
                     break;
                 }
             }
         } finally {
             progressMonitor.finishTask();
+        }
+    }
+
+    /**
+     * Update nodes lacking a lat/lon
+     * @param progressMonitor The monitor to update
+     * @param nodes The nodes to update
+     * @param versionMap The version map to update for the next round
+     * @param history The history dataset
+     */
+    private void updateNodes(ProgressMonitor progressMonitor, Collection<Node> nodes, Map<Long, Integer> versionMap, DataSet history) {
+        for (Node n : nodes) {
+            if (!n.isDeleted() && !n.isLatLonKnown()) {
+                final Node historyNode = (Node) history.getPrimitiveById(n);
+                if (historyNode != null && historyNode.isLatLonKnown()
+                        && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
+                    n.load(historyNode.save());
+                    versionMap.remove(n.getUniqueId());
+                    progressMonitor.worked(1);
+                }
+            }
+            if (progressMonitor.isCanceled()) {
+                break;
+            }
         }
     }
 

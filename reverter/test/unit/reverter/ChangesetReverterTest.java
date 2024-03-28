@@ -3,6 +3,8 @@ package reverter;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -20,13 +22,28 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
+import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -37,30 +54,21 @@ import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
-import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
-import org.openstreetmap.josm.testutils.annotations.HTTP;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Logging;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 
 /**
  * Test class for {@link ChangesetReverter}
  */
 @BasicPreferences
 @HTTP
+@Main
+@Projection
 class ChangesetReverterTest {
     @RegisterExtension
     static WireMockExtension wireMockExtension = WireMockExtension.newInstance()
@@ -73,9 +81,9 @@ class ChangesetReverterTest {
     @Test
     void testTicket22520(WireMockRuntimeInfo wireMockRuntimeInfo) throws ExecutionException, InterruptedException {
         wireMockRuntimeInfo.getWireMock().loadMappingsFrom(TestUtils.getRegressionDataDir(22520));
-        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/nodes")).willReturn(WireMock.aResponse().withTransformers("MultiplePrimitiveTransformer")));
-        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/relations")).willReturn(WireMock.aResponse().withTransformers("MultiplePrimitiveTransformer")));
-        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/ways")).willReturn(WireMock.aResponse().withTransformers("MultiplePrimitiveTransformer")));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/nodes")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 22520)));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/relations")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 22520)));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/ways")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 22520)));
         Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl());
         PrimitiveId building = new SimplePrimitiveId(233056719, OsmPrimitiveType.WAY);
         new DownloadOsmTask().loadUrl(new DownloadParams().withLayerName("testTicket22520"), wireMockRuntimeInfo.getHttpBaseUrl() + "/0.6/way/233056719/3", NullProgressMonitor.INSTANCE).get();
@@ -89,6 +97,26 @@ class ChangesetReverterTest {
     }
 
     /**
+     * Non-regression test for #23582: Nodes that were not modified by a changeset should not be reverted.
+     * Note: This might not be the intended behavior, but it was the behavior prior to r36230.
+     */
+    @Test
+    void testTicket23582(WireMockRuntimeInfo wireMockRuntimeInfo) {
+        wireMockRuntimeInfo.getWireMock().loadMappingsFrom(TestUtils.getRegressionDataDir(23582));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/nodes")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 23582)));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/relations")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 23582)));
+        wireMockRuntimeInfo.getWireMock().register(WireMock.get(WireMock.urlPathMatching("/0.6/ways")).willReturn(WireMock.aResponse().withTransformer("MultiplePrimitiveTransformer", "ticket", 23582)));
+        Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl());
+        final RevertChangesetTask task = new RevertChangesetTask(149181932, ChangesetReverter.RevertType.FULL, true, true);
+        task.run();
+        GuiHelper.runInEDTAndWait(() -> { /* Sync UI thread (some actions are taken on this thread which modify primitives) */ });
+        final DataSet reverted = MainApplication.getLayerManager().getEditDataSet();
+        assertEquals(1, reverted.allModifiedPrimitives().size());
+        final Way oldWay = assertInstanceOf(Way.class, reverted.allModifiedPrimitives().iterator().next());
+        assertEquals(8, oldWay.getNodesCount());
+    }
+
+    /**
      * A transformer for the /nodes?node, /ways?ways, and /relations?relations endpoints. This is needed since we don't always do the requests in the same order.
      */
     private static class MultiplePrimitiveTransformer extends ResponseTransformer {
@@ -99,15 +127,16 @@ class ChangesetReverterTest {
 
         @Override
         public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
+            final int ticket = parameters.getInt("ticket");
             final QueryParameter wayParam = request.queryParameter("ways");
             final QueryParameter nodeParam = request.queryParameter("nodes");
             final QueryParameter relParam = request.queryParameter("relations");
             if (wayParam.isPresent()) {
-                return Response.Builder.like(response).but().body(getReturnXml(OsmPrimitiveType.WAY, wayParam)).build();
+                return Response.Builder.like(response).but().body(getReturnXml(ticket, OsmPrimitiveType.WAY, wayParam)).build();
             } else if (nodeParam.isPresent()) {
-                return Response.Builder.like(response).but().body(getReturnXml(OsmPrimitiveType.NODE, nodeParam)).build();
+                return Response.Builder.like(response).but().body(getReturnXml(ticket, OsmPrimitiveType.NODE, nodeParam)).build();
             } else if (relParam.isPresent()) {
-                return Response.Builder.like(response).but().body(getReturnXml(OsmPrimitiveType.RELATION, relParam)).build();
+                return Response.Builder.like(response).but().body(getReturnXml(ticket, OsmPrimitiveType.RELATION, relParam)).build();
             } else {
                 IllegalArgumentException e = new IllegalArgumentException("No query parameter present");
                 Logging.error(e); // Log first since wiremock is really bad about propagating and logging exceptions.
@@ -120,7 +149,7 @@ class ChangesetReverterTest {
             return false;
         }
 
-        private static String getReturnXml(OsmPrimitiveType type, QueryParameter parameter) {
+        private static String getReturnXml(int ticket, OsmPrimitiveType type, QueryParameter parameter) {
             final String file;
             switch (type) {
                 case NODE:
@@ -139,7 +168,7 @@ class ChangesetReverterTest {
                     ? Arrays.asList(parameter.values().get(0).split(",", -1))
                     : parameter.values())
                     .stream().map(s -> new OsmParameterInformation(type, s)).collect(Collectors.toSet());
-            try (InputStream fis = Files.newInputStream(Paths.get(TestUtils.getRegressionDataDir(22520), file));
+            try (InputStream fis = Files.newInputStream(Paths.get(TestUtils.getRegressionDataDir(ticket), file));
                  JsonReader reader = Json.createReader(fis)) {
                 String version = "0.6";
                 String generator = "MultiplePrimitiveTransformer";

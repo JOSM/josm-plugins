@@ -1,0 +1,197 @@
+{
+  "version": "0.6",
+  "generator": "CGImap 0.9.0 (2113908 spike-08.openstreetmap.org)",
+  "copyright": "OpenStreetMap and contributors",
+  "attribution": "http://www.openstreetmap.org/copyright",
+  "license": "http://opendatacommons.org/licenses/odbl/1-0/",
+  "elements": [
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2009-09-09T10:02:27Z",
+      "version": 1,
+      "changeset": 2422888,
+      "user": "moyogo",
+      "uid": 246,
+      "nodes": [
+        257553745,
+        490699158,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "true",
+        "service": "parking"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2013-01-07T22:47:24Z",
+      "version": 2,
+      "changeset": 14569019,
+      "user": "eMerzh",
+      "uid": 15399,
+      "nodes": [
+        257553745,
+        490699158,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2016-02-28T15:23:02Z",
+      "version": 3,
+      "changeset": 37500705,
+      "user": "AtonX",
+      "uid": 383309,
+      "nodes": [
+        257553745,
+        4031338294,
+        490699158,
+        4031337541,
+        4031337542,
+        4031337543,
+        4031337551,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2016-09-28T22:42:06Z",
+      "version": 4,
+      "changeset": 42506693,
+      "user": "Glenn Plas",
+      "uid": 497567,
+      "nodes": [
+        257553745,
+        4031338294,
+        490699158,
+        4031337541,
+        4031337542,
+        4031337543,
+        4031337551,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking_aisle"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2020-12-16T19:07:47Z",
+      "version": 5,
+      "changeset": 95959881,
+      "user": "bxl-forever",
+      "uid": 2644288,
+      "nodes": [
+        257553745,
+        4031338294,
+        490699158,
+        4031337541,
+        4031337542,
+        4031337543,
+        4031337551,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "maxspeed": "30",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking_aisle",
+        "source:maxspeed": "BE-BRU:urban"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2023-02-03T05:06:00Z",
+      "version": 6,
+      "changeset": 132026961,
+      "user": "RaphaelPasloin_mobile",
+      "uid": 16794559,
+      "nodes": [
+        257553745,
+        4031338294,
+        490699158,
+        4031337541,
+        4031337542,
+        4031337543,
+        4031337551,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "lit": "yes",
+        "maxspeed": "30",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking_aisle",
+        "source:maxspeed": "BE-BRU:urban"
+      }
+    },
+    {
+      "type": "way",
+      "id": 40487768,
+      "timestamp": "2024-03-26T14:55:59Z",
+      "version": 7,
+      "changeset": 149181932,
+      "user": "bxl-forever",
+      "uid": 2644288,
+      "nodes": [
+        257553745,
+        4031338294,
+        490699158,
+        4031337541,
+        4031337542,
+        4031337543,
+        4031337551,
+        142038322
+      ],
+      "tags": {
+        "highway": "service",
+        "lit": "yes",
+        "maxspeed": "30",
+        "name": "Boulevard de Waterloo - Waterloolaan",
+        "name:fr": "Boulevard de Waterloo",
+        "name:nl": "Waterloolaan",
+        "oneway": "yes",
+        "service": "parking_aisle",
+        "source:maxspeed": "BE-BRU:urban",
+        "surface": "asphalt"
+      }
+    }
+  ]
+}
