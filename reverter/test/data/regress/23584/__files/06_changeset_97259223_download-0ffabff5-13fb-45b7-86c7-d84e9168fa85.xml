@@ -1,0 +1,1938 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmChange version="0.6" generator="CGImap 0.9.0 (4075617 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <modify>
+  <way id="327389927" visible="true" version="6" changeset="97259223" timestamp="2021-01-10T18:23:00Z" user="zstadler" uid="3127">
+   <nd ref="5417882025"/>
+   <nd ref="3341696161"/>
+   <nd ref="3341696162"/>
+   <nd ref="3341696163"/>
+   <nd ref="3341696165"/>
+   <nd ref="2605810445"/>
+   <tag k="bicycle" v="designated"/>
+   <tag k="highway" v="path"/>
+   <tag k="mtb:scale" v="1"/>
+   <tag k="oneway:bicycle" v="yes"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="5287691" visible="true" version="20" changeset="97259223" timestamp="2021-01-10T18:25:27Z" user="zstadler" uid="3127">
+   <member type="way" ref="353931103" role=""/>
+   <member type="way" ref="353931101" role=""/>
+   <member type="way" ref="353931099" role=""/>
+   <member type="way" ref="353931098" role=""/>
+   <member type="way" ref="353931095" role=""/>
+   <member type="way" ref="368299862" role=""/>
+   <member type="way" ref="368299860" role=""/>
+   <member type="way" ref="61295198" role=""/>
+   <member type="way" ref="355055033" role=""/>
+   <member type="way" ref="287493795" role=""/>
+   <member type="way" ref="287493794" role=""/>
+   <member type="way" ref="722484753" role=""/>
+   <member type="way" ref="368299854" role=""/>
+   <member type="way" ref="368299871" role=""/>
+   <member type="way" ref="82682614" role=""/>
+   <member type="way" ref="368299873" role=""/>
+   <member type="way" ref="376848352" role=""/>
+   <member type="way" ref="376848353" role=""/>
+   <member type="way" ref="368408724" role=""/>
+   <member type="way" ref="368408725" role=""/>
+   <member type="way" ref="788216359" role=""/>
+   <member type="way" ref="60957243" role=""/>
+   <member type="way" ref="61295196" role=""/>
+   <tag k="colour" v="blue"/>
+   <tag k="image" v="https://upload.wikimedia.org/wikipedia/commons/d/d7/Israel_Hiking_Map_%D7%A1%D7%99%D7%A0%D7%92%D7%9C_%D7%A9%D7%95%D7%94%D7%9D.jpeg"/>
+   <tag k="image1" v="https://upload.wikimedia.org/wikipedia/commons/7/77/Israel_Hiking_Map_%D7%A1%D7%99%D7%A0%D7%92%D7%9C_%D7%A9%D7%95%D7%94%D7%9D_1.jpeg"/>
+   <tag k="mtb:type" v="allmountain"/>
+   <tag k="name" v="סינגל שוהם"/>
+   <tag k="name:he" v="סינגל שוהם"/>
+   <tag k="network" v="lcn"/>
+   <tag k="operator" v="kkl"/>
+   <tag k="osmc:symbol" v="blue:white:blue_stripe"/>
+   <tag k="route" v="mtb"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="262423772" visible="true" version="6" changeset="97259223" timestamp="2021-01-10T18:27:25Z" user="zstadler" uid="3127">
+   <nd ref="2266352686"/>
+   <nd ref="2266352696"/>
+   <nd ref="2266352707"/>
+   <nd ref="2266352709"/>
+   <nd ref="2266352722"/>
+   <nd ref="2266352724"/>
+   <nd ref="2266352723"/>
+   <nd ref="2266352727"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+   <tag k="mtb:name" v="סינגל שפד&quot;ן"/>
+   <tag k="mtb:name:he" v="סינגל שפד&quot;ן"/>
+   <tag k="surface" v="sand"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="331599168" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T18:56:03Z" user="zstadler" uid="3127">
+   <nd ref="1238622070"/>
+   <nd ref="3372966368"/>
+   <nd ref="3326898452"/>
+   <nd ref="3372966369"/>
+   <nd ref="3326898453"/>
+   <nd ref="3326898454"/>
+   <nd ref="3326898455"/>
+   <tag k="colour" v="red"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="104300899" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T18:57:57Z" user="zstadler" uid="3127">
+   <nd ref="2299773216"/>
+   <nd ref="856565902"/>
+   <nd ref="3195667215"/>
+   <nd ref="856565904"/>
+   <nd ref="856565907"/>
+   <nd ref="856565910"/>
+   <nd ref="3195667216"/>
+   <nd ref="856565913"/>
+   <nd ref="3195667217"/>
+   <nd ref="856565917"/>
+   <nd ref="856565919"/>
+   <nd ref="3195667218"/>
+   <nd ref="3195667219"/>
+   <nd ref="3195667220"/>
+   <nd ref="856565921"/>
+   <nd ref="856565924"/>
+   <nd ref="3195667221"/>
+   <nd ref="856565927"/>
+   <nd ref="856565929"/>
+   <nd ref="3195667222"/>
+   <nd ref="856565931"/>
+   <nd ref="856565933"/>
+   <nd ref="856565935"/>
+   <nd ref="3195667223"/>
+   <nd ref="3195667224"/>
+   <nd ref="856565938"/>
+   <nd ref="856565943"/>
+   <nd ref="3195667225"/>
+   <nd ref="856565947"/>
+   <nd ref="856565951"/>
+   <nd ref="3195667226"/>
+   <nd ref="856565954"/>
+   <nd ref="856565957"/>
+   <nd ref="3195667227"/>
+   <nd ref="1030872954"/>
+   <nd ref="856565960"/>
+   <nd ref="856565963"/>
+   <nd ref="3195667228"/>
+   <nd ref="856565974"/>
+   <nd ref="3195667229"/>
+   <nd ref="856565976"/>
+   <nd ref="856565977"/>
+   <nd ref="3195667230"/>
+   <nd ref="856565978"/>
+   <nd ref="3195667231"/>
+   <nd ref="856565981"/>
+   <nd ref="3195667232"/>
+   <nd ref="856565984"/>
+   <nd ref="856565987"/>
+   <nd ref="3195667233"/>
+   <nd ref="3195667234"/>
+   <nd ref="856565991"/>
+   <nd ref="1030873006"/>
+   <nd ref="1030872995"/>
+   <nd ref="2299894369"/>
+   <nd ref="856565993"/>
+   <nd ref="856565998"/>
+   <nd ref="3195667235"/>
+   <nd ref="856566002"/>
+   <nd ref="3195667236"/>
+   <nd ref="856566007"/>
+   <nd ref="3195667237"/>
+   <nd ref="856566009"/>
+   <nd ref="3195667238"/>
+   <nd ref="3195667239"/>
+   <nd ref="856566011"/>
+   <nd ref="3195667240"/>
+   <nd ref="856566012"/>
+   <nd ref="3195667241"/>
+   <nd ref="3195667242"/>
+   <nd ref="856566014"/>
+   <nd ref="3195667243"/>
+   <nd ref="856566015"/>
+   <nd ref="3195667244"/>
+   <nd ref="856566017"/>
+   <nd ref="856566020"/>
+   <nd ref="856566022"/>
+   <nd ref="3195667245"/>
+   <nd ref="856566025"/>
+   <nd ref="856566028"/>
+   <nd ref="3195667246"/>
+   <nd ref="856566036"/>
+   <nd ref="856566039"/>
+   <nd ref="3195667247"/>
+   <nd ref="3195667248"/>
+   <nd ref="856566042"/>
+   <nd ref="856565710"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="114922086" visible="true" version="3" changeset="97259223" timestamp="2021-01-10T18:58:28Z" user="zstadler" uid="3127">
+   <nd ref="856569325"/>
+   <nd ref="1300449702"/>
+   <nd ref="1300449689"/>
+   <nd ref="1300449714"/>
+   <nd ref="1300449712"/>
+   <nd ref="1300449715"/>
+   <nd ref="1300449698"/>
+   <nd ref="1300449741"/>
+   <nd ref="1300449724"/>
+   <nd ref="1300449759"/>
+   <nd ref="1300449757"/>
+   <nd ref="1300449687"/>
+   <nd ref="1300449765"/>
+   <nd ref="1300449764"/>
+   <nd ref="1300449723"/>
+   <nd ref="1300449746"/>
+   <nd ref="1300449688"/>
+   <nd ref="1300449747"/>
+   <nd ref="1300449754"/>
+   <nd ref="1300449737"/>
+   <nd ref="1300449725"/>
+   <nd ref="1300449708"/>
+   <nd ref="1300449709"/>
+   <nd ref="1300449720"/>
+   <nd ref="856569231"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="178461493" visible="true" version="4" changeset="97259223" timestamp="2021-01-10T18:58:54Z" user="zstadler" uid="3127">
+   <nd ref="2909980767"/>
+   <nd ref="1888118877"/>
+   <nd ref="1888118878"/>
+   <nd ref="2909980737"/>
+   <nd ref="1888118880"/>
+   <nd ref="2909980738"/>
+   <nd ref="1888118873"/>
+   <nd ref="2909980739"/>
+   <nd ref="1888118875"/>
+   <nd ref="2909980740"/>
+   <nd ref="1888118884"/>
+   <nd ref="1888118885"/>
+   <nd ref="2909980741"/>
+   <nd ref="1888118883"/>
+   <nd ref="2909980742"/>
+   <nd ref="1888118876"/>
+   <nd ref="1888118879"/>
+   <nd ref="1888118887"/>
+   <nd ref="2909980743"/>
+   <nd ref="2909980744"/>
+   <nd ref="2909980745"/>
+   <nd ref="1888118888"/>
+   <nd ref="2909980746"/>
+   <nd ref="1888118868"/>
+   <nd ref="2909980747"/>
+   <nd ref="2909980748"/>
+   <nd ref="2909980749"/>
+   <nd ref="2909980750"/>
+   <nd ref="1888118869"/>
+   <nd ref="2909980751"/>
+   <nd ref="2909980752"/>
+   <nd ref="2909980753"/>
+   <nd ref="1888118870"/>
+   <nd ref="2909980736"/>
+   <nd ref="1888118871"/>
+   <nd ref="2909980754"/>
+   <nd ref="1888118872"/>
+   <nd ref="1888118874"/>
+   <nd ref="1888118886"/>
+   <nd ref="700896422"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <create>
+  <relation id="12165075" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T19:01:52Z" user="zstadler" uid="3127">
+   <member type="way" ref="833523578" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <create>
+  <relation id="12165110" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T19:13:29Z" user="zstadler" uid="3127">
+   <member type="way" ref="865338452" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="green:white:green_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <delete>
+  <node id="8065720681" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T19:13:29Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <way id="866358296" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T19:13:29Z" user="zstadler" uid="3127"/>
+ </delete>
+ <modify>
+  <way id="865338452" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T19:13:29Z" user="zstadler" uid="3127">
+   <nd ref="8075146364"/>
+   <nd ref="8065720682"/>
+   <nd ref="8075146365"/>
+   <nd ref="8065720683"/>
+   <nd ref="8065720684"/>
+   <nd ref="8065739985"/>
+   <nd ref="8065739986"/>
+   <nd ref="8065739987"/>
+   <nd ref="8065739988"/>
+   <nd ref="8065739989"/>
+   <nd ref="8065739990"/>
+   <nd ref="8065739991"/>
+   <nd ref="8065739992"/>
+   <nd ref="8065739993"/>
+   <nd ref="8065739994"/>
+   <nd ref="8065739995"/>
+   <nd ref="8065739996"/>
+   <nd ref="8065739997"/>
+   <nd ref="8065739998"/>
+   <nd ref="8065739999"/>
+   <nd ref="8065740000"/>
+   <nd ref="8065740001"/>
+   <nd ref="8065740002"/>
+   <nd ref="8065740003"/>
+   <nd ref="8065740004"/>
+   <nd ref="8065740005"/>
+   <nd ref="8065740006"/>
+   <nd ref="8065740007"/>
+   <nd ref="8065740008"/>
+   <nd ref="8065740009"/>
+   <nd ref="8065740010"/>
+   <nd ref="8065740011"/>
+   <nd ref="8065740012"/>
+   <nd ref="8065740013"/>
+   <nd ref="8065740014"/>
+   <nd ref="8065740015"/>
+   <tag k="colour" v="green"/>
+   <tag k="highway" v="footway"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="813347310" visible="true" version="3" changeset="97259223" timestamp="2021-01-10T19:14:58Z" user="zstadler" uid="3127">
+   <nd ref="2896837777"/>
+   <nd ref="8230778040"/>
+   <nd ref="8230778039"/>
+   <tag k="highway" v="unclassified"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="817203124" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T19:42:09Z" user="zstadler" uid="3127">
+   <nd ref="608453898"/>
+   <nd ref="608453835"/>
+   <nd ref="7632267320"/>
+   <tag k="bicycle" v="designated"/>
+   <tag k="foot" v="designated"/>
+   <tag k="highway" v="track"/>
+   <tag k="mtb:scale" v="2"/>
+   <tag k="tracktype" v="grade4"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="7070478" visible="true" version="6" changeset="97259223" timestamp="2021-01-10T19:43:32Z" user="zstadler" uid="3127">
+   <member type="way" ref="314631069" role=""/>
+   <member type="way" ref="868296461" role=""/>
+   <member type="way" ref="504850191" role=""/>
+   <member type="node" ref="8091128897" role=""/>
+   <member type="way" ref="868044817" role=""/>
+   <member type="way" ref="868297012" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="green:white:green_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <relation id="1401956" visible="true" version="19" changeset="97259223" timestamp="2021-01-10T19:44:24Z" user="zstadler" uid="3127">
+   <member type="way" ref="723589871" role=""/>
+   <member type="way" ref="723589870" role=""/>
+   <member type="way" ref="723589874" role=""/>
+   <member type="way" ref="723352026" role=""/>
+   <member type="way" ref="723589875" role=""/>
+   <member type="way" ref="723589876" role=""/>
+   <member type="way" ref="723589877" role=""/>
+   <member type="way" ref="97602486" role=""/>
+   <member type="way" ref="567920056" role=""/>
+   <member type="way" ref="252756159" role=""/>
+   <member type="way" ref="56031041" role=""/>
+   <member type="way" ref="810403111" role=""/>
+   <member type="way" ref="56031042" role=""/>
+   <member type="way" ref="56018722" role=""/>
+   <member type="way" ref="282467357" role=""/>
+   <member type="way" ref="183264246" role=""/>
+   <member type="way" ref="183264210" role=""/>
+   <member type="way" ref="252756163" role=""/>
+   <member type="way" ref="282467356" role=""/>
+   <member type="way" ref="252756158" role=""/>
+   <member type="way" ref="884339337" role=""/>
+   <member type="way" ref="884339344" role=""/>
+   <member type="way" ref="884341446" role=""/>
+   <member type="way" ref="884341447" role=""/>
+   <member type="way" ref="884405433" role=""/>
+   <member type="way" ref="183254953" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="ref" v="11042"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="331599168" visible="true" version="3" changeset="97259223" timestamp="2021-01-10T20:16:27Z" user="zstadler" uid="3127">
+   <nd ref="1238622070"/>
+   <nd ref="3372966368"/>
+   <nd ref="3326898452"/>
+   <nd ref="3372966369"/>
+   <nd ref="3326898453"/>
+   <nd ref="3326898454"/>
+   <nd ref="3326898455"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="215847658" visible="true" version="14" changeset="97259223" timestamp="2021-01-10T20:19:34Z" user="zstadler" uid="3127">
+   <nd ref="5034743718"/>
+   <nd ref="2252793486"/>
+   <nd ref="2252793485"/>
+   <nd ref="6457150742"/>
+   <tag k="highway" v="unclassified"/>
+   <tag k="source" v="GPS"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="1281678" visible="true" version="26" changeset="97259223" timestamp="2021-01-10T20:19:34Z" user="zstadler" uid="3127">
+   <member type="way" ref="86042039" role=""/>
+   <member type="way" ref="300519848" role=""/>
+   <member type="way" ref="86042042" role=""/>
+   <member type="way" ref="813818980" role=""/>
+   <member type="way" ref="82600179" role=""/>
+   <member type="way" ref="654415888" role=""/>
+   <member type="way" ref="813818981" role=""/>
+   <member type="way" ref="88845305" role=""/>
+   <member type="way" ref="284511976" role=""/>
+   <member type="way" ref="215847667" role=""/>
+   <member type="way" ref="425103940" role=""/>
+   <member type="way" ref="821872999" role=""/>
+   <tag k="name" v="דרך נוף צפונית"/>
+   <tag k="name:en" v="Northen Scenic Route"/>
+   <tag k="name:he" v="דרך נוף צפונית"/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="ref" v="9344"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="481119850" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T20:27:08Z" user="zstadler" uid="3127">
+   <nd ref="4681803355"/>
+   <nd ref="701338859"/>
+   <tag k="bicycle" v="designated"/>
+   <tag k="highway" v="path"/>
+   <tag k="mtb:scale" v="2"/>
+   <tag k="oneway" v="yes"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="93943319" visible="true" version="8" changeset="97259223" timestamp="2021-01-10T20:27:08Z" user="zstadler" uid="3127">
+   <nd ref="701338859"/>
+   <nd ref="701338861"/>
+   <nd ref="2411876616"/>
+   <nd ref="701338040"/>
+   <tag k="bicycle" v="designated"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="1492739" visible="true" version="32" changeset="97259223" timestamp="2021-01-10T20:28:28Z" user="zstadler" uid="3127">
+   <member type="way" ref="64436997" role=""/>
+   <member type="way" ref="85698499" role=""/>
+   <member type="way" ref="356910933" role=""/>
+   <member type="way" ref="85703771" role=""/>
+   <member type="way" ref="223061147" role=""/>
+   <member type="way" ref="85698500" role=""/>
+   <member type="way" ref="689533279" role=""/>
+   <member type="way" ref="689533280" role=""/>
+   <member type="way" ref="106390036" role=""/>
+   <member type="way" ref="80285257" role=""/>
+   <member type="way" ref="90039933" role=""/>
+   <member type="way" ref="90039935" role=""/>
+   <member type="way" ref="279995724" role=""/>
+   <tag k="colour" v="red"/>
+   <tag k="mtb:type" v="allmountain"/>
+   <tag k="name" v="סינגל משואה אדום"/>
+   <tag k="name:en" v="Red Masua Singletrack"/>
+   <tag k="name:he" v="סינגל משואה אדום"/>
+   <tag k="network" v="lcn"/>
+   <tag k="operator" v="kkl"/>
+   <tag k="route" v="mtb"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <create>
+  <relation id="12165596" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T20:51:01Z" user="zstadler" uid="3127">
+   <member type="way" ref="886016289" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="red:white:red_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <create>
+  <relation id="12165597" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T20:51:01Z" user="zstadler" uid="3127">
+   <member type="way" ref="295850900" role=""/>
+   <member type="way" ref="563246475" role=""/>
+   <member type="way" ref="886016288" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <modify>
+  <relation id="12033382" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T20:51:01Z" user="zstadler" uid="3127">
+   <member type="way" ref="886016289" role=""/>
+   <member type="way" ref="563246475" role=""/>
+   <member type="way" ref="886016288" role=""/>
+   <tag k="name" v="סובב מאגר פורה"/>
+   <tag k="route" v="road"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <create>
+  <relation id="12165599" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T20:53:33Z" user="zstadler" uid="3127">
+   <member type="way" ref="770398939" role=""/>
+   <member type="way" ref="872375540" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="blue:white:blue_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <modify>
+  <way id="403024450" visible="true" version="3" changeset="97259223" timestamp="2021-01-10T20:55:04Z" user="zstadler" uid="3127">
+   <nd ref="2007136043"/>
+   <nd ref="4734257178"/>
+   <nd ref="2570217973"/>
+   <nd ref="2570217266"/>
+   <nd ref="4054127328"/>
+   <nd ref="2570217920"/>
+   <nd ref="2570217138"/>
+   <nd ref="2570217529"/>
+   <tag k="highway" v="track"/>
+   <tag k="source" v="GPS"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="7608051" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T20:56:23Z" user="zstadler" uid="3127">
+   <member type="way" ref="475501645" role=""/>
+   <member type="way" ref="519292260" role=""/>
+   <member type="way" ref="519292259" role=""/>
+   <member type="way" ref="475501647" role=""/>
+   <member type="way" ref="240287893" role=""/>
+   <member type="way" ref="475503746" role=""/>
+   <member type="way" ref="475503745" role=""/>
+   <member type="way" ref="475503743" role=""/>
+   <member type="way" ref="240287820" role=""/>
+   <member type="way" ref="439646180" role=""/>
+   <member type="way" ref="570298732" role=""/>
+   <member type="way" ref="864295019" role=""/>
+   <member type="way" ref="375795057" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="green:white:green_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <relation id="6991124" visible="true" version="8" changeset="97259223" timestamp="2021-01-10T20:56:23Z" user="zstadler" uid="3127">
+   <member type="way" ref="475503746" role=""/>
+   <member type="way" ref="570298732" role=""/>
+   <member type="way" ref="439646180" role=""/>
+   <member type="way" ref="255768922" role=""/>
+   <member type="way" ref="785878339" role=""/>
+   <member type="way" ref="165713890" role=""/>
+   <member type="way" ref="785878336" role=""/>
+   <member type="way" ref="578734169" role=""/>
+   <member type="way" ref="570298750" role=""/>
+   <member type="way" ref="570298726" role=""/>
+   <member type="way" ref="570298748" role=""/>
+   <member type="way" ref="570298747" role=""/>
+   <member type="way" ref="475504140" role=""/>
+   <member type="way" ref="570298756" role=""/>
+   <member type="way" ref="570298759" role=""/>
+   <member type="way" ref="475504141" role=""/>
+   <member type="way" ref="475503745" role=""/>
+   <member type="way" ref="475503743" role=""/>
+   <member type="way" ref="519292259" role=""/>
+   <member type="way" ref="519292260" role=""/>
+   <member type="way" ref="475501645" role=""/>
+   <member type="way" ref="475501647" role=""/>
+   <member type="way" ref="240287893" role=""/>
+   <member type="way" ref="240287820" role=""/>
+   <member type="way" ref="519317747" role=""/>
+   <member type="way" ref="372944144" role=""/>
+   <member type="way" ref="372944138" role=""/>
+   <member type="way" ref="372944148" role=""/>
+   <member type="way" ref="527833637" role=""/>
+   <member type="way" ref="527833636" role=""/>
+   <member type="way" ref="578734171" role=""/>
+   <member type="way" ref="35150499" role=""/>
+   <member type="way" ref="371204648" role=""/>
+   <member type="way" ref="372943794" role=""/>
+   <member type="way" ref="395391940" role=""/>
+   <member type="way" ref="519314059" role=""/>
+   <member type="way" ref="519314045" role=""/>
+   <member type="way" ref="372943803" role=""/>
+   <member type="way" ref="372943795" role=""/>
+   <member type="way" ref="396458107" role=""/>
+   <member type="way" ref="164164075" role=""/>
+   <member type="way" ref="396458068" role=""/>
+   <member type="way" ref="396458106" role=""/>
+   <member type="way" ref="396458109" role=""/>
+   <member type="way" ref="460523611" role=""/>
+   <member type="way" ref="396458077" role=""/>
+   <member type="way" ref="460523641" role=""/>
+   <member type="way" ref="460523602" role=""/>
+   <member type="way" ref="460523646" role=""/>
+   <member type="way" ref="460523647" role=""/>
+   <member type="way" ref="460523609" role=""/>
+   <member type="way" ref="460523640" role=""/>
+   <member type="way" ref="460523623" role=""/>
+   <member type="way" ref="460523633" role=""/>
+   <member type="way" ref="460523628" role=""/>
+   <member type="way" ref="460523599" role=""/>
+   <member type="way" ref="396458060" role=""/>
+   <member type="way" ref="396458053" role=""/>
+   <member type="way" ref="396458093" role=""/>
+   <member type="way" ref="396458063" role=""/>
+   <member type="way" ref="396458071" role=""/>
+   <member type="way" ref="368335773" role=""/>
+   <member type="way" ref="625276302" role=""/>
+   <member type="way" ref="864295019" role=""/>
+   <member type="way" ref="375795057" role=""/>
+   <tag k="name" v="שביל סובב באר שבע"/>
+   <tag k="name:en" v="Beer-Sheva Circuit Track"/>
+   <tag k="name:he" v="שביל סובב באר שבע"/>
+   <tag k="network" v="rwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="809467092" visible="true" version="3" changeset="97259223" timestamp="2021-01-10T21:25:57Z" user="zstadler" uid="3127">
+   <nd ref="6990539764"/>
+   <nd ref="6990539766"/>
+   <nd ref="6990539767"/>
+   <nd ref="6990539768"/>
+   <nd ref="6990539763"/>
+   <nd ref="6990539765"/>
+   <nd ref="6990539769"/>
+   <nd ref="2850217043"/>
+   <nd ref="6990539770"/>
+   <nd ref="6990539761"/>
+   <nd ref="6990539762"/>
+   <nd ref="6990539757"/>
+   <nd ref="2850217042"/>
+   <nd ref="2850217041"/>
+   <nd ref="2850217040"/>
+   <nd ref="2850217039"/>
+   <nd ref="6990539760"/>
+   <nd ref="6990539758"/>
+   <nd ref="1512498344"/>
+   <nd ref="6990539759"/>
+   <nd ref="2850217038"/>
+   <nd ref="2850217037"/>
+   <nd ref="2850217036"/>
+   <nd ref="6990539771"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+   <tag k="mtb:scale" v="1"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="5637837" visible="true" version="8" changeset="97259223" timestamp="2021-01-10T21:25:57Z" user="zstadler" uid="3127">
+   <member type="way" ref="377825379" role=""/>
+   <member type="way" ref="758058791" role=""/>
+   <member type="way" ref="809467091" role=""/>
+   <member type="way" ref="758058793" role=""/>
+   <tag k="name" v="מעלה זרון הרגלי"/>
+   <tag k="name:he" v="מעלה זרון הרגלי"/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="red:white:red_stripe"/>
+   <tag k="ref" v="11344"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="586838944" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="5606547568"/>
+   <nd ref="5606547572"/>
+   <nd ref="5606547567"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="colour" v="black"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="586838945" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="5606547567"/>
+   <nd ref="5606547186"/>
+   <nd ref="5606545680"/>
+   <nd ref="5606545684"/>
+   <nd ref="5606545681"/>
+   <nd ref="5606545700"/>
+   <nd ref="2870723062"/>
+   <nd ref="2870723007"/>
+   <nd ref="2870723063"/>
+   <nd ref="2870723064"/>
+   <nd ref="2870723065"/>
+   <nd ref="2870723066"/>
+   <nd ref="2870723067"/>
+   <nd ref="2870723068"/>
+   <nd ref="2870723069"/>
+   <nd ref="2870723070"/>
+   <nd ref="2870723071"/>
+   <nd ref="2870723072"/>
+   <nd ref="2870723073"/>
+   <nd ref="2870723074"/>
+   <nd ref="2870723008"/>
+   <nd ref="2870723075"/>
+   <nd ref="2870723076"/>
+   <nd ref="2870723077"/>
+   <nd ref="2870723078"/>
+   <nd ref="2870723079"/>
+   <nd ref="2870723080"/>
+   <nd ref="2870723081"/>
+   <nd ref="2870723082"/>
+   <nd ref="2870723083"/>
+   <nd ref="2870723084"/>
+   <nd ref="2870723085"/>
+   <nd ref="2870723086"/>
+   <nd ref="2870723087"/>
+   <nd ref="2870723088"/>
+   <nd ref="2870723089"/>
+   <nd ref="2870723090"/>
+   <nd ref="2870723091"/>
+   <nd ref="2870723009"/>
+   <nd ref="2870723092"/>
+   <nd ref="2870723093"/>
+   <nd ref="2870723094"/>
+   <nd ref="2870723010"/>
+   <nd ref="2870723095"/>
+   <nd ref="2870723096"/>
+   <nd ref="2870723097"/>
+   <nd ref="2870723098"/>
+   <nd ref="2870723011"/>
+   <nd ref="2870723099"/>
+   <nd ref="2870723100"/>
+   <nd ref="2870723101"/>
+   <nd ref="2870723102"/>
+   <nd ref="2870723103"/>
+   <nd ref="2870723104"/>
+   <nd ref="2870723105"/>
+   <nd ref="2870723106"/>
+   <nd ref="2870723107"/>
+   <nd ref="2870723108"/>
+   <nd ref="2870723109"/>
+   <nd ref="2870723110"/>
+   <nd ref="2870723111"/>
+   <nd ref="2870723112"/>
+   <nd ref="2870723113"/>
+   <nd ref="2870723114"/>
+   <nd ref="2870723115"/>
+   <nd ref="2870723116"/>
+   <nd ref="2870723117"/>
+   <nd ref="2870723118"/>
+   <nd ref="2870723119"/>
+   <nd ref="2870723120"/>
+   <nd ref="2870723121"/>
+   <nd ref="2870723012"/>
+   <nd ref="2870723122"/>
+   <nd ref="2870723123"/>
+   <nd ref="2870723124"/>
+   <nd ref="2870723125"/>
+   <nd ref="2870723126"/>
+   <nd ref="2870723127"/>
+   <nd ref="2870723013"/>
+   <nd ref="2870723128"/>
+   <nd ref="2870723129"/>
+   <nd ref="2870723130"/>
+   <nd ref="2870723131"/>
+   <nd ref="2870723132"/>
+   <nd ref="2870723133"/>
+   <nd ref="2870723134"/>
+   <nd ref="2870723014"/>
+   <nd ref="2870723135"/>
+   <nd ref="2870723136"/>
+   <nd ref="2870723137"/>
+   <nd ref="2870723015"/>
+   <nd ref="2870723138"/>
+   <nd ref="2870723139"/>
+   <nd ref="2870723140"/>
+   <nd ref="2870723141"/>
+   <nd ref="2870723142"/>
+   <nd ref="2870723143"/>
+   <nd ref="2870723144"/>
+   <nd ref="2870723145"/>
+   <nd ref="2870723146"/>
+   <nd ref="2870723147"/>
+   <nd ref="2870723148"/>
+   <nd ref="2870723149"/>
+   <nd ref="2870723016"/>
+   <nd ref="2870723150"/>
+   <nd ref="2870723151"/>
+   <nd ref="2870723017"/>
+   <nd ref="2870723152"/>
+   <nd ref="2870723153"/>
+   <nd ref="2870723154"/>
+   <nd ref="2870723018"/>
+   <nd ref="2870723155"/>
+   <nd ref="2870723156"/>
+   <nd ref="2870723157"/>
+   <nd ref="2870723158"/>
+   <nd ref="2870723159"/>
+   <nd ref="2870723160"/>
+   <nd ref="2870723161"/>
+   <nd ref="2870723162"/>
+   <nd ref="2870723163"/>
+   <nd ref="2870723164"/>
+   <nd ref="2870723019"/>
+   <nd ref="2870723165"/>
+   <nd ref="2870723166"/>
+   <nd ref="2870723167"/>
+   <nd ref="2870723168"/>
+   <nd ref="2870723169"/>
+   <nd ref="2870723170"/>
+   <nd ref="2870723171"/>
+   <nd ref="2870723172"/>
+   <nd ref="2870723173"/>
+   <nd ref="2870723174"/>
+   <nd ref="2870723175"/>
+   <nd ref="2870723176"/>
+   <nd ref="2870723177"/>
+   <nd ref="2870723178"/>
+   <nd ref="2870723179"/>
+   <nd ref="2870723020"/>
+   <nd ref="2870723180"/>
+   <nd ref="2870723181"/>
+   <nd ref="2870723182"/>
+   <nd ref="2870723183"/>
+   <nd ref="2870723021"/>
+   <nd ref="2870723184"/>
+   <nd ref="2870723185"/>
+   <nd ref="2870723186"/>
+   <nd ref="2870723187"/>
+   <nd ref="2870723188"/>
+   <nd ref="2870723189"/>
+   <nd ref="2870723190"/>
+   <nd ref="2870723191"/>
+   <nd ref="2870723192"/>
+   <nd ref="2870723022"/>
+   <nd ref="2870723193"/>
+   <nd ref="2870723194"/>
+   <nd ref="2870723195"/>
+   <nd ref="2870723196"/>
+   <nd ref="2870723197"/>
+   <nd ref="2870723023"/>
+   <nd ref="2870723198"/>
+   <nd ref="2870723199"/>
+   <nd ref="2870723200"/>
+   <nd ref="2870723201"/>
+   <nd ref="2870723202"/>
+   <nd ref="2870723024"/>
+   <nd ref="2870723203"/>
+   <nd ref="2870723204"/>
+   <nd ref="2870723205"/>
+   <nd ref="2870723206"/>
+   <nd ref="2870723207"/>
+   <nd ref="2870723208"/>
+   <nd ref="2870723209"/>
+   <nd ref="2870723210"/>
+   <nd ref="2870723211"/>
+   <nd ref="2870723212"/>
+   <nd ref="2870723213"/>
+   <nd ref="2870723214"/>
+   <nd ref="2870723215"/>
+   <nd ref="2870723216"/>
+   <nd ref="2870723217"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="colour" v="black"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="884297858" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="8223871561"/>
+   <nd ref="3212019390"/>
+   <nd ref="3212019391"/>
+   <nd ref="3212019392"/>
+   <nd ref="3212019393"/>
+   <nd ref="3212019394"/>
+   <nd ref="3212019395"/>
+   <nd ref="3212019396"/>
+   <nd ref="5155099636"/>
+   <nd ref="3212019397"/>
+   <tag k="bicycle" v="no"/>
+   <tag k="colour" v="black"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="884297860" visible="true" version="2" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="1645472729"/>
+   <nd ref="3212019373"/>
+   <nd ref="3212019374"/>
+   <nd ref="3212019375"/>
+   <nd ref="3212019376"/>
+   <nd ref="3212019377"/>
+   <nd ref="3212019378"/>
+   <nd ref="3212019379"/>
+   <nd ref="3212019380"/>
+   <nd ref="3212019381"/>
+   <nd ref="3212019382"/>
+   <nd ref="3212019383"/>
+   <nd ref="3212019384"/>
+   <nd ref="3212019385"/>
+   <nd ref="3212019386"/>
+   <nd ref="3212019387"/>
+   <nd ref="3212019388"/>
+   <nd ref="8223871556"/>
+   <nd ref="8223871557"/>
+   <nd ref="8223871558"/>
+   <nd ref="8223871559"/>
+   <nd ref="8223871560"/>
+   <nd ref="8223871561"/>
+   <tag k="bicycle" v="no"/>
+   <tag k="colour" v="black"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="315106778" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="2870723217"/>
+   <nd ref="3212019092"/>
+   <nd ref="3212019093"/>
+   <nd ref="3212019094"/>
+   <nd ref="3212019095"/>
+   <nd ref="3212019096"/>
+   <nd ref="3212019097"/>
+   <nd ref="3212019098"/>
+   <nd ref="3212019099"/>
+   <nd ref="3079689673"/>
+   <nd ref="3212019100"/>
+   <nd ref="3212019101"/>
+   <nd ref="3212019102"/>
+   <nd ref="3212019103"/>
+   <nd ref="3212019104"/>
+   <nd ref="3212019105"/>
+   <nd ref="3212019106"/>
+   <nd ref="3212019107"/>
+   <nd ref="3212019108"/>
+   <nd ref="3212019109"/>
+   <nd ref="3212019110"/>
+   <nd ref="3212019111"/>
+   <nd ref="3212019112"/>
+   <nd ref="3212019113"/>
+   <nd ref="3212019114"/>
+   <tag k="bicycle" v="no"/>
+   <tag k="colour" v="black"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <way id="484068423" visible="true" version="5" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <nd ref="3212019114"/>
+   <nd ref="3212019115"/>
+   <nd ref="3212019116"/>
+   <nd ref="3212019117"/>
+   <nd ref="3212019118"/>
+   <nd ref="3212019119"/>
+   <nd ref="3212019120"/>
+   <nd ref="3212019121"/>
+   <nd ref="3212019122"/>
+   <nd ref="3212019123"/>
+   <nd ref="3212019124"/>
+   <nd ref="3212019125"/>
+   <nd ref="3212019126"/>
+   <nd ref="3212019127"/>
+   <nd ref="3212019128"/>
+   <nd ref="3212019129"/>
+   <nd ref="3212019130"/>
+   <nd ref="3212019131"/>
+   <nd ref="3212019132"/>
+   <nd ref="3212019133"/>
+   <nd ref="3212019134"/>
+   <nd ref="3212019135"/>
+   <nd ref="3212019136"/>
+   <nd ref="3212019137"/>
+   <nd ref="3212019138"/>
+   <nd ref="3212019139"/>
+   <nd ref="3212019140"/>
+   <nd ref="3212019141"/>
+   <nd ref="3212019142"/>
+   <nd ref="3212019143"/>
+   <nd ref="3212019144"/>
+   <nd ref="3212019145"/>
+   <nd ref="3212019146"/>
+   <nd ref="3212019147"/>
+   <nd ref="3212019148"/>
+   <nd ref="3212019149"/>
+   <nd ref="3212019150"/>
+   <nd ref="3212019151"/>
+   <nd ref="3212019152"/>
+   <nd ref="3212019153"/>
+   <nd ref="3212019154"/>
+   <nd ref="3212019155"/>
+   <nd ref="3212019156"/>
+   <nd ref="3212019157"/>
+   <nd ref="3212019158"/>
+   <nd ref="3212019159"/>
+   <nd ref="3212019160"/>
+   <nd ref="3212019261"/>
+   <nd ref="3212019262"/>
+   <nd ref="3212019263"/>
+   <nd ref="3212019264"/>
+   <nd ref="3212019265"/>
+   <nd ref="3212019266"/>
+   <nd ref="3212019267"/>
+   <nd ref="3212019268"/>
+   <nd ref="3212019269"/>
+   <nd ref="3212019270"/>
+   <nd ref="3212019271"/>
+   <nd ref="3212019272"/>
+   <nd ref="3212019273"/>
+   <nd ref="3212019274"/>
+   <nd ref="3212019275"/>
+   <nd ref="3212019276"/>
+   <nd ref="3212019277"/>
+   <nd ref="3212019278"/>
+   <nd ref="3212019279"/>
+   <nd ref="3212019280"/>
+   <nd ref="3212019281"/>
+   <nd ref="3212019282"/>
+   <nd ref="3212019283"/>
+   <nd ref="3212019284"/>
+   <nd ref="3212019285"/>
+   <nd ref="3212019286"/>
+   <nd ref="3212019287"/>
+   <nd ref="3212019288"/>
+   <nd ref="3212019289"/>
+   <nd ref="3212019290"/>
+   <nd ref="3212019291"/>
+   <nd ref="3212019292"/>
+   <nd ref="3212019293"/>
+   <nd ref="3212019294"/>
+   <nd ref="3212019295"/>
+   <nd ref="3212019296"/>
+   <nd ref="3212019297"/>
+   <nd ref="3212019298"/>
+   <nd ref="3212019299"/>
+   <nd ref="3212019300"/>
+   <nd ref="3212019301"/>
+   <nd ref="3212019302"/>
+   <nd ref="3212019303"/>
+   <nd ref="3212019304"/>
+   <nd ref="3212019305"/>
+   <nd ref="3212019306"/>
+   <nd ref="3212019307"/>
+   <nd ref="3212019308"/>
+   <nd ref="3212019309"/>
+   <nd ref="3212019310"/>
+   <nd ref="3212019311"/>
+   <nd ref="3212019312"/>
+   <nd ref="3212019313"/>
+   <nd ref="3212019314"/>
+   <nd ref="3212019315"/>
+   <nd ref="3212019316"/>
+   <nd ref="3212019317"/>
+   <nd ref="3212019318"/>
+   <nd ref="3212019319"/>
+   <nd ref="3212019320"/>
+   <nd ref="3212019321"/>
+   <nd ref="3212019322"/>
+   <nd ref="3212019323"/>
+   <nd ref="3212019324"/>
+   <nd ref="3212019325"/>
+   <nd ref="3212019326"/>
+   <nd ref="3212019327"/>
+   <nd ref="3212019328"/>
+   <nd ref="3212019329"/>
+   <nd ref="3212019330"/>
+   <nd ref="3212019331"/>
+   <nd ref="3212019332"/>
+   <nd ref="3212019333"/>
+   <nd ref="3212019334"/>
+   <nd ref="3212019335"/>
+   <nd ref="3212019336"/>
+   <nd ref="3212019337"/>
+   <nd ref="3212019338"/>
+   <nd ref="3212019339"/>
+   <nd ref="3212019340"/>
+   <nd ref="3212019341"/>
+   <nd ref="3212019342"/>
+   <nd ref="3212019343"/>
+   <nd ref="3212019344"/>
+   <nd ref="3212019345"/>
+   <nd ref="3212019346"/>
+   <nd ref="3212019347"/>
+   <nd ref="3212019348"/>
+   <nd ref="3212019349"/>
+   <nd ref="3212019350"/>
+   <nd ref="3212019351"/>
+   <nd ref="3212019352"/>
+   <nd ref="3212019353"/>
+   <nd ref="3212019354"/>
+   <nd ref="3212019355"/>
+   <nd ref="3212019356"/>
+   <nd ref="3212019357"/>
+   <nd ref="3212019358"/>
+   <nd ref="3212019359"/>
+   <nd ref="3212019360"/>
+   <nd ref="3212019361"/>
+   <nd ref="3212019362"/>
+   <nd ref="3212019363"/>
+   <nd ref="3212019364"/>
+   <nd ref="3212019365"/>
+   <nd ref="3212019366"/>
+   <nd ref="3212019367"/>
+   <nd ref="3212019368"/>
+   <nd ref="3212019369"/>
+   <nd ref="3212019370"/>
+   <nd ref="3212019371"/>
+   <nd ref="3212019372"/>
+   <nd ref="1645472729"/>
+   <tag k="bicycle" v="no"/>
+   <tag k="colour" v="black"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+  </way>
+ </modify>
+ <modify>
+  <relation id="4255164" visible="true" version="9" changeset="97259223" timestamp="2021-01-10T21:30:49Z" user="zstadler" uid="3127">
+   <member type="way" ref="484068423" role=""/>
+   <member type="way" ref="884297860" role=""/>
+   <member type="way" ref="884297858" role=""/>
+   <tag k="name" v="נחל צפית תיכון"/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="ref" v="14141"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <relation id="4738533" visible="true" version="8" changeset="97259223" timestamp="2021-01-10T21:36:33Z" user="zstadler" uid="3127">
+   <member type="way" ref="58680268" role=""/>
+   <member type="way" ref="668244808" role=""/>
+   <member type="way" ref="668244809" role=""/>
+   <member type="way" ref="826148778" role=""/>
+   <member type="way" ref="245043365" role=""/>
+   <member type="way" ref="407803981" role=""/>
+   <member type="way" ref="456588200" role=""/>
+   <member type="way" ref="826148780" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <modify>
+  <way id="514764315" visible="true" version="6" changeset="97259223" timestamp="2021-01-10T21:40:00Z" user="zstadler" uid="3127">
+   <nd ref="8252881630"/>
+   <nd ref="3879867610"/>
+   <nd ref="3879867609"/>
+   <nd ref="3879867608"/>
+   <nd ref="3879867607"/>
+   <nd ref="3879867606"/>
+   <nd ref="3879867605"/>
+   <nd ref="3879867604"/>
+   <nd ref="3879867603"/>
+   <nd ref="3879867602"/>
+   <nd ref="8252881520"/>
+   <nd ref="8252881614"/>
+   <nd ref="8252881560"/>
+   <nd ref="8252881549"/>
+   <nd ref="8252881575"/>
+   <tag k="highway" v="track"/>
+  </way>
+ </modify>
+ <delete>
+  <node id="1951474132" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474134" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474188" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474210" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474303" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474405" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474448" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474818" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474872" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474895" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951474949" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951475043" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951475165" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951594693" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="1951594828" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603480" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603481" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603482" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603483" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603485" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603486" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603487" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603488" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603689" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603690" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603691" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603692" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603693" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603694" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603695" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603696" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603697" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603698" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603699" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603700" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603701" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603702" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603703" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603704" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603705" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603706" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603707" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603708" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603709" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603710" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603711" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603712" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462227" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462228" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462229" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462230" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462231" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462232" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462233" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462234" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462235" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462236" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462237" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462238" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462239" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462240" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462241" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462242" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462243" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462244" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462245" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462246" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462247" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462248" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462249" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462250" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462251" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462252" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462253" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462254" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462255" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462256" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462257" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462258" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462259" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462260" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462261" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462262" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462263" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462264" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462265" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462266" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462267" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462268" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462269" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462270" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462271" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462272" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462273" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462274" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462275" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462277" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462278" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462279" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462280" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462281" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462282" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462283" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462284" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462286" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462287" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462288" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462289" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462290" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462291" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462292" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462293" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462294" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462295" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462296" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462297" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462298" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462299" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462300" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462301" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462302" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462303" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462304" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462305" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462306" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462307" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462308" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462309" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462310" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462311" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462312" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462313" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462314" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462315" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462316" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462317" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462318" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462319" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462320" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462321" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462322" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462323" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462324" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462325" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462326" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462327" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462328" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462329" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462330" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462331" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462332" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462333" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462334" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462335" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462336" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462337" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462338" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462339" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462340" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462341" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462342" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462343" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462344" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462345" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462346" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462347" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462348" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462349" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462350" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462351" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462352" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462353" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462354" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462355" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462356" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462357" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462358" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462359" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462360" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462361" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462362" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462363" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462364" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462365" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462366" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462367" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462368" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462369" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462370" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462371" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4892462372" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227474" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227477" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227864" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227865" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227868" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227869" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227871" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227872" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227875" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227885" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227897" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227898" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227902" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227903" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227906" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227911" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227912" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227913" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227915" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227917" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227920" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227921" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227930" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227931" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227932" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227936" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227937" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227939" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227941" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938227952" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938228024" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="6433980283" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="6433980284" visible="false" version="2" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603713" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603714" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603715" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603716" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="4571603717" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938228021" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <node id="5938228023" visible="false" version="3" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <modify>
+  <relation id="2459349" visible="true" version="9" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127">
+   <member type="way" ref="886774160" role=""/>
+   <member type="way" ref="886774137" role=""/>
+   <member type="way" ref="886774152" role=""/>
+   <member type="way" ref="886774153" role=""/>
+   <member type="way" ref="886774156" role=""/>
+   <member type="way" ref="886774146" role=""/>
+   <member type="way" ref="628952355" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="red:white:red_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </modify>
+ <delete>
+  <way id="184648676" visible="false" version="12" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <delete>
+  <way id="497727065" visible="false" version="14" changeset="97259223" timestamp="2021-01-10T21:41:31Z" user="zstadler" uid="3127"/>
+ </delete>
+ <create>
+  <relation id="12165735" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T21:42:48Z" user="zstadler" uid="3127">
+   <member type="way" ref="851531736" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <create>
+  <relation id="12165748" visible="true" version="1" changeset="97259223" timestamp="2021-01-10T21:44:59Z" user="zstadler" uid="3127">
+   <member type="way" ref="850556602" role=""/>
+   <tag k="network" v="lwn"/>
+   <tag k="operator" v="itc"/>
+   <tag k="osmc:symbol" v="black:white:black_stripe"/>
+   <tag k="route" v="hiking"/>
+   <tag k="type" v="route"/>
+  </relation>
+ </create>
+ <modify>
+  <way id="758058792" visible="true" version="4" changeset="97259223" timestamp="2021-01-10T21:47:38Z" user="zstadler" uid="3127">
+   <nd ref="6990539771"/>
+   <nd ref="1512498270"/>
+   <nd ref="2850217035"/>
+   <nd ref="2850217034"/>
+   <nd ref="2850217033"/>
+   <tag k="bicycle" v="yes"/>
+   <tag k="foot" v="yes"/>
+   <tag k="highway" v="path"/>
+   <tag k="mtb:scale" v="3"/>
+  </way>
+ </modify>
+</osmChange>

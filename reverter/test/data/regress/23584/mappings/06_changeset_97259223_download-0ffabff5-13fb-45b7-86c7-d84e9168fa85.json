@@ -1,0 +1,24 @@
+{
+  "id" : "0ffabff5-13fb-45b7-86c7-d84e9168fa85",
+  "name" : "06_changeset_97259223_download",
+  "request" : {
+    "url" : "/0.6/changeset/97259223/download",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "bodyFileName" : "06_changeset_97259223_download-0ffabff5-13fb-45b7-86c7-d84e9168fa85.xml",
+    "headers" : {
+      "Date" : "Tue, 02 Apr 2024 21:11:16 GMT",
+      "Server" : "Apache/2.4.54 (Ubuntu)",
+      "Cache-Control" : "private, max-age=0, must-revalidate",
+      "Strict-Transport-Security" : "max-age=31536000; includeSubDomains; preload",
+      "Upgrade" : "h2,h2c",
+      "Keep-Alive" : "timeout=5, max=100",
+      "Content-Type" : "application/xml; charset=utf-8"
+    }
+  },
+  "uuid" : "0ffabff5-13fb-45b7-86c7-d84e9168fa85",
+  "persistent" : true,
+  "insertionIndex" : 6
+}
