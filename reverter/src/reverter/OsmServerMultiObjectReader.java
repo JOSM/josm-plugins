@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
@@ -49,7 +51,7 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
      * @param list The map of ids to versions
      * @return The queries to make
      */
-    private static List<String> makeQueryStrings(OsmPrimitiveType type, Map<Long,Integer> list) {
+    private static List<String> makeQueryStrings(OsmPrimitiveType type, Map<Long, Integer> list) {
         // This is a "worst-case" calculation. Keep it fast (and err higher rather than lower), not accurate.
         final int expectedSize = (int) (list.entrySet().stream().mapToLong(entry ->
                 // Keep in mind that 0-3 is 0, 3-32 is 1, 32-316 is 2, and so on when rounding log10.
@@ -62,8 +64,8 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
                 ).sum() / MAX_QUERY_LENGTH);
         List<String> result = new ArrayList<>(expectedSize + 1);
         StringBuilder sb = new StringBuilder();
-        int cnt=0;
-        for (Map.Entry<Long,Integer> entry : list.entrySet()) {
+        int cnt = 0;
+        for (Map.Entry<Long, Integer> entry : list.entrySet()) {
             if (cnt == 0) {
                 sb.append(type.getAPIName());
                 sb.append("s?");
@@ -82,7 +84,7 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
                 cnt = 0;
             }
         }
-        if (cnt>0) {
+        if (cnt > 0) {
             result.add(sb.toString());
         }
         return result;
@@ -108,14 +110,14 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
     protected static final int MAX_QUERY_LENGTH = 8000;
 
     /**
-     * Parse many objects
+     * Parse many objects.
      * @param type The object type (<i>must</i> be common between all objects)
-     * @param list The map of object id to object version
+     * @param list The map of object id to object version. Successfully retrieved objects are removed.
      * @param progressMonitor The progress monitor to update
      * @throws OsmTransferException If there is an issue getting the data
      */
-    public void readMultiObjects(OsmPrimitiveType type, Map<Long,Integer> list, ProgressMonitor progressMonitor) throws OsmTransferException {
-        for (String query : makeQueryStrings(type,list)) {
+    public void readMultiObjects(OsmPrimitiveType type, Map<Long, Integer> list, ProgressMonitor progressMonitor) throws OsmTransferException {
+        for (String query : makeQueryStrings(type, list)) {
             if (progressMonitor.isCanceled()) {
                 return;
             }
@@ -129,9 +131,54 @@ public class OsmServerMultiObjectReader extends OsmServerReader {
             } catch (IOException | IllegalDataException e) {
                 Logging.warn(e);
                 throw new OsmTransferException(e);
+            } catch (OsmApiException e) {
+                Logging.warn(e);
+                // allow to continue further bulk requests
+                if (e.getResponseCode() != HttpURLConnection.HTTP_FORBIDDEN
+                        && e.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
+                    throw e;
+                }
             } finally {
                 rdr.callback = null;
             }
+        }
+    }
+
+    /**
+     * Parse many objects. If redacted elements are requested the method tries to retrieve the next older version.
+     * @param type The object type (<i>must</i> be common between all objects)
+     * @param list The map of object id to object version. Successfully retrieved objects are removed.
+     * @param progressMonitor The progress monitor to update
+     * @throws OsmTransferException If there is an issue getting the data
+     */
+    public void readMultiObjectsOrNextOlder(OsmPrimitiveType type, Map<Long, Integer> list,
+            ProgressMonitor progressMonitor) throws OsmTransferException {
+        readMultiObjects(type, list, progressMonitor);
+        // If multi-read failed, retry with regular read
+        for (Map.Entry<Long, Integer> entry : list.entrySet()) {
+            if (progressMonitor.isCanceled()) return;
+            readObjectVersion(type, entry.getKey(), entry.getValue(), progressMonitor);
+        }
+    }
+
+    private void readObjectVersion(OsmPrimitiveType type, long id, int version, ProgressMonitor progressMonitor)
+            throws OsmTransferException {
+        boolean readOK = false;
+        while (!readOK && version >= 1) {
+            try {
+                readObject(id, version, type, progressMonitor.createSubTaskMonitor(1, true));
+                readOK = true;
+            } catch (OsmApiException e) {
+                if (e.getResponseCode() != HttpURLConnection.HTTP_FORBIDDEN) {
+                    throw e;
+                }
+                String message = "Version " + version + " of " + id + " is unauthorized";
+                Logging.info(version <= 1 ? message : message + ", requesting previous one");
+                version--;
+            }
+        }
+        if (!readOK) {
+            Logging.warn("Cannot retrieve any previous version of {1} {2}", type, id);
         }
     }
 

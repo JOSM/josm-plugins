@@ -4,7 +4,6 @@ package reverter;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,10 +45,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Fetches and stores data for reverting of specific changeset.
@@ -203,27 +200,6 @@ public class ChangesetReverter {
         addMissingHistoryIds(deleted);
     }
 
-    private static void readObjectVersion(OsmServerMultiObjectReader rdr, PrimitiveId id, int version, ProgressMonitor progressMonitor)
-            throws OsmTransferException {
-        boolean readOK = false;
-        while (!readOK && version >= 1) {
-            try {
-                rdr.readObject(id, version, progressMonitor.createSubTaskMonitor(1, true));
-                readOK = true;
-            } catch (OsmApiException e) {
-                if (e.getResponseCode() != HttpURLConnection.HTTP_FORBIDDEN) {
-                    throw e;
-                }
-                String message = "Version " + version + " of " + id + " is unauthorized";
-                Logging.info(version <= 1 ? message : message + ", requesting previous one");
-                version--;
-            }
-        }
-        if (!readOK) {
-            Logging.warn("Cannot retrieve any previous version of "+id);
-        }
-    }
-
     /**
      * fetch objects that were updated or deleted by changeset
      * @param progressMonitor progress monitor
@@ -237,9 +213,9 @@ public class ChangesetReverter {
                 addChangesetIdPrefix(
                         trn("Downloading history for {0} object", "Downloading history for {0} objects", num, num)), num + 1);
         try {
-            HashMap<Long, Integer> nodeList = new HashMap<>(),
-                    wayList = new HashMap<>(),
-                    relationList = new HashMap<>();
+            HashMap<Long, Integer> nodeList = new HashMap<>();
+            HashMap<Long, Integer> wayList = new HashMap<>();
+            HashMap<Long, Integer> relationList = new HashMap<>();
 
             for (HashSet<HistoryOsmPrimitive> collection : Arrays.asList(updated, deleted)) {
                 for (HistoryOsmPrimitive entry : collection) {
@@ -255,23 +231,9 @@ public class ChangesetReverter {
                     }
                 }
             }
-            rdr.readMultiObjects(OsmPrimitiveType.NODE, nodeList, progressMonitor);
-            rdr.readMultiObjects(OsmPrimitiveType.WAY, wayList, progressMonitor);
-            rdr.readMultiObjects(OsmPrimitiveType.RELATION, relationList, progressMonitor);
-            if (progressMonitor.isCanceled()) return;
-            // If multi-read failed, retry with regular read
-            for (Map.Entry<Long, Integer> entry : nodeList.entrySet()) {
-                if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.NODE), entry.getValue(), progressMonitor);
-            }
-            for (Map.Entry<Long, Integer> entry : wayList.entrySet()) {
-                if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.WAY), entry.getValue(), progressMonitor);
-            }
-            for (Map.Entry<Long, Integer> entry : relationList.entrySet()) {
-                if (progressMonitor.isCanceled()) return;
-                readObjectVersion(rdr, new SimplePrimitiveId(entry.getKey(), OsmPrimitiveType.RELATION), entry.getValue(), progressMonitor);
-            }
+            rdr.readMultiObjectsOrNextOlder(OsmPrimitiveType.NODE, nodeList, progressMonitor);
+            rdr.readMultiObjectsOrNextOlder(OsmPrimitiveType.WAY, wayList, progressMonitor);
+            rdr.readMultiObjectsOrNextOlder(OsmPrimitiveType.RELATION, relationList, progressMonitor);
             if (progressMonitor.isCanceled()) return;
             nds = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
             ds.update(() -> {
@@ -512,10 +474,13 @@ public class ChangesetReverter {
 
         // Remove primitives where we already know the LatLon.
         nodes.removeIf(n -> {
+            if (n.isDeleted() || n.isLatLonKnown())
+                return true;
             PrimitiveId id = n.getPrimitiveId();
             OsmPrimitive p = ds.getPrimitiveById(id);
-            return !(p instanceof Node) || ((Node) p).isLatLonKnown();
+            return !(p instanceof Node) || ((Node) p).isLatLonKnown() || p.getVersion() <= 1;
         });
+
         progressMonitor.worked(num - nodes.size());
 
         // Do bulk version fetches first
@@ -523,17 +488,18 @@ public class ChangesetReverter {
         final Map<Long, Integer> versionMap = nodes.stream()
                 .collect(Collectors.toMap(AbstractPrimitive::getUniqueId,
                         id -> Math.max(1, Optional.ofNullable(ds.getPrimitiveById(id)).orElse(id).getVersion() - 1)));
+
         try {
             while (!versionMap.isEmpty()) {
                 final OsmServerMultiObjectReader rds = new OsmServerMultiObjectReader();
                 final ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(num, false);
                 subMonitor.beginTask(tr("Fetching multi-objects"), versionMap.size());
-                rds.readMultiObjects(OsmPrimitiveType.NODE, versionMap, subMonitor);
+                rds.readMultiObjectsOrNextOlder(OsmPrimitiveType.NODE, versionMap, subMonitor);
                 subMonitor.finishTask();
                 final DataSet history = rds.parseOsm(progressMonitor.createSubTaskMonitor(0, false));
-                versionMap.replaceAll((key, value) -> value - 1);
-                versionMap.values().removeIf(i -> i <= 0);
                 ds.update(() -> updateNodes(progressMonitor, nodes, versionMap, history));
+                versionMap.values().removeIf(i -> i <= 1);
+                versionMap.replaceAll((key, value) -> value - 1);
                 if (progressMonitor.isCanceled()) {
                     break;
                 }
@@ -554,11 +520,14 @@ public class ChangesetReverter {
         for (Node n : nodes) {
             if (!n.isDeleted() && !n.isLatLonKnown()) {
                 final Node historyNode = (Node) history.getPrimitiveById(n);
-                if (historyNode != null && historyNode.isLatLonKnown()
-                        && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
-                    n.load(historyNode.save());
-                    versionMap.remove(n.getUniqueId());
-                    progressMonitor.worked(1);
+                if (historyNode != null) {
+                    if (historyNode.isLatLonKnown()
+                            && changeset.getClosedAt().isAfter(historyNode.getInstant())) {
+                        n.load(historyNode.save());
+                        progressMonitor.worked(1);
+                    } else {
+                        versionMap.put(n.getId(), historyNode.getVersion());
+                    }
                 }
             }
             if (progressMonitor.isCanceled()) {
