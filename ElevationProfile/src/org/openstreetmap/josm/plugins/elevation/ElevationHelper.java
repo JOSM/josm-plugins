@@ -76,13 +76,13 @@ public final class ElevationHelper {
         }
 
         // no HGT, check for elevation data in GPX
-        if (!wpt.attr.containsKey(HEIGHT_ATTRIBUTE)) {
+        // Parse elevation from GPX data
+        String height = wpt.getString(HEIGHT_ATTRIBUTE);
+        if (height == null) {
             // GPX has no elevation data :-(
             return NO_ELEVATION;
         }
 
-        // Parse elevation from GPX data
-        String height = wpt.getString(ElevationHelper.HEIGHT_ATTRIBUTE);
         try {
             return Double.parseDouble(height);
         } catch (NumberFormatException e) {
