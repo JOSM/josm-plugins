@@ -58,13 +58,12 @@ public final class ElevationHelper {
     }
 
     /**
-     * Gets the elevation (Z coordinate) of a GPX way point in meter or feet (for
-     * US, UK, ZA, AU, NZ and CA).
+     * Gets the elevation (Z coordinate) of a GPX way point in meter.
      *
      * @param wpt
      *            The way point instance.
-     * @return The x coordinate or <code>NO_ELEVATION</code>, if the given way point is null or contains
-     *         not height attribute.
+     * @return The Z coordinate or <code>NO_ELEVATION</code>, if the given way point is null or contains
+     *         no height attribute.
      */
     public static double getElevation(WayPoint wpt) {
         if (wpt == null) return NO_ELEVATION;
@@ -77,18 +76,20 @@ public final class ElevationHelper {
 
         // no HGT, check for elevation data in GPX
         // Parse elevation from GPX data
-        String height = wpt.getString(HEIGHT_ATTRIBUTE);
-        if (height == null) {
-            // GPX has no elevation data :-(
-            return NO_ELEVATION;
+        Object height = wpt.get(HEIGHT_ATTRIBUTE);
+        if (height instanceof String) {
+            try {
+                return Double.parseDouble((String) height);
+            } catch (NumberFormatException e) {
+                Logging.error(String.format("Cannot parse double from '%s': %s", height, e.getMessage()));
+            }
+        } else if (height instanceof Double) {
+            eleInt = ((Double) height).doubleValue();
+            if (isValidElevation(eleInt)) {
+                return eleInt;
+            }
         }
-
-        try {
-            return Double.parseDouble(height);
-        } catch (NumberFormatException e) {
-            Logging.error(String.format("Cannot parse double from '%s': %s", height, e.getMessage()));
-            return NO_ELEVATION;
-        }
+        return NO_ELEVATION;
     }
 
     private static double getElevation(LatLon ll) {
