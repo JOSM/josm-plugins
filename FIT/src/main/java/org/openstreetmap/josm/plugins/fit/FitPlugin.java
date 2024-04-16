@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -54,6 +55,7 @@ public class FitPlugin extends Plugin {
 
         @Override
         public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
+            final var fieldMap = new HashMap<Class<? extends Record>, RecordComponent[]>(1);
             try (var inputStream = Files.newInputStream(file.toPath())) {
                 final var records = FitReader.read(inputStream, FitReaderOptions.TRY_TO_FINISH);
                 final var gpxData = new GpxData(true);
@@ -72,8 +74,8 @@ public class FitPlugin extends Plugin {
                             waypoint.setInstant(heartRateCadenceDistanceSpeed.timestamp());
                             // Use a sorted map for consistency
                             final var map = new TreeMap<String, Object>();
-                            for (RecordComponent component : HeartRateCadenceDistanceSpeed.class
-                                    .getRecordComponents()) {
+                            for (RecordComponent component : fieldMap.computeIfAbsent(HeartRateCadenceDistanceSpeed.class,
+                                    Class::getRecordComponents)) {
                                 if (Arrays.asList("lat", "lon", "timestamp", "unknown").contains(component.getName())) {
                                     continue; // skip information that has specific fields
                                 }
