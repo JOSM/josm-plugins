@@ -59,7 +59,8 @@ public record HeartRateCadenceDistanceSpeed(Instant timestamp, double lat, doubl
                 // Field 0 was "closer" to the lat, and Field 1 was "closer" to the lon.
                 case 0 -> lat = decodeDegrees(NumberUtils.decodeLong(size, littleEndian, inputStream));
                 case 1 -> lon = decodeDegrees(NumberUtils.decodeLong(size, littleEndian, inputStream));
-                case 2 -> ele = decodeElevation(NumberUtils.decodeLong(size, littleEndian, inputStream));
+                // 2 is documented ele, 78 also seems to be ele (GJ @ 1416m, record 78 in GJ test data decodes to ~1400)
+                case 2, 78 -> ele = decodeElevation(NumberUtils.decodeLong(size, littleEndian, inputStream));
                 case 3 -> heartRate = NumberUtils.decodeShort(size, littleEndian, inputStream);
                 case 4 -> cadence = NumberUtils.decodeShort(size, littleEndian, inputStream);
                 case 5 -> distance = NumberUtils.decodeInt(size, littleEndian, inputStream);

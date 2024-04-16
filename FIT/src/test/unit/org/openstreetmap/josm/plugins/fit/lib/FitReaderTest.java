@@ -10,13 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.plugins.fit.lib.global.FitData;
 import org.openstreetmap.josm.plugins.fit.lib.global.FitDevDataRecord;
-import org.openstreetmap.josm.plugins.fit.lib.global.Global;
 import org.openstreetmap.josm.plugins.fit.lib.global.FitDeveloperDataIdMessage;
 import org.openstreetmap.josm.plugins.fit.lib.global.FitDevice;
+import org.openstreetmap.josm.plugins.fit.lib.global.Global;
 import org.openstreetmap.josm.plugins.fit.lib.global.HeartRateCadenceDistanceSpeed;
 import org.openstreetmap.josm.plugins.fit.lib.records.FitDevIntData;
 import org.openstreetmap.josm.plugins.fit.lib.records.internal.FitDeveloperFieldDescriptionMessage;
@@ -169,5 +173,24 @@ class FitReaderTest {
                 () -> assertEquals(new HeartRateCadenceDistanceSpeed(140, 88, 510, 2800, doughnuts), fitData[2]),
                 () -> assertEquals(new HeartRateCadenceDistanceSpeed(143, 90, 2080, 2920, doughnuts), fitData[3]),
                 () -> assertEquals(new HeartRateCadenceDistanceSpeed(144, 92, 3710, 3050, doughnuts), fitData[4]));
+    }
+
+    @Test
+    void testNonRegression23613() throws IOException {
+        final FitData[] fitData;
+        try (final var inputStream = TestUtils.getRegressionDataStream(23613, "2023-10-30-05-04-50.fit")) {
+            fitData = FitReader.read(inputStream);
+        }
+        final var heartRateCadenceDistanceSpeed = Arrays.stream(fitData).filter(HeartRateCadenceDistanceSpeed.class::isInstance)
+                .map(HeartRateCadenceDistanceSpeed.class::cast).toArray(HeartRateCadenceDistanceSpeed[]::new);
+        assertEquals(160, heartRateCadenceDistanceSpeed.length);
+        assertEquals(157, Arrays.stream(heartRateCadenceDistanceSpeed)
+                .filter(r -> !Double.isNaN(r.lat()) && !Double.isNaN(r.lon())).count());
+        assertEquals(39.0662439, heartRateCadenceDistanceSpeed[2].lat(), ILatLon.MAX_SERVER_PRECISION);
+        assertEquals(-108.5501406, heartRateCadenceDistanceSpeed[2].lon(), ILatLon.MAX_SERVER_PRECISION);
+        assertEquals(39.0674976, heartRateCadenceDistanceSpeed[heartRateCadenceDistanceSpeed.length - 2].lat(),
+                ILatLon.MAX_SERVER_PRECISION);
+        assertEquals(-108.5603802, heartRateCadenceDistanceSpeed[heartRateCadenceDistanceSpeed.length - 2].lon(),
+                ILatLon.MAX_SERVER_PRECISION);
     }
 }
