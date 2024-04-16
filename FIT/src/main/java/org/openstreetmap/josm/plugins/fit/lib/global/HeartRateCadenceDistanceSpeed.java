@@ -99,7 +99,11 @@ public record HeartRateCadenceDistanceSpeed(Instant timestamp, double lat, doubl
         // Assume that the equation doesn't have fractions and no additions (0, 0)
         // 56.7421794 = 676960569 / 180 * x => x = 56.7421794 * 180 / 676960569 = 1.5087e-5 (inverse -> 66280.359)
         // 56.7421794 = 676960569 * 180 * x => x = 56.7421794 / (180 * 676960569) = 3.56e-8 (inverse -> 2.1474836E9, or Integer.MAX_VALUE)
-        return original * 180d / Integer.MAX_VALUE;
+        var raw = original * 180d / Integer.MAX_VALUE;
+        while (raw >= 180d) {
+            raw -= 360d;
+        }
+        return raw;
     }
 
     private static double decodeElevation(long original) {
