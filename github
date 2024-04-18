@@ -13,11 +13,24 @@ if(($ARGV[0]||'') eq 'checkout')
     system('git','clone',"https://github.com/JOSM/$plugin");
   }
 }
+elsif(($ARGV[0]||'') eq 'status')
+{
+  my $dir = cwd();
+  for my $plugin (<$file>)
+  {
+    print($plugin);
+    chomp($plugin);
+    chdir($plugin);
+    system('git','status',$plugin);
+    chdir($dir);
+  }
+}
 else
 {
   my $dir = cwd();
   for my $plugin (<$file>)
   {
+    print($plugin);
     chomp($plugin);
     chdir($plugin);
     system('git','pull');
