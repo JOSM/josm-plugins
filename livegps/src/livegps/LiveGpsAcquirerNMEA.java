@@ -165,7 +165,7 @@ public class LiveGpsAcquirerNMEA implements Runnable {
                                 if (w.getString("course") != null)
                                     course = Float.valueOf(w.getString("course"));
                                 if (w.getString("speed") != null)
-                                    speed = Float.valueOf(w.getString("speed"))/3.6;
+                                    speed = Float.valueOf(w.getString("speed"))/3.6f;
                                 Logging.trace("New LiveGPS entry: " + w);
                                 LiveGpsData gpsData = new LiveGpsData(w.lat(), w.lon(), course, speed, 0.0f, 0.0f);
                                 gpsData.setWaypoint(w);
