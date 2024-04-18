@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+
+use strict;
+use Cwd;
+
+open(my $file, '<', 'github_plugins') or die;
+
+if(($ARGV[0]||'') eq 'checkout')
+{
+  for my $plugin (<$file>)
+  {
+    chomp($plugin);
+    system('git','clone',"https://github.com/JOSM/$plugin");
+  }
+}
+else
+{
+  my $dir = cwd();
+  for my $plugin (<$file>)
+  {
+    chomp($plugin);
+    chdir($plugin);
+    system('git','pull');
+    chdir($dir);
+  }
+}
+close($file);
