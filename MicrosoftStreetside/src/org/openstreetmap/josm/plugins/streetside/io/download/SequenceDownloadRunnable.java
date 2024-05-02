@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.plugins.streetside.StreetsideImage;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideURL.APIv3;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -67,6 +69,9 @@ public final class SequenceDownloadRunnable extends BoundsDownloadRunnable {
             final long endTime = System.currentTimeMillis();
             LOG.log(Level.INFO, "Successfully loaded {0} Microsoft Streetside images in {1} seconds.",
                     new Object[] {this.data.getImages().size(), (endTime - startTime) / 1000});
+        } catch (DateTimeParseException dateTimeParseException) {
+            // Added to debug #23658 -- a valid date string caused an exception
+            BugReport.intercept(dateTimeParseException).put("url", con.getURL()).warn();
         }
     }
 
