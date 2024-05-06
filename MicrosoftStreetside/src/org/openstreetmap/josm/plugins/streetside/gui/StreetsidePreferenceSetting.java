@@ -133,8 +133,8 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting {
     @SuppressWarnings("PMD.ShortMethodName")
     @Override
     public boolean ok() {
-        StreetsideProperties.DOWNLOAD_MODE
-                .put(DOWNLOAD_MODE.fromLabel(Objects.requireNonNull(downloadModeComboBox.getSelectedItem()).toString()).getPrefId());
+        StreetsideProperties.DOWNLOAD_MODE.put(DOWNLOAD_MODE
+                .fromLabel(Objects.requireNonNull(downloadModeComboBox.getSelectedItem()).toString()).getPrefId());
         StreetsideProperties.DISPLAY_HOUR.put(displayHour.isSelected());
         StreetsideProperties.TIME_FORMAT_24.put(format24.isSelected());
         StreetsideProperties.MOVE_TO_IMG.put(moveTo.isSelected());

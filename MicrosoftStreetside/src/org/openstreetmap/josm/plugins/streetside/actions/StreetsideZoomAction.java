@@ -30,7 +30,8 @@ public class StreetsideZoomAction extends JosmAction implements StreetsideDataLi
      * Main constructor.
      */
     public StreetsideZoomAction() {
-        super(tr("Zoom to selected image"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT).setOptional(true),
+        super(tr("Zoom to selected image"),
+                new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT).setOptional(true),
                 tr("Zoom to the currently selected Streetside image"), null, false, "mapillaryZoom", true);
     }
 

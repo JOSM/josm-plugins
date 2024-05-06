@@ -21,6 +21,8 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public final class StreetsideURL {
 
+    /** The maximum API responses */
+    public static final int MAX_RETURN = 500;
     private static final Logger LOGGER = Logger.getLogger(StreetsideURL.class.getCanonicalName());
 
     /**
@@ -49,7 +51,7 @@ public final class StreetsideURL {
     static String queryStreetsideBoundsString(Map<String, String> parts) {
         final var ret = new StringBuilder(100);
         if (parts != null) {
-            ret.append("?count=500").append("&key=").append(StreetsideProperties.BING_MAPS_KEY.get());
+            ret.append("?count=").append(MAX_RETURN).append("&key=").append(StreetsideProperties.BING_MAPS_KEY.get());
             if (parts.containsKey("bbox")) {
                 final String[] bbox = parts.get("bbox").split(",");
                 ret.append("&mapArea=").append(bbox[OSM_BBOX_SOUTH]).append(',').append(bbox[OSM_BBOX_WEST]).append(',')

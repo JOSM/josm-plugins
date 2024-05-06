@@ -40,8 +40,8 @@ public class StreetsideWalkAction extends JosmAction implements StreetsideDataLi
      * Automatically go through images
      */
     public StreetsideWalkAction() {
-        super(tr("Walk mode"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT).setOptional(true), tr("Walk mode"),
-                null, false, "streetsideWalk", true);
+        super(tr("Walk mode"), new ImageProvider(StreetsidePlugin.LOGO).setSize(ImageSizes.DEFAULT).setOptional(true),
+                tr("Walk mode"), null, false, "streetsideWalk", true);
     }
 
     @Override

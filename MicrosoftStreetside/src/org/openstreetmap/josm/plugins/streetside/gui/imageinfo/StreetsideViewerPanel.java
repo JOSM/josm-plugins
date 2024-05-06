@@ -149,7 +149,7 @@ public final class StreetsideViewerPanel extends JPanel implements StreetsideDat
 
             if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
                 LOGGER.log(Logging.LEVEL_DEBUG, "Privacy link set for Streetside image {0} quadKey {1}",
-                        new Object[] {bubbleId, newImageId});
+                        new Object[] { bubbleId, newImageId });
             }
 
             imageLinkChangeListener.valueChanged(null);
