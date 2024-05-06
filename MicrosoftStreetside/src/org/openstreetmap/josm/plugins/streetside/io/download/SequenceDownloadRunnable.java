@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -148,11 +149,11 @@ public final class SequenceDownloadRunnable extends BoundsDownloadRunnable imple
                 final var roll = node.containsKey("ro") ? node.getJsonNumber("ro").doubleValue() : Double.NaN;
                 final var vintageStart = LocalDate
                         .parse(node.getString("vintageStart").replace("GMT", "UTC"),
-                                DateTimeFormatter.ofPattern("dd LLL yyyy zzz"))
+                                DateTimeFormatter.ofPattern("dd LLL yyyy zzz", Locale.ROOT))
                         .atStartOfDay().toInstant(ZoneOffset.UTC);
                 final var vintageEnd = LocalDate
                         .parse(node.getString("vintageStart").replace("GMT", "UTC"),
-                                DateTimeFormatter.ofPattern("dd LLL yyyy zzz"))
+                                DateTimeFormatter.ofPattern("dd LLL yyyy zzz", Locale.ROOT))
                         .atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC);
                 final List<String> imageUrlSubdomains = node.getJsonArray("imageUrlSubdomains")
                         .getValuesAs(JsonString.class).stream().map(JsonString::getString).toList();

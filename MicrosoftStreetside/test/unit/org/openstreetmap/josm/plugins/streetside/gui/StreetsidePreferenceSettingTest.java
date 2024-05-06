@@ -99,8 +99,10 @@ class StreetsidePreferenceSettingTest {
             ((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox")).setSelectedIndex(i);
             settings.ok();
             assertEquals(new StringProperty("streetside.download-mode", "default").get(),
-                    DOWNLOAD_MODE.fromLabel(Objects.requireNonNull(((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox"))
-                            .getSelectedItem()).toString()).getPrefId());
+                    DOWNLOAD_MODE.fromLabel(Objects
+                            .requireNonNull(((JComboBox<String>) getPrivateFieldValue(settings, "downloadModeComboBox"))
+                                    .getSelectedItem())
+                            .toString()).getPrefId());
         }
     }
 
