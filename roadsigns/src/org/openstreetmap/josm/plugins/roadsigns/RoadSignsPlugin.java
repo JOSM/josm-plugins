@@ -45,7 +45,9 @@ public class RoadSignsPlugin extends Plugin {
     public static List<String> iconDirs;
 
     public static RoadSignsPlugin plugin;
-
+    
+    public static final PresetMetaData PRESET_AT = new PresetMetaData(
+            "AT", tr("Austria"), "resource://data/roadsignpresetAT.xml", "resource://images/AT/");
     public static final PresetMetaData PRESET_BE = new PresetMetaData(
             "BE", tr("Belgium"), "resource://data/roadsignpresetBE.xml", "resource://images/BE/");
     public static final PresetMetaData PRESET_CZ = new PresetMetaData(
@@ -59,7 +61,7 @@ public class RoadSignsPlugin extends Plugin {
     public static final PresetMetaData PRESET_SK = new PresetMetaData(
             "SK", tr("Slovakia"), "resource://data/roadsignpresetSK.xml", "resource://images/SK/");
     public static final Collection<PresetMetaData> DEFAULT_PRESETS = Arrays.asList(
-            PRESET_BE, PRESET_CZ, PRESET_ES, PRESET_DE, PRESET_PL, PRESET_SK);
+            PRESET_AT, PRESET_BE, PRESET_CZ, PRESET_ES, PRESET_DE, PRESET_PL, PRESET_SK);
 
     public RoadSignsPlugin(PluginInformation info) {
         super(info);

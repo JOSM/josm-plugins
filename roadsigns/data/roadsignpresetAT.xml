@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+roadsigns plugin preset file for Austria
+-->
+<roadsignpreset country="AT">
+    <sign ref="AT:52.16" name="Bicycle path with mandatory use (AT:52.16)" de.name="Radweg mit Benutzungspflicht (AT:52.16)"
+        help="Mandatory use can be specified as a restriction on the corresponding road, see:"
+        de.help="Benutzungspflicht kann als Einschränkung an der entsprechenden Straße angegeben werden, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="cycleway"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.27" name="Bicycle path without mandatory use (AT:52.27)" de.name="Radweg ohne Benutzungspflicht (AT:52.27)"
+        help="Differs from bicycle paths WITH mandatory use by the lack of restrictions on the corresponding roads, see:"
+        de.help="Unterscheidet sich von Radwegen MIT Benutzungspflicht durch die fehlende Einschränkung an den entsprechenden Straßen, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="cycleway"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.17b" name="Bridle path (AT:52.17b)" de.name="Reitweg (AT:52.17b)">
+        <tag key="highway" value="bridleway"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.17" name="Pedestrian path (AT:52.17)" de.name="Gehweg (AT:52.17)">
+        <tag key="highway" value="footway"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.17a-a" name="Pedestrian &amp; bicycle path with mandatory use (AT:52.17a-a)" de.name="Gemeinsamer Geh- und Radweg mit Benutzungspflicht (AT:52.17a-a)"
+        help="Mandatory use can be specified as a restriction on the corresponding road, see:"
+        de.help="Benutzungspflicht kann als Einschränkung an der entsprechenden Straße angegeben werden, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="path"/>
+        <tag key="foot" value="designated"/>
+        <tag key="bicycle" value="designated"/>
+        <tag key="segregated" value="no"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.28a" name="Pedestrian &amp; bicycle path without mandatory use (AT:52.28a)" de.name="Gemeinsamer Geh- und Radweg ohne Benutzungspflicht (AT:52.28a)"
+        help="Differs from pedestrian &amp; bicycle paths WITH mandatory use by the lack of restrictions on the corresponding roads, see:"
+        de.help="Unterscheidet sich von Geh- und Radwegen MIT Benutzungspflicht durch die fehlende Einschränkung an den entsprechenden Straßen, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="path"/>
+        <tag key="foot" value="designated"/>
+        <tag key="bicycle" value="designated"/>
+        <tag key="segregated" value="no"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.17a-b" name="Split pedestrian &amp; bicycle path with mandatory use (AT:52.17a-b)" de.name="Getrennter Rad- und Gehweg mit Benutzungspflicht (AT:52.17a-b)"
+        help="Mandatory use can be specified as a restriction on the corresponding road, see:"
+        de.help="Benutzungspflicht kann als Einschränkung an der entsprechenden Straße angegeben werden, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="path"/>
+        <tag key="foot" value="designated"/>
+        <tag key="bicycle" value="designated"/>
+        <tag key="segregated" value="yes"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.28b" name="Split pedestrian &amp; bicycle path without mandatory use (AT:52.28b)" de.name="Getrennter Rad- und Gehweg ohne Benutzungspflicht (AT:52.28b)"
+        help="Differs from split pedestrian &amp; bicycle paths WITH mandatory use by the lack of restrictions on the corresponding roads, see:"
+        de.help="Unterscheidet sich von getrennten Geh- und Radwegen MIT Benutzungspflicht durch die fehlende Einschränkung an den entsprechenden Straßen, siehe:"
+        wiki="Tag:bicycle%3Duse_sidepath">
+        <tag key="highway" value="path"/>
+        <tag key="foot" value="designated"/>
+        <tag key="bicycle" value="designated"/>
+        <tag key="segregated" value="yes"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:53.26" name="Bicycle road (AT:53.26)" de.name="Fahrradstraße (AT:53.26)"
+        de.wiki="DE:Key:bicycle_road#Situation_in_.C3.96sterreich">
+        <tag key="bicycle_road" value="yes"/>
+        <tag key="bicycle" value="designated"/>
+        <tag key="maxspeed" value="30"/>
+        <tag key="source:maxspeed" value="AT:bicycle_road"/>
+        <tag key="vehicle" value="destination" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:53.9a" name="Pedestrian zone (AT:53.9a)" de.name="Fußgängerzone (AT:53.9a)"
+            wiki="Tag:highway%3Dpedestrian"
+            de.wiki="DE:Tag:highway%3Dpedestrian">
+        <tag key="highway" value="pedestrian"/>
+        <tag key="access" value="" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:53.26a" icon="AT_53_26a" name="School zone (AT:53.26a)" de.name="Schulstraße (AT:53.26a)"
+            wiki="Tag:highway%3Dliving_street"
+            de.wiki="DE:Tag:highway%3Dliving_street#Schulstraßen">
+        <tag key="highway" value="living_street"/>
+        <tag key="motor_vehicle" value="yes" />
+        <tag key="motor_vehicle:conditional" value="private @ ($condition)" />
+        <tag key="maxspeed:conditional" value="walk @ ($condition)" />
+        <parameter input="textfield" name="conditional" de.name="conditional" type="text" ident="condition" default="Mo-Fr 07:00-09:00, 11:30-13:00; PH off; SH off" suffix="" field_width="20"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:53.9c" icon="AT_53_9c" name="Home zone (AT:53.9c)" de.name="Wohnstraße (AT:53.9c)"
+            wiki="Tag:highway%3Dliving_street"
+            de.wiki="DE:Tag:highway%3Dliving_street#Wohnstra.C3.9Fen">
+        <tag key="highway" value="living_street"/>
+        <tag key="vehicle" value="destination" />
+        <tag key="bicycle" value="yes" />
+        <tag key="maxspeed" value="walk" />
+        <tag key="source:maxspeed" value="AT:Wohnstraße"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+    
+    <sign ref="AT:53.9e[$val]" icon="AT_53_9e" name="Traffic calming zone (AT:53.9e)" de.name="Begegnungszone (AT:53.9e)"
+            wiki="Tag:highway%3Dliving_street"
+            de.wiki="DE:Tag:highway%3Dliving_street#Begegnungszonen">
+        <tag key="highway" value="living_street"/>
+        <tag key="vehicle" value="yes" />
+        <tag key="maxspeed" value="$val" />
+        <tag key="source:maxspeed" value="AT:Begegnungszone:$val"/>
+        <parameter ident="val" input="textfield" suffix="km/h" default="20" field_width="2"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+    
+    <sign ref="AT:52.19[$val]" icon="AT_52_19" name="Minimum speed limit (AT:52.19)" de.name="Vorgeschriebene Mindestgeschwindigkeit (AT:52.19)"
+            wiki="Key:minspeed">
+        <tag key="minspeed" value="$val"/>
+        <parameter ident="val" input="textfield" suffix="km/h" default="30" field_width="2"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+    
+    <sign ref="AT:WVO_F.1" name="Treppelweg (AT:WVO_F.1)" de.name="Treppelweg (AT:WVO_F.1)" 
+        de.help="Treppelwege sind in der Wasserstraßen-Verkehrsordnung geregelt und in erster Linie zu Zwecken der Schifffahrt angelegt. 
+            Zumeist daher highway=track + tracktype=grade1, in seltenen Fällen auch highway=path. 
+            Beachte auch die quadratischen Zusatztafeln für die Berechtigungen für Radfahrer und Rollstuhlfahrer."
+        de.wiki="Treppelweg">
+        <tag key="highway" value="track"/>
+        <tag key="motor_vehicle" value="private"/>
+        <tag key="description" value="Treppelweg"/>
+        <tag key="inline_skates" value="no"/>
+        <tag key="bicycle" value="yes"/>
+        <supplementary id="Zusatztafel_Text"/>
+        <supplementary id="WVO_F.3.1"/>
+        <supplementary id="WVO_F.3.2"/>
+        <supplementary id="WVO_F.4.1"/>
+        <supplementary id="WVO_F.4.2"/>
+    </sign>
+
+    <sign ref="AT:52.1" name="All vehicles prohibited (AT:52.1)" de.name="Verbot für Fahrzeuge aller Art (AT:52.1)">
+        <tag key="vehicle" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Radfahrer"/>
+        <supplementary id="Zusatztafel_ausgenommen_Linienbusse"/>
+        <supplementary id="Zusatztafel_ausgenommen_Taxi"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_landwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_forstwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:FKV_1.9" icon="AT_FKV_1_9" name="Forestry Road (AT:FKV_1.9)" de.name="Forststraße (AT:FKV_1.9)">
+        <tag key="vehicle" value="forestry" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Radfahrer"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.6a" name="Motorcars prohibited (AT:52.6a)" de.name="Verbot für Kraftwagen (AT:52.6a)"
+            long_name="Motorcars and other multi-track motorized vehicles prohibited"
+            de.long_name="Verbot für Kraftwagen und sonstige mehrspurige Kraftfahrzeuge"
+            wiki="Key:motorcar"
+            de.wiki="DE:Key:motorcar">
+        <tag key="motorcar" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Linienbusse"/>
+        <supplementary id="Zusatztafel_ausgenommen_Taxi"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_landwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_forstwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.7a-1" name="Heavy goods vehicles prohibited (AT:52.7a-1)" de.name="Verbot für LKW (AT:52.7a-1)"
+            wiki="Key:hgv"
+            de.wiki="DE:Key:hgv">
+        <tag key="hgv" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_landwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_forstwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.7a-2[$val]" icon="AT_52_7a-2" name="Heavy goods vehicles with a max allowed weight above the specified weight prohibited (AT:52.7a-2)" de.name="Verbot für LKW mit höchst zulässigem Gesamtgewicht über angegebenem Gewicht (AT:52.7a-2)"
+        wiki="Key:maxweightrating">
+        <tag key="maxweightrating:hgv" value="$val"/>
+        <parameter input="textfield" name="max. allowed weight" de.name="höchst zulässiges Gesamtgewicht" type="float" ident="val" default="5.5" suffix="t" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.7a-3[$val]" icon="AT_52_7a-3" name="Heavy goods vehicles exceeding specified length prohibited (AT:52.7a-3)" de.name="Verbot für LKW über angegebener Länge (AT:52.7a-3)"
+        wiki="Key:maxlength"
+        de.wiki="DE:Key:maxlength">
+        <tag key="maxlength" value="$val"/>
+        <parameter input="textfield" name="max. length" de.name="Maximale Länge" type="float" ident="val" default="10" suffix="m" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+
+    <sign ref="AT:52.8c" name="Bicycles prohibited (AT:52.8c)" de.name="Verbot für Fahrräder (AT:52.8c)"
+            wiki="Key:bicycle"
+            de.wiki="DE:Key:access">
+        <tag key="bicycle" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.6b" name="Motorcycles prohibited (AT:52.6b)" de.name="Verbot für Krafträder (AT:52.6b)">
+        <tag key="motorcycle" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.14a" name="Horses prohibited (AT:52.14a)" de.name="Verbot für Reiter (AT:52.14a)">
+        <tag key="horse" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.14b" name="Pedestrians prohibited (AT:52.14b)" de.name="Verbot für Fußgänger (AT:52.14b)">
+        <tag key="foot" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.6c" name="Motor vehicles prohibited (AT:52.6c)" de.name="Verbot für Kraftfahrzeuge (AT:52.6c)"
+        long_name="Motorcycles, also with sidecar, mopeds, mofas as well as motorcars and other multi-track motorized vehicles prohibited (AT:52.6c)"
+        de.long_name="Verbot für Krafträder, auch mit Beiwagen, Kleinkrafträder und Mofas sowie für Kraftwagen und sonstige mehrspurige Kraftfahrzeuge (AT:52.6c)">
+        <tag key="motor_vehicle" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_ausgenommen_Anrainerverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_Linienbusse"/>
+        <supplementary id="Zusatztafel_ausgenommen_Taxi"/>
+        <supplementary id="Zusatztafel_ausgenommen_Lieferverkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_landwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_ausgenommen_forstwirtschaftlicher_Verkehr"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.7e" name="Hazardous cargo prohibited (AT:52.7e)" de.name="Verbot für kennzeichnungspflichtige Kraftfahrzeuge mit gefährlichen Gütern (AT:52.7e)"
+            wiki="Key:hazmat" 
+            de.wiki="DE:Key:hazmat">
+        <tag key="hazmat" value="no" ident="mode"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.9c[$val]" icon="AT_52_9c" name="Weight limit (AT:52.9c)" de.name="Tatsächliches Gewicht (AT:52.9c)"
+            wiki="Key:maxweight">
+        <tag key="maxweight" value="$val"/>
+        <parameter ident="val" input="textfield" default="5.5" suffix="t" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.9d[$val]" icon="AT_52_9d" name="Axle weight limit (AT:52.9d)" de.name="Tatsächliche Achslast (AT:52.9d)"
+            wiki="Key:maxaxleload">
+        <tag key="maxaxleload" value="$val"/>
+        <parameter ident="val" input="textfield" default="8" suffix="t" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.9a[$val]" icon="AT_52_9a" name="Width limit (AT:52.9a)" de.name="Tatsächliche Breite (AT:52.9a)"
+            wiki="Key:maxwidth">
+        <tag key="maxwidth" value="$val"/>
+        <parameter ident="val" input="textfield" default="2" suffix="m" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.9b[$val]" icon="AT_52_9b" name="Height limit (AT:52.9b)" de.name="Tatsächliche Höhe (AT:52.9b)"
+            wiki="Key:maxheight"
+            de.wiki="DE:Key:maxheight">
+        <tag key="maxheight" value="$val"/>
+        <parameter ident="val" input="textfield" default="2.9" suffix="m" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.10a[$val]" icon="AT_52_10a" name="Speed limit (AT:52.10a)" de.name="Zulässige Höchstgeschwindigkeit (AT:52.10a)"
+            wiki="Key:maxspeed"
+            de.wiki="DE:Key:maxspeed">
+        <tag key="maxspeed" value="$val" ident="restriction"/>
+        <parameter ident="val" type="int" input="combo" editable="yes" text="speed-limit" de.text="Höchstgeschwindigkeit" suffix="km/h" values="5,10,20,30,40,50,60,70,80,90,100,110,120,130" default="30" field_width="3"/>
+        <supplementary id="54.f"/>
+        <supplementary id="54.g"/>
+        <supplementary id="Zusatztafel_conditional"/>
+        <supplementary id="Zusatztafel_hgv_conditional"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:52.11a[$val]" icon="AT_52_11a" name="Speed limit zone (AT:52.11a)" de.name="Zone mit zulässiger Höchstgeschwindigkeit (AT:52.11a)">
+        <tag key="maxspeed" value="$val"/>
+        <tag key="source:maxspeed" value="AT:zone:$val"/>
+        <parameter ident="val" type="int" input="combo" editable="yes" text="speed-limit" de.text="Höchstgeschwindigkeit" suffix="km/h" values="20,30" default="30" field_width="2"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:50.7a" icon="AT_50_7a" traffic_sign_tag="" name="Incline (AT:50.7a)" de.name="Steigung (AT:52.7a)"
+            help="Applies for the road section with steep incline. (Split the way at the ends of the steep section.) 
+Positive values indicate movement upward in the direction of the (osm) way and negative values indicate movement downwards in the direction of the way."
+            de.help="Gilt für das Streckenstück mit hoher Steigung. (Weg am Anfang und Ende des steilen Abschnittes auftrennen.) 
+Positive Werte stehen für einen Anstieg in Richtung des ways und negative Werte für einen Abfall in Richtung des ways."
+            wiki="Key:incline"
+            de.wiki="DE:Key:incline">
+        <tag key="incline" value="$val%"/>
+        <parameter input="textfield" name="max. incline" de.name="Maximale Steigung" type="int" ident="val" default="10" suffix="%" field_width="3"/>
+        <supplementary id="Zusatztafel_Text"/>
+    </sign>
+
+    <sign ref="AT:FKV_1.2" icon="AT_FKV_1_2" name="Forest area with permanent ban on access (AT:FKV_1.2)" de.name="Forstliches Sperrgebiet (AT:FKV_1.2)">
+        <tag key="access" value="forestry"/>
+    </sign>
+
+    <sign ref="AT:FKV_1.3" icon="AT_FKV_1_3" name="Forest area with temporary ban on access (AT:FKV_1.3)" de.name="Befristetes Forstliches Sperrgebiet (AT:FKV_1.3)">
+        <tag key="access:conditional" value="forestry @ $condition"/>
+        <parameter input="textfield" name="conditional" de.name="conditional" type="text" ident="condition" default="2024 May 01 - 2024 Oct 01" suffix="" field_width="20"/>
+    </sign>
+    
+    <sign ref="AT:FKV_1.8" icon="AT_FKV_1_8" name="Permission to use forest roads or other paths in the forest by cyclists (AT:FKV_1.8)" de.name="Zulässigkeit der allgemeinen Benützung von Forststraßen oder sonstigen Wegen im Wald durch Radfahrer (AT:FKV_1.8)">
+        <tag key="bicycle" value="yes"/>
+    </sign>
+
+    <sign id="jagdliches_Sperrgebiet" icon="jagdliches_Sperrgebiet" name="Hunting area with permanent ban on access" de.name="Jagdliches Sperrgebiet">
+        <tag key="access" value="no"/>
+    </sign>
+
+    <sign id="befristetes_jagdliches_Sperrgebiet" icon="befristetes_jagdliches_Sperrgebiet" name="Hunting area with temporary ban on access" de.name="Befristetes Jagdliches Sperrgebiet">
+        <tag key="access:conditional" value="no @ $condition"/>
+        <parameter input="textfield" name="conditional" de.name="conditional" type="text" ident="condition" default="Oct 01 - Mar 31" suffix="" field_width="20"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_Anrainerverkehr" supplementary="yes" name="except for access" de.name="ausgenommen Anrainerverkehr"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="mode" append_value="destination"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_Radfahrer" supplementary="yes" name="Bicycles allowed" de.name="ausgenommen Radfahrer"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag key="bicycle" value="yes"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_Linienbusse" supplementary="yes" name="Bus allowed" de.name="ausgenommen Linienbusse"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag key="bus" value="yes"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_Taxi" supplementary="yes" name="Taxi allowed" de.name="ausgenommen Taxi"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag key="taxi" value="yes"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_Lieferverkehr" supplementary="yes" name="Delivery vehicles allowed" de.name="ausgenommen Lieferverkehr"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="mode" append_value="delivery"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_landwirtschaftlicher_Verkehr" supplementary="yes" name="Agricultural vehicles allowed" de.name="ausgenommen Landwirtschaftlicher Verkehr"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="mode" append_value="agricultural"/>
+    </sign>
+
+    <sign id="Zusatztafel_ausgenommen_forstwirtschaftlicher_Verkehr" supplementary="yes" name="Forestry vehicles allowed" de.name="ausgenommen Forstwirtschaftlicher Verkehr"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="mode" append_value="forestry"/>
+    </sign>
+
+    <sign ref="54.f" icon="AT_54_f" supplementary="yes" name="In case of snow or ice (AT:54.f)" de.name="Bei Schneelage oder Eisbildung (AT:54.f)">
+        <tag tag_ref="restriction" condition="conditional"/>
+        <tag tag_ref="restriction" append_value="$val @ (snow)"/>
+    </sign>
+
+    <sign ref="54.g" icon="AT_54_g" supplementary="yes" name="When the road is wet (AT:54.g)" de.name="Bei nasser Fahrbahn (AT:54.g)">
+        <tag tag_ref="restriction" condition="conditional"/>
+        <tag tag_ref="restriction" append_value="$val @ (wet)"/>
+    </sign>
+
+    <sign id="Zusatztafel_hgv_conditional" supplementary="yes" name="conditional hgv restriction" de.name="Bedingte LKW Beschränkung"
+        wiki="Conditional_restrictions"
+        de.wiki="DE:Conditional_restrictions"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="restriction" condition="hgv:conditional"/>
+        <tag tag_ref="restriction" append_value="$val @ ($hgv_condition)"/>        
+        <parameter input="textfield" name="hgv_conditional" de.name="hgv_conditional" type="text" ident="hgv_condition" default="weight>7.5 AND 22:00-05:00" suffix="" field_width="20"/>
+    </sign>
+
+    <sign id="Zusatztafel_conditional" supplementary="yes" name="conditional restriction" de.name="Bedingte Beschränkung"
+        wiki="Conditional_restrictions"
+        de.wiki="DE:Conditional_restrictions"
+        de.help="Setzt nur die entsprechende Ausnahme, aber keinen Wert für traffic_sign. Der genaue, vollständige Text der Zusatztafel kann über das Schild 'ZUSATZTAFELTEXT ERFASSEN' festgehalten werden.">
+        <tag tag_ref="restriction" condition="conditional"/>
+        <tag tag_ref="restriction" append_value="$val @ ($condition)"/>
+        <parameter input="textfield" name="conditional" de.name="conditional" type="text" ident="condition" default="Mo-Sa 05:00-22:00;PH off" suffix="" field_width="20"/>
+    </sign>
+
+    <sign ref="54[$text]" id="Zusatztafel_Text" supplementary="yes" icon="Zusatztafel_text" name="supplementary text (AT:54[...])" de.name="Zusatztafel Text (AT:54[...])"
+        de.help="Speichert den genauen Text der Zusatz Tafel unter traffic_sign. Die entsprechenden Tags müssen extra gesetzt werden!
+Wie bei allen anderen Schildern auch, muss dazu die Option 'traffic_sign Merkmal' aktiviert sein.">
+        <parameter input="textfield" name="text" de.name="text" type="text" ident="text" default="" suffix="" field_width="20"/>
+    </sign>
+    
+    <sign ref="WVO_F.3.1" supplementary="yes" name="Supplementary sign for Treppelweg: Cycling permitted (AT:WVO_F.3.1)" de.name="Treppelweg-Zusatztafel Radfahren erlaubt (AT:WVO_F.3.1)" 
+        de.help="Zusatztafel für Treppelwege - nicht zu verwechseln mit Radweg ohne Benützungspflicht (AT:53.27)"
+        de.wiki="Treppelweg">
+        <tag key="bicycle" value="designated"/>
+    </sign>
+    
+    <sign ref="WVO_F.3.2" supplementary="yes" name="Supplementary sign for Treppelweg: Cycling forbidden (AT:WVO_F.3.2)" de.name="Treppelweg-Zusatztafel Radfahren verboten (AT:WVO_F.3.2)"
+        de.wiki="Treppelweg">
+        <tag key="bicycle" value="no"/>
+    </sign>
+    
+    <sign ref="WVO_F.4.1" supplementary="yes" name="Supplementary sign for Treppelweg: Roller skating permitted  (AT:WVO_F.4.1)" de.name="Treppelweg-Zusatztafel Rollschuhfahren erlaubt (AT:WVO_F.4.1)"
+        de.wiki="Treppelweg">
+        <tag key="inline_skates" value="designated"/>
+    </sign>
+    
+    <sign ref="WVO_F.4.2" supplementary="yes" name="Supplementary sign for Treppelweg: Roller skating forbidden (AT:WVO_F.4.2)" de.name="Treppelweg-Zusatztafel Rollschuhfahren verboten (AT:WVO_F.4.2)"
+        de.wiki="Treppelweg">
+        <tag key="inline_skates" value="no"/>
+    </sign>
+</roadsignpreset>
