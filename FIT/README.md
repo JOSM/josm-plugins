@@ -15,5 +15,8 @@ The main entry point for the library is `FitReader.read(InputStream inputStream)
 You _should not_ use any of the `public` constructors; they may change at any time.
 You also _should not_ use any of the `static <return> parse` methods.
 
+Non-developers can use this in JOSM by installing the plugin.
+Once installed, the standard methods of opening a file should allow the user to open FIT files.
+
 ## Authors
 Taylor Smock <taylor.smock@kaart.com>

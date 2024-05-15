@@ -83,7 +83,7 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         panel.add(disableGPSD, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
 
         serialDevice.setText(Config.getPref().get(C_SERIAL));
-        serialDevice.setToolTipText(tr(".Serial device for direct NMEA input, does not exist by default.</html>"));
+        serialDevice.setToolTipText(tr("Serial device for direct NMEA input, does not exist by default.</html>"));
         panel.add(new JLabel(tr("Serial device")), GBC.std());
         panel.add(serialDevice, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
         /* I18n : {0} to {3} is like /dev/ttyACM<b>x</b>, {4} and {5} are COM1 and COM9 */

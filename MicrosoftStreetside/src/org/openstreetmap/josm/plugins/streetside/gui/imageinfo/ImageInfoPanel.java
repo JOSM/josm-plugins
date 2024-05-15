@@ -123,8 +123,8 @@ public final class ImageInfoPanel extends ToggleDialog implements StreetsideData
     public synchronized void selectionChanged(final SelectionChangeEvent event) {
         final Collection<? extends OsmPrimitive> sel = event.getSelection();
         if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
-            LOGGER.log(Logging.LEVEL_DEBUG,
-                    "Selection changed. {0} primitives are selected.", sel == null ? 0 : sel.size());
+            LOGGER.log(Logging.LEVEL_DEBUG, "Selection changed. {0} primitives are selected.",
+                    sel == null ? 0 : sel.size());
         }
     }
 }

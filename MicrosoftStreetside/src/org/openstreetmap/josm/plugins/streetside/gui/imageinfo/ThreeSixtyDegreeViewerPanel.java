@@ -125,11 +125,11 @@ public class ThreeSixtyDegreeViewerPanel extends JFXPanel {
         }
         if (me.isSecondaryButtonDown()) { // JOSM viewer uses right-click for moving.
             cameraTransform.setRy(
-                    ((cameraTransform.ry.getAngle() - mouseDeltaX * modifierFactor * modifier * 2.0) % 360 + 540)
-                            % 360 - 180); // +
+                    ((cameraTransform.ry.getAngle() - mouseDeltaX * modifierFactor * modifier * 2.0) % 360 + 540) % 360
+                            - 180); // +
             cameraTransform.setRx(
-                    ((cameraTransform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier * 2.0) % 360 + 540)
-                            % 360 - 180); // -
+                    ((cameraTransform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier * 2.0) % 360 + 540) % 360
+                            - 180); // -
         } else if (me.isPrimaryButtonDown()) {
             final double z = camera.getTranslateZ();
             final double newZ = z + mouseDeltaX * modifierFactor * modifier;

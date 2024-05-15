@@ -11,7 +11,9 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -27,6 +29,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -278,11 +281,52 @@ public final class StreetsideLayer extends AbstractModifiableLayer
             }
         }
 
-        for (var imageAbs : data.getImages()) {
-            if (imageAbs.visible() && mv != null && mv.contains(mv.getPoint(imageAbs))) {
-                drawImageMarker(g, imageAbs);
+        if (mv != null && mv.getDist100Pixel() < 100) {
+            for (var imageAbs : data.search(box.toBBox())) {
+                if (imageAbs.visible() && mv.contains(mv.getPoint(imageAbs))) {
+                    drawImageMarker(g, imageAbs);
+                }
+            }
+        } else if (mv != null) {
+            // Generate sequence lines
+            final var sortedImages = new ArrayList<>(data.search(box.toBBox()));
+            sortedImages.sort(Comparator.naturalOrder());
+            final var imagesToPaint = new ArrayList<StreetsideImage>(sortedImages.size());
+            boolean containsSelected = false;
+            for (var image : sortedImages) {
+                if (!imagesToPaint.isEmpty() && imagesToPaint.getLast().greatCircleDistance(image) > 20) {
+                    paintSequence(g, mv, imagesToPaint, containsSelected);
+                    containsSelected = false;
+                    imagesToPaint.clear();
+                }
+                imagesToPaint.add(image);
+                if (image.equals(getData().getHighlightedImage())) {
+                    containsSelected = true;
+                }
+            }
+            if (!imagesToPaint.isEmpty()) {
+                paintSequence(g, mv, imagesToPaint, containsSelected);
             }
         }
+    }
+
+    /**
+     * Paint an artificial sequence
+     * @param g The graphics to paint on
+     * @param mv The current mapview
+     * @param images The images to use for the sequence
+     * @param containsSelected {@code true} if the sequence has a selected or highlighted image
+     */
+    private void paintSequence(Graphics2D g, MapView mv, List<StreetsideImage> images, boolean containsSelected) {
+        final var color = containsSelected ? StreetsideColorScheme.SEQ_HIGHLIGHTED
+                : StreetsideColorScheme.SEQ_UNSELECTED;
+        final var path = new MapViewPath(mv);
+        path.moveTo(images.get(0));
+        for (int i = 1; i < images.size(); i++) {
+            path.lineTo(images.get(i));
+        }
+        g.setColor(color);
+        g.draw(path);
     }
 
     /**
@@ -321,13 +365,15 @@ public final class StreetsideLayer extends AbstractModifiableLayer
                 CA_INDICATOR_ANGLE);
         // Paint image marker
         g.setColor(markerC);
-        g.fillOval(point.x - IMG_MARKER_RADIUS, point.y - IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS);
+        g.fillOval(point.x - IMG_MARKER_RADIUS, point.y - IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS,
+                2 * IMG_MARKER_RADIUS);
 
         // Paint highlight for selected or highlighted images
         if (img.equals(getData().getHighlightedImage())) {
             g.setColor(Color.WHITE);
             g.setStroke(new BasicStroke(2));
-            g.drawOval(point.x - IMG_MARKER_RADIUS, point.y - IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS);
+            g.drawOval(point.x - IMG_MARKER_RADIUS, point.y - IMG_MARKER_RADIUS, 2 * IMG_MARKER_RADIUS,
+                    2 * IMG_MARKER_RADIUS);
         }
     }
 
@@ -440,9 +486,9 @@ public final class StreetsideLayer extends AbstractModifiableLayer
     }
 
     private record NearestImgToTargetComparator(StreetsideAbstractImage target) implements Comparator<StreetsideAbstractImage> {
-        @Override
-        public int compare(StreetsideAbstractImage img1, StreetsideAbstractImage img2) {
-            return (int) Math.signum(img1.greatCircleDistance(target) - img2.greatCircleDistance(target));
-        }
+
+    @Override
+    public int compare(StreetsideAbstractImage img1, StreetsideAbstractImage img2) {
+        return (int) Math.signum(img1.greatCircleDistance(target) - img2.greatCircleDistance(target));
     }
-}
+}}

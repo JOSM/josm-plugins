@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.plugins.streetside.StreetsideLayer;
 import org.openstreetmap.josm.plugins.streetside.utils.StreetsideProperties;
 import org.openstreetmap.josm.testutils.annotations.LayerManager;
 
@@ -41,10 +40,9 @@ class SequenceDownloadRunnableTest {
         testNumberOfDecodedImages(0, new Bounds(0, 0, 0, 0));
     }
 
-    private void testNumberOfDecodedImages(int expectedNumImgs, Bounds bounds)
-            throws IllegalArgumentException {
-        SequenceDownloadRunnable r = new SequenceDownloadRunnable(StreetsideLayer.getInstance().getData(), bounds);
-        r.run();
-        assertEquals(expectedNumImgs, StreetsideLayer.getInstance().getData().getImages().size());
+    private void testNumberOfDecodedImages(int expectedNumImgs, Bounds bounds) throws IllegalArgumentException {
+        SequenceDownloadRunnable r = new SequenceDownloadRunnable(bounds);
+        final var images = r.call();
+        assertEquals(expectedNumImgs, images.size());
     }
 }
