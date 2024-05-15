@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="13.229166mm"
+   height="13.229166mm"
+   viewBox="0 0 13.229166 13.229166"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   sodipodi:docname="Zeichnung.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="-3.5277981"
+     inkscape:cy="42.463169"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1294"
+     inkscape:window-height="1040"
+     inkscape:window-x="2154"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     lock-margins="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-4.4495653,-5.0861458)">
+    <g
+       id="surface1"
+       transform="matrix(0.26458333,0,0,0.26458333,4.4495653,5.0861458)">
+      <path
+         style="fill:#ee1921;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="M 0,25 C 0,11.195312 11.191406,0 25,0 38.808594,0 50,11.195312 50,25 50,38.808594 38.808594,50 25,50 11.191406,50 0,38.808594 0,25 Z m 0,0"
+         id="path833" />
+      <path
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         d="m 24.953125,43.539062 c 10.210937,0 18.488281,-8.28125 18.488281,-18.492187 0,-10.210937 -8.277344,-18.488281 -18.488281,-18.488281 -10.210937,0 -18.492187,8.277344 -18.492187,18.488281 0,10.210937 8.28125,18.492187 18.492187,18.492187"
+         id="path835" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:2.46944px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="7.5955424"
+       y="11.255309"
+       id="text855"><tspan
+         sodipodi:role="line"
+         x="7.5955424"
+         y="11.255309"
+         style="font-size:2.46944px;stroke-width:0.264583"
+         id="tspan875">Forst-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:2.46944px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="7.3222365"
+       y="13.803344"
+       id="text881"><tspan
+         sodipodi:role="line"
+         id="tspan879"
+         x="7.3222365"
+         y="13.803344"
+         style="font-size:2.46944px;stroke-width:0.264583">straße</tspan></text>
+  </g>
+</svg>
