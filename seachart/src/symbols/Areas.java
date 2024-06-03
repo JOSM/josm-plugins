@@ -280,36 +280,97 @@ public final class Areas {
     public static final Symbol Spring = new Symbol();
     static {
         Spring.add(new Instr(Form.FILL, Color.black));
-        Spring.add(new Instr(Form.STRK, new BasicStroke(5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, 0, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-20, 0, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-40, 0, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(20, 0, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(40, 0, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -20, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -40, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -60, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(0, -80, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-15, -90, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(15, -90, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-35, -85, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(35, -85, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(-50, -70, 7.5, 7.5)));
-        Spring.add(new Instr(Form.ELPS, new Ellipse2D.Double(50, -70, 7.5, 7.5)));
+        Spring.add(new Instr(Form.STRK, new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(0, 0, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(-20, 0, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(-40, 0, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(20, 0, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(40, 0, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(0, -20, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(0, -40, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(0, -60, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(0, -80, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(-15, -90, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(15, -90, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(-35, -85, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(35, -85, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(-50, -70, 10, 10)));
+        Spring.add(new Instr(Form.RSHP, new Ellipse2D.Double(50, -70, 10, 10)));
     }
 
-    public static final Symbol KelpS = new Symbol();
+    public static final BufferedImage Seagrass = new BufferedImage(240, 240, BufferedImage.TYPE_INT_ARGB);
     static {
-        KelpS.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER)));
-        Path2D.Double p = new Path2D.Double(); p.moveTo(-60, 0); p.curveTo(-20, -20, -24, 40, 24, 20); p.moveTo(-60, 0); p.quadTo(-48, 20, -32, 12);
-        p.moveTo(-36, -4); p.quadTo(-24, -24, -4, -16); p.quadTo(8, -32, 20, -24); p.moveTo(-4, -16); p.quadTo(8, 0, 20, -8);
-        p.moveTo(-8, 20); p.quadTo(12, 0, 36, 8); p.quadTo(48, 24, 60, 16); p.moveTo(36, 8); p.quadTo(48, -8, 60, 0);
-        KelpS.add(new Instr(Form.PLIN, p));
+        Graphics2D g2 = Seagrass.createGraphics();
+        g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.setBackground(new Color(0, true));
+        g2.clearRect(0, 0, 240, 240);
+        g2.setPaint(new Color(0x2E8E20));
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(90, 100); p.quadTo(50, 93, 29, 110);
+        p.moveTo(78, 98); p.quadTo(120, 75, 115, 50);
+        p.moveTo(45, 100); p.quadTo(65, 80, 55, 60); p.quadTo(50, 35, 60, 10);
+        p.moveTo(32, 108); p.quadTo(50, 90, 43, 70); p.quadTo(35, 40, 41, 18);
+        p.moveTo(32, 108); p.quadTo(0, 70, 16, 46);
+        p.moveTo(42, 103); p.quadTo(13, 75, 32, 31);
+        p.moveTo(23, 95); p.quadTo(35, 90, 34, 63);
+        p.moveTo(59, 99); p.quadTo(75, 75, 71, 22);
+        p.moveTo(66, 98); p.quadTo(85, 75, 82, 27);
+        p.moveTo(55, 97); p.quadTo(110, 50, 106, 30);
+        p.moveTo(90+120, 100+120); p.quadTo(50+120, 93+120, 29+120, 110+120);
+        p.moveTo(78+120, 98+120); p.quadTo(120+120, 75+120, 115+120, 50+120);
+        p.moveTo(45+120, 100+120); p.quadTo(65+120, 80+120, 55+120, 60+120); p.quadTo(50+120, 35+120, 60+120, 10+120);
+        p.moveTo(32+120, 108+120); p.quadTo(50+120, 90+120, 43+120, 70+120); p.quadTo(35+120, 40+120, 41+120, 18+120);
+        p.moveTo(32+120, 108+120); p.quadTo(0+120, 70+120, 16+120, 46+120);
+        p.moveTo(42+120, 103+120); p.quadTo(13+120, 75+120, 32+120, 31+120);
+        p.moveTo(23+120, 95+120); p.quadTo(35+120, 90+120, 34+120, 63+120);
+        p.moveTo(59+120, 99+120); p.quadTo(75+120, 75+120, 71+120, 22+120);
+        p.moveTo(66+120, 98+120); p.quadTo(85+120, 75+120, 82+120, 27+120);
+        p.moveTo(55+120, 97+120); p.quadTo(110+120, 50+120, 106+120, 30+120);
+        g2.draw(p);
     }
 
-    public static final BufferedImage KelpA = new BufferedImage(240, 240, BufferedImage.TYPE_INT_ARGB);
+    public static final Symbol SeagrassP = new Symbol();
     static {
-        Graphics2D g2 = KelpA.createGraphics();
+    	SeagrassP.add(new Instr(Form.BBOX, new Rectangle2D.Double(-60, -60, 120, 120)));
+    	SeagrassP.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        SeagrassP.add(new Instr(Form.FILL, new Color(0x2E8E20)));
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(30, 40); p.quadTo(-10, 33, -31, 50);
+        p.moveTo(18, 38); p.quadTo(60, 15, 55, -10);
+        p.moveTo(-15, 40); p.quadTo(5, 20, -5, 0); p.quadTo(-10, -25, 0, -50);
+        p.moveTo(-28, 48); p.quadTo(-10, 30, -17, 10); p.quadTo(-25, -20, -19, -42);
+        p.moveTo(-28, 48); p.quadTo(-60, 10, -44, -14);
+        p.moveTo(-18, 43); p.quadTo(-47, 15, -28, -29);
+        p.moveTo(-37, 35); p.quadTo(-25, 30, -26, 3);
+        p.moveTo(-1, 39); p.quadTo(15, 15, 11, -38);
+        p.moveTo(6, 38); p.quadTo(25, 15, 22, -33);
+        SeagrassP.add(new Instr(Form.PLIN, p));
+    }
+
+    public static final Symbol Rocks = new Symbol();
+    static {
+        Rocks.add(new Instr(Form.BBOX, new Rectangle2D.Double(-30, -60, 60, 120)));
+        Rocks.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Path2D.Double p = new Path2D.Double(); 
+        p.moveTo(8, -50); p.quadTo(5, -58, 0, -60); p.quadTo(-15, -50, -8, -30); p.quadTo(-10, -20, 0, -15); p.quadTo(10, -10, 15, -25);
+        p.moveTo(0, -15); p.quadTo(-18, -6, -12, 10); p.quadTo(-9, 20, 0, 20); p.quadTo(8, 16, 12, 25);
+        p.moveTo(0, 20); p.quadTo(-15, 26, -10, 44); p.quadTo(-12, 55, 0, 60);
+        Rocks.add(new Instr(Form.PLIN, p));
+    }
+
+    public static final Symbol Coral = new Symbol();
+    static {
+        Coral.add(new Instr(Form.BBOX, new Rectangle2D.Double(-20, -60, 40, 120)));
+        Coral.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Path2D.Double p = new Path2D.Double(); p.moveTo(0, -60); p.lineTo(0, -50); p.moveTo(15, -48); p.lineTo(-20, -50); 
+        p.lineTo(0, -30); p.lineTo(-20, -20); p.lineTo(10, 0); p.lineTo(-20, 20); p.lineTo(0, 30); p.lineTo(-20, 50); 
+        p.lineTo(20, 45); p.moveTo(0, 49); p.lineTo(0, 60);
+        Coral.add(new Instr(Form.PLIN, p));
+    }
+
+    public static final BufferedImage Kelp = new BufferedImage(240, 240, BufferedImage.TYPE_INT_ARGB);
+    static {
+        Graphics2D g2 = Kelp.createGraphics();
         g2.setStroke(new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.setBackground(new Color(0, true));
         g2.clearRect(0, 0, 240, 240);
@@ -320,5 +381,15 @@ public final class Areas {
         p.moveTo(120, 180); p.curveTo(160, 160, 164, 220, 204, 200); p.moveTo(120, 180); p.quadTo(132, 200, 148, 192); p.moveTo(144, 176); p.quadTo(156, 156, 176, 164); p.quadTo(188, 148, 200, 156);
         p.moveTo(176, 164); p.quadTo(188, 180, 200, 172); p.moveTo(172, 196); p.quadTo(192, 180, 216, 188); p.quadTo(228, 204, 240, 196); p.moveTo(216, 188); p.quadTo(228, 172, 240, 180);
         g2.draw(p);
+    }
+    
+    public static final Symbol KelpP = new Symbol();
+    static {
+    	KelpP.add(new Instr(Form.BBOX, new Rectangle2D.Double(-60, -60, 120, 120)));
+    	KelpP.add(new Instr(Form.STRK, new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)));
+        Path2D.Double p = new Path2D.Double();
+        p.moveTo(-60, 0); p.curveTo(-20, -20, -16, 40, 24, 20); p.moveTo(-60, 0); p.quadTo(-48, 20, -32, 12); p.moveTo(-36, -4); p.quadTo(-24, -24, -4, -16); p.quadTo(8, -32, 20, -24);
+        p.moveTo(-4, -16); p.quadTo(8, 0, 20, -8); p.moveTo(-8, 16); p.quadTo(12, 0, 36, 8); p.quadTo(48, 24, 60, 16); p.moveTo(36, 8); p.quadTo(48, -8, 60, 0);
+        KelpP.add(new Instr(Form.PLIN, p));
     }
 }

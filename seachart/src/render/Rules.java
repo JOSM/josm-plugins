@@ -42,28 +42,27 @@ import s57.S57val.CatPIL;
 import s57.S57val.CatPIP;
 import s57.S57val.CatREA;
 import s57.S57val.CatROD;
-import s57.S57val.CatROS;
 import s57.S57val.CatSCF;
 import s57.S57val.CatSEA;
 import s57.S57val.CatSIL;
 import s57.S57val.CatSIT;
 import s57.S57val.CatSIW;
 import s57.S57val.CatSLC;
+import s57.S57val.CatVAN;
 import s57.S57val.CatWED;
 import s57.S57val.CatWRK;
 import s57.S57val.ColCOL;
 import s57.S57val.ColPAT;
 import s57.S57val.FncFNC;
 import s57.S57val.MarSYS;
-import s57.S57val.NatSUR;
 import s57.S57val.NatQUA;
+import s57.S57val.NatSUR;
 import s57.S57val.StsSTS;
 import s57.S57val.TecSOU;
 import s57.S57val.TopSHP;
 import s57.S57val.TrfTRF;
 import s57.S57val.UniHLU;
 import s57.S57val.WatLEV;
-import s57.S57val.CatVAN;
 import symbols.Areas;
 import symbols.Beacons;
 import symbols.Buoys;
@@ -550,7 +549,7 @@ public class Rules {
 			}
 			break;
 		case SNDWAV:
-			if (Renderer.zoom >= 12)
+			if (Renderer.zoom >= 14)
 				Renderer.fillPattern(Areas.Sandwaves);
 			break;
 		case SBDARE:
@@ -559,7 +558,7 @@ public class Rules {
 				String sep = ".";
 				if (hasAttribute(feature.type, Att.NATSUR)) {
 					ArrayList<NatSUR> surs = (ArrayList<NatSUR>) getAttList(feature.type, Att.NATSUR);
-					ArrayList<NatQUA> quas = new ArrayList<NatQUA>();
+					ArrayList<NatQUA> quas = new ArrayList<>();
 					if (hasAttribute(feature.type, Att.NATQUA)) {
 						quas = (ArrayList<NatQUA>) getAttList(feature.type, Att.NATQUA);
 					}
@@ -607,6 +606,7 @@ public class Rules {
 						switch (surs.get(i)) {
 						case SUR_MUD:
 							str += "M";
+
 							break;
 						case SUR_CLAY:
 							str += "Cy";
@@ -616,12 +616,15 @@ public class Rules {
 							break;
 						case SUR_SAND:
 							str += "S";
+
 							break;
 						case SUR_STON:
 							str += "St";
+
 							break;
 						case SUR_GRVL:
 							str += "G";
+
 							break;
 						case SUR_PBBL:
 							str += "P";
@@ -631,12 +634,18 @@ public class Rules {
 							break;
 						case SUR_ROCK:
 							str += "R";
+							if (feature.geom.prim != Pflag.POINT) {
+								Renderer.lineSymbols(Areas.Rocks, 1, null, null, 0, Color.black);
+							}
 							break;
 						case SUR_LAVA:
 							str += "Lv";
 							break;
 						case SUR_CORL:
 							str += "Co";
+							if (feature.geom.prim != Pflag.POINT) {
+								Renderer.lineSymbols(Areas.Coral, 1, null, null, 0, Color.black);
+							}
 							break;
 						case SUR_SHEL:
 							str += "Sh";
@@ -660,17 +669,21 @@ public class Rules {
 			if (Renderer.zoom >= 14) {
 				switch ((CatWED) getAttEnum(feature.type, Att.CATWED)) {
 				case WED_KELP:
-					if (feature.geom.prim == Pflag.AREA) {
-						Renderer.fillPattern(Areas.KelpA);
+					if (feature.geom.prim == Pflag.POINT) {
+						Renderer.symbol(Areas.KelpP);
 					} else {
-						Renderer.symbol(Areas.KelpS);
+						Renderer.fillPattern(Areas.Kelp);
 					}
 					break;
 				case WED_SWED:
 					Renderer.labelText("Wd", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
 					break;
 				case WED_SGRS:
-					Renderer.labelText("Sg", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
+					if (feature.geom.prim == Pflag.POINT) {
+						Renderer.symbol(Areas.SeagrassP);
+					} else {
+						Renderer.fillPattern(Areas.Seagrass);
+					}
 					break;
 				case WED_SGSO:
 					break;
@@ -680,10 +693,18 @@ public class Rules {
 			}
 			break;
 		case SEGRAS:
-			Renderer.labelText("Sg", new Font("Arial", Font.ITALIC, 40), Color.black, new Delta(Handle.CC));
+			if (Renderer.zoom >= 14) {
+				if (feature.geom.prim == Pflag.POINT) {
+					Renderer.symbol(Areas.SeagrassP);
+				} else {
+					Renderer.fillPattern(Areas.Seagrass);
+				}
+			}
 			break;
 		case SPRING:
-			Renderer.symbol(Areas.Spring);
+			if (Renderer.zoom >= 14) {
+				Renderer.symbol(Areas.Spring);
+			}
 			break;
 		case SPLARE:
 			if (Renderer.zoom >= 12) {
@@ -1272,11 +1293,9 @@ public class Rules {
 			    } else {
 			        Renderer.symbol(Harbours.Dolphin);
 			    }
-	            Signals.addSignals();
 				break;
 			case MOR_DDPN:
 				Renderer.symbol(Harbours.DeviationDolphin);
-	            Signals.addSignals();
 				break;
 			case MOR_BLRD:
 			case MOR_POST:
@@ -1290,13 +1309,14 @@ public class Rules {
 			        }
 			        Renderer.symbol(Buoys.Shapes.get(shape), (1.0 / (1.0 + (0.25 * (18 - Renderer.zoom)))), getScheme(feature.type));
 			        Renderer.symbol(Topmarks.TopMooring, (1.0 / (1.0 + (0.25 * (18 - Renderer.zoom)))), Topmarks.BuoyDeltas.get(shape));
-		            Signals.addSignals();
 		            addName(15, new Font("Arial", Font.BOLD, 40), new Delta(Handle.BL, AffineTransform.getTranslateInstance(60, -50)));
 			    }
 				break;
 			default:
+				Renderer.symbol(Harbours.Post);
 				break;
 			}
+            Signals.addSignals();
 		}
 	}
 
@@ -1424,7 +1444,7 @@ public class Rules {
 	}
 
 	private static void pipelines() {
-		if ((Renderer.zoom >= 14)  && (feature.geom.length < 20)) {
+		if ((Renderer.zoom >= 14) && (feature.geom.length < 20) || (Renderer.zoom < 12) && (feature.geom.length >= 20)) {
 			if (feature.type == Obj.PIPSOL) {
 				switch ((CatPIP) getAttEnum(feature.type, Att.CATPIP)) {
 				case PIP_ITAK:
@@ -1775,7 +1795,7 @@ public class Rules {
                 Renderer.labelText("V-AIS", new Font("Arial", Font.PLAIN, 40), Symbols.Msymb, new Delta(Handle.BC, AffineTransform.getTranslateInstance(0, 70)));
         }
     }
-        
+
 	private static void waterways() {
 		Renderer.lineVector(new LineStyle(Symbols.Bwater, 20, (feature.geom.prim == Pflag.AREA) ? Symbols.Bwater : null));
 	}

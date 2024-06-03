@@ -124,7 +124,7 @@ public final class Jrender {
                 send = new ArrayList<>();
             }
         }
-        if ((z >= 12) && (z < 18) && ((z < 16) || (bos.size() > empty))) {
+        if ((z >= 12) && (z < 19) && ((z < 16) || (bos.size() > empty))) {
             for (int x = 0; x < 2; x++) {
                 for (int y = 0; y < 2; y++) {
                     tile((z + 1), (s * 2), (xn * 2 + x), (yn * 2 + y));
@@ -143,7 +143,7 @@ public final class Jrender {
             deletes.put(delnam, true);
             delfile.delete();
         }
-        if ((z < 18)) {
+        if ((z < 19)) {
             for (int x = 0; x < 2; x++) {
                 for (int y = 0; y < 2; y++) {
                     clean((z + 1), (xn * 2 + x), (yn * 2 + y));

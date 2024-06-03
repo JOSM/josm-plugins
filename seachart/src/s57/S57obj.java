@@ -114,7 +114,7 @@ public final class S57obj { // S57 Object lookup tables & methods
         ObjStr.put(Obj.RAPIDS, "rapids"); ObjStr.put(Obj.RCRTCL, "recommended_route_centreline"); ObjStr.put(Obj.RECTRC, "recommended_track");
         ObjStr.put(Obj.RCTLPT, "recommended_traffic_lane"); ObjStr.put(Obj.RSCSTA, "rescue_station"); ObjStr.put(Obj.RESARE, "restricted_area");
         ObjStr.put(Obj.RETRFL, "retro_reflector"); ObjStr.put(Obj.RIVERS, "river"); ObjStr.put(Obj.ROADWY, "road"); ObjStr.put(Obj.RUNWAY, "runway");
-        ObjStr.put(Obj.SNDWAV, "sandwaves"); ObjStr.put(Obj.SEAARE, "sea_area"); ObjStr.put(Obj.SPLARE, "seaplane_landing_area"); ObjStr.put(Obj.SBDARE, "seabed_area");
+        ObjStr.put(Obj.SNDWAV, "sand_waves"); ObjStr.put(Obj.SEAARE, "sea_area"); ObjStr.put(Obj.SPLARE, "seaplane_landing_area"); ObjStr.put(Obj.SBDARE, "seabed_area");
         ObjStr.put(Obj.SLCONS, "shoreline_construction"); ObjStr.put(Obj.SISTAT, "signal_station_traffic"); ObjStr.put(Obj.SISTAW, "signal_station_warning");
         ObjStr.put(Obj.SILTNK, "tank"); ObjStr.put(Obj.SLOTOP, "slope_topline"); ObjStr.put(Obj.SLOGRD, "sloping_ground"); ObjStr.put(Obj.SMCFAC, "small_craft_facility");
         ObjStr.put(Obj.SOUNDG, "sounding"); ObjStr.put(Obj.SPRING, "spring"); ObjStr.put(Obj.STSLNE, "territorial_baseline"); ObjStr.put(Obj.SUBTLN, "submarine_transit_lane");

@@ -558,7 +558,7 @@ public final class Renderer {
         case POINT:
             point = context.getPoint(Rules.feature.geom.centre);
             g2.drawImage(image, new AffineTransformOp(AffineTransform.getScaleInstance(sScale, sScale), AffineTransformOp.TYPE_NEAREST_NEIGHBOR),
-                    (int) (point.getX() - (50 * sScale)), (int) (point.getY() - (50 * sScale)));
+                    (int) (point.getX() - (sScale * image.getWidth() / 2)), (int) (point.getY() - (sScale * image.getHeight() / 2)));
             break;
         case AREA:
             GeomIterator git = map.new GeomIterator(Rules.feature.geom);
@@ -582,7 +582,7 @@ public final class Renderer {
                     }
                 }
             }
-            g2.setPaint(new TexturePaint(image, new Rectangle(0, 0, 1 + (int) (300 * sScale), 1 + (int) (300 * sScale))));
+            g2.setPaint(new TexturePaint(image, new Rectangle(0, 0, (1 + (int) (150 * sScale)), (1 + (int) (150 * sScale)))));
             g2.fill(p);
             break;
         default:
