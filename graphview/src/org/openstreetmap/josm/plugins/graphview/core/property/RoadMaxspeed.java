@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.property;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.plugins.graphview.core.access.AccessParameters;
 import org.openstreetmap.josm.plugins.graphview.core.data.DataSource;
 import org.openstreetmap.josm.plugins.graphview.core.data.TagGroup;
@@ -33,7 +35,8 @@ public class RoadMaxspeed implements RoadPropertyType<Float> {
     @Override
     public <N, W, R, M> Float evaluateN(N node, AccessParameters accessParameters,
             DataSource<N, W, R, M> dataSource) {
-        assert node != null && accessParameters != null && dataSource != null;
+        Objects.requireNonNull(node);
+        Objects.requireNonNull(dataSource);
 
         initializeIfNecessary(dataSource);
 
@@ -43,7 +46,8 @@ public class RoadMaxspeed implements RoadPropertyType<Float> {
     @Override
     public <N, W, R, M> Float evaluateW(W way, boolean forward, AccessParameters accessParameters,
             DataSource<N, W, R, M> dataSource) {
-        assert way != null && accessParameters != null && dataSource != null;
+        Objects.requireNonNull(dataSource);
+        Objects.requireNonNull(way);
 
         initializeIfNecessary(dataSource);
 
@@ -54,12 +58,7 @@ public class RoadMaxspeed implements RoadPropertyType<Float> {
         String maxspeedString = tags.getValue("maxspeed");
 
         if (maxspeedString != null) {
-
-            Float maxspeed = ValueStringParser.parseSpeed(maxspeedString);
-            if (maxspeed != null) {
-                return maxspeed;
-            }
-
+            return ValueStringParser.parseSpeed(maxspeedString);
         }
 
         return null;
@@ -67,8 +66,7 @@ public class RoadMaxspeed implements RoadPropertyType<Float> {
 
     @Override
     public boolean isUsable(Object propertyValue, AccessParameters accessParameters) {
-        assert propertyValue instanceof Float;
-        return true;
+        return propertyValue instanceof Float;
     }
 
 }
