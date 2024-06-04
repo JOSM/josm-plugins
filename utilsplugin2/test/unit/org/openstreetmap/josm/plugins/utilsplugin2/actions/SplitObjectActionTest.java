@@ -78,6 +78,7 @@ class SplitObjectActionTest {
         final Way newWay = TestUtils.newWay("", outer.firstNode(), new Node(new LatLon(-0.5, -0.5)), outer.getNode(1));
         this.dataSet.addPrimitive(newWay.getNode(1));
         this.dataSet.addPrimitive(newWay);
+        this.dataSet.allPrimitives().forEach(p -> p.setReferrersDownloaded(true));
 
         this.dataSet.setSelected(outer.firstNode(), outer.getNode(1));
         new SplitWayAction().actionPerformed(null);
