@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.graphview.core.property;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.plugins.graphview.core.access.AccessParameters;
 import org.openstreetmap.josm.plugins.graphview.core.data.DataSource;
 import org.openstreetmap.josm.plugins.graphview.core.data.TagGroup;
@@ -17,7 +19,8 @@ public class RoadIncline implements RoadPropertyType<Float> {
     @Override
     public <N, W, R, M> Float evaluateW(W way, boolean forward, AccessParameters accessParameters,
             DataSource<N, W, R, M> dataSource) {
-        assert way != null && accessParameters != null && dataSource != null;
+        Objects.requireNonNull(way, "way");
+        Objects.requireNonNull(dataSource, "dataSource");
 
         TagGroup tags = dataSource.getTagsW(way);
         String inclineString = tags.getValue("incline");

@@ -54,14 +54,12 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.FileSource;
-import com.github.tomakehurst.wiremock.extension.Parameters;
-import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
+import com.github.tomakehurst.wiremock.extension.ResponseTransformerV2;
 import com.github.tomakehurst.wiremock.http.QueryParameter;
-import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
@@ -88,7 +86,8 @@ class ChangesetReverterTest {
      * Non-regression test for #22520: IllegalStateException: Missing merge target for node
      */
     @Test
-    void testTicket22520(WireMockRuntimeInfo wireMockRuntimeInfo) throws ExecutionException, InterruptedException {
+    void testTicket22520() throws ExecutionException, InterruptedException {
+        final WireMockRuntimeInfo wireMockRuntimeInfo = wireMockExtension.getRuntimeInfo();
         wireMockRuntimeInfo.getWireMock().loadMappingsFrom(TestUtils.getRegressionDataDir(22520));
         MultiplePrimitiveTransformer.register(wireMockRuntimeInfo.getWireMock(), 22520);
         Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl());
@@ -111,7 +110,8 @@ class ChangesetReverterTest {
      * Note: This might not be the intended behavior, but it was the behavior prior to r36230.
      */
     @Test
-    void testTicket23582(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    void testTicket23582() {
+        final WireMockRuntimeInfo wireMockRuntimeInfo = wireMockExtension.getRuntimeInfo();
         wireMockRuntimeInfo.getWireMock().loadMappingsFrom(TestUtils.getRegressionDataDir(23582));
         MultiplePrimitiveTransformer.register(wireMockRuntimeInfo.getWireMock(), 23582);
         Config.getPref().put("osm-server.url", wireMockRuntimeInfo.getHttpBaseUrl());
@@ -125,7 +125,8 @@ class ChangesetReverterTest {
     }
 
     @Test
-    void testTicket23584(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    void testTicket23584() {
+        final WireMockRuntimeInfo wireMockRuntimeInfo = wireMockExtension.getRuntimeInfo();
         new JOptionPaneSimpleMocker(Collections.singletonMap("Conflicts detected", JOptionPane.OK_OPTION));
         wireMockRuntimeInfo.getWireMock().loadMappingsFrom(TestUtils.getRegressionDataDir(23584));
         MultiplePrimitiveTransformer.register(wireMockRuntimeInfo.getWireMock(), 23584);
@@ -147,7 +148,7 @@ class ChangesetReverterTest {
      * A transformer for `/node/:id/:version`, `way/:id/:version`, and `relation/:id/:version` that will use
      * the same data as {@link MultiplePrimitiveTransformer}.
      */
-    private static class PrimitiveTransformer extends ResponseTransformer {
+    private static class PrimitiveTransformer implements ResponseTransformerV2 {
         /**
          * Register the URLs for this transformer
          * @param wireMock The wiremock object to register stubs for
@@ -173,9 +174,9 @@ class ChangesetReverterTest {
         }
 
         @Override
-        public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
-            final int ticket = parameters.getInt("ticket");
-            final String[] parts = request.getUrl().substring(1).split("/", -1);
+        public Response transform(Response response, ServeEvent serveEvent) {
+            final int ticket = serveEvent.getTransformerParameters().getInt("ticket");
+            final String[] parts = serveEvent.getRequest().getUrl().substring(1).split("/", -1);
             final int version = Integer.parseInt(parts[3]);
             final long id = Long.parseLong(parts[2]);
             final OsmParameterInformation info;
@@ -203,7 +204,7 @@ class ChangesetReverterTest {
      * A transformer for the /nodes?node, /ways?ways, and /relations?relations endpoints.
      * This is needed since we don't always do the requests in the same order.
      */
-    private static class MultiplePrimitiveTransformer extends ResponseTransformer {
+    private static class MultiplePrimitiveTransformer implements ResponseTransformerV2 {
 
         /**
          * Register the URLs for this transformer
@@ -225,11 +226,11 @@ class ChangesetReverterTest {
         }
 
         @Override
-        public Response transform(Request request, Response response, FileSource files, Parameters parameters) {
-            final int ticket = parameters.getInt("ticket");
-            final QueryParameter wayParam = request.queryParameter("ways");
-            final QueryParameter nodeParam = request.queryParameter("nodes");
-            final QueryParameter relParam = request.queryParameter("relations");
+        public Response transform(Response response, ServeEvent serveEvent) {
+            final int ticket = serveEvent.getTransformerParameters().getInt("ticket");
+            final QueryParameter wayParam = serveEvent.getRequest().queryParameter("ways");
+            final QueryParameter nodeParam = serveEvent.getRequest().queryParameter("nodes");
+            final QueryParameter relParam = serveEvent.getRequest().queryParameter("relations");
             if (wayParam.isPresent()) {
                 return Response.Builder.like(response).but().body(getReturnXml(ticket, OsmPrimitiveType.WAY, wayParam)).build();
             } else if (nodeParam.isPresent()) {
