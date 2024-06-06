@@ -1,4 +1,5 @@
-// Wrapper class for sanselan library
+// License: GPL. For details, see LICENSE file.
+// SPDX-License-Identifier: GPL-2.0-or-later
 package org.openstreetmap.josm.plugins.photo_geotagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -10,13 +11,11 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
@@ -27,7 +26,14 @@ import org.apache.commons.imaging.formats.tiff.write.TiffImageWriterLossy;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 
-public class ExifGPSTagger {
+/**
+ * Wrapper class for sanselan library
+ */
+public final class ExifGPSTagger {
+    private ExifGPSTagger() {
+        // Hide constructor
+    }
+
     /**
      * Set the GPS values in JPEG EXIF metadata.
      * This is based on one of the examples of the sanselan project.
@@ -43,18 +49,18 @@ public class ExifGPSTagger {
      * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
      */
-    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed, Double ele, Double imgDir, boolean lossy) throws IOException {
+    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed,
+            Double ele, Double imgDir, boolean lossy) throws IOException {
         try {
             setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir, lossy);
-        } catch (ImageReadException ire) {
-            throw new IOException(tr("Read error: "+ire), ire);
-        } catch (ImageWriteException ire2) {
-            throw new IOException(tr("Write error: "+ire2), ire2);
+        } catch (ImagingException ire) {
+            // This used to be two separate exceptions; ImageReadException and imageWriteException
+            throw new IOException(tr("Read/write error: " + ire.getMessage()), ire);
         }
     }
 
-    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed, Double ele, Double imgDir, boolean lossy)
-            throws IOException, ImageReadException, ImageWriteException {
+    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed,
+            Double ele, Double imgDir, boolean lossy) throws IOException {
 
         TiffOutputSet outputSet = null;
         ImageMetadata metadata = Imaging.getMetadata(imageFile);
@@ -72,7 +78,7 @@ public class ExifGPSTagger {
             outputSet = new TiffOutputSet();
         }
 
-        TiffOutputDirectory gpsDirectory = outputSet.getOrCreateGPSDirectory();
+        TiffOutputDirectory gpsDirectory = outputSet.getOrCreateGpsDirectory();
         gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_VERSION_ID);
         gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_VERSION_ID, (byte)2, (byte)3, (byte)0, (byte)0);
 
@@ -111,7 +117,7 @@ public class ExifGPSTagger {
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_DATE_STAMP, dateStamp);
         }
 
-        outputSet.setGPSInDegrees(lon, lat);
+        outputSet.setGpsInDegrees(lon, lat);
 
         if (speed != null) {
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_SPEED_REF);

@@ -1,4 +1,5 @@
-//License: GPL (v2 or later)
+// License: GPL. For details, see LICENSE file.
+// SPDX-License-Identifier: GPL-2.0-or-later
 package org.openstreetmap.josm.plugins.photo_geotagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -7,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -16,8 +18,8 @@ import java.nio.file.NoSuchFileException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.swing.AbstractAction;
@@ -34,7 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
+import org.apache.commons.imaging.ImagingOverflowException;
 import org.apache.commons.io.FilenameUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -56,11 +58,11 @@ import org.openstreetmap.josm.tools.Utils;
  */
 class GeotaggingAction extends AbstractAction implements LayerAction {
 
-    final static String KEEP_BACKUP = "plugins.photo_geotagging.keep_backup";
-    final static String CHANGE_MTIME = "plugins.photo_geotagging.change-mtime";
-    final static String MTIME_MODE = "plugins.photo_geotagging.mtime-mode";
-    final static int MTIME_MODE_GPS = 1;
-    final static int MTIME_MODE_PREVIOUS_VALUE = 2;
+    static final String KEEP_BACKUP = "plugins.photo_geotagging.keep_backup";
+    static final String CHANGE_MTIME = "plugins.photo_geotagging.change-mtime";
+    static final String MTIME_MODE = "plugins.photo_geotagging.mtime-mode";
+    static final int MTIME_MODE_GPS = 1;
+    static final int MTIME_MODE_PREVIOUS_VALUE = 2;
 
     public GeotaggingAction() {
         super(tr("Write coordinates to image header"), ImageProvider.get("geotagging"));
@@ -87,7 +89,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                 the GPS data changed. */
             if (e.getPos() != null && e.hasNewGpsData()) {
                 String pth = e.getFile().getAbsolutePath();
-                switch (FilenameUtils.getExtension(pth).toLowerCase()) {
+                switch (FilenameUtils.getExtension(pth).toLowerCase(Locale.ENGLISH)) {
                     case "tif":
                     case "tiff":
                         hasTiff = true;
@@ -112,13 +114,14 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         JScrollPane scroll = new JScrollPane(entryList);
         scroll.setPreferredSize(new Dimension(900, 250));
-        cont.add(scroll, GBC.eol().fill(GBC.BOTH));
+        cont.add(scroll, GBC.eol().fill(GridBagConstraints.BOTH));
 
         if (notSupportedFilesCount > 0) {
             JLabel warn = new JLabel(notSupportedFilesCount == 1
                     ? tr("The file \"{0}\" can not be updated. Only JPEG and TIFF images are supported.", notSupportedName)
                     : trn("{0} file can not be updated. Only JPEG and TIFF images are supported.",
-                          "{0} files can not be updated. Only JPEG and TIFF images are supported.", notSupportedFilesCount, notSupportedFilesCount));
+                          "{0} files can not be updated. Only JPEG and TIFF images are supported.",
+                    notSupportedFilesCount, notSupportedFilesCount));
             warn.setForeground(Color.RED);
             cont.add(warn, GBC.eol());
         }
@@ -202,9 +205,9 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
     }
 
     static class GeoTaggingRunnable extends PleaseWaitRunnable {
-        final private List<ImageEntry> images;
-        final private boolean keep_backup;
-        final private int mTimeMode;
+        private final List<ImageEntry> images;
+        private final boolean keep_backup;
+        private final int mTimeMode;
 
         private boolean canceled = false;
         Boolean override_backup = null;
@@ -287,9 +290,9 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                 try {
                     processEntry(e, lossy);
                 } catch (final IOException ioe) {
-                    ioe.printStackTrace();
+                    Logging.trace(ioe);
                     restoreFile();
-                    if (!lossy && ioe.getCause() instanceof ExifRewriter.ExifOverflowException) {
+                    if (!lossy && ioe.getCause() instanceof ImagingOverflowException) {
                         exifFailedEntries.add(e);
                     } else {
                         int ret = GuiHelper.runInEDTAndWaitAndReturn(() -> {
