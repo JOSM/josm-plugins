@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
@@ -79,7 +77,7 @@ public class StreetsideExportWriterThread extends Thread {
                 TiffOutputDirectory gpsDirectory;
 
                 exifDirectory = outputSet.getOrCreateExifDirectory();
-                gpsDirectory = outputSet.getOrCreateGPSDirectory();
+                gpsDirectory = outputSet.getOrCreateGpsDirectory();
 
                 gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION_REF);
                 gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION_REF,
@@ -90,7 +88,7 @@ public class StreetsideExportWriterThread extends Thread {
 
                 exifDirectory.removeField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
 
-                outputSet.setGPSInDegrees(mimg.lon(), mimg.lat());
+                outputSet.setGpsInDegrees(mimg.lon(), mimg.lat());
                 try (OutputStream os = new BufferedOutputStream(new FileOutputStream(finalPath + ".jpg"))) {
                     new ExifRewriter().updateExifMetadataLossless(imageBytes, os, outputSet);
                 }
@@ -98,7 +96,7 @@ public class StreetsideExportWriterThread extends Thread {
                 Thread.currentThread().interrupt();
                 LOGGER.info("Streetside export cancelled");
                 return;
-            } catch (IOException | ImageReadException | ImageWriteException e) {
+            } catch (IOException e) {
                 LOGGER.log(Logging.LEVEL_ERROR, e.getMessage(), e);
             }
 
