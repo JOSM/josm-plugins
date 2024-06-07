@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>comfort0</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <id>simon04</id>
+        </developer>
+    </developers>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>12164</plugin.main.version>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+
+        <plugin.author>simon04</plugin.author>
+        <plugin.class>net.simon04.comfort0.Comfort0Plugin</plugin.class>
+        <plugin.description>Allows editing data in Level0L format</plugin.description>
+        <plugin.icon>images/theta.svg</plugin.icon>
+        <plugin.link>https://josm.openstreetmap.de/wiki/Help/Plugin/Comfort0</plugin.link>
+        <parser.dir>src/net/simon04/comfort0/level0l</parser.dir>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javacc-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>javacc</id>
+                        <goals>
+                            <goal>javacc</goal>
+                        </goals>
+                        <configuration>
+                            <debugParser>false</debugParser>
+                            <debugTokenManager>false</debugTokenManager>
+                            <jdkVersion>${java.lang.version}</jdkVersion>
+                            <grammarEncoding>UTF-8</grammarEncoding>
+                            <unicodeInput>true</unicodeInput>
+                            <outputDirectory>${parser.dir}/parsergen</outputDirectory>
+                            <sourceDirectory>${parser.dir}</sourceDirectory>
+                            <includes><include>Level0LParser.jj</include></includes>
+                            <excludes><exclude>**/*.java</exclude></excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

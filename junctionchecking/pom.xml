@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>junctionchecking</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Jörg Possin</name>
+        </developer>
+    </developers>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Jörg Possin</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.JunctionChecker.JunctionCheckerPlugin</plugin.class>
+        <plugin.description>creates a channel digraph and checks a subset of channels if it is a junction or searches in a subset of channels for junctions</plugin.description>
+        <plugin.icon>images/dialogs/junctionchecker.png</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/index.php/JOSM/Plugins/JunctionChecking</plugin.link>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.openstreetmap.josm.plugins.JunctionChecker.commandlineinterface.CLI</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

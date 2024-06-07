@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>apache-http</artifactId>
+    <developers>
+        <developer>
+            <id>Don-vip</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>${project.basedir}/src</plugin.src.dir>
+        <plugin.main.version>19044</plugin.main.version>
+        <plugin.author>Don-vip</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.http.HttpPlugin</plugin.class>
+        <plugin.description>Provides Apache HTTP library. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>
+        <plugin.requires>apache-commons;jna</plugin.requires>
+        <plugin.stage>15</plugin.stage>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>apache-commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

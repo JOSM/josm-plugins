@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>openvisible</artifactId>
+
+    <developers>
+        <developer>
+            <name>Christof Dallermassl</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Christof Dallermassl</plugin.author>
+        <plugin.class>at.dallermassl.josm.plugin.openvisible.OpenVisiblePlugin</plugin.class>
+        <plugin.description>Allows opening gpx/osm files that intersect the currently visible screen area</plugin.description>
+        <plugin.icon>images/openvisible.png</plugin.icon>
+        <plugin.stage>50</plugin.stage>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

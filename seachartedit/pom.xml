@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>SeaChartEditor</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Malcolm Herring</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Malcolm Herring</plugin.author>
+        <plugin.class>scedit.SCedit</plugin.class>
+        <plugin.description>Edit features for Sea Charts</plugin.description>
+        <plugin.icon>images/SC.png</plugin.icon>
+        <plugin.link>https://openseamap.org/</plugin.link>
+        <plugin.requires>seachart</plugin.requires>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>SeaChart</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

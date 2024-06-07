@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>jna</artifactId>
+
+    <developers>
+        <developer>
+            <id>Don-vip</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>19044</plugin.main.version>
+        <plugin.author>Don-vip</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.jna.JNAPlugin</plugin.class>
+        <plugin.description>Provides Java Native Access (JNA) library. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>
+        <plugin.icon>images/jnalogo.jpg</plugin.icon>
+        <plugin.stage>10</plugin.stage>
+        <jna.version>5.14.0</jna.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

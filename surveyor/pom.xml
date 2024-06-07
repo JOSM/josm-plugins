@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>surveyor</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Christof Dallermassl</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Christof Dallermassl</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.surveyor.SurveyorPlugin</plugin.class>
+        <plugin.description>Allow adding markers/nodes on current gps positions.</plugin.description>
+        <plugin.icon>images/surveyormenu.png</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/JOSM/Plugins/Surveyor</plugin.link>
+        <plugin.requires>livegps</plugin.requires>
+        <plugin.stage>60</plugin.stage>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>livegps</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

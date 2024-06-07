@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>livegps</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Frederik Ramm</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18788</plugin.main.version>
+        <plugin.author>Frederik Ramm</plugin.author>
+        <plugin.class>livegps.LiveGpsPlugin</plugin.class>
+        <plugin.description>Support live GPS input (moving dot) through a connection to gpsd server.</plugin.description>
+        <plugin.icon>images/dialogs/livegps.svg</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/index.php/JOSM/Plugins/LiveGPS</plugin.link>
+        <plugin.stage>50</plugin.stage>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>poly</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <id>Zverik</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Zverik</plugin.author>
+        <plugin.class>poly.PolyPlugin</plugin.class>
+        <plugin.description>Read and write osmosis poly filter files</plugin.description>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/Osmosis/Polygon_Filter_File_Format</plugin.link>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

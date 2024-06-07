@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>touchscreenhelper</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <email>glebius@glebius.int.ru</email>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>12630</plugin.main.version>
+        <plugin.author>glebius@glebius.int.ru</plugin.author>
+        <plugin.class>touchscreenhelper.TouchScreenHelperPlugin</plugin.class>
+        <plugin.description>Provides helper buttons to allow working with single button mouse (stylus). Activate by holding T and slip map with left mouse button</plugin.description>
+        <plugin.icon>images/mapmode/browse.png</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/JOSM/Plugins/TouchScreenHelper</plugin.link>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>flatlaf</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <id>simon04</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>16974</plugin.main.version>
+
+        <plugin.author>simon04</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.flatlaf.FlatLafPlugin</plugin.class>
+        <plugin.description>FlatLaf - Flat Look and Feel</plugin.description>
+        <plugin.icon>images/FlatLaf.svg</plugin.icon>
+        <plugin.early>true</plugin.early>
+        <plugin.stage>-4</plugin.stage><!-- very early plugin -->
+        <plugin.link>https://www.formdev.com/flatlaf/</plugin.link>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Early>${plugin.early}</Plugin-Early>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

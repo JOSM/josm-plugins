@@ -1,0 +1,66 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>routes</artifactId>
+
+    <developers>
+        <developer>
+            <name>Jiri Klement</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Jiri Klement</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.routes.RoutesPlugin</plugin.class>
+        <plugin.description>Renders routes (bus, hiking trails, bicycle routes, ..). Route types must be defined in routes.xml file in plugin directory</plugin.description>
+        <plugin.requires>jaxb</plugin.requires>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>jaxb</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sources>
+                        <source>resources/org/openstreetmap/josm/plugins/routes/xml/routes.xsd</source>
+                    </sources>
+                    <packageName>org.openstreetmap.josm.plugins.routes.xml</packageName>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>reverter</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <id>Upliner</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18723</plugin.main.version>
+        <plugin.author>Upliner</plugin.author>
+        <plugin.class>reverter.ReverterPlugin</plugin.class>
+        <plugin.description>Plugin for reverting changesets</plugin.description>
+        <plugin.icon>images/revert-changeset.svg</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/JOSM/Plugins/Reverter</plugin.link>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+        <plugin.stage>5</plugin.stage>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

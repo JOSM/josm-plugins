@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>utilsplugin2</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Kalle Lampila</name>
+        </developer>
+        <developer>
+            <id>Upliner</id>
+        </developer>
+        <developer>
+            <id>Zverik</id>
+        </developer>
+        <developer>
+            <id>akks</id>
+        </developer>
+        <developer>
+            <id>joshdoe</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18495</plugin.main.version>
+        <plugin.author>Kalle Lampila, Upliner, Zverik, akks, joshdoe and others</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.utilsplugin2.UtilsPlugin2</plugin.class>
+        <plugin.description>Several utilities that make your life easier.</plugin.description>
+        <plugin.icon>images/utils.png</plugin.icon>
+        <plugin.link>https://josm.openstreetmap.de/wiki/Help/Plugin/UtilsPlugin2</plugin.link>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+        <plugin.stage>40</plugin.stage>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

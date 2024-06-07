@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>colorscheme</artifactId>
+
+    <developers>
+        <developer>
+            <name>Christof Dallermassl</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>17314</plugin.main.version>
+
+        <plugin.author>Christof Dallermassl</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.colorscheme.ColorSchemePlugin</plugin.class>
+        <plugin.description>Allows the user to create different color schemes and to switch between them. Just change the colors and create a new scheme. Used to switch to a white background with matching colors for better visibility in bright sunlight. See dialog in display preferences.</plugin.description>
+    </properties>
+</project>

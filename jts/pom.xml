@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>jts</artifactId>
+
+    <developers>
+        <developer>
+            <name>Josh Doe</name>
+            <email>josh@joshdoe.com</email>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>12164</plugin.main.version>
+    
+        <plugin.author>Josh Doe &lt;josh@joshdoe.com&gt;</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.jts.JTSPlugin</plugin.class>
+        <plugin.description>Provides Java Topology Suite (JTS) library and related utilities. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>
+        <plugin.icon>images/jts.png</plugin.icon>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+        <plugin.stage>10</plugin.stage>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>1.19.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.jts.io</groupId>
+            <artifactId>jts-io-common</artifactId>
+            <version>1.19.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

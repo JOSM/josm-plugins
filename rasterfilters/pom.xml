@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>rasterfilters</artifactId>
+
+    <developers>
+        <developer>
+            <name>Vadim Varnavsky</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18723</plugin.main.version>
+        <plugin.version>1.0.4</plugin.version>
+
+        <plugin.icon>images/josm_filters_48.png</plugin.icon>
+        <plugin.author>Vadim Varnavsky</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.rasterfilters.RasterFiltersPlugin</plugin.class>
+        <plugin.description>The RasterFiltersPlugin allows to choose and apply some images'' filters to some layers</plugin.description>
+    </properties>
+    <repositories>
+        <repository>
+            <id>colorpicker</id>
+            <url>file:///${project.basedir}/lib</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+        <dependency>
+            <!-- I think lib/picker.jar is an "old" version of org.drjekyll:colorpicker:1.2 -->
+            <!-- Note: you will have to run mvn initialize to get this working. Sorry. -->
+            <groupId>org.drjekyll</groupId>
+            <artifactId>colorpicker</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>default-initialize</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>lib/picker.jar</file>
+                            <groupId>org.drjekyll</groupId>
+                            <artifactId>colorpicker</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>clean-initialize</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>lib/picker.jar</file>
+                            <groupId>org.drjekyll</groupId>
+                            <artifactId>colorpicker</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

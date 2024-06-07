@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>DirectUpload</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Subhodip Biswas</name>
+        </developer>
+    </developers>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18173</plugin.main.version>
+        <plugin.author>Subhodip Biswas</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.DirectUpload.UploadDataGuiPlugin</plugin.class>
+        <plugin.description>This plugin directly upload GPS Traces from current active layer in JOSM to openstreetmap.org.</plugin.description>
+        <plugin.icon>images/UploadAction.svg</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/index.php/User:Subhodip/GSoC_Doc#DirectUpload_Plugin_in_JOSM_:</plugin.link>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

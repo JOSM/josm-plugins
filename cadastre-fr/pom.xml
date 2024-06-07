@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>cadastre-fr</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <id>Pieren</id>
+        </developer>
+        <developer>
+            <id>Don-vip</id>
+        </developer>
+    </developers>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>18723</plugin.main.version>
+        <plugin.author>Pieren;Don-vip</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.fr.cadastre.CadastrePlugin</plugin.class>
+        <plugin.description>A special handler for the French land registry WMS server.</plugin.description>
+        <plugin.icon>images/preferences/cadastrewms.png</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/FR:JOSM/Fr:Plugin/Cadastre</plugin.link>
+        <plugin.stage>60</plugin.stage>
+        <plugin.requires>apache-commons;ejml;jts;geotools</plugin.requires>
+        <plugin.minimum.java.version>11</plugin.minimum.java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>apache-commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- We need to override this from the parent pom; otherwise, it will be test only -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope> <!-- provided by the apache-commons plugin -->
+        </dependency>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>ejml</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>geotools</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Minimum-Java-Version>${plugin.minimum.java.version}</Plugin-Minimum-Java-Version>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>ImportImagePlugin</artifactId>
+
+    <url>${plugin.link}</url>
+    <developers>
+        <developer>
+            <name>Christoph Beekmans</name>
+        </developer>
+        <developer>
+            <name>Fabian Kowitz</name>
+        </developer>
+        <developer>
+            <name>Anna Robaszkiewicz</name>
+        </developer>
+        <developer>
+            <name>Oliver Kuhn</name>
+        </developer>
+        <developer>
+            <name>Martin Ulitzny</name>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.main.version>14153</plugin.main.version>
+        <plugin.author>Christoph Beekmans, Fabian Kowitz, Anna Robaszkiewicz, Oliver Kuhn, Martin Ulitzny</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.ImportImagePlugin.ImportImagePlugin</plugin.class>
+        <plugin.description>Plugin for importing spatial referenced images</plugin.description>
+        <plugin.icon>images/layericon.png</plugin.icon>
+        <plugin.link>https://wiki.openstreetmap.org/wiki/JOSM/Plugins/ImportImagePlugin</plugin.link>
+        <plugin.requires>jts;ejml;geotools</plugin.requires>
+        <java.lang.version>11</java.lang.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>ejml</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openstreetmap.josm.plugins</groupId>
+            <artifactId>geotools</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Minimum-Java-Version>${java.lang.version}</Plugin-Minimum-Java-Version>
+                            <Plugin-Link>${plugin.link}</Plugin-Link>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Requires>${plugin.requires}</Plugin-Requires>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

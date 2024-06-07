@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ejml</artifactId>
+
+    <developers>
+        <developer>
+            <id>Don-vip</id>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src</plugin.src.dir>
+        <plugin.main.version>10580</plugin.main.version>
+        <plugin.author>Don-vip</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.ejml.EjmlPlugin</plugin.class>
+        <plugin.description>Provides the EJML library for other JOSM plugins. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>
+        <plugin.icon>images/ejml.png</plugin.icon>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+        <plugin.stage>15</plugin.stage>
+        <plugin.minimum.java.version>11</plugin.minimum.java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-all</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>ejml-experimental</artifactId>
+            <version>0.43.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Minimum-Java-Version>${plugin.minimum.java.version}</Plugin-Minimum-Java-Version>
+                            <Plugin-Icon>${plugin.icon}</Plugin-Icon>
+                            <Plugin-Stage>${plugin.stage}</Plugin-Stage>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

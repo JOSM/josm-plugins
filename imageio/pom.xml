@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>imageio</artifactId>
+
+    <developers>
+        <developer>
+            <id>taylor.smock</id>
+            <name>Taylor Smock</name>
+            <email>tsmock@meta.com</email>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.src.dir>src/main/java</plugin.src.dir>
+        <plugin.test.dir>src/test/java</plugin.test.dir>
+        <plugin.resources.dir>src/main/resources</plugin.resources.dir>
+        <plugin.main.version>18877</plugin.main.version>
+
+        <plugin.author>Taylor Smock</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.imageio.ImageIOPlugin</plugin.class>
+        <plugin.description>Enable additional image types such as webp (each image type must be enabled in preferences)</plugin.description>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+        <java.lang.version>17</java.lang.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Minimum-Java-Version>${java.lang.version}</Plugin-Minimum-Java-Version>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

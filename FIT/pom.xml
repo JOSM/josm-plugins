@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openstreetmap.josm.plugins</groupId>
+        <artifactId>plugin-root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>FIT</artifactId>
+
+    <developers>
+        <developer>
+            <id>taylor.smock</id>
+            <name>Taylor Smock</name>
+            <email>tsmock@meta.com</email>
+        </developer>
+    </developers>
+    <properties>
+        <plugin.test.dir>src/test</plugin.test.dir>
+        <plugin.test.data.dir>${plugin.test.dir}/data</plugin.test.data.dir>
+        <plugin.test.src.dir>${plugin.test.dir}/unit</plugin.test.src.dir>
+        <plugin.src.dir>src/main/java</plugin.src.dir>
+        <plugin.resources.dir>src/main/resources</plugin.resources.dir>
+        <plugin.main.version>10580</plugin.main.version>
+
+        <plugin.author>Taylor Smock</plugin.author>
+        <plugin.class>org.openstreetmap.josm.plugins.fit.FitPlugin</plugin.class>
+        <plugin.description>Garmin FIT files in JOSM</plugin.description>
+        <!--<plugin.icon>...</plugin.icon>-->
+        <!--<plugin.link>...</plugin.link>-->
+        <java.lang.version>21</java.lang.version>
+        <plugin.canloadatruntime>true</plugin.canloadatruntime>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Plugin-Minimum-Java-Version>${java.lang.version}</Plugin-Minimum-Java-Version>
+                            <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

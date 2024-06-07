@@ -16,8 +16,6 @@
     <property name="josm.ivy"               location="../../core/ivy.xml"/>
     <property name="josm.ivysettings"       location="../../core/ivysettings.xml"/>
     <property name="josm.test.build.dir"    location="../../core/test/build"/>
-    <property name="jmockit.jar"            location="../00_core_test_lib/jmockit.jar"/>
-    <property name="annotations.jar"        location="../00_core_tools/spotbugs/spotbugs-annotations.jar"/>
     <property name="core.tools.ivy"         location="../00_core_tools/ivy.xml"/>
     <property name="plugin.tools.dir"       location="../00_tools"/>
     <property name="plugin.build.dir"       location="build"/>
@@ -552,16 +550,21 @@
         <init-test-preferences/>
         <ivy:settings file="${josm.ivysettings}" id="ivy.core.settings"/>
         <ivy:resolve settingsRef="ivy.core.settings" file="${josm.ivy}" conf="test,jacocoant"/>
+        <!-- The following ivy:retrieve calls are for IDEs without Ivy support; since we don't have sync=true, these may not have the "latest" versions -->
+        <!--
         <ivy:retrieve settingsRef="ivy.core.settings" pattern="../00_core_test_lib/[artifact].[ext]" conf="test"/>
         <ivy:retrieve settingsRef="ivy.core.settings" pattern="../00_core_tools/[conf].[ext]" conf="jacocoant"/>
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="../00_core_tools/jacocoant.jar"/>
+        -->
+        <ivy:cachepath settingsRef="ivy.core.settings" pathid=".local.test.classpath" conf="test" />
+        <ivy:cachepath settingsRef="ivy.core.settings" pathid="jacocotest.classpath" conf="test,jacocoant"/>
+        <ivy:cachepath settingsRef="ivy.core.settings" pathid="jmockit.classpath" file="${josm.ivy}" conf="jmockit" transitive="false"/>
+        <ivy:cachepath settingsRef="ivy.core.settings" pathid="jacocoant.classpath" file="${josm.ivy}" conf="jacocoant"/>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="${toString:jacocoant.classpath}"/>
         <path id="test.classpath">
             <!-- JMockit must be included before JUnit in the classpath -->
-            <pathelement path="${jmockit.jar}"/>
-            <fileset dir="../00_core_test_lib">
-                <include name="**/*.jar"/>
-                <exclude name="**/jmockit*.jar"/>
-            </fileset>
+            <path refid="jmockit.classpath"/>
+            <path refid="jacocotest.classpath"/>
+            <path refid=".local.test.classpath"/>
             <fileset dir="${plugin.test.dir}/lib" erroronmissingdir="no">
                 <include name="**/*.jar"/>
                 <exclude name="**/*-sources.jar"/>
@@ -577,7 +580,6 @@
             <pathelement path="${josm.test.build.dir}/unit"/>
             <pathelement path="${josm}"/>
             <pathelement path="${plugin.jar}"/>
-            <pathelement path="${annotations.jar}"/>
         </path>
     </target>
     <target name="test-clean">
@@ -618,7 +620,7 @@
 	                  <fork>
                         <jvmarg value="${jacocoagent}" if:set="jacocoagent" />
                         <jvmarg value="-Dfile.encoding=UTF-8"/>
-                        <jvmarg value="-javaagent:${jmockit.jar}"/>
+                        <jvmarg value="-javaagent:${toString:jmockit.classpath}"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
                         <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
