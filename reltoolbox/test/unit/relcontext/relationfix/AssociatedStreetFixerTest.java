@@ -44,6 +44,8 @@ class AssociatedStreetFixerTest implements RelationFixerTest {
         final Relation relation = TestUtils.newRelation("type=associatedStreet name=FooBar",
                 new RelationMember("street", TestUtils.newWay("highway=residential name=FooBar", TestUtils.newNode(""), TestUtils.newNode(""))),
                 new RelationMember("house", TestUtils.newNode("")));
+        final DataSet ds = new DataSet();
+        ds.addPrimitiveRecursive(relation);
         return Stream.of(relation);
     }
 }

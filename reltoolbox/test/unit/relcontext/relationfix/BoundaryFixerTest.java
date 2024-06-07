@@ -60,7 +60,7 @@ class BoundaryFixerTest implements RelationFixerTest {
         final Relation wayRelation = TestUtils.newRelation("type=boundary boundary=administrative",
                 new RelationMember("outer", TestUtils.newWay("", TestUtils.newNode(""), TestUtils.newNode(""))));
         final Relation nodeRelation = TestUtils.newRelation("type=boundary boundary=administrative",
-                new RelationMember("admin_centre", TestUtils.newNode("")));
+                new RelationMember("admin_centre", TestUtils.newNode("place=city")));
         final Relation relationRelation = TestUtils.newRelation("type=boundary boundary=administrative",
                 new RelationMember("subarea", TestUtils.newRelation("")));
         Relation[] relations = {nodeRelation, wayRelation, relationRelation};

@@ -49,11 +49,10 @@ public class MultipolygonFixer extends RelationFixer {
     @Override
     public Command fixRelation(Relation rel) {
         List<RelationMember> members = fixMultipolygonRoles(rel.getMembers());
-        if (!members.equals(rel.getMembers())) {
-            final DataSet ds = Utils.firstNonNull(rel.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
-            return new ChangeMembersCommand(ds, rel, members);
-        }
-        return null;
+        if (members.isEmpty() || members.equals(rel.getMembers())) 
+            return null;
+        final DataSet ds = Utils.firstNonNull(rel.getDataSet(), MainApplication.getLayerManager().getEditDataSet());
+        return new ChangeMembersCommand(ds, rel, members);
     }
 
     /**
