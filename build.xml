@@ -15,6 +15,7 @@
                                             MicrosoftStreetside/build.xml" />
     <property name="java17_plugins" value="maproulette/build.xml
                                             imageio/build.xml
+                                            Mapillary/build.xml
                                             pmtiles/build.xml
                                             todo/build.xml"/>
     <property name="ordered_plugins" value="jackson/build.xml
@@ -27,7 +28,6 @@
                                             apache-commons/build.xml
                                             apache-http/build.xml
                                             geotools/build.xml
-                                            Mapillary/build.xml
                                             austriaaddresshelper/build.xml"/>
     <property name="javafx_plugins" value="javafx/build.xml"/>
     <macrodef name="iterate">
