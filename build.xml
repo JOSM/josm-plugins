@@ -16,6 +16,7 @@
     <property name="java17_plugins" value="maproulette/build.xml
                                             imageio/build.xml
                                             Mapillary/build.xml
+                                            MapRoulette/build.xml
                                             pmtiles/build.xml
                                             todo/build.xml"/>
     <property name="ordered_plugins" value="jackson/build.xml
