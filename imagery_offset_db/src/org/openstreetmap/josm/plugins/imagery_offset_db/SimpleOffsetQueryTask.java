@@ -94,7 +94,7 @@ class SimpleOffsetQueryTask extends PleaseWaitRunnable {
      */
     private void doQuery(String query) throws UploadException, IOException {
         try {
-            String serverURL = Config.getPref().get("iodb.server.url", "http://offsets.textual.ru/");
+            String serverURL = Config.getPref().get("iodb.server.url", "https://offsets.textual.ru/");
             URL url = new URL(serverURL + query);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
