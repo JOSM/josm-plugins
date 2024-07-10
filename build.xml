@@ -13,8 +13,7 @@
     <!-- Specific plugins -->
     <property name="java21_plugins" value="FIT/build.xml
                                             MicrosoftStreetside/build.xml" />
-    <property name="java17_plugins" value="maproulette/build.xml
-                                            imageio/build.xml
+    <property name="java17_plugins" value="imageio/build.xml
                                             Mapillary/build.xml
                                             MapRoulette/build.xml
                                             pmtiles/build.xml
