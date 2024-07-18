@@ -13,6 +13,7 @@
               value="هذه الأداة تقوم بجلب العنوان الوطني لأي مبنى في المملكة العربية السعودية، يلزم تسجيل حساب لدى موقع https://api.address.gov.sa/"/>
     <property name="plugin.icon" value="images/icon.png"/>
     <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/JOSM/Plugins/SaudiNationalAddress"/>
+    <property name="java.lang.version" value="11"/>
     <!--<property name="plugin.early" value="..."/>-->
     <!--<property name="plugin.requires" value="..."/>-->
     <!--<property name="plugin.stage" value="..."/>-->
