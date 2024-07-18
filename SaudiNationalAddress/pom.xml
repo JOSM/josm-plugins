@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>10580</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Mouath Ibrahim</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.saudinationaladdress.SaudiNationalAddressPlugin</plugin.class>
         <plugin.description>This tool will query the Saudi National address API using coordinate and return building number, An API key is required. can be obtained from https://api.address.gov.sa/</plugin.description>
