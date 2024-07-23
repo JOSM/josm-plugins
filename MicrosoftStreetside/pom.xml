@@ -22,7 +22,7 @@
         <plugin.class>org.openstreetmap.josm.plugins.streetside.StreetsidePlugin</plugin.class>
         <plugin.description>Allows the user to work with pictures hosted at Microsoft Streetside</plugin.description>
         <plugin.icon>images/streetside-logo.svg</plugin.icon>
-        <plugin.link>https://github.com/Microsoft/MicrosoftStreetsidePlugin</plugin.link>
+        <plugin.link>https://josm.openstreetmap.de/browser/osm/applications/editors/josm/plugins/MicrosoftStreetside</plugin.link>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <java.lang.version>21</java.lang.version>
         <plugin.requires>apache-commons;javafx</plugin.requires>
