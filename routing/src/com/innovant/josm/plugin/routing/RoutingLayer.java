@@ -46,6 +46,9 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class RoutingLayer extends Layer {
 
+    /**
+     * Preference keys for routing
+     */
     public enum PreferencesKeys {
         KEY_ACTIVE_ROUTE_COLOR(marktr("routing active route")),
         KEY_INACTIVE_ROUTE_COLOR(marktr("routing inactive route")),
@@ -61,6 +64,8 @@ public class RoutingLayer extends Layer {
             return key;
         }
     }
+
+    private static final String ROUTING = "routing";
 
     /**
      * Constant
@@ -92,14 +97,14 @@ public class RoutingLayer extends Layer {
     public RoutingLayer(String name, OsmDataLayer dataLayer) {
         super(name);
         Logging.trace("Creating Routing Layer...");
-        this.startIcon = ImageProvider.get("routing", "startflag");
-        this.middleIcon = ImageProvider.get("routing", "middleflag");
-        this.endIcon = ImageProvider.get("routing", "endflag");
+        this.startIcon = ImageProvider.get(ROUTING, "startflag");
+        this.middleIcon = ImageProvider.get(ROUTING, "middleflag");
+        this.endIcon = ImageProvider.get(ROUTING, "endflag");
         this.dataLayer = dataLayer;
         this.routingModel = new RoutingModel(dataLayer.data);
         Logging.trace("Routing Layer created.");
 
-        this.routingModel.routingGraph.createGraph();    /* construct the graph right after we we create the layer */
+        this.routingModel.routingGraph.createGraph();    /* construct the graph right after we create the layer */
         invalidate();                            /* update MapView */
     }
 
@@ -205,7 +210,7 @@ public class RoutingLayer extends Layer {
 
         // Get path stroke width from preferences
         String widthString = Config.getPref().get(PreferencesKeys.KEY_ROUTE_WIDTH.getKey());
-        if (widthString.length() == 0) {
+        if (widthString.isEmpty()) {
             widthString = "2";                        /* I think 2 is better  */
             // FIXME add after good width is found: Config.getPref().put(KEY_ROUTE_WIDTH, widthString);
         }
@@ -267,7 +272,7 @@ public class RoutingLayer extends Layer {
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         routingModel.reset();
         //      layerAdded = false;
     }
@@ -289,7 +294,7 @@ public class RoutingLayer extends Layer {
         g2d.setStroke(new BasicStroke(width)); // thickness
         g2d.drawLine(from.x, from.y, to.x, to.y);
         if (showDirection) {
-            double t = Math.atan2(to.y-from.y, to.x-from.x) + Math.PI;
+            double t = Math.atan2(to.y - (double) from.y, to.x - (double) from.x) + Math.PI;
             g.drawLine(to.x, to.y, (int) (to.x + 10*Math.cos(t-ARROW_PHI)), (int) (to.y + 10*Math.sin(t-ARROW_PHI)));
             g.drawLine(to.x, to.y, (int) (to.x + 10*Math.cos(t+ARROW_PHI)), (int) (to.y + 10*Math.sin(t+ARROW_PHI)));
         }
@@ -308,7 +313,7 @@ public class RoutingLayer extends Layer {
         g2d.setStroke(new BasicStroke(width)); // thickness
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Anti-alias!
         g2d.drawLine(from.x, from.y, to.x, to.y);
-        g2d.drawRect(to.x- 4, to.y+4, 4, 4);
+        g2d.drawRect(to.x - 2, to.y - 2, 4, 4);
 
         g2d.setStroke(oldStroke);
     }
