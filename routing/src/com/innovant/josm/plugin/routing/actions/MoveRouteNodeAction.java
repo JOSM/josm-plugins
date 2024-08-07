@@ -108,7 +108,7 @@ public class MoveRouteNodeAction extends MapMode {
             routingDialog.removeNode(index);
             routingModel.insertNode(index, node);
             routingDialog.insertNode(index, node);
-            MainApplication.getMap().repaint();
+            MainApplication.getLayerManager().getLayersOfType(RoutingLayer.class).forEach(RoutingLayer::invalidate);
         }
     }
 

@@ -71,7 +71,7 @@ public class RemoveRouteNodeAction extends MapMode {
                 Logging.trace("Removing node {0}", nl.get(index));
                 routingModel.removeNode(index);
                 RoutingPlugin.getInstance().getRoutingDialog().removeNode(index);
-                MainApplication.getMap().repaint();
+                MainApplication.getLayerManager().getLayersOfType(RoutingLayer.class).forEach(RoutingLayer::invalidate);
             } else {
                 Logging.trace("Can't find a node to remove.");
             }

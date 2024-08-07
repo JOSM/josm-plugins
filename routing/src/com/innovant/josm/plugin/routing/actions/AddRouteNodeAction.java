@@ -60,7 +60,7 @@ public class AddRouteNodeAction extends MapMode {
                 RoutingPlugin.getInstance().getRoutingDialog().addNode(node);
             }
         }
-        MainApplication.getMap().repaint();
+        MainApplication.getLayerManager().getLayersOfType(RoutingLayer.class).forEach(RoutingLayer::invalidate);
     }
 
     @Override public boolean layerIsSupported(Layer l) {
