@@ -25,7 +25,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author><![CDATA[Jose Vidal <vidalfree@gmail.com>, Juangui Jordán <juangui@gmail.com>, Hassan S <hassan.sabirin@gmail.com>]]></plugin.author>
         <plugin.class>com.innovant.josm.plugin.routing.RoutingPlugin</plugin.class>
         <plugin.description>Provides routing capabilities.</plugin.description>
