@@ -18,6 +18,7 @@
                                             pmtiles/build.xml
                                             todo/build.xml"/>
     <property name="ordered_plugins" value="jackson/build.xml
+                                            javafx/build.xml
                                             jaxb/build.xml
                                             jna/build.xml
                                             jts/build.xml
