@@ -26,7 +26,7 @@
     <property name="plugin.lib.dir"         location="lib"/>
     <!-- this is the directory where the plugin jar is copied to -->
     <property name="plugin.dist.dir"        location="../../dist"/>
-    <property name="java.lang.version"      value="8" />
+    <property name="java.lang.version"      value="11" />
     <property name="javadoc.executable"     value="javadoc" />
     <property name="manifest"               value="MANIFEST"/>
     <property name="manifest.unixoid"       value="MANIFEST-unixoid"/>
@@ -51,16 +51,13 @@
     <condition property="isUnix"><os family="Unix"/></condition>
     <condition property="isMac"><os family="Mac"/></condition>
     <!-- For Java specific stuff by version -->
-    <condition property="isJava9"><matches string="${ant.java.version}" pattern="(1.)?(9|[1-9][0-9])" /></condition>
-    <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]|[2-9][0-9]" /></condition>
     <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition>
     <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition>
     <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
     <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
 
     <!-- set the javadoc location -->
-    <property name="javadoc.link"           value="https://docs.oracle.com/javase/8/docs/api" unless:set="isJava11"/>
-    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/11/docs/api/" if:set="isJava11" unless:set="isJava17"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/11/docs/api/" unless:set="isJava17"/>
     <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/17/docs/api/" if:set="isJava17" unless:set="isJava21"/>
     <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/21/docs/api/" if:set="isJava21"/>
 
@@ -114,29 +111,27 @@
     </target>
     <target name="compile" depends="init, pre-compile, resolve-tools" unless="skip-compile">
         <echo message="compiling sources for ${plugin.jar} ..."/>
-        <path id="jdk8.boot.classpath">
+        <path id="jdk.boot.classpath">
             <path refid="errorprone_javac.classpath"/>
             <fileset refid="jaxb.jars"/>
         </path>
         <javac srcdir="${plugin.src.dir}" debug="true" destdir="${plugin.build.dir}" includeantruntime="false"
             encoding="UTF-8" release="${java.lang.version}" fork="yes">
-            <compilerarg value="-J-Xbootclasspath/p:${toString:jdk8.boot.classpath}" unless:set="isJava9"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
-            <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" if:set="isJava11" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" unless:set="noErrorProne"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
             <compilerarg value="-processorpath"/>
             <compilerarg pathref="errorprone.classpath"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:StringSplitter:OFF -Xep:ReferenceEquality:OFF -Xep:InsecureCryptoUsage:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsHashCode:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF -Xep:RestrictedApiChecker:OFF" unless:set="isJava11"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:StringSplitter:OFF -Xep:ReferenceEquality:OFF -Xep:InsecureCryptoUsage:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsHashCode:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF" if:set="isJava11"/>
+            <compilerarg value="-Xplugin:ErrorProne -Xep:StringSplitter:OFF -Xep:ReferenceEquality:OFF -Xep:InsecureCryptoUsage:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsHashCode:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF" />
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath refid="plugin.classpath"/>
         </javac>
@@ -304,11 +299,9 @@
             <doctitle><![CDATA[<h2>JOSM-${ant.project.name} - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/wiki/Plugins">JOSM Plugins</a>]]></bottom>
             <arg line="-tag license:X" />
-            <arg value="-html5" if:set="isJava9" />
-            <arg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
-            <arg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
-            <arg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
-            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
+            <arg value="-html5" />
+            <arg value="--add-exports" unless:set="noJavaFX" />
+            <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" unless:set="noJavaFX" />
         </javadoc>
     </target>
     <!--
@@ -623,14 +616,12 @@
                         <jvmarg value="-javaagent:${toString:jmockit.classpath}"/>
                         <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
                         <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
-                        <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-opens" if:set="isJava9" />
-                        <jvmarg value="java.desktop/javax.imageio.spi=ALL-UNNAMED" if:set="isJava9" />
-                        <jvmarg value="--add-exports" if:set="isJava9" />
-                        <jvmarg value="java.desktop/com.sun.imageio.spi=ALL-UNNAMED" if:set="isJava9" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
+                        <jvmarg value="--add-opens" />
+                        <jvmarg value="java.desktop/javax.imageio.spi=ALL-UNNAMED" />
+                        <jvmarg value="--add-exports" />
+                        <jvmarg value="java.desktop/com.sun.imageio.spi=ALL-UNNAMED"  />
                         <jvmarg value="-XX:+ShowCodeDetailsInExceptionMessages" if:set="isJava14" unless:set="isJava15" />
                         <sysproperty key="josm.home" value="../00_core_test_config/unit-josm.home"/>
                         <sysproperty key="josm.test.data" value="${plugin.test.dir}/data"/>
