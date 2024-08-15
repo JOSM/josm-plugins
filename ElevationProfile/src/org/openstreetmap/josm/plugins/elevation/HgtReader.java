@@ -204,8 +204,8 @@ public class HgtReader {
         double lonDegrees = latLon.lon();
 
         float fraction = ((float) SRTM_EXTENT) / (mapSize - 1);
-        int latitude = (int) Math.round(frac(latDegrees) / fraction);
-        int longitude = (int) Math.round(frac(lonDegrees) / fraction);
+        int latitude = (int) Math.abs(Math.round(frac(latDegrees) / fraction));
+        int longitude = (int) Math.abs(Math.round(frac(lonDegrees) / fraction));
         if (latDegrees >= 0)
         {
             latitude = mapSize - latitude - 1;
