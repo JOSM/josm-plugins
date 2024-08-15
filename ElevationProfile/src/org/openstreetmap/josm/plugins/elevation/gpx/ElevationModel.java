@@ -23,7 +23,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @see IElevationModel
  */
 public class ElevationModel implements IGpxVisitor, IElevationModel {
-    // private int sliceSize;
     private int trackCounter;
     private final GpxData gpxData;
     private final String name;
@@ -60,6 +59,7 @@ public class ElevationModel implements IGpxVisitor, IElevationModel {
     }
 
     /**
+     * Return the tracks of the elevation model
      * @return the tracks
      */
     protected WayPointMap getTracks() {

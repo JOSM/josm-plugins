@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.plugins.elevation;
 
 /**
- * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  * Enumeration for different unit types.
+ * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  */
 public enum UnitMode {
     NotSelected,

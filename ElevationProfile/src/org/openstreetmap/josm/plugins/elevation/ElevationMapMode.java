@@ -8,8 +8,8 @@ import java.awt.Cursor;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 
 /**
- * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  * Provides the map mode and controls visibility of the elevation profile layer/panel.
+ * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  */
 public class ElevationMapMode extends MapMode implements IElevationModelListener {
     /**

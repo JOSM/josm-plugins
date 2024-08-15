@@ -18,21 +18,20 @@ import org.openstreetmap.josm.data.imagery.TileJobOptions;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
+ * Tile loader for the elevation grid display
  * @author Olli
  *
  */
 public class ElevationGridTileLoader extends TMSCachedTileLoader {
 
-    class ElevationGridTileJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob {
+    static class ElevationGridTileJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob {
 
         private final Tile tile;
         private final TileLoaderListener listener;
-        private final ICacheAccess<String, BufferedImageCacheEntry> cache;
 
         protected ElevationGridTileJob(TileLoaderListener listener, Tile tile, ICacheAccess<String, BufferedImageCacheEntry> cache, TileJobOptions options,
                 ThreadPoolExecutor downloadJobExecutor) {
             super(cache, options, downloadJobExecutor);
-            this.cache = cache;
             this.tile = tile;
             this.listener = listener;
         }

@@ -7,6 +7,7 @@ import org.openstreetmap.josm.plugins.elevation.ColorMap;
 import org.openstreetmap.josm.plugins.elevation.IVertexRenderer;
 
 /**
+ * Simple implementation of vertex renderer
  * @author Olli
  *
  */

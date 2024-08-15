@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.plugins.elevation.gpx;
 
 /**
- * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  * Enumeration which classifies way points within an elevation profile.
+ * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  */
 public enum ElevationWayPointKind {
     Plain,              // Simple way point (equal to no or low slope)

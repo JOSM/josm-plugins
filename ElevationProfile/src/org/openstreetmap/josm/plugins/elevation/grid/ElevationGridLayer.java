@@ -40,6 +40,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
+ * Elevation grid display layer
  * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  *
  */
@@ -283,7 +284,7 @@ public class ElevationGridLayer extends Layer implements TileLoaderListener, Mou
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         super.destroy();
         HgtReader.clearCache();
         MainApplication.getMap().mapView.removeMouseListener(this);

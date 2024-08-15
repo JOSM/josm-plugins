@@ -8,8 +8,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 
 /**
- * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  * Interface for an elevation profile providing special properties/values.
+ * @author Oliver Wieland &lt;oliver.wieland@online.de&gt;
  */
 public interface IElevationProfile {
     /**

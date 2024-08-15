@@ -7,8 +7,8 @@ import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 
 /**
+ * Tile source class for the tile loader
  * @author Olli
- *
  */
 public class ElevationGridTileSource extends TMSTileSource {
     public ElevationGridTileSource(String name) {

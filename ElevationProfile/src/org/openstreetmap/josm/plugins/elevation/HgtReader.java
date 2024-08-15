@@ -106,10 +106,9 @@ public class HgtReader {
 
         try (InputStream fis = Compression.getUncompressedFileInputStream(Paths.get(file))) {
             // choose the right endianness
-            ByteBuffer bb = ByteBuffer.wrap(IOUtils.toByteArray(fis));
-            //System.out.println(Arrays.toString(bb.array()));
+            ByteBuffer bb = ByteBuffer.wrap(fis.readAllBytes());
             bb.order(ByteOrder.BIG_ENDIAN);
-            int size = (int) Math.sqrt(bb.array().length / 2);
+            int size = (int) Math.sqrt(bb.array().length / 2.0);
             data = new short[size][size];
             int x = 0;
             int y = 0;
@@ -129,7 +128,7 @@ public class HgtReader {
     /**
      * Reads the elevation value for the given coordinate.
      *
-     * See also <a href="http://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file">stackexchange.com</a>
+     * See also <a href="https://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file">stackexchange.com</a>
      * @param coor the coordinate to get the elevation data for
      * @return the elevation value or <code>Double.NaN</code>, if no value is present
      */
@@ -141,7 +140,7 @@ public class HgtReader {
     /**
      * Reads the elevation value for the given coordinate.
      *
-     * See also <a href="http://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file">stackexchange.com</a>
+     * See also <a href="https://gis.stackexchange.com/questions/43743/how-to-extract-elevation-from-hgt-file">stackexchange.com</a>
      * @param coor the coordinate to get the elevation data for
      * @param fileName The expected filename
      * @return the elevation value or <code>Double.NaN</code>, if no value is present
@@ -204,8 +203,8 @@ public class HgtReader {
         double lonDegrees = latLon.lon();
 
         float fraction = ((float) SRTM_EXTENT) / (mapSize - 1);
-        int latitude = (int) Math.round(frac(latDegrees) / fraction);
-        int longitude = (int) Math.round(frac(lonDegrees) / fraction);
+        int latitude = (int) Math.round(frac(Math.abs(latDegrees)) / fraction);
+        int longitude = (int) Math.round(frac(Math.abs(lonDegrees)) / fraction);
         if (latDegrees >= 0)
         {
             latitude = mapSize - latitude - 1;

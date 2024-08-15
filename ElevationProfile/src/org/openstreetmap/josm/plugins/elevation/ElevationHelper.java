@@ -246,7 +246,7 @@ public final class ElevationHelper {
             return origList;
         }
 
-        int delta = (int) Math.max(Math.ceil(origSize / targetSize), 2);
+        int delta = (int) Math.max(origSize / targetSize, 2);
 
         List<WayPoint> res = new ArrayList<>(targetSize);
         for (int i = 0; i < origSize; i += delta) {

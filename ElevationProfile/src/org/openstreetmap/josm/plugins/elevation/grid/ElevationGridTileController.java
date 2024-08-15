@@ -43,8 +43,4 @@ public class ElevationGridTileController extends TileController {
         }
         return tile;
     }
-
-    /**
-     *
-     */
 }
