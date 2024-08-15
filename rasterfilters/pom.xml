@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.2</version>
+            <version>1.15.3</version>
         </dependency>
         <dependency>
             <!-- I think lib/picker.jar is an "old" version of org.drjekyll:colorpicker:1.2 -->
