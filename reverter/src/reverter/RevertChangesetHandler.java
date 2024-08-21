@@ -6,22 +6,28 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
+import org.openstreetmap.josm.tools.Logging;
 
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * The handler for {@link org.openstreetmap.josm.io.remotecontrol.RemoteControl} revert commands
+ */
 public class RevertChangesetHandler extends RequestHandler {
-    public static final String command = "revert_changeset";
-    public static final String permissionKey = "remotecontrol.permission.revert_changeset";
-    public static final boolean permissionDefault = true;
+    public static final String COMMAND = "revert_changeset";
+    private static final String PERMISSION_KEY = "remotecontrol.permission.revert_changeset";
+    private static final boolean PERMISSION_DEFAULT = true;
 
-    private int changesetId;
+    private final List<Integer> changesetIds = new ArrayList<>();
 
     @Override
-    protected void handleRequest() throws RequestHandlerErrorException,
-            RequestHandlerBadRequestException {
+    protected void handleRequest() throws RequestHandlerErrorException {
         try {
-            MainApplication.worker.submit(new RevertChangesetTask(changesetId, ChangesetReverter.RevertType.FULL, true));
+            MainApplication.worker.submit(new RevertChangesetTask(changesetIds, ChangesetReverter.RevertType.FULL, true, false));
         } catch (Exception ex) {
-            System.out.println("RemoteControl: Error parsing revert_changeset remote control request:");
-            ex.printStackTrace();
+            Logging.debug("RemoteControl: Error parsing revert_changeset remote control request:");
+            Logging.debug(ex);
             throw new RequestHandlerErrorException(ex);
         }
     }
@@ -33,7 +39,7 @@ public class RevertChangesetHandler extends RequestHandler {
 
     @Override
     public PermissionPrefWithDefault getPermissionPref() {
-        return null;
+        return new PermissionPrefWithDefault(PERMISSION_KEY, PERMISSION_DEFAULT, tr("Revert changeset(s)"));
     }
 
     @Override
@@ -43,10 +49,16 @@ public class RevertChangesetHandler extends RequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        try {
-            changesetId = Integer.parseInt(args.get("id"));
-        } catch (NumberFormatException e) {
-            throw new RequestHandlerBadRequestException("NumberFormatException: "+e.getMessage());
+        if (args.get("id") != null) {
+            try {
+                for (String id : args.get("id").split(",", -1)) {
+                    changesetIds.add(Integer.parseInt(id));
+                }
+            } catch (NumberFormatException e) {
+                throw new RequestHandlerBadRequestException("NumberFormatException: " + e.getMessage());
+            }
+        } else {
+            throw new RequestHandlerBadRequestException("The required id argument must be specified");
         }
     }
 }
