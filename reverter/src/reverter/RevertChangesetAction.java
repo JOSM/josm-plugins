@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package reverter;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -13,11 +14,18 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 import reverter.ChangesetReverter.RevertType;
 
+/**
+ * An action for reverting changesets
+ */
 public class RevertChangesetAction extends JosmAction {
+    private static final String REVERT_CHANGESET = marktr("Revert changeset");
 
+    /**
+     * Create a new action for reverting changesets
+     */
     public RevertChangesetAction() {
-        super(tr("Revert changeset"), "revert-changeset", tr("Revert changeset"),
-            Shortcut.registerShortcut("tool:revert", tr("Data: {0}", tr("Revert changeset")), KeyEvent.VK_T, Shortcut.CTRL_SHIFT),
+        super(tr(REVERT_CHANGESET), "revert-changeset", tr(REVERT_CHANGESET),
+            Shortcut.registerShortcut("tool:revert", tr("Data: {0}", tr(REVERT_CHANGESET)), KeyEvent.VK_T, Shortcut.CTRL_SHIFT),
                 true, false);
     }
 

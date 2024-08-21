@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -29,6 +28,9 @@ import org.openstreetmap.josm.tools.UserCancelException;
 
 import reverter.ChangesetReverter.RevertType;
 
+/**
+ * The task for reverting changesets
+ */
 public class RevertChangesetTask extends PleaseWaitRunnable {
     private final Collection<Integer> changesetIds;
     private final RevertType revertType;
@@ -39,18 +41,43 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
     private boolean downloadConfirmed;
     private int numberOfConflicts;
 
+    /**
+     * Create a new task for reverting a changeset with a default progress monitor and no new layer with user confirmation of the download
+     * @param changesetId The changeset id to revert
+     * @param revertType The type of revert to do
+     */
     public RevertChangesetTask(int changesetId, RevertType revertType) {
         this(changesetId, revertType, false);
     }
 
+    /**
+     * Create a new task for reverting a changeset with a default progress monitor and no new layer
+     * @param changesetId The changeset id to revert
+     * @param revertType The type of revert to do
+     * @param autoConfirmDownload {@code true} if the user has already indicated that they want to download missing data
+     */
     public RevertChangesetTask(int changesetId, RevertType revertType, boolean autoConfirmDownload) {
         this(changesetId, revertType, autoConfirmDownload, false);
     }
 
+    /**
+     * Create a new task for reverting a changeset with a default progress monitor
+     * @param changesetId The changeset id to revert
+     * @param revertType The type of revert to do
+            * @param autoConfirmDownload {@code true} if the user has already indicated that they want to download missing data
+     * @param newLayer {@code true} if the user wants the reversion to be on a new layer
+     */
     public RevertChangesetTask(int changesetId, RevertType revertType, boolean autoConfirmDownload, boolean newLayer) {
         this(Collections.singleton(changesetId), revertType, autoConfirmDownload, newLayer);
     }
 
+    /**
+     * Create a new task for reverting a changeset with a default progress monitor
+     * @param changesetIds The changeset ids to revert
+     * @param revertType The type of revert to do
+     * @param autoConfirmDownload {@code true} if the user has already indicated that they want to download missing data
+     * @param newLayer {@code true} if the user wants the reversion to be on a new layer
+     */
     public RevertChangesetTask(Collection<Integer> changesetIds, RevertType revertType, boolean autoConfirmDownload, boolean newLayer) {
         this(null, changesetIds, revertType, autoConfirmDownload, newLayer);
     }
@@ -63,7 +90,8 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
      * @param autoConfirmDownload {@code true} if the user has already indicated that they want to download missing data
      * @param newLayer {@code true} if the user wants the reversion to be on a new layer
      */
-    public RevertChangesetTask(ProgressMonitor progressMonitor, Collection<Integer> changesetIds, RevertType revertType, boolean autoConfirmDownload, boolean newLayer) {
+    public RevertChangesetTask(ProgressMonitor progressMonitor, Collection<Integer> changesetIds, RevertType revertType,
+                               boolean autoConfirmDownload, boolean newLayer) {
         super(tr("Reverting..."), progressMonitor, false);
         this.changesetIds = new ArrayList<>(changesetIds);
         this.revertType = revertType;
@@ -76,15 +104,10 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
     private boolean checkAndDownloadMissing() throws OsmTransferException {
         if (!rev.hasMissingObjects()) return true;
         if (!downloadConfirmed) {
-            final Integer selectedOption = GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
-                @Override
-                public Integer call() throws Exception {
-                    return JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
-                            tr("This changeset has objects that are not present in current dataset.\n" +
-                                    "It is needed to download them before reverting. Do you want to continue?"),
-                            tr("Confirm"), JOptionPane.YES_NO_OPTION);
-                }
-            });
+            final Integer selectedOption = GuiHelper.runInEDTAndWaitAndReturn(() -> JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
+                    tr("This changeset has objects that are not present in current dataset.\n" +
+                            "It is needed to download them before reverting. Do you want to continue?"),
+                    tr("Confirm"), JOptionPane.YES_NO_OPTION));
             downloadConfirmed = selectedOption != null && selectedOption == JOptionPane.YES_OPTION;
             if (!downloadConfirmed) return false;
         }
@@ -141,6 +164,7 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
         try {
             rev = new ChangesetReverter(changesetId, revertType, newLayer, oldDataSet, progressMonitor.createSubTaskMonitor(0, true));
         } catch (final RevertRedactedChangesetException e) {
+            Logging.debug(e);
             GuiHelper.runInEDT(() -> new Notification(
                     e.getMessage()+"<br>"+
                     tr("See {0}", "<a href=\"https://www.openstreetmap.org/redactions\">https://www.openstreetmap.org/redactions</a>"))
@@ -190,21 +214,38 @@ public class RevertChangesetTask extends PleaseWaitRunnable {
             Logging.warn(MessageFormat.format("No revert commands found for changeset {0}", Long.toString(changesetId)));
             return null;
         }
-        GuiHelper.runInEDT(() -> cmds.get(0).getAffectedDataSet().update(() -> {
+        GuiHelper.runInEDT(() -> executeCommands(cmds));
+        final String desc = getRevertDescription(revertType, changesetId);
+        return new RevertChangesetCommand(desc, cmds);
+    }
+
+    /**
+     * Execute a list of commands
+     * @param cmds The commands to execute
+     */
+    private void executeCommands(List<Command> cmds) {
+        cmds.get(0).getAffectedDataSet().update(() -> {
             for (Command c : cmds) {
                 if (c instanceof ConflictAddCommand) {
                     numberOfConflicts++;
                 }
                 c.executeCommand();
             }
-        }));
-        final String desc;
+        });
+    }
+
+    /**
+     * Get the description to show the user for this reversion
+     * @param revertType The type of revert
+     * @param changesetId The changeset id
+     * @return The string to show the user
+     */
+    private static String getRevertDescription(RevertType revertType, int changesetId) {
         if (revertType == RevertType.FULL) {
-            desc = tr("Revert changeset {0}", String.valueOf(changesetId));
+            return tr("Revert changeset {0}", String.valueOf(changesetId));
         } else {
-            desc = tr("Partially revert changeset {0}", String.valueOf(changesetId));
+            return tr("Partially revert changeset {0}", String.valueOf(changesetId));
         }
-        return new RevertChangesetCommand(desc, cmds);
     }
 
     @Override

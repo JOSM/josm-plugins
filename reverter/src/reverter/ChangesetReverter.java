@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
  */
 public class ChangesetReverter {
 
+    /** The type of reversion */
     public enum RevertType {
         FULL,
         SELECTION,
@@ -66,16 +68,23 @@ public class ChangesetReverter {
             760_215L  // pnorman redaction revert
             ));
 
+    /** The id of the changeset */
     public final int changesetId;
+    /** The changeset to be reverted */
     public final Changeset changeset;
+    /** The reversion type */
     public final RevertType revertType;
 
-    private final OsmDataLayer layer; // data layer associated with reverter
-    private final DataSet ds; // DataSet associated with reverter
-    private final ChangesetDataSet cds; // Current changeset data
+    /** data layer associated with reverter */
+    private final OsmDataLayer layer;
+    /** DataSet associated with reverter */
+    private final DataSet ds;
+    /** Current changeset data */
+    private final ChangesetDataSet cds;
     /** original DataSet, used if a new layer is requested */
     private final DataSet ods;
-    private DataSet nds; // Dataset that contains new objects downloaded by reverter
+    /** Dataset that contains new objects downloaded by reverter */
+    private DataSet nds;
 
     private final HashSet<PrimitiveId> missing = new HashSet<>();
 
@@ -86,6 +95,11 @@ public class ChangesetReverter {
 
     //// Handling missing objects
     ////////////////////////////////////////
+
+    /**
+     * Add a primitive that is not in {@link #ds} to {@link #missing}
+     * @param id The primitive to add if missing
+     */
     private void addIfMissing(PrimitiveId id) {
         OsmPrimitive p = ds.getPrimitiveById(id);
         if (p == null || p.isIncomplete()) {
@@ -93,12 +107,20 @@ public class ChangesetReverter {
         }
     }
 
+    /**
+     * Add missing primitives to {@link #missing}
+     * @param primitives The primitives to iterate through
+     */
     private void addMissingHistoryIds(Iterable<HistoryOsmPrimitive> primitives) {
         for (HistoryOsmPrimitive p : primitives) {
             addIfMissing(p.getPrimitiveId());
         }
     }
 
+    /**
+     * Add missing necessary primitives to {@link #missing}
+     * @param p The primitive to look at
+     */
     private void addMissingId(OsmPrimitive p) {
         addIfMissing(p);
         if (p.getType() == OsmPrimitiveType.WAY) {
@@ -170,7 +192,13 @@ public class ChangesetReverter {
             }
         }
 
-        // Build our own lists of created/updated/modified objects for better performance
+        buildCreatedUpdatedModifiedObjectLists();
+    }
+
+    /**
+     * Build our own lists of created/updated/modified objects for better performance
+     */
+    private void buildCreatedUpdatedModifiedObjectLists() {
         for (PrimitiveId id : cds.getIds()) {
             ChangesetDataSetEntry first = cds.getFirstEntry(id);
             earliestVersions.put(id, (int) first.getPrimitive().getVersion());
@@ -188,14 +216,23 @@ public class ChangesetReverter {
         }
     }
 
+    /**
+     * Add missing primitives that have been created
+     */
     public void checkMissingCreated() {
         addMissingHistoryIds(created);
     }
 
+    /**
+     * Add missing primitives that have been updated
+     */
     public void checkMissingUpdated() {
         addMissingHistoryIds(updated);
     }
 
+    /**
+     * Add missing primitives that have been deleted
+     */
     public void checkMissingDeleted() {
         addMissingHistoryIds(deleted);
     }
@@ -236,29 +273,39 @@ public class ChangesetReverter {
             rdr.readMultiObjectsOrNextOlder(OsmPrimitiveType.RELATION, relationList, progressMonitor);
             if (progressMonitor.isCanceled()) return;
             nds = rdr.parseOsm(progressMonitor.createSubTaskMonitor(1, true));
-            ds.update(() -> {
-                for (OsmPrimitive p : nds.allPrimitives()) {
-                    if (!p.isIncomplete()) {
-                        addMissingId(p);
-                    } else {
-                        if (ds.getPrimitiveById(p.getPrimitiveId()) == null) {
-                            switch (p.getType()) {
-                            case NODE: ds.addPrimitive(new Node(p.getUniqueId())); break;
-                            case CLOSEDWAY:
-                            case WAY: ds.addPrimitive(new Way(p.getUniqueId())); break;
-                            case MULTIPOLYGON:
-                            case RELATION: ds.addPrimitive(new Relation(p.getUniqueId())); break;
-                            default: throw new AssertionError();
-                            }
-                        }
-                    }
-                }
-            });
+            ds.update(this::addPartialPrimitives);
         } finally {
             progressMonitor.finishTask();
         }
     }
 
+    /**
+     * Add partial primitives if they are incomplete in {@link #nds}
+     */
+    private void addPartialPrimitives() {
+        for (OsmPrimitive p : nds.allPrimitives()) {
+            if (!p.isIncomplete()) {
+                addMissingId(p);
+            } else {
+                if (ds.getPrimitiveById(p.getPrimitiveId()) == null) {
+                    switch (p.getType()) {
+                        case NODE: ds.addPrimitive(new Node(p.getUniqueId())); break;
+                        case CLOSEDWAY:
+                        case WAY: ds.addPrimitive(new Way(p.getUniqueId())); break;
+                        case MULTIPOLYGON:
+                        case RELATION: ds.addPrimitive(new Relation(p.getUniqueId())); break;
+                        default: throw new AssertionError();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Download any missing primitives we have
+     * @param monitor The monitor to update with our progress
+     * @throws OsmTransferException If there is an issue transferring data from OSM
+     */
     public void downloadMissingPrimitives(ProgressMonitor monitor) throws OsmTransferException {
         if (!hasMissingObjects()) return;
         MultiFetchServerObjectReader rdr = MultiFetchServerObjectReader.create(false);
@@ -307,42 +354,72 @@ public class ChangesetReverter {
         if (!current.getKeys().equals(history.getTags())) return false;
         switch (current.getType()) {
         case NODE:
-            LatLon currentCoor = ((Node) current).getCoor();
-            LatLon historyCoor = ((HistoryNode) history).getCoords();
-            if (currentCoor == historyCoor || (currentCoor != null && historyCoor != null && currentCoor.equals(historyCoor)))
-                return true;
-            // Handle case where a deleted note has been restored to avoid false conflicts (fix #josm8660)
-            if (currentCoor != null && historyCoor == null) {
-                LatLon previousCoor = ((Node) nds.getPrimitiveById(history.getPrimitiveId())).getCoor();
-                return previousCoor != null && previousCoor.equals(currentCoor);
-            }
-            return false;
+            return hasEqualSemanticAttributesNode(nds, (HistoryNode) history, (Node) current);
         case CLOSEDWAY:
         case WAY:
-            List<Node> currentNodes = ((Way) current).getNodes();
-            List<Long> historyNodes = ((HistoryWay) history).getNodes();
-            if (currentNodes.size() != historyNodes.size()) return false;
-            for (int i = 0; i < currentNodes.size(); i++) {
-                if (currentNodes.get(i).getId() != historyNodes.get(i)) return false;
-            }
-            return true;
+            return hasEqualSemanticAttributesWay((HistoryWay) history, (Way) current);
         case MULTIPOLYGON:
         case RELATION:
-            List<org.openstreetmap.josm.data.osm.RelationMember> currentMembers =
-                ((Relation) current).getMembers();
-            List<RelationMemberData> historyMembers = ((HistoryRelation) history).getMembers();
-            if (currentMembers.size() != historyMembers.size()) return false;
-            for (int i = 0; i < currentMembers.size(); i++) {
-                org.openstreetmap.josm.data.osm.RelationMember currentMember =
-                    currentMembers.get(i);
-                RelationMemberData historyMember = historyMembers.get(i);
-                if (!currentMember.getRole().equals(historyMember.getRole())) return false;
-                if (!currentMember.getMember().getPrimitiveId().equals(new SimplePrimitiveId(
-                        historyMember.getMemberId(), historyMember.getMemberType()))) return false;
-            }
-            return true;
+            return hasEqualSemanticAttributesRelation((HistoryRelation) history, (Relation) current);
         default: throw new AssertionError();
         }
+    }
+
+    /**
+     * Check if two nodes with the same tags are otherwise semantically similar
+     * @param nds The dataset with downloaded data from OSM (see {@link #nds})
+     * @param history The node history
+     * @param current The current node
+     * @return {@code true} if they are semantically similar
+     */
+    private static boolean hasEqualSemanticAttributesNode(DataSet nds, HistoryNode history, Node current) {
+        LatLon currentCoor = current.getCoor();
+        LatLon historyCoor = history.getCoords();
+        if (Objects.equals(currentCoor, historyCoor))
+            return true;
+        // Handle case where a deleted note has been restored to avoid false conflicts (fix #josm8660)
+        if (currentCoor != null && historyCoor == null) {
+            LatLon previousCoor = ((Node) nds.getPrimitiveById(history.getPrimitiveId())).getCoor();
+            return previousCoor != null && previousCoor.equals(currentCoor);
+        }
+        return false;
+    }
+
+    /**
+     * Check if two ways with the same tags are otherwise semantically similar
+     * @param history The way history
+     * @param current The current way
+     * @return {@code true} if they are semantically similar
+     */
+    private static boolean hasEqualSemanticAttributesWay(HistoryWay history, Way current) {
+        List<Node> currentNodes = current.getNodes();
+        List<Long> historyNodes = history.getNodes();
+        if (currentNodes.size() != historyNodes.size()) return false;
+        for (int i = 0; i < currentNodes.size(); i++) {
+            if (currentNodes.get(i).getId() != historyNodes.get(i)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check if two relations with the same tags are otherwise semantically similar
+     * @param history The relation history
+     * @param current The current relation
+     * @return {@code true} if they are semantically similar
+     */
+    private static boolean hasEqualSemanticAttributesRelation(HistoryRelation history, Relation current) {
+        List<org.openstreetmap.josm.data.osm.RelationMember> currentMembers = current.getMembers();
+        List<RelationMemberData> historyMembers = history.getMembers();
+        if (currentMembers.size() != historyMembers.size()) return false;
+        for (int i = 0; i < currentMembers.size(); i++) {
+            org.openstreetmap.josm.data.osm.RelationMember currentMember =
+                    currentMembers.get(i);
+            RelationMemberData historyMember = historyMembers.get(i);
+            if (!currentMember.getRole().equals(historyMember.getRole())) return false;
+            if (!currentMember.getMember().getPrimitiveId().equals(new SimplePrimitiveId(
+                    historyMember.getMemberId(), historyMember.getMemberType()))) return false;
+        }
+        return true;
     }
 
     /**
@@ -385,40 +462,79 @@ public class ChangesetReverter {
             cmds.add(new ConflictAddCommand(layer.data, conflict));
         }
 
-        // Check objects versions
+        checkObjectVersions(cmds, conflicted, toDelete);
+        checkForDeletedReferrers(cmds, conflicted, toDelete);
+        return cmds;
+    }
+
+    /**
+     * Check objects versions
+     * @param cmds The command list to add to
+     * @param conflicted The primitives with conflicts
+     * @param toDelete The primitives that will be deleted
+     */
+    private void checkObjectVersions(List<Command> cmds, HashSet<OsmPrimitive> conflicted, HashSet<OsmPrimitive> toDelete) {
         for (Iterator<ChangesetDataSetEntry> it = cds.iterator(); it.hasNext();) {
             ChangesetDataSetEntry entry = it.next();
-            if (!checkOsmChangeEntry(entry)) continue;
-            if (entry.getModificationType() == ChangesetModificationType.DELETED
-                    && revertType == RevertType.SELECTION_WITH_UNDELETE) {
-                // see #22520: missing merge target when object is first created and then
-                // deleted in the same changeset
-                ChangesetDataSetEntry first = cds.getFirstEntry(entry.getPrimitive().getPrimitiveId());
-                if (first.getModificationType() == ChangesetModificationType.CREATED)
-                    continue;
-            }
-            HistoryOsmPrimitive hp = entry.getPrimitive();
-            OsmPrimitive dp = ds.getPrimitiveById(hp.getPrimitiveId());
-            if (dp == null || dp.isIncomplete()) {
-                throw new IllegalStateException(addChangesetIdPrefix(tr("Missing merge target for {0}", hp.getPrimitiveId())));
-            }
+            if (checkOsmChangeEntry(entry) && checkModificationType(cds, entry, revertType)) {
+                HistoryOsmPrimitive hp = entry.getPrimitive();
+                OsmPrimitive dp = ds.getPrimitiveById(hp.getPrimitiveId());
+                if (dp == null || dp.isIncomplete()) {
+                    throw new IllegalStateException(addChangesetIdPrefix(tr("Missing merge target for {0}", hp.getPrimitiveId())));
+                }
 
-            if (hp.getVersion() != dp.getVersion()
-                    && (hp.isVisible() || dp.isVisible()) &&
-                    /* Don't create conflict if changeset object and dataset object
-                     * has same semantic attributes (but different versions) */
-                    !hasEqualSemanticAttributes(dp, hp)
-                    /* Don't create conflict if the object has to be deleted but has already been deleted */
-                    && !(toDelete.contains(dp) && dp.isDeleted())) {
-                cmds.add(new ConflictAddCommand(layer.data, createConflict(dp,
-                        entry.getModificationType() == ChangesetModificationType.CREATED)));
-                conflicted.add(dp);
+                if (checkObjectVersionsNotSemanticallySame(toDelete, hp, dp)) {
+                    cmds.add(new ConflictAddCommand(layer.data, createConflict(dp,
+                            entry.getModificationType() == ChangesetModificationType.CREATED)));
+                    conflicted.add(dp);
+                }
             }
         }
+    }
 
-        /* Check referrers for deleted objects: if object is referred by another object that
-         * isn't going to be deleted or modified, create a conflict.
-         */
+    /**
+     * Check that the modification type is something that we are looking at
+     * @param cds {@link #cds} (current changeset data)
+     * @param entry The entry in the changeset data
+     * @param revertType The type of revert we are doing
+     * @return {@code true} if the entry is something we are interested in for this revert
+     */
+    private static boolean checkModificationType(ChangesetDataSet cds, ChangesetDataSetEntry entry, RevertType revertType) {
+        if (entry.getModificationType() == ChangesetModificationType.DELETED
+                && revertType == RevertType.SELECTION_WITH_UNDELETE) {
+            // see #22520: missing merge target when object is first created and then
+            // deleted in the same changeset
+            ChangesetDataSetEntry first = cds.getFirstEntry(entry.getPrimitive().getPrimitiveId());
+            return first.getModificationType() != ChangesetModificationType.CREATED;
+        }
+        return true;
+    }
+
+    /**
+     * Check that versions are not the same prior to creating a conflict
+     * @param toDelete The deleted objects
+     * @param hp The history primitive
+     * @param dp The current primitive
+     * @return {@code true} if the objects are not semantically the same
+     */
+    private boolean checkObjectVersionsNotSemanticallySame(HashSet<OsmPrimitive> toDelete, HistoryOsmPrimitive hp, OsmPrimitive dp) {
+        return hp.getVersion() != dp.getVersion()
+                && (hp.isVisible() || dp.isVisible()) &&
+                /* Don't create conflict if changeset object and dataset object
+                 * has same semantic attributes (but different versions) */
+                !hasEqualSemanticAttributes(dp, hp)
+                /* Don't create conflict if the object has to be deleted but has already been deleted */
+                && !(toDelete.contains(dp) && dp.isDeleted());
+    }
+
+    /**
+     * Check referrers for deleted objects: if object is referred by another object that
+     * isn't going to be deleted or modified, create a conflict.
+     * @param cmds The command list to add to
+     * @param conflicted The primitives with conflicts
+     * @param toDelete The primitives that will be deleted
+     */
+    private void checkForDeletedReferrers(List<Command> cmds, HashSet<OsmPrimitive> conflicted, HashSet<OsmPrimitive> toDelete) {
         List<OsmPrimitive> delSorted = toDelete.stream()
                 .filter(p -> !p.isDeleted())
                 .sorted(OsmPrimitiveComparator.orderingRelationsWaysNodes())
@@ -428,28 +544,7 @@ public class ChangesetReverter {
             restartNeeded = false;
             for (int i = 0; i < delSorted.size() && !restartNeeded; i++) {
                 OsmPrimitive p = delSorted.get(i);
-                for (OsmPrimitive referrer : p.getReferrers()) {
-                    if (toDelete.contains(referrer)) continue; // object is going to be deleted
-                    if (nds.getPrimitiveById(referrer) != null)
-                        continue; /* object is going to be modified so it cannot refer to
-                         * objects created in changeset to be reverted
-                         */
-                    if (conflicted.add(p)) {
-                        cmds.add(new ConflictAddCommand(layer.data, createConflict(p, true)));
-                        if (p instanceof Relation) {
-                            // handle possible special case with nested relations
-                            for (int j = 0; j < i; j++) {
-                                if (delSorted.get(j).getReferrers().contains(p)) {
-                                    // we have to create a conflict for a previously processed relation
-                                    restartNeeded = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    toDelete.remove(p);
-                    break;
-                }
+                restartNeeded = checkForDeletedReferrersPrimitive(cmds, conflicted, toDelete, delSorted, p, i);
             }
         } while (restartNeeded);
         // Create a Command to delete all marked objects
@@ -457,13 +552,58 @@ public class ChangesetReverter {
         if (!delSorted.isEmpty()) {
             cmds.add(new DeleteCommand(delSorted));
         }
-        return cmds;
     }
 
+    /**
+     *
+     * @param cmds The command list to add to
+     * @param conflicted The primitives with conflicts
+     * @param toDelete The primitives that will be deleted
+     * @param delSorted The list of sorted deleted objects we need to check against
+     * @param p The primitive to check
+     * @param i The current index in {@code delSorted}
+     * @return {@code true} if we need to restart processing
+     */
+    private boolean checkForDeletedReferrersPrimitive(List<Command> cmds, HashSet<OsmPrimitive> conflicted,
+                                                      HashSet<OsmPrimitive> toDelete, List<OsmPrimitive> delSorted,
+                                                      OsmPrimitive p, int i) {
+        for (OsmPrimitive referrer : p.getReferrers()) {
+            if (toDelete.contains(referrer) || // object is going to be deleted
+                    nds.getPrimitiveById(referrer) != null)
+                continue; /* object is going to be modified so it cannot refer to
+                 * objects created in changeset to be reverted
+                 */
+            if (conflicted.add(p)) {
+                cmds.add(new ConflictAddCommand(layer.data, createConflict(p, true)));
+                if (p instanceof Relation) {
+                    // handle possible special case with nested relations
+                    for (int j = 0; j < i; j++) {
+                        if (delSorted.get(j).getReferrers().contains(p)) {
+                            // we have to create a conflict for a previously processed relation
+                            return true;
+                        }
+                    }
+                }
+            }
+            toDelete.remove(p);
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Check if there are missing objects
+     * @return {@code true} if we need to handle missing objects
+     */
     public boolean hasMissingObjects() {
         return !missing.isEmpty();
     }
 
+    /**
+     * Get coordinates for nodes that have no coordinates
+     * @param progressMonitor The monitor to update our progress with
+     * @throws OsmTransferException If we have an issue getting data from the API
+     */
     public void fixNodesWithoutCoordinates(ProgressMonitor progressMonitor) throws OsmTransferException {
         Collection<Node> nodes = new ArrayList<>(nds.getNodes());
         int num = nodes.size();
