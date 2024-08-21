@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
@@ -473,7 +474,7 @@ public class ChangesetReverter {
      * @param conflicted The primitives with conflicts
      * @param toDelete The primitives that will be deleted
      */
-    private void checkObjectVersions(List<Command> cmds, HashSet<OsmPrimitive> conflicted, HashSet<OsmPrimitive> toDelete) {
+    private void checkObjectVersions(List<Command> cmds, Set<OsmPrimitive> conflicted, Set<OsmPrimitive> toDelete) {
         for (Iterator<ChangesetDataSetEntry> it = cds.iterator(); it.hasNext();) {
             ChangesetDataSetEntry entry = it.next();
             if (checkOsmChangeEntry(entry) && checkModificationType(cds, entry, revertType)) {
@@ -517,7 +518,7 @@ public class ChangesetReverter {
      * @param dp The current primitive
      * @return {@code true} if the objects are not semantically the same
      */
-    private boolean checkObjectVersionsNotSemanticallySame(HashSet<OsmPrimitive> toDelete, HistoryOsmPrimitive hp, OsmPrimitive dp) {
+    private boolean checkObjectVersionsNotSemanticallySame(Set<OsmPrimitive> toDelete, HistoryOsmPrimitive hp, OsmPrimitive dp) {
         return hp.getVersion() != dp.getVersion()
                 && (hp.isVisible() || dp.isVisible()) &&
                 /* Don't create conflict if changeset object and dataset object
@@ -534,7 +535,7 @@ public class ChangesetReverter {
      * @param conflicted The primitives with conflicts
      * @param toDelete The primitives that will be deleted
      */
-    private void checkForDeletedReferrers(List<Command> cmds, HashSet<OsmPrimitive> conflicted, HashSet<OsmPrimitive> toDelete) {
+    private void checkForDeletedReferrers(List<Command> cmds, Set<OsmPrimitive> conflicted, Set<OsmPrimitive> toDelete) {
         List<OsmPrimitive> delSorted = toDelete.stream()
                 .filter(p -> !p.isDeleted())
                 .sorted(OsmPrimitiveComparator.orderingRelationsWaysNodes())
@@ -564,8 +565,8 @@ public class ChangesetReverter {
      * @param i The current index in {@code delSorted}
      * @return {@code true} if we need to restart processing
      */
-    private boolean checkForDeletedReferrersPrimitive(List<Command> cmds, HashSet<OsmPrimitive> conflicted,
-                                                      HashSet<OsmPrimitive> toDelete, List<OsmPrimitive> delSorted,
+    private boolean checkForDeletedReferrersPrimitive(List<Command> cmds, Set<OsmPrimitive> conflicted,
+                                                      Set<OsmPrimitive> toDelete, List<OsmPrimitive> delSorted,
                                                       OsmPrimitive p, int i) {
         for (OsmPrimitive referrer : p.getReferrers()) {
             if (toDelete.contains(referrer) || // object is going to be deleted
