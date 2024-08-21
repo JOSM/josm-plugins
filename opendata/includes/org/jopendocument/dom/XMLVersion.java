@@ -18,8 +18,8 @@ package org.jopendocument.dom;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 /**
  * Encapsulate all namespaces for a particular version of xml.

@@ -15,7 +15,7 @@
 
 package org.jopendocument.dom;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * A node with a style.

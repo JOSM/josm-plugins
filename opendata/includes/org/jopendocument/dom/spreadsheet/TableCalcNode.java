@@ -15,8 +15,8 @@
 
 package org.jopendocument.dom.spreadsheet;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jopendocument.dom.ImmutableDocStyledNode;
 import org.jopendocument.dom.ODDocument;
 import org.jopendocument.dom.StyleStyle;

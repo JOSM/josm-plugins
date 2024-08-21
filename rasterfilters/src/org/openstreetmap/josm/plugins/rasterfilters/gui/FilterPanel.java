@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: WTFPL
 package org.openstreetmap.josm.plugins.rasterfilters.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -12,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.rmi.server.UID;
 import java.util.Hashtable;
 
+import com.bric.colorpicker.ColorPickerMode;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import javax.swing.BorderFactory;
@@ -26,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -33,7 +36,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.rasterfilters.model.FiltersManager;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 
 /**
  * FilterPanel is usual JPanel with its
@@ -45,9 +48,15 @@ import com.bric.swing.ColorPicker;
 public class FilterPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+    private static final String TITLE = "title";
+    private static final String DEFAULT = "default";
+    private static final String ARIAL = "Arial";
     private UID filterId;
     private int neededHeight;
 
+    /**
+     * Create a new {@link FilterPanel}
+     */
     public FilterPanel() {
         super();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -72,8 +81,8 @@ public class FilterPanel extends JPanel {
             case "checkbox":
                 setNeededHeight(getNeededHeight() + 30);
 
-                JCheckBox checkBox = createCheckBox(json.getString("title"));
-                checkBox.setSelected(json.getBoolean("default"));
+                JCheckBox checkBox = createCheckBox(json.getString(TITLE));
+                checkBox.setSelected(json.getBoolean(DEFAULT));
                 checkBox.setName(json.getString("name"));
 
                 return checkBox;
@@ -92,7 +101,7 @@ public class FilterPanel extends JPanel {
 
     private JComponent createSelect(JsonObject json) {
 
-        Font font = new Font("Arial", Font.PLAIN, 14);
+        Font font = new Font(ARIAL, Font.PLAIN, 14);
 
         JPanel selectPanel = new JPanel();
 
@@ -101,7 +110,7 @@ public class FilterPanel extends JPanel {
         selectPanel.setLayout(new BoxLayout(selectPanel, BoxLayout.X_AXIS));
         selectPanel.setMaximumSize(new Dimension(300, 40));
 
-        JLabel selectTitle = new JLabel(json.getString("title"));
+        JLabel selectTitle = new JLabel(json.getString(TITLE));
 
         selectTitle.setFont(font);
         selectTitle.setBackground(Color.white);
@@ -110,7 +119,7 @@ public class FilterPanel extends JPanel {
 
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
 
-        model.setSelectedItem(json.getString("default"));
+        model.setSelectedItem(json.getString(DEFAULT));
 
         for (int i = 0; i < valuesArray.size(); i++) {
             model.addElement(valuesArray.getString(i));
@@ -133,10 +142,10 @@ public class FilterPanel extends JPanel {
 
         ColorPicker picker = new ColorPicker(false, false);
         picker.setPreferredSize(new Dimension(200, 180));
-        picker.setMode(ColorPicker.HUE);
+        picker.setMode(ColorPickerMode.HUE);
         picker.setName(json.getString("name"));
 
-        addControlTitle(json.getString("title"));
+        addControlTitle(json.getString(TITLE));
 
         this.add(picker);
 
@@ -151,7 +160,7 @@ public class FilterPanel extends JPanel {
         checkBoxPanel.setBackground(Color.white);
 
         JCheckBox checkBox = new JCheckBox(text);
-        Font font = new Font("Arial", Font.PLAIN, 12);
+        Font font = new Font(ARIAL, Font.PLAIN, 12);
 
         checkBox.setFont(font);
         checkBox.setBackground(Color.white);
@@ -166,7 +175,7 @@ public class FilterPanel extends JPanel {
 
     private static JCheckBox createDisableBox(ItemListener listener) {
         JCheckBox disable = new JCheckBox("Disable");
-        Font font = new Font("Arial", Font.PLAIN, 12);
+        Font font = new Font(ARIAL, Font.PLAIN, 12);
 
         disable.addItemListener(listener);
         disable.setFont(font);
@@ -176,7 +185,7 @@ public class FilterPanel extends JPanel {
 
     private static JButton createRemoveButton(ActionListener listener) {
         JButton removeButton = new JButton("Remove");
-        Font font = new Font("Arial", Font.PLAIN, 12);
+        Font font = new Font(ARIAL, Font.PLAIN, 12);
 
         removeButton.setFont(font);
         removeButton.setName("remove");
@@ -206,14 +215,14 @@ public class FilterPanel extends JPanel {
     }
 
     private void addControlTitle(String labelText) {
-        Font labelFont = new Font("Arial", Font.PLAIN, 14);
+        Font labelFont = new Font(ARIAL, Font.PLAIN, 14);
 
         JPanel sliderLabelPanel = new JPanel();
         sliderLabelPanel.setMaximumSize(new Dimension(400, 30));
         sliderLabelPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         sliderLabelPanel.setBackground(Color.white);
 
-        JLabel sliderLabel = new JLabel(labelText, JLabel.LEFT);
+        JLabel sliderLabel = new JLabel(labelText, SwingConstants.LEFT);
         sliderLabel.setFont(labelFont);
         sliderLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         sliderLabel.setVisible(true);
@@ -227,7 +236,7 @@ public class FilterPanel extends JPanel {
 
         Border sliderBorder = new EmptyBorder(5, 5, 5, 5);
 
-        addControlTitle(json.getString("title"));
+        addControlTitle(json.getString(TITLE));
 
         Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
 
@@ -239,13 +248,13 @@ public class FilterPanel extends JPanel {
         if ("integer".equals(valueType)) {
             int minValue = array.getInt(0);
             int maxValue = array.getInt(1);
-            int initValue = json.getInt("default");
+            int initValue = json.getInt(DEFAULT);
 
             Logging.debug("Slider is integer\n");
             Logging.debug("minValue: " + minValue
                     + "maxValue: " + maxValue);
             try {
-                slider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue,
+                slider = new JSlider(SwingConstants.HORIZONTAL, minValue, maxValue,
                         initValue);
                 slider.setName(json.getString("name"));
                 slider.setToolTipText(String.valueOf(slider.getValue()));
@@ -272,7 +281,7 @@ public class FilterPanel extends JPanel {
             int maxValue = (int) (maxValueDouble * 100);
 
 
-            double initValue = json.getJsonNumber("default").doubleValue() * 100;
+            double initValue = json.getJsonNumber(DEFAULT).doubleValue() * 100;
             double delta = (maxValue - minValue) / 100d;
 
             for (int i = 0; i <= maxValue; i++) {
@@ -286,7 +295,7 @@ public class FilterPanel extends JPanel {
             }
 
             try {
-                slider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue, (int) initValue);
+                slider = new JSlider(SwingConstants.HORIZONTAL, minValue, maxValue, (int) initValue);
                 slider.setMinorTickSpacing(maxValue / 4);
                 slider.setName(json.getString("name"));
                 slider.setToolTipText(String.valueOf((double) slider.getValue() / 100));

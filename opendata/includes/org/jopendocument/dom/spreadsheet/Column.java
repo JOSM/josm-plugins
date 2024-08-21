@@ -15,7 +15,7 @@
 
 package org.jopendocument.dom.spreadsheet;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.jopendocument.dom.ODDocument;
 
 public class Column<D extends ODDocument> extends TableCalcNode<ColumnStyle, D> {

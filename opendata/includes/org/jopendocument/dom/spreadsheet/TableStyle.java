@@ -17,7 +17,7 @@ package org.jopendocument.dom.spreadsheet;
 
 import java.util.Arrays;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.StyleDesc;
 import org.jopendocument.dom.StyleStyle;

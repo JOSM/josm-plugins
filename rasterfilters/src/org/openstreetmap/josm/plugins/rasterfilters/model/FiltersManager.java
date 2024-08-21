@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: WTFPL
 package org.openstreetmap.josm.plugins.rasterfilters.model;
 
 import java.awt.Dimension;
@@ -31,7 +32,7 @@ import org.openstreetmap.josm.plugins.rasterfilters.preferences.FiltersDownloade
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 
 
 /**
@@ -41,11 +42,16 @@ import com.bric.swing.ColorPicker;
  * @author Nipel-Crumple
  */
 public class FiltersManager implements StateChangeListener, ImageProcessor, ActionListener, ItemListener {
+    private static final String TITLE = "title";
 
-    public Map<UID, Filter> filtersMap = new LinkedHashMap<>();
-    public Set<Filter> disabledFilters = new HashSet<>();
-    public FiltersDialog dialog;
+    private final Map<UID, Filter> filtersMap = new LinkedHashMap<>();
+    private final Set<Filter> disabledFilters = new HashSet<>();
+    private final FiltersDialog dialog;
 
+    /**
+     * Create a new {@link FiltersManager} given a {@link FiltersDialog}
+     * @param dialog The dialog to use
+     */
     public FiltersManager(FiltersDialog dialog) {
         this.dialog = dialog;
     }
@@ -60,7 +66,7 @@ public class FiltersManager implements StateChangeListener, ImageProcessor, Acti
 
         String filterClassName = meta.getString("classname");
 
-        String filterTitle = meta.getString("title");
+        String filterTitle = meta.getString(TITLE);
 
         fp.setName(filterTitle);
 
@@ -95,7 +101,7 @@ public class FiltersManager implements StateChangeListener, ImageProcessor, Acti
             // all filters enabled in the beggining by default
         }
 
-        fp.setBorder(BorderFactory.createTitledBorder(meta.getString("title")));
+        fp.setBorder(BorderFactory.createTitledBorder(meta.getString(TITLE)));
 
         JsonArray controls = meta.getJsonArray("controls");
 
@@ -164,7 +170,7 @@ public class FiltersManager implements StateChangeListener, ImageProcessor, Acti
 
         for (JsonObject json : FiltersDownloader.filtersMeta) {
 
-            if (json.getString("title").equals(title)) {
+            if (json.getString(TITLE).equals(title)) {
                 return createFilterWithPanel(json);
             }
         }

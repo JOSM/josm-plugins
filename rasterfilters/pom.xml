@@ -34,53 +34,16 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
+            <version>1.18.1</version>
         </dependency>
         <dependency>
-            <!-- I think lib/picker.jar is an "old" version of org.drjekyll:colorpicker:1.2 -->
-            <!-- Note: you will have to run mvn initialize to get this working. Sorry. -->
             <groupId>org.drjekyll</groupId>
             <artifactId>colorpicker</artifactId>
-            <version>1.0</version>
+            <version>2.0.1</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>default-initialize</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>lib/picker.jar</file>
-                            <groupId>org.drjekyll</groupId>
-                            <artifactId>colorpicker</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>clean-initialize</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <file>lib/picker.jar</file>
-                            <groupId>org.drjekyll</groupId>
-                            <artifactId>colorpicker</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

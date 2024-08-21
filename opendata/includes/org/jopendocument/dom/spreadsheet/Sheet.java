@@ -15,7 +15,7 @@
 
 package org.jopendocument.dom.spreadsheet;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * A single sheet in a spreadsheet.

@@ -18,8 +18,8 @@ package org.jopendocument.dom;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 public class ImmutableDocStyledNode<S extends StyleStyle, D extends ODDocument> extends StyledNode<S, D> {
 

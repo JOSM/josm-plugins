@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="opendata" default="dist" basedir=".">
+<project name="opendata" default="dist" basedir="." xmlns:mvn="antlib:org.apache.maven.resolver.ant">
     <property name="plugin.main.version" value="18723"/>
     <property name="plugin.author" value="Don-vip"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.opendata.OdPlugin"/>
@@ -25,7 +25,7 @@
     <property name="jts" location="${plugin.dist.dir}/jts.jar"/>
     <property name="ejml" location="${plugin.dist.dir}/ejml.jar"/>
     <property name="geotools" location="${plugin.dist.dir}/geotools.jar"/>
-    
+
     <!--
     **********************************************************
     ** compile_poi - compiles Apache POI needed classes
@@ -40,12 +40,12 @@
     ** compile_jopendoc - compiles JOpenDocument needed classes
     **********************************************************
     -->
-    <target name="compile_jopendoc" depends="init">
+    <target name="compile_jopendoc" depends="init, fetch_dependencies">
         <echo message="compiling JOpenDocument ... "/>
 	<javac srcdir="includes/org/jopendocument" debug="false" destdir="${plugin.build.dir}" includeAntRuntime="false" encoding="ISO-8859-1" release="${java.lang.version}">
             <classpath>
                 <!-- JDOM is required in an older version than the one embedded in geotools jar -->
-                <pathelement location="lib/jdom-1.1.3.jar"/>
+                <pathelement location="lib/jdom2-2.0.6.1.jar"/>
                 <pathelement location="${apache-commons}"/>
             </classpath>
         </javac>
@@ -77,7 +77,7 @@
     ** compile - compiles the source tree
     **********************************************************
     -->
-    <target name="pre-compile" depends="init, compile_poi, compile_jopendoc, compile_neptune, compile_j7zip"/>
+    <target name="pre-compile" depends="init, fetch_dependencies, compile_poi, compile_jopendoc, compile_neptune, compile_j7zip"/>
     
     <target name="xjc_neptune" depends="init, -jaxb_linux, -jaxb_windows" unless="jaxb.notRequired">
         <exec executable="${xjc}" failonerror="true">

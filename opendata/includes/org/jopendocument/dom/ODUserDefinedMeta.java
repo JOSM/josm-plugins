@@ -18,9 +18,9 @@ package org.jopendocument.dom;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.jdom.Attribute;
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 // eg <meta:user-defined meta:name="countOfSomething">5.2</meta:user-defined>
 public class ODUserDefinedMeta extends ODNode {

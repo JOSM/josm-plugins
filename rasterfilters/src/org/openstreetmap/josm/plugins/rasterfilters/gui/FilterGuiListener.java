@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: WTFPL
 package org.openstreetmap.josm.plugins.rasterfilters.gui;
 
 import java.awt.Color;
@@ -25,7 +26,7 @@ import org.openstreetmap.josm.plugins.rasterfilters.values.ColorValue;
 import org.openstreetmap.josm.plugins.rasterfilters.values.SelectValue;
 import org.openstreetmap.josm.plugins.rasterfilters.values.SliderValue;
 
-import com.bric.swing.ColorPicker;
+import com.bric.colorpicker.ColorPicker;
 
 /**
  * This class is GUI listener which tracks all changes of GUI controls
@@ -34,14 +35,17 @@ import com.bric.swing.ColorPicker;
  * @author Nipel-Crumple
  */
 public class FilterGuiListener implements ChangeListener, ItemListener,
-        ActionListener, PropertyChangeListener, FilterStateOwner
-{
+        ActionListener, PropertyChangeListener, FilterStateOwner {
 
-    private StateChangeListener handler;
+    private final StateChangeListener handler;
     private FilterStateModel filterState;
-    private Set<ComboBoxModel<String>> models = new HashSet<>();
+    private final Set<ComboBoxModel<String>> models = new HashSet<>();
     private UID filterId;
 
+    /**
+     * Create a new {@link FilterGuiListener} with the given handler
+     * @param handler The handler to call when the state changes
+     */
     public FilterGuiListener(StateChangeListener handler) {
         this.handler = handler;
     }

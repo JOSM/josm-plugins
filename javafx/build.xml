@@ -11,7 +11,7 @@
     <property name="plugin.author" value="Don-vip"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.javafx.JavaFxPlugin"/>
     <property name="plugin.description" value="Provides additional OpenJFX (JavaFX) features such as MP3 audio playback."/>
-    <!--<property name="plugin.minimum.java.version" value="10"/>-->
+    <property name="plugin.minimum.java.version" value="17"/>
     <property name="plugin.provides" value="javafx"/>
     <!--<property name="plugin.icon" value="..."/>-->
     <!--<property name="plugin.link" value="..."/>-->

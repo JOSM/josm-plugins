@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.Text;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.Text;
 import org.jopendocument.dom.ODDocument;
 import org.jopendocument.dom.ODValueType;
 import org.jopendocument.dom.XMLVersion;

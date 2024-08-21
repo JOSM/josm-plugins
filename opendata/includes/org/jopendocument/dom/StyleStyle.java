@@ -18,8 +18,8 @@ package org.jopendocument.dom;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jopendocument.dom.spreadsheet.CellStyle;
 import org.jopendocument.dom.spreadsheet.ColumnStyle;
 import org.jopendocument.dom.spreadsheet.RowStyle;

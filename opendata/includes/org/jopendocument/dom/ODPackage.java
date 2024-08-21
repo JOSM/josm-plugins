@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 import org.jopendocument.util.CopyUtils;
 import org.jopendocument.util.FileUtils;
 

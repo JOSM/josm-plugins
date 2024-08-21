@@ -10,7 +10,7 @@
 ** Paths are relative to the build.xml that imports this template.
 **
 -->
-<project name="plugin_common" basedir="." xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="plugin_common" basedir="." xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:mvn="antlib:org.apache.maven.resolver.ant" >
 
     <property name="josm"                   location="../../core/dist/josm-custom.jar"/>
     <property name="josm.ivy"               location="../../core/ivy.xml"/>
@@ -42,6 +42,9 @@
     <property name="ivy.jar.dir"            location="${ivy.home}/lib"/>
     <property name="ivy.jar.file"           location="${ivy.jar.dir}/ivy.jar"/>
     <property name="ivy.version"            value="2.5.1"/>
+    <property name="maven.artifact.resolver.version" value="1.5.1"/>
+    <property name="maven.artifact.resolver.parent.dir" value="${user.home}/.m2/repository/org/apache/maven/resolver/maven-resolver-ant-tasks/${maven.artifact.resolver.version}/"/>
+    <property name="maven.artifact.resolver.jar.file" value="${maven.artifact.resolver.parent.dir}/maven-resolver-ant-tasks-${maven.artifact.resolver.version}-uber.jar"/>
     <property name="jacoco.inclbootstrapclasses"  value="false" />
     <property name="jacoco.inclnolocationclasses" value="false" />
     <property name="junit.printsummary"     value="on" />
@@ -110,6 +113,12 @@
         <!-- to be overridden by plugins that need to perform additional tasks before compiling -->
     </target>
     <target name="compile" depends="init, pre-compile, resolve-tools" unless="skip-compile">
+        <condition property="plugin.classpath.actual.defined">
+            <isreference refid="plugin.classpath.actual" type="path"/>
+        </condition>
+        <path id="plugin.classpath.actual" unless:set="plugin.classpath.actual.defined">
+            <path refid="plugin.classpath"/>
+        </path>
         <echo message="compiling sources for ${plugin.jar} ..."/>
         <path id="jdk.boot.classpath">
             <path refid="errorprone_javac.classpath"/>
@@ -133,7 +142,7 @@
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xplugin:ErrorProne -Xep:StringSplitter:OFF -Xep:ReferenceEquality:OFF -Xep:InsecureCryptoUsage:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:JdkObsolete:OFF -Xep:EqualsHashCode:OFF -Xep:JavaUtilDate:OFF -Xep:DoNotCallSuggester:OFF -Xep:BanSerializableRead:OFF" />
             <compilerarg line="-Xmaxwarns 1000"/>
-            <classpath refid="plugin.classpath"/>
+            <classpath refid="plugin.classpath.actual"/>
         </javac>
     </target>
     <!--
@@ -279,7 +288,8 @@
     <target name="pre-javadoc">
         <!-- to be overridden by plugins that need to perform additional tasks before generating javadoc -->
     </target>
-    <target name="javadoc" depends="pre-javadoc" unless="skip-javadoc">
+    <target name="javadoc" depends="pre-javadoc,pre-compile" unless="skip-javadoc">
+        <mkdir dir="${plugin.doc.dir}"/>
         <javadoc destdir="${plugin.doc.dir}"
                 executable="${javadoc.executable}"
                 encoding="UTF-8"
@@ -288,7 +298,8 @@
                 private="true"
                 linksource="true"
                 author="false">
-            <classpath refid="plugin.classpath"/>
+            <classpath refid="plugin.classpath" unless:set="plugin.classpath.dependencies"/>
+            <classpath refid="plugin.classpath.dependencies" if:set="plugin.classpath.dependencies"/>
             <sourcepath>
                 <pathelement path="${plugin.src.dir}" />
                 <pathelement path="gen" />
@@ -660,6 +671,7 @@
                                                                          org/osgeo/**/*.java,
                                                                          "/>
             <fileset dir="${basedir}/test" includes="**/*.java" erroronmissingdir="false"/>
+            <formatter type="plain"/>
             <formatter type="xml" toFile="checkstyle-josm-${ant.project.name}.xml"/>
         </checkstyle>
     </target>
@@ -676,7 +688,8 @@
                 nested="false"
                 jvmargs="-Xmx1024m"
                 >
-            <auxClasspath refid="plugin.classpath" />
+            <auxClasspath refid="plugin.classpath" unless:set="plugin.classpath.dependencies"/>
+            <auxClasspath refid="plugin.classpath.dependencies" if:set="plugin.classpath.dependencies"/>
             <sourcePath path="${basedir}/src" />
             <class location="${plugin.build.dir}" />
         </spotbugs>
@@ -714,6 +727,11 @@
     <!--
     ** Ivy tasks
     -->
+    <target name="is-ivy">
+        <condition property="isIvy">
+            <available file="ivy.xml"/>
+        </condition>
+    </target>
     <target name="download-ivy">
         <mkdir dir="${ivy.jar.dir}"/>
         <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
@@ -742,7 +760,7 @@
             </fileset>
         </delete>
     </target>
-    <target name="fetch_dependencies" depends="clean_ivy, init-ivy">
+    <target name="fetch-dependencies-ivy" depends="clean_ivy, init-ivy, is-ivy" if="isIvy">
         <echo>fetching dependencies with ivy</echo>
         <available property="plugin.ivysettings.exists" file="ivy_settings.xml"/>
         <ivy:settings file="ivy_settings.xml" if:set="plugin.ivysettings.exists"/>
@@ -750,7 +768,86 @@
         <ivy:resolve />
         <ivy:retrieve pattern="${plugin.lib.dir}/[artifact]-[revision](-[classifier]).[ext]" conf="default" />
     </target>
-    <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="fetch_dependencies">
+    <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="fetch-dependencies-ivy">
         <ivy:checkdepsupdate/>
+    </target>
+    <!--
+    ** Maven tasks
+    -->
+    <target name="is-maven" depends="is-ivy">
+        <condition property="isMaven">
+            <and>
+                <available file="pom.xml"/>
+                <not>
+                    <isset property="isIvy"/>
+                </not>
+            </and>
+        </condition>
+    </target>
+    <target name="download-maven" depends="is-maven" if="isMaven">
+        <mkdir dir="${maven.artifact.resolver.parent.dir}"/>
+        <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/maven/resolver/maven-resolver-ant-tasks/${maven.artifact.resolver.version}/maven-resolver-ant-tasks-${maven.artifact.resolver.version}-uber.jar"
+             dest="${maven.artifact.resolver.jar.file}"
+             usetimestamp="true"/>
+    </target>
+    <target name="init-maven" depends="is-maven,download-maven" if="isMaven">
+        <path id="maven.lib.path">
+            <fileset dir="${maven.artifact.resolver.parent.dir}" includes="*.jar"/>
+        </path>
+        <taskdef uri="antlib:org.apache.maven.resolver.ant" resource="org/apache/maven/resolver/ant/antlib.xml" classpathref="maven.lib.path"/>
+    </target>
+    <target name="fetch-dependencies-maven" depends="is-maven,init-maven,clean_ivy" if="isMaven">
+        <mvn:pom file="pom.xml"/>
+        <mvn:pom file="pom.xml" id="pom"/>
+        <!-- This stanza is necessary since the maven resolver doesn't read repo settings from the pom.xml file -->
+        <!-- resolver.repositories makes it global -->
+        <mvn:remoterepos id="resolver.repositories">
+            <mvn:remoterepo id="JOSM" url="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+        </mvn:remoterepos>
+        <mkdir dir="${plugin.lib.dir}"/>
+        <mvn:resolve>
+            <!-- For some reason, compile time josm-unittest dependencies get included -->
+            <mvn:dependencies pomRef="pom">
+                <mvn:exclusion groupId="org.openstreetmap.josm" artifactId="josm-unittest"/>
+                <mvn:exclusion groupId="org.junit.platform"/>
+                <mvn:exclusion groupId="org.junit.vintage"/>
+                <mvn:exclusion groupId="org.junit.jupiter"/>
+            </mvn:dependencies>
+            <mvn:files refid="lib.files" dir="${plugin.lib.dir}" layout="{artifactId}-{version}-{classifier}.{extension}" scopes="compile,!test"/>
+        </mvn:resolve>
+        <echo message="${toString:lib.files}"/>
+        <mvn:resolve>
+            <mvn:path refid="classpath.provided" scopes="provided"/>
+        </mvn:resolve>
+        <mvn:resolve>
+            <mvn:path refid="testlib.classpath" classpath="test"/>
+        </mvn:resolve>
+        <mvn:resolve>
+            <mvn:dependencies>
+                <mvn:dependency groupId="org.jacoco" artifactId="org.jacoco.ant" version="${pom.properties.jacoco.version}" classifier="nodeps" type="jar" scope="test"/>
+            </mvn:dependencies>
+            <mvn:path refid="jacocotest.classpath" classpath="test"/>
+        </mvn:resolve>
+        <mvn:resolve>
+            <mvn:dependencies>
+                <mvn:dependency groupId="com.puppycrawl.tools" artifactId="checkstyle" version="${pom.properties.checkstyle.version}" scope="compile"/>
+            </mvn:dependencies>
+            <mvn:path refid="checkstyle.classpath" classpath="compile"/>
+        </mvn:resolve>
+        <mvn:resolve>
+            <mvn:dependencies>
+                <mvn:dependency groupId="com.github.spotbugs" artifactId="spotbugs" version="${pom.properties.spotbugs.version}" scope="compile"/>
+                <mvn:dependency groupId="com.github.spotbugs" artifactId="spotbugs-ant" version="${pom.properties.spotbugs.version}" scope="compile"/>
+            </mvn:dependencies>
+            <mvn:path refid="spotbugs.classpath" classpath="compile"/>
+        </mvn:resolve>
+        <path id="plugin.classpath.actual">
+            <path refid="plugin.classpath"/>
+            <path refid="classpath.provided"/>
+        </path>
+    </target>
+
+    <target name="fetch_dependencies" depends="fetch-dependencies-ivy,fetch-dependencies-maven">
+      <!-- We can depend upon ivy and/or maven right now. -->
     </target>
 </project>
