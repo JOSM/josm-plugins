@@ -178,7 +178,7 @@ public class LiveGpsData {
             Way way = null;
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             if (ds != null)
-                Geometry.getClosestPrimitive(n, ds.getWays());
+                way = Geometry.getClosestPrimitive(n, ds.getWays());
             if (way != null) {
                 wayString = way.getDisplayName(new DefaultNameFormatter() {
                      @Override
