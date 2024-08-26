@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="opendata" default="dist" basedir="." xmlns:mvn="antlib:org.apache.maven.resolver.ant">
-    <property name="plugin.main.version" value="18723"/>
+    <property name="plugin.main.version" value="19044"/>
     <property name="plugin.author" value="Don-vip"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.opendata.OdPlugin"/>
     <property name="plugin.description" value="Allows JOSM to read Open Data formats (csv, xls, ods, kml, kmz, shp, mif) into an .osm data layer. Supports zip and 7z compression of these file types."/>
