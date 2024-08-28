@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <relativePath>../core/nodist/pom.xml</relativePath>
   </parent>
 
@@ -36,7 +36,7 @@
     <manifest.unixoid>MANIFEST-unixoid</manifest.unixoid>
     <manifest.windows>MANIFEST-windows</manifest.windows>
     <manifest.osx>MANIFEST-osx</manifest.osx>
-    <plugin.compile.version>1.0-SNAPSHOT</plugin.compile.version>
+    <plugin.compile.version>SNAPSHOT</plugin.compile.version>
     <plugin.jar>${project.name}.jar</plugin.jar>
     <plugin.unixoid.jar>${project.name}-unixoid.jar</plugin.unixoid.jar>
     <plugin.windows.jar>${project.name}-windows.jar</plugin.windows.jar>
@@ -121,7 +121,6 @@
     <module>infomode</module>
     <module>jackson</module>
     <module>jaxb</module>
-    <module>javafx</module>
     <module>jna</module>
     <module>jts</module>
     <module>junctionchecking</module>
@@ -194,7 +193,7 @@
       <dependency>
         <groupId>org.openstreetmap.josm</groupId>
         <artifactId>josm-unittest</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -487,6 +486,7 @@
         <jdk>[17,]</jdk>
       </activation>
       <modules>
+        <module>javafx</module>
         <module>imageio</module>
         <module>pmtiles</module>
       </modules>

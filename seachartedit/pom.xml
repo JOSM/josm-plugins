@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>plugin-root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
     <artifactId>SeaChartEditor</artifactId>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>SeaChart</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

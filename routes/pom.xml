@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>plugin-root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
     <artifactId>routes</artifactId>
 
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>jaxb</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -59,6 +59,18 @@
                             <Plugin-Requires>${plugin.requires}</Plugin-Requires>
                         </manifestEntries>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <!-- Only needed while we keep ant scripts around -->
+                            <directory>src/org/openstreetmap/josm/plugins/routes/xml</directory>
+                        </fileset>
+                    </filesets>
                 </configuration>
             </plugin>
         </plugins>

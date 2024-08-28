@@ -803,6 +803,7 @@
         <!-- resolver.repositories makes it global -->
         <mvn:remoterepos id="resolver.repositories">
             <mvn:remoterepo id="JOSM" url="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+            <mvn:remoterepo id="JOSM-snapshots" url="https://josm.openstreetmap.de/nexus/content/repositories/snapshots/" snapshots="true" />
         </mvn:remoterepos>
         <mkdir dir="${plugin.lib.dir}"/>
         <mvn:resolve>
@@ -815,7 +816,6 @@
             </mvn:dependencies>
             <mvn:files refid="lib.files" dir="${plugin.lib.dir}" layout="{artifactId}-{version}-{classifier}.{extension}" scopes="compile,!test"/>
         </mvn:resolve>
-        <echo message="${toString:lib.files}"/>
         <mvn:resolve>
             <mvn:path refid="classpath.provided" scopes="provided"/>
         </mvn:resolve>
@@ -841,7 +841,13 @@
             </mvn:dependencies>
             <mvn:path refid="spotbugs.classpath" classpath="compile"/>
         </mvn:resolve>
-        <path id="plugin.classpath.actual">
+        <condition property="classpath.provided.present">
+            <isreference refid="classpath.provided" type="path"/>
+        </condition>
+        <path id="plugin.classpath.actual" unless:set="classpath.provided.present">
+            <path refid="plugin.classpath"/>
+        </path>
+        <path id="plugin.classpath.actual" if:set="classpath.provided.present">
             <path refid="plugin.classpath"/>
             <path refid="classpath.provided"/>
         </path>

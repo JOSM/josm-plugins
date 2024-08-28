@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>plugin-root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
     <artifactId>OsmInspectorPlugin</artifactId>
 
@@ -27,13 +27,13 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>jts</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>geotools</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

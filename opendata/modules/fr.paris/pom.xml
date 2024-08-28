@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>opendata-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
     <groupId>org.openstreetmap.josm.plugins.opendata</groupId>
     <artifactId>fr.paris</artifactId>
@@ -15,19 +15,19 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>apache-commons</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>geotools</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>opendata</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>lwjgl-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
         <relativePath>pom.xml</relativePath>
     </parent>
     <artifactId>lwjgl-osx</artifactId>
@@ -20,7 +20,7 @@
             <!-- The actual dependency is reversed, but this is so the maven-shade-plugin doesn't duplicate classes -->
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>lwjgl</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
