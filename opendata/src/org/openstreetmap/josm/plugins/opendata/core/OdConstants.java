@@ -51,7 +51,7 @@ public abstract class OdConstants {
     public static final String PREF_MODULES = "opendata.modules";
     public static final String PREF_MODULES_SITES = "opendata.modules.sites";
     public static final String OSM_SITE = "https://josm.openstreetmap.de/browser/osm/applications/editors/josm/plugins/opendata";
-    public static final String[] DEFAULT_MODULE_SITES = {OSM_SITE + "modules.txt%<?modules=>"};
+    public static final String[] DEFAULT_MODULE_SITES = {OSM_SITE + "/modules.txt?format=txt%<?modules=>"};
 
     public static final String PREF_CRS_COMPARISON_TOLERANCE = "opendata.crs.comparison_tolerance";
     public static final Double DEFAULT_CRS_COMPARISON_TOLERANCE = 0.00000002;
