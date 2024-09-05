@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
@@ -165,6 +166,12 @@ public class PhotoAdjustWorker {
                 }
             } else {
                 disableCenterView();
+                final Projection proj = ProjectionRegistry.getProjection();
+                if (dragPhoto.getPos() == null) {
+                    // Set a false location -- the image most likely has no position
+                    // So we use a location in the middle of the projection bounds to ensure that everything works.
+                    dragPhoto.setPos(proj.getWorldBoundsLatLon().getCenter());
+                }
                 final EastNorth startEN = dragPhoto.getPos().getEastNorth(ProjectionRegistry.getProjection()).subtract(dragOffset);
                 final EastNorth currentEN = MainApplication.getMap().mapView.getEastNorth(evt.getX(), evt.getY());
                 final EastNorth translation = currentEN.subtract(startEN);
