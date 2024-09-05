@@ -6,6 +6,9 @@ package livegps;
  * @author cdaller
  */
 public class LiveGpsStatus {
+    /**
+     * Possible status of LiveGPS data input
+     */
     public enum GpsStatus {
         CONNECTING, CONNECTED, DISCONNECTED, CONNECTION_FAILED
     }

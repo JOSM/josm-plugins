@@ -31,6 +31,7 @@ public class LiveGpsData {
     private String wayString;
     private WayPoint waypoint;
     private static final DecimalFormat offsetFormat = new DecimalFormat("0.00");
+    private double offs = 0;
 
     public LiveGpsData(double latitude, double longitude, float course, float speed) {
         this.fix = true;
@@ -166,6 +167,14 @@ public class LiveGpsData {
         + ", long=" + latLon.lon() + ", speed=" + speed + ", course=" + course + ']';
     }
 
+    public void setOffset(double offs) {
+        this.offs = offs;
+    }
+
+    public double getOffset() {
+        return this.offs;
+    }
+
     /**
      * Returns the name of the way that is closest to the current coordinates or an
      * empty string if no way is around.
@@ -193,10 +202,10 @@ public class LiveGpsData {
                     wayString = tr("no name");
                 }
                 if (Config.getPref().getBoolean(LiveGPSPreferences.C_WAYOFFSET, false)) {
-                    double offs = Geometry.getDistanceWayNode(way, n);
+                    offs = Geometry.getDistanceWayNode(way, n);
                     WaySegment ws = Geometry.getClosestWaySegment(way, n);
                     if (!Geometry.angleIsClockwise(ws.getFirstNode(), ws.getSecondNode(), n))
-                        offs = -offs;
+                        setOffset(-offs);
                     /* I18N: side offset and way name for livegps way display with offset */
                     wayString = tr("{0} ({1})", offsetFormat.format(offs), wayString);
                 }

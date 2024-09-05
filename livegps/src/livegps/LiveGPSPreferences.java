@@ -6,6 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+//import java.beans.PropertyChangeEvent;
+//import java.beans.PropertyChangeListener;
+
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -33,6 +36,10 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
     public static final String C_PORT = "livegps.gpsd.port";
     /* option to use specify gpsd disabling */
     public static final String C_DISABLED = "livegps.gpsd.disabled";
+    /* option to use distance visualisation and set threshold */
+    public static final String C_DISTANCE_VISUALISATION = "livegps.distance_visualisation";
+    public static final String C_OFFSET_THRESHOLD = "livegps.offset_threshold";
+    public static final double DEFAULT_THRESHOLD = 0.3;
 
     public static final String C_LIVEGPS_COLOR_POSITION = "color.livegps.position";
     public static final String C_LIVEGPS_COLOR_POSITION_ESTIMATE = "color.livegps.position_estimate";
@@ -60,6 +67,9 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
     private final JTextField serialDevice = new JTextField(30);
     private final JCheckBox disableGPSD = new JCheckBox(tr("Disable GPSD"));
     private final JCheckBox showOffset = new JCheckBox(tr("Show Distance to nearest way"));
+    private final JCheckBox showDistanceVisualisation = new JCheckBox(tr("Show distance visualisation"));
+    private final JTextField threshold = new JTextField(5);
+    private JLabel thresholdLabel;
 
     public LiveGPSPreferences() {
         super("dialogs/livegps", tr("LiveGPS settings"), tr("Here you can change some preferences of LiveGPS plugin"));
@@ -95,8 +105,29 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         showOffset.setSelected(Config.getPref().getBoolean(C_WAYOFFSET, false));
         panel.add(showOffset, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
 
+        showDistanceVisualisation.setSelected(Config.getPref().getBoolean(C_DISTANCE_VISUALISATION, false));
+        panel.add(showDistanceVisualisation, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(0, 0, 0, 5));
+
+        threshold.setText(String.valueOf(Config.getPref().getDouble(C_OFFSET_THRESHOLD, DEFAULT_THRESHOLD)));
+        threshold.setToolTipText(tr("Threshold, default is {0}", DEFAULT_THRESHOLD));
+        thresholdLabel = new JLabel(tr("Threshold"));
+        panel.add(thresholdLabel, GBC.std());
+        panel.add(threshold, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
+        threshold.setVisible(false);
+        thresholdLabel.setVisible(false);
+
+        updateThreshold(); // beim Start
+        showDistanceVisualisation.addActionListener(e -> updateThreshold()); // wenn sich was ändert
+
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GridBagConstraints.VERTICAL));
         createPreferenceTabWithScrollPane(gui, panel);
+    }
+
+    private void updateThreshold() {
+        boolean isVisible = showDistanceVisualisation.isSelected();
+
+        threshold.setVisible(isVisible);
+        thresholdLabel.setVisible(isVisible);
     }
 
     @Override
@@ -106,6 +137,13 @@ public class LiveGPSPreferences extends DefaultTabPreferenceSetting {
         Config.getPref().put(C_SERIAL, serialDevice.getText());
         Config.getPref().putBoolean(C_DISABLED, disableGPSD.isSelected());
         Config.getPref().putBoolean(C_WAYOFFSET, showOffset.isSelected());
+        boolean oldVal = Config.getPref().getBoolean(C_DISTANCE_VISUALISATION, false);
+        boolean newVal = showDistanceVisualisation.isSelected();
+        Config.getPref().putBoolean(C_DISTANCE_VISUALISATION, newVal);
+        Config.getPref().put(C_OFFSET_THRESHOLD, threshold.getText());
+        if (oldVal != newVal) {
+            LiveGpsDialog.updateCirclePanelVisibility();
+        }
         return false;
     }
 }

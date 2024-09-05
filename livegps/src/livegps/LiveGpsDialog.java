@@ -4,14 +4,19 @@ package livegps;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+
 import java.awt.event.KeyEvent;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
@@ -42,30 +47,72 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
     private JLabel speedLabel;
     private JLabel wayText;
     private JPanel panel;
+    private JPanel opanel;
+    private Color backgroundColor;
     private LiveGpsStatus status = new LiveGpsStatus(LiveGpsStatus.GpsStatus.CONNECTING, tr("Connecting"));
     private LiveGpsStatus nmeaStatus = new LiveGpsStatus(LiveGpsStatus.GpsStatus.CONNECTING, tr("Connecting"));
     private LiveGpsData data;
+    private CirclePanel circlePanel;
+
+    private static volatile LiveGpsDialog dialog;
 
     public LiveGpsDialog(final MapFrame mapFrame) {
         super(tr("Live GPS"), "livegps", tr("Show GPS data."),
         Shortcut.registerShortcut("subwindow:livegps", tr("Toggle: {0}", tr("Live GPS")),
         KeyEvent.VK_G, Shortcut.ALT_CTRL_SHIFT), 100);
+
+        dialog = this;
+
+        backgroundColor = UIManager.getColor("Panel.background");
+
+        opanel = new JPanel();
+        opanel.setLayout(new BorderLayout());
+
         panel = new JPanel();
-        panel.setLayout(new GridLayout(7, 2));
-        panel.add(statusText = new JLabel(tr("Status gpsd")));
-        panel.add(statusLabel = new JLabel());
-        panel.add(nmeaStatusText = new JLabel(tr("Status NMEA")));
-        panel.add(nmeaStatusLabel = new JLabel());
-        panel.add(wayText = new JLabel(tr("Way Info")));
-        panel.add(wayLabel = new JLabel());
-        panel.add(latText = new JLabel(tr("Latitude")));
-        panel.add(latLabel = new JLabel());
-        panel.add(longText = new JLabel(tr("Longitude")));
-        panel.add(longLabel = new JLabel());
-        panel.add(new JLabel(tr("Speed")));
-        panel.add(speedLabel = new JLabel());
-        panel.add(new JLabel(tr("Course")));
-        panel.add(courseLabel = new JLabel());
+
+        GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        // first column
+        gbc.weightx = 0.3;
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        panel.add(statusText = new JLabel("Status gpsd "), gbc);
+        panel.add(nmeaStatusText = new JLabel("Status NMEA "), gbc);
+        panel.add(wayText = new JLabel("Way Info"), gbc);
+        panel.add(latText = new JLabel("Latitude"), gbc);
+        panel.add(longText = new JLabel("Longitude"), gbc);
+        panel.add(new JLabel(tr("Speed")), gbc);
+        panel.add(new JLabel(tr("Course")), gbc);
+
+        // second column
+        gbc.weightx = 0.7;
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        panel.add(statusLabel = new JLabel(), gbc);
+        panel.add(nmeaStatusLabel = new JLabel(), gbc);
+        panel.add(wayLabel = new JLabel(), gbc);
+        panel.add(latLabel = new JLabel(), gbc);
+        panel.add(longLabel = new JLabel(), gbc);
+        panel.add(speedLabel = new JLabel(), gbc);
+        panel.add(courseLabel = new JLabel(), gbc);
+
+        opanel.add(panel, BorderLayout.NORTH);
+
+        addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateCirclePanelVisibility();
+            }
+        });
+
+        circlePanel = new CirclePanel(0);
+        opanel.add(circlePanel, BorderLayout.CENTER);
+
         setStatusVisibility(true);
         if (Config.getPref().getBoolean(LiveGPSPreferences.C_WAYOFFSET, false)) {
             /* I18N: way information with offset (in m) enabled */
@@ -73,7 +120,18 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
         } else {
             wayText.setText(tr("Way Info"));
         }
-        createLayout(panel, true, null);
+        createLayout(opanel, true, null);
+    }
+
+    public static void updateCirclePanelVisibility() {
+        if (dialog != null) {
+            boolean vis = Config.getPref().getBoolean(LiveGPSPreferences.C_DISTANCE_VISUALISATION, false);
+
+            dialog.circlePanel.setVisible(vis);
+
+            dialog.circlePanel.revalidate();
+            dialog.circlePanel.repaint();
+        }
     }
 
     /**
@@ -107,7 +165,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
             @Override
             public void run() {
                 if (data.isFix()) {
-                    panel.setBackground(Color.WHITE);
+                    panel.setBackground(backgroundColor);
                     ICoordinateFormat mCord = CoordinateFormatManager.getDefaultFormat();
                     if (ProjectedCoordinateFormat.INSTANCE.equals(mCord)) {
                         latText.setText(tr("Northing"));
@@ -125,7 +183,13 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
 
                     String wayString = data.getWayInfo();
                     if (!wayString.isEmpty()) {
-                        wayLabel.setText(wayString);
+                        wayLabel.setText(tr("<html><body width={0}>{1}</html>", (int) getWidth()*0.8, wayString));
+
+                        circlePanel.setOffset(data.getOffset());
+                        circlePanel.setBackground(backgroundColor);
+                        circlePanel.validate();
+                        circlePanel.repaint();
+
                     } else {
                         wayLabel.setText(tr("unknown"));
                     }
@@ -135,6 +199,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                     } else {
                         wayText.setText(tr("Way Info"));
                     }
+
                 } else {
                     latLabel.setText("");
                     longLabel.setText("");
@@ -142,7 +207,9 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                     courseLabel.setText("");
                     panel.setBackground(Color.RED);
                 }
-            } });
+            }
+
+            });
         } else if ("gpsstatus".equals(evt.getPropertyName())) {
             LiveGpsStatus oldStatus = status;
             status = (LiveGpsStatus) evt.getNewValue();
@@ -161,7 +228,7 @@ public class LiveGpsDialog extends ToggleDialog implements PropertyChangeListene
                 && nmeaStatus.getStatus() != LiveGpsStatus.GpsStatus.CONNECTED) {
                     panel.setBackground(Color.RED);
                 } else {
-                    panel.setBackground(Color.WHITE);
+                    panel.setBackground(backgroundColor);
                 }
             } });
         } else if ("nmeastatus".equals(evt.getPropertyName())) {

@@ -47,6 +47,9 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
     private GpxData data = new GpxData();
     private LiveGpsLayer lgpslayer = null;
 
+    /**
+     * Main action to start data capture
+     */
     public class CaptureAction extends JosmAction {
         public CaptureAction() {
             super(
@@ -64,6 +67,9 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
         }
     }
 
+    /**
+     * Center view to newest data
+     */
     public class CenterAction extends JosmAction {
         public CenterAction() {
             super(tr("Center Once"), "centermenu",
@@ -81,6 +87,9 @@ public class LiveGpsPlugin extends Plugin implements LayerChangeListener {
         }
     }
 
+    /**
+     * Automatically center view to newest data
+     */
     public class AutoCenterAction extends JosmAction {
         public AutoCenterAction() {
             super(
