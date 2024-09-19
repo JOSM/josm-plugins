@@ -20,7 +20,7 @@ public class OpenDataSessionImporter implements SessionLayerImporter {
     public Layer load(Element elem, ImportSupport support, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         OsmDataSessionImporter.checkMetaVersion(elem);
         String fileStr = OsmDataSessionImporter.extractFileName(elem, support);
-        File pathname = new File(fileStr.startsWith("file:/") ? fileStr.replace("file:/", "") : fileStr);
+        File pathname = new File(fileStr.startsWith("file:") ? fileStr.replace("file:", "") : fileStr);
         for (AbstractImporter importer : OdPlugin.getInstance().importers) {
             if (importer.acceptFile(pathname)) {
                 importer.setFile(pathname);
