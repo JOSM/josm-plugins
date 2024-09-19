@@ -61,7 +61,7 @@ public class KWalletProvider implements KeyringProvider {
     private static final Logger logger = Logger.getLogger(KWalletProvider.class.getName());
     private char[] handler = "0".toCharArray();
     private boolean timeoutHappened = false;
-    private char[] defaultLocalWallet = "kdewallet".toCharArray();
+    private final char[] defaultLocalWallet = "kdewallet".toCharArray();
 
     @Override
     public boolean enabled(){
@@ -99,7 +99,6 @@ public class KWalletProvider implements KeyringProvider {
             if (result.exitCode != 0 || new String(result.retVal).equals("-1")) {
                 warning("save action failed");
             }
-            return;
         }
         //throw new KwalletException("save");
     }
@@ -112,7 +111,6 @@ public class KWalletProvider implements KeyringProvider {
              if (result.exitCode != 0  || new String(result.retVal).equals("-1")) {
                 warning("delete action failed");
             }
-            return;
         }
         //throw new KwalletException("delete");
     }
@@ -121,7 +119,7 @@ public class KWalletProvider implements KeyringProvider {
         if(timeoutHappened) {
             return false;
         }
-        handler = new String(handler).equals("")? "0".toCharArray() : handler;
+        handler = new String(handler).isEmpty() ? "0".toCharArray() : handler;
         CommandResult result = runCommand("isOpen",handler);          
         if(new String(result.retVal).equals("true")){
             return true;
@@ -156,13 +154,24 @@ public class KWalletProvider implements KeyringProvider {
     
 
     private CommandResult runCommand(String command,char[]... commandArgs) {
+        CommandResult result = null;
+        for (int i : new int[] {6, 5, 0}) {
+            result = runCommandKdeVersion(i, command, commandArgs);
+            if (result.exitCode == 0 && !result.errVal.equals("Service 'org.kde.kwalletd" + (i != 0 ? i : "") + "' does not exist.")) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    private CommandResult runCommandKdeVersion(int kdeVersion, String command, char[]... commandArgs) {
         String[] argv = new String[commandArgs.length+4];
         argv[0] = "qdbus";
-        argv[1] = "org.kde.kwalletd";
-        argv[2] = "/modules/kwalletd";
+        argv[1] = "org.kde.kwalletd" + (kdeVersion != 0 ? kdeVersion : "");
+        argv[2] = "/modules/kwalletd" + (kdeVersion != 0 ? kdeVersion : "");
         argv[3] = "org.kde.KWallet."+command;
         for (int i = 0; i < commandArgs.length; i++) {
-            //unfortunatelly I cannot pass char[] to the exec in any way - so this poses a security issue with passwords in String() !
+            //unfortunately I cannot pass char[] to the exec in any way - so this poses a security issue with passwords in String() !
             //TODO: find a way to avoid changing char[] into String
             argv[i+4] = new String(commandArgs[i]);
         }
@@ -180,7 +189,7 @@ public class KWalletProvider implements KeyringProvider {
 
                 String line;
                 while((line = input.readLine()) != null) {
-                    if (!retVal.equals("")){
+                    if (!retVal.isEmpty()){
                         retVal = retVal.concat("\n");
                     }
                     retVal = retVal.concat(line);
@@ -190,7 +199,7 @@ public class KWalletProvider implements KeyringProvider {
 
                 String line;
                 while((line = input.readLine()) != null) {
-                    if (!errVal.equals("")){
+                    if (!errVal.isEmpty()){
                         errVal = errVal.concat("\n");
                     }
                     errVal = errVal.concat(line);
@@ -203,6 +212,7 @@ public class KWalletProvider implements KeyringProvider {
                             new Object[]{exitCode, Arrays.toString(argv), errVal});
             }       
         } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
             logger.log(Level.FINE,
                     "exception thrown while invoking the command \""+Arrays.toString(argv)+"\"",
                     ex);
@@ -223,12 +233,14 @@ public class KWalletProvider implements KeyringProvider {
     }      
   
     private static class CommandResult {
-        private int exitCode;
-        private char[] retVal;
+        private final int exitCode;
+        private final char[] retVal;
+        private final String errVal;
 
         public CommandResult(int exitCode, char[] retVal, String errVal) {
             this.exitCode = exitCode;
             this.retVal = retVal;
+            this.errVal = errVal;
         }                        
     }
 
