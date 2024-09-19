@@ -149,7 +149,7 @@ public class PbfWriter implements Closeable {
                         b.setUid((int) e.getUser().getId());
                         b.setUserSid(stable.getIndex(e.getUser().getName()));
                     }
-                    b.setTimestamp((int) (e.getInstant().toEpochMilli() / date_granularity));
+                    b.setTimestamp(e.getInstant().toEpochMilli() / date_granularity);
                     b.setVersion(e.getVersion());
                     b.setChangeset(e.getChangesetId());
                 }
