@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17896</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Upliner</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.buildings_tools.BuildingsToolsPlugin</plugin.class>
         <plugin.description>Tools for drawing buildings.</plugin.description>

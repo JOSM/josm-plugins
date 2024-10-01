@@ -17,7 +17,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Jorge Luis Chamorro</plugin.author>
         <plugin.class>CreateGridOfWaysPlugin.CreateGridOfWaysPlugin</plugin.class>
         <plugin.description>Create a grid of ways.</plugin.description>

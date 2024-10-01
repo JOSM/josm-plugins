@@ -22,7 +22,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18464</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Jan Bilak, Petr Dlouhý, Dirk Brünig</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.tracer2.TracerPlugin</plugin.class>
         <plugin.description>Traces buildings and other shapes from a map. Needs Tracer2Server to be running.</plugin.description>

@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Mike Nice</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.AddrInterpolation.AddrInterpolationPlugin</plugin.class>
         <plugin.description>Group common Address Interpolation inputs in a single dialog, as well as an option to automatically generate individual house number nodes from a Way.</plugin.description>
