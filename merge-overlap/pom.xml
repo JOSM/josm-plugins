@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14256</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Stéphane Brunner</plugin.author>
         <plugin.class>mergeoverlap.MergeOverlapPlugin</plugin.class>
         <plugin.description>Merge overlapping part of ways.</plugin.description>

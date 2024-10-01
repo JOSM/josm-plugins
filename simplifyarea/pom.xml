@@ -17,7 +17,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Martin Ždila &lt;m.zdila@gmail.com&gt;</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.simplifyarea.SimplifyAreaPlugin</plugin.class>
         <plugin.description>Simplify area by removing nodes on very obtuse angles. This can be constrained by maximum removed area size. Also average nearby nodes.</plugin.description>

@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
 
         <plugin.author>Ilya Zverev</plugin.author>

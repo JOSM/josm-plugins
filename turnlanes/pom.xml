@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Benjamin Schulz</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.turnlanes.TurnLanesPlugin</plugin.class>
         <plugin.description>Provides a straightforward GUI for adding, editing and deleting turn lanes.</plugin.description>

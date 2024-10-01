@@ -28,7 +28,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18495</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Kalle Lampila, Upliner, Zverik, akks, joshdoe and others</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.utilsplugin2.UtilsPlugin2</plugin.class>
         <plugin.description>Several utilities that make your life easier.</plugin.description>

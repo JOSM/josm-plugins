@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Upliner</plugin.author>
         <plugin.class>ext_tools.ExtToolsPlugin</plugin.class>
         <plugin.description>Use external scripts in JOSM</plugin.description>

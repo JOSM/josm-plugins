@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18991</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Frederik Ramm</plugin.author>
         <plugin.class>org.openstreetmap.hot.sds.SeparateDataStorePlugin</plugin.class>
         <plugin.description>Loads data from SDS</plugin.description>

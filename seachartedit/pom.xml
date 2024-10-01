@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Malcolm Herring</plugin.author>
         <plugin.class>scedit.SCedit</plugin.class>
         <plugin.description>Edit features for Sea Charts</plugin.description>

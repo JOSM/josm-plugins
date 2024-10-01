@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18464</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Upliner</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.importvec.ImportVecPlugin</plugin.class>
         <plugin.description>Import vector graphics (SVG)</plugin.description>

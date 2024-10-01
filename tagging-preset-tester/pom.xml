@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15649</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Imi</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.taggingpresettester.TaggingPresetTesterAction</plugin.class>
         <plugin.description>Adds a tagging preset tester to the windows menu, which helps you developing of tagging presets (quick preview of the dialog that will popup). You can start the jar-file as standalone as well.</plugin.description>

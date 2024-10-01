@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Hind</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.commandline.CommandLine</plugin.class>
         <plugin.description>Implements a command line and enables to create your commands. See link for standard commands (arc, circle etc.)</plugin.description>

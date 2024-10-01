@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17896</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Attila Szász</plugin.author>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.class>org.openstreetmap.josm.plugins.alignways.AlignWaysPlugin</plugin.class>
