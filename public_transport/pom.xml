@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Roland M. Olbricht</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.public_transport.PublicTransportPlugin</plugin.class>
         <plugin.description>This plugin simplifies the mapping and editing of public transport routes.</plugin.description>
