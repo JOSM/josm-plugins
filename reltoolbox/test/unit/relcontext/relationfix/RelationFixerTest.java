@@ -98,6 +98,7 @@ interface RelationFixerTest {
 				.map(member -> () -> assertSame(ds, member.getDataSet(), member + " does not have the same dataset as " + relation)));
 	}
 
+	@Projection
 	@ParameterizedTest
 	@MethodSource("getGoodRelations")
 	default void testGoodRelationNotFixed(Relation goodRelation) {
@@ -108,6 +109,7 @@ interface RelationFixerTest {
 		assertNull(command);
 	}
 
+	@Projection
 	@ParameterizedTest
 	@MethodSource("getGoodRelations")
 	default void testAddBadMember(Relation goodRelation) {
