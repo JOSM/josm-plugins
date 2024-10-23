@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Nikhil Shirahatti</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.osminspector.OsmInspectorPlugin</plugin.class>
         <plugin.description>Bring in errors from Osm Inspector and display it on the current JOSM bounding box</plugin.description>

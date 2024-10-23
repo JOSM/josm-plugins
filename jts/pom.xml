@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>12164</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
     
         <plugin.author>Josh Doe &lt;josh@joshdoe.com&gt;</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.jts.JTSPlugin</plugin.class>
@@ -24,18 +24,19 @@
         <plugin.icon>images/jts.png</plugin.icon>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.stage>10</plugin.stage>
+        <jts.version>1.19.0</jts.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
-            <version>1.19.0</version>
+            <version>${jts.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts.io</groupId>
             <artifactId>jts-io-common</artifactId>
-            <version>1.19.0</version>
+            <version>${jts.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

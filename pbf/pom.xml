@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17749</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.pbf.PbfPlugin</plugin.class>
         <plugin.description>Import/export OSM data in PBF format</plugin.description>

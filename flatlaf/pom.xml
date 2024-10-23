@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>16974</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
 
         <plugin.author>simon04</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.flatlaf.FlatLafPlugin</plugin.class>
