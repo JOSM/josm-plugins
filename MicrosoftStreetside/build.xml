@@ -19,19 +19,5 @@
     <include name="javafx-windows.jar" if:set="isWindows"/>
   </fileset>
   <target name="pre-compile" depends="fetch_dependencies">
-    <!-- include fetch_dependencies task -->
-    <ivy:retrieve conf="provided,default"/>
-    <!--<ivy:cachepath pathid="compile.path" conf="default,provided"/>-->
-  </target>
-  <target name="build-jar">
-    <ivy:resolve/>
-    <ivy:cachefileset setid="ivy.default.path" conf="default"/>
-    <jar destfile="${basedir}/dependencies.jar" duplicate="preserve" level="0">
-      <zipgroupfileset refid="ivy.default.path"/>
-    </jar>
-    <jar destfile="${plugin.jar}" basedir="${plugin.build.dir}" manifest="${manifest}" manifestencoding="UTF-8" duplicate="preserve" level="9" excludes="${basedir}/dependencies.jar">
-      <zipfileset src="${basedir}/dependencies.jar" excludes="META-INF/maven/* META-INF/DEPENDENCIES META-INF/LICENSE META-INF/NOTICE META-INF/*.RSA META-INF/*.SF module-info.class"/>
-    </jar>
-    <delete file="${basedir}/dependencies.jar"/>
   </target>
 </project>
