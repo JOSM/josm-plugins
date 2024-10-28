@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Christof Dallermassl</plugin.author>
         <plugin.class>at.dallermassl.josm.plugin.openvisible.OpenVisiblePlugin</plugin.class>
         <plugin.description>Allows opening gpx/osm files that intersect the currently visible screen area</plugin.description>

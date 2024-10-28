@@ -4,7 +4,7 @@
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="trustosm: recompile for compatibility with JOSM r17896" />
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="18494"/>
+    <property name="plugin.main.version" value="19044"/>
     <property name="plugin.author" value="Christoph Wagner" />
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.trustosm.TrustOSMplugin" />
     <property name="plugin.description" value="Plugin to digital sign OSM-Data" />
@@ -21,87 +21,8 @@
     <fileset id="plugin.requires.jars" dir="${plugin.dist.dir}">
         <include name="plastic_laf.jar"/>
     </fileset>
-    <!-- create a property containing all .jar files, prefix lib/, and seperated with a space -->
-    <pathconvert property="libs.project" pathsep=" ">
-        <mapper>
-            <chainedmapper>
-                <!-- remove absolute path -->
-                <flattenmapper/>
-                <!-- add lib/ prefix -->
-                <globmapper from="*" to="${ant.project.name}/lib/*"/>
-            </chainedmapper>
-        </mapper>
-        <path>
-            <!-- plugin.lib.dir contains all jar files -->
-            <fileset dir="${plugin.lib.dir}">
-                <include name="**/*.jar"/>
-                <exclude name="**/*-sources.jar"/>
-                <exclude name="**/*-javadoc.jar"/>
-            </fileset>
-        </path>
-    </pathconvert>
-    <!-- additional entry in manifest -->
-    <target name="additional-manifest">
-        <manifest file="MANIFEST" mode="update">
-            <attribute name="Class-Path" value="${libs.project}"/>
-        </manifest>
-    </target>
-    <!--
-    **********************************************************
-    ** setup-dist - copies files for distribution
-    **********************************************************
-    -->
-    <target name="setup-dist">
-        <antcall target="setup-dist-default" />
-        <copy todir="${plugin.build.dir}/lib">
-            <fileset dir="${plugin.lib.dir}"/>
-        </copy>
-    </target>
-    <!--
-    **********************************************************
-    ** dist - creates the plugin jar
-    **********************************************************
-    -->
-    <target name="dist" depends="compile,revision">
-        <echo message="creating ${ant.project.name}.jar ... "/>
-        <antcall target="setup-dist" />
-        <delete file="MANIFEST" failonerror="no"/>
-        <manifest file="MANIFEST" mode="update">
-            <attribute name="Plugin-Mainversion" value="${plugin.main.version}"/>
-            <attribute name="Plugin-Version" value="${version.entry.commit.revision}"/>
-            <attribute name="Plugin-Class" value="${plugin.class}" />
-            <attribute name="Plugin-Description" value="${plugin.description}" />
-            <attribute name="Plugin-Date" value="${version.entry.commit.date}" />
-            <attribute name="Author" value="${plugin.author}"/>
-        </manifest>
-        <antcall target="add-manifest-attribute">
-            <param name="manifest.attribute" value="Plugin-Link"/>
-            <param name="property.name" value="plugin.link"/>
-            <param name="property.value" value="${plugin.link}"/>
-        </antcall>
-        <antcall target="add-manifest-attribute">
-            <param name="manifest.attribute" value="Plugin-Icon"/>
-            <param name="property.name" value="plugin.icon"/>
-            <param name="property.value" value="${plugin.icon}"/>
-        </antcall>
-        <antcall target="add-manifest-attribute">
-            <param name="manifest.attribute" value="Plugin-Early"/>
-            <param name="property.name" value="plugin.early"/>
-            <param name="property.value" value="${plugin.early}"/>
-        </antcall>
-        <antcall target="add-manifest-attribute">
-            <param name="manifest.attribute" value="Plugin-Requires"/>
-            <param name="property.name" value="plugin.requires"/>
-            <param name="property.value" value="${plugin.requires}"/>
-        </antcall>
-        <antcall target="add-manifest-attribute">
-            <param name="manifest.attribute" value="Plugin-Stage"/>
-            <param name="property.name" value="plugin.stage"/>
-            <param name="property.value" value="${plugin.stage}"/>
-        </antcall>
-        <antcall target="additional-manifest" />
-        <jar destfile="${plugin.jar}" basedir="${plugin.build.dir}" manifest="MANIFEST" manifestencoding="UTF-8"/>
-        <delete file="MANIFEST" failonerror="no"/>
-        <antcall target="post-dist" />
+
+    <target name="pre-compile" depends="fetch_dependencies">
+        <!-- include fetch_dependencies task -->
     </target>
 </project>

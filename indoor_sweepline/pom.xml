@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Roland M. Olbricht</plugin.author>
         <plugin.class>indoor_sweepline.IndoorSweepline</plugin.class>
         <plugin.description>This plugin simplifies the mapping and editing of indoor corridors.</plugin.description>

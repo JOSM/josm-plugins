@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>12663</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.fr.epci.EpciPlugin</plugin.class>
         <plugin.description>Handling of French EPCIs (boundary=local_authority)</plugin.description>

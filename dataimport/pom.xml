@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15496</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Dieter Muecke</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.dataimport.DataImportPlugin</plugin.class>
         <plugin.description>Allows to import various file formats into JOSM directly. Currently supported: TangoGPS, Garmin Trainings Center TCX.</plugin.description>

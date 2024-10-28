@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Nakor</plugin.author>
         <plugin.class>MichiganLeft.MichiganLeft</plugin.class>
         <plugin.description>Adds no left turn for sets of 4 or 5 ways</plugin.description>

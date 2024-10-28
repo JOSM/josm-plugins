@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17715</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Martin Garbe</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.editgpx.EditGpxPlugin</plugin.class>
         <plugin.description>Allows the user to anonymize timestamps and delete parts of huge GPX tracks very fast.</plugin.description>

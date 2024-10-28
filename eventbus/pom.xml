@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>16563</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.eventbus.EventBusPlugin</plugin.class>
         <plugin.description>Provides an event bus more powerful than the traditional listeners registration</plugin.description>

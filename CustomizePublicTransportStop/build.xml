@@ -4,7 +4,7 @@
     <!-- enter the SVN commit message -->
     <property name="commit.message" value="CustomizePublicTransportStop: recompile for compatibility with JOSM r17896"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="17896"/>
+    <property name="plugin.main.version" value="19044"/>
 
     <property name="plugin.author" value="Rodion Scherbakov"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.customizepublictransportstop.CustomizePublicTransportStopPlugin"/>

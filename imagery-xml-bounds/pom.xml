@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15115</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.imageryxmlbounds.ImageryXmlBoundsPlugin</plugin.class>
         <plugin.description>Generate Imagery XML bounds from a multipolygon</plugin.description>

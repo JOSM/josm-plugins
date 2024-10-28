@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Oliver Wieland</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.elevation.ElevationProfilePlugin</plugin.class>
         <plugin.description>Shows the elevation profile and some statistical data of a GPX track.</plugin.description>

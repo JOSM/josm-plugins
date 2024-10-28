@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Jiri Klement</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.routes.RoutesPlugin</plugin.class>
         <plugin.description>Renders routes (bus, hiking trails, bicycle routes, ..). Route types must be defined in routes.xml file in plugin directory</plugin.description>

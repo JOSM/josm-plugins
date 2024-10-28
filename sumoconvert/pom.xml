@@ -18,7 +18,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>12643</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Ignacio Palermo - Julio Rivera</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.sumoconvert.SumoConvertPlugin</plugin.class>
         <plugin.description>Allows to edit traffic information and export it to the urban mobility simulator SUMO</plugin.description>

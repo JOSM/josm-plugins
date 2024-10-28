@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Alexei Kasatkin</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.infomode.InfoModePlugin</plugin.class>
         <plugin.description>Extra information about current layer objects pop ups - currently GPX trackpoint info</plugin.description>
