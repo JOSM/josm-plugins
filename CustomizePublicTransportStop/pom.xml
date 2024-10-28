@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17896</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Rodion Scherbakov</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.customizepublictransportstop.CustomizePublicTransportStopPlugin</plugin.class>
         <plugin.description>Customization of public transport stops.</plugin.description>

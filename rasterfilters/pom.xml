@@ -15,8 +15,8 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18723</plugin.main.version>
-        <plugin.version>1.0.4</plugin.version>
+        <plugin.main.version>19044</plugin.main.version>
+        <plugin.version>1.0.5</plugin.version>
 
         <plugin.icon>images/josm_filters_48.png</plugin.icon>
         <plugin.author>Vadim Varnavsky</plugin.author>

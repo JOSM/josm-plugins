@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18723</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.author>Marián Kyral</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.pointinfo.PointInfoPlugin</plugin.class>

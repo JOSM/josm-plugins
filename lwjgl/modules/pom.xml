@@ -19,13 +19,13 @@
     </developers>
     <properties>
         <plugin.src.dir>../src/main/java</plugin.src.dir>
-        <plugin.main.version>10580</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.dist.dir>../../../dist</plugin.dist.dir>
         <plugin.author>Taylor Smock</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.lwjgl.LWJGLNativesPlugin</plugin.class>
         <plugin.description>Provides the common LWJGL interfaces for other plugins</plugin.description>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
-        <joml.version>1.10.5</joml.version>
+        <joml.version>1.10.8</joml.version>
         <lwjgl.version>3.3.3</lwjgl.version>
         <lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
     </properties>

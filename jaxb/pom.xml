@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>10580</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.jaxb.JaxbPlugin</plugin.class>
         <plugin.description>Provides the JAXB library for other JOSM plugins. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>

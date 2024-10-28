@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Ilya Zverev</plugin.author>
         <plugin.class>nanolog.NanoLogPlugin</plugin.class>
         <plugin.description>NanoLog adjustment and browsing layer</plugin.description>

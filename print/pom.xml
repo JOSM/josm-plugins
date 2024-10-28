@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14977</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Kai Pastor</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.print.PrintPlugin</plugin.class>
         <plugin.icon>images/printer.svg</plugin.icon>

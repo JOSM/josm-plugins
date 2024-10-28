@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>17838</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
 
         <plugin.author>Nakor</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.undelete.Undelete</plugin.class>

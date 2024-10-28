@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Rafal Jachowicz &lt;rjachow@gmail.com&gt;</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.namemanager.NameManagerPlugin</plugin.class>
         <plugin.description>Allows to attribute tags to all objects in any selected area at once</plugin.description>

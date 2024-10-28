@@ -24,7 +24,7 @@
         <plugin.icon>images/jts.png</plugin.icon>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.stage>10</plugin.stage>
-        <jts.version>1.19.0</jts.version>
+        <jts.version>1.20.0</jts.version>
     </properties>
     <dependencies>
         <dependency>

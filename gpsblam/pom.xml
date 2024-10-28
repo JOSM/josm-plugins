@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15502</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Russell Edwards</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.gpsblam.GPSBlamPlugin</plugin.class>
         <plugin.description>Analyse a set of GPS points to obtain its centre and direction of spread.</plugin.description>

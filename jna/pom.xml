@@ -21,7 +21,7 @@
         <plugin.description>Provides Java Native Access (JNA) library. Not meant to be installed directly by users, but rather as a dependency for other plugins.</plugin.description>
         <plugin.icon>images/jnalogo.jpg</plugin.icon>
         <plugin.stage>10</plugin.stage>
-        <jna.version>5.14.0</jna.version>
+        <jna.version>5.15.0</jna.version>
     </properties>
     <dependencies>
         <dependency>

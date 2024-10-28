@@ -20,7 +20,7 @@
         <plugin.src.dir>src/main/java</plugin.src.dir>
         <plugin.test.dir>src/test/java</plugin.test.dir>
         <plugin.resources.dir>src/main/resources</plugin.resources.dir>
-        <plugin.main.version>18831</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Taylor Smock</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.pmtiles.PMTilesPlugin</plugin.class>
         <plugin.description>A plugin for pmtile support</plugin.description>

@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15496</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
 
         <plugin.author>Andrzej Zaborowski</plugin.author>
         <plugin.class>wmsturbochallenge.WMSRacer</plugin.class>

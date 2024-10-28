@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15496</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Raphael Mack</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.globalsat.GlobalsatPlugin</plugin.class>
         <plugin.description>Download GPS points from Globalsat dg100 data logger directly in JOSM.</plugin.description>

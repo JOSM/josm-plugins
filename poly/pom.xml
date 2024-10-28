@@ -16,7 +16,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>14153</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Zverik</plugin.author>
         <plugin.class>poly.PolyPlugin</plugin.class>
         <plugin.description>Read and write osmosis poly filter files</plugin.description>

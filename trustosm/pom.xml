@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>18494</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Christoph Wagner</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.trustosm.TrustOSMplugin</plugin.class>
         <plugin.description>Plugin to digital sign OSM-Data</plugin.description>
@@ -26,8 +26,8 @@
     <dependencies>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
-            <version>1.51</version>
+            <artifactId>bcpg-jdk18on</artifactId>
+            <version>1.78.1</version>
         </dependency>
         <dependency>
             <groupId>com.toedter</groupId>

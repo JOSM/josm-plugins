@@ -15,7 +15,7 @@
     </developers>
     <properties>
         <plugin.src.dir>src</plugin.src.dir>
-        <plugin.main.version>15502</plugin.main.version>
+        <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Hartmut Holzgraefe</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.directdownload.DirectDownload</plugin.class>
         <plugin.description>Download your GPX tracks from openstreetmap.org</plugin.description>
