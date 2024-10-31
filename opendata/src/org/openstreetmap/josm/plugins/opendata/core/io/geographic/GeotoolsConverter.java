@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.opendata.core.io.geographic;
 
 import static org.openstreetmap.josm.plugins.opendata.core.io.geographic.GeographicReader.wgs84;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.plugins.opendata.core.io.geographic.geopackage.GeoPackageReader;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
@@ -76,7 +78,7 @@ public class GeotoolsConverter {
             throws IOException, FactoryException, GeoMathTransformException, TransformException, GeoCrsException {
         String[] typeNames = dataStore.getTypeNames();
         if (progressMonitor != null) {
-            progressMonitor.beginTask(tr("Loading shapefile ({0} layers)", typeNames.length), typeNames.length);
+            progressMonitor.beginTask(tr(getLayerMessage(this.reader.getClass()), typeNames.length), typeNames.length);
         }
         try {
             for (String typeName : typeNames) {
@@ -113,7 +115,7 @@ public class GeotoolsConverter {
     private void parseFeatures(ProgressMonitor progressMonitor, FeatureCollection<?, ?> collection)
             throws FactoryException, GeoMathTransformException, TransformException, GeoCrsException {
         if (progressMonitor != null) {
-            progressMonitor.beginTask(tr("Loading shapefile ({0} features)", collection.size()), collection.size());
+            progressMonitor.beginTask(tr(getFeatureMessage(this.reader.getClass()), collection.size()), collection.size());
         }
 
         int n = 0;
@@ -150,6 +152,34 @@ public class GeotoolsConverter {
                 progressMonitor.setCustomText(null);
             }
         }
+    }
+
+    /**
+     * Get the message for loading layers
+     * @param clazz The class to use to figure out which message to show
+     * @return The message to show the user
+     */
+    private static String getLayerMessage(Class<? extends GeographicReader> clazz) {
+        if (GeoPackageReader.class.equals(clazz)) {
+            return marktr("Loading GeoPackage ({0} layers)");
+        } else if (GmlReader.class.equals(clazz)) {
+            return marktr("Loading GML ({0} layers)");
+        }
+        return marktr("Loading shapefile ({0} layers)");
+    }
+
+    /**
+     * Get the message for loading features
+     * @param clazz The class to use to figure out which message to show
+     * @return The message to show the user
+     */
+    private static String getFeatureMessage(Class<? extends GeographicReader> clazz) {
+        if (GeoPackageReader.class.equals(clazz)) {
+            return marktr("Loading GeoPackage ({0} features)");
+        } else if (GmlReader.class.equals(clazz)) {
+            return marktr("Loading GML ({0} features)");
+        }
+        return marktr("Loading shapefile ({0} features)");
     }
 
     private void parseFeature(Feature feature, final Component parent) throws UserCancelException, GeoMathTransformException,
