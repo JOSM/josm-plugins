@@ -26,8 +26,8 @@
         <plugin.description>Provides the common LWJGL interfaces for other plugins</plugin.description>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <joml.version>1.10.8</joml.version>
-        <lwjgl.version>3.3.3</lwjgl.version>
-        <lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
+        <lwjgl.version>3.3.4</lwjgl.version>
+        <lwjgl3-awt.version>0.2.2</lwjgl3-awt.version>
     </properties>
 
     <dependencyManagement>
