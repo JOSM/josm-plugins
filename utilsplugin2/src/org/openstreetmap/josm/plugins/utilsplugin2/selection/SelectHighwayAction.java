@@ -193,7 +193,7 @@ public class SelectHighwayAction extends JosmAction {
 
         public List<Way> getPath(Way to) {
             if (to == null)
-                return Collections.singletonList(tree.get(0));
+                return Collections.unmodifiableList(Collections.singletonList(tree.get(0)));
             int pos = tree.indexOf(to);
             if (pos < 0)
                 throw new ArrayIndexOutOfBoundsException("Way " + to + " is not in the tree.");
