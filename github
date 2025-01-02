@@ -21,7 +21,7 @@ elsif(($ARGV[0]||'') eq 'status')
     print($plugin);
     chomp($plugin);
     chdir($plugin);
-    system('git','status',$plugin);
+    system('git','status');
     chdir($dir);
   }
 }
