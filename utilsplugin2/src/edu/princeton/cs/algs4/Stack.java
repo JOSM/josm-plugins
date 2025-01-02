@@ -1,7 +1,7 @@
 // License: GPL v3 or later courtesy of author Kevin Wayne
 package edu.princeton.cs.algs4;
 
-/*************************************************************************
+/* ************************************************************************
  *  Compilation:  javac Stack.java
  *  Execution:    java Stack < input.txt
  *
@@ -159,9 +159,9 @@ public class Stack<Item> implements Iterable<Item> {
     }
 
 
-    /**
-     * A test client.
-     */
+    ///**
+    // * A test client.
+    // */
     //    public static void main(String[] args) {
     //        Stack<String> s = new Stack<String>();
     //        while (!StdIn.isEmpty()) {

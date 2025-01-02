@@ -432,6 +432,7 @@ public final class NodeWayUtils {
     }
 
     /**
+     * Get Count of Ray intersections
      * @param point - point to start an OX-parallel  ray
      * @param polygonPoints - poits forming bundary, use null to split unconnected segmants
      * @return 0 =  not inside polygon, 1 = strictly inside, 2 = near edge, 3 = near vertex

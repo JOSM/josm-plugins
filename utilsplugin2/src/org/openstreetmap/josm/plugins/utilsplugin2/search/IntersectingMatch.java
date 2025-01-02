@@ -69,7 +69,7 @@ public class IntersectingMatch extends SearchCompiler.UnaryMatch {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj) || getClass() != obj.getClass())
+        if (!super.equals(obj) || !(obj instanceof IntersectingMatch))
             return false;
         IntersectingMatch other = (IntersectingMatch) obj;
         if (all != other.all)

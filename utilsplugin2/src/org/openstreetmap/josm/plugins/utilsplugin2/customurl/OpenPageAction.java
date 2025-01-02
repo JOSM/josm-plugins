@@ -6,8 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,9 +100,24 @@ public final class OpenPageAction extends JosmAction {
         for (int j = 0; j < i; j++) {
             addr = addr.replace(keys[j], vals[j]);
         }
+
+        // Opened on the local system instead of the browser: local:http://127.0.0.1:<port>/script
+        Pattern pat_direct = Pattern.compile("local:(http.*)$");
+        Matcher m_direct = pat_direct.matcher(addr);
+
         try {
+            if (m_direct.find()) {
+                addr = m_direct.group(1);   // replace addr so possible error uses it
+                Logging.info("Opening on the local system: " + addr);
+                URL url = new URL(addr);
+                HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+                urlConn.setRequestMethod("GET");
+                if (urlConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    throw new IOException(". GET response:" + urlConn.getResponseCode());
+                }
+
             // See #12836 - do not load invalid history
-            if (!addr.endsWith("/0/history")) {
+            } else if (!addr.endsWith("/0/history")) {
                 OpenBrowser.displayUrl(addr);
             }
         } catch (Exception ex) {

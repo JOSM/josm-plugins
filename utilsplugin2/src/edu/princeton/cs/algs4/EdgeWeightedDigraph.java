@@ -102,19 +102,19 @@ public class EdgeWeightedDigraph {
     /**
      * Add the edge e to this digraph.
      */
-    public void addEdge(DirectedEdge e) {
-        int v = e.from();
-        adj[v].add(e);
+    public void addEdge(DirectedEdge ed) {
+        int v = ed.from();
+        adj[v].add(ed);
         E++;
     }
 
     /**
-     * Return the edges leaving vertex v as an Iterable.
-     * To iterate over the edges leaving vertex v, use foreach notation:
-     * <tt>for (DirectedEdge e : graph.adj(v))</tt>.
+     * Return the edges leaving vertex ve as an Iterable.
+     * To iterate over the edges leaving vertex ve, use foreach notation:
+     * <tt>for (DirectedEdge e : graph.adj(ve))</tt>.
      */
-    public Iterable<DirectedEdge> adj(int v) {
-        return adj[v];
+    public Iterable<DirectedEdge> adj(int ve) {
+        return adj[ve];
     }
 
     /**
@@ -124,19 +124,19 @@ public class EdgeWeightedDigraph {
      */
     public Iterable<DirectedEdge> edges() {
         Bag<DirectedEdge> list = new Bag<>();
-        for (int v = 0; v < V; v++) {
-            for (DirectedEdge e : adj(v)) {
-                list.add(e);
+        for (int ve = 0; ve < V; ve++) {
+            for (DirectedEdge ed : adj(ve)) {
+                list.add(ed);
             }
         }
         return list;
     }
 
     /**
-     * Return number of edges leaving v.
+     * Return number of edges leaving ve.
      */
-    public int outdegree(int v) {
-        return adj[v].size();
+    public int outdegree(int ve) {
+        return adj[ve].size();
     }
 
     /**

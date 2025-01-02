@@ -1,7 +1,7 @@
 // License: GPL v3 or later courtesy of author Kevin Wayne
 package edu.princeton.cs.algs4;
 
-/*************************************************************************
+/* ************************************************************************
  *  Compilation:  javac IndexMinPQ.java
  *  Execution:    java IndexMinPQ
  *
