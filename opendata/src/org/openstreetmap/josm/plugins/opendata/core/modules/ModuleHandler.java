@@ -565,14 +565,14 @@ public final class ModuleHandler {
                 String moduleName = updatedModule.getName().substring(0, updatedModule.getName().length() - 8);
                 if (module.exists() && !module.delete() && doWarn) {
                     Logging.warn(tr("Warning: failed to delete outdated module ''{0}''.", module.toString()));
-                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation." +
+                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation. " +
                             "JOSM is still going to load the old module version.", moduleName));
                     continue;
                 }
                 if (!updatedModule.renameTo(module) && doWarn) {
                     Logging.warn(tr("Warning: failed to install module ''{0}'' from temporary download file ''{1}''. Renaming failed.",
                             module.toString(), updatedModule.toString()));
-                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation." +
+                    Logging.warn(tr("Warning: failed to install already downloaded module ''{0}''. Skipping installation. " +
                             "JOSM is still going to load the old module version.", moduleName));
                 }
             }
