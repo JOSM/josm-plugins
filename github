@@ -38,6 +38,25 @@ elsif(($ARGV[0]||'') eq 'reset')
     chdir($dir);
   }
 }
+elsif(($ARGV[0]||'') eq 'i18nupdate')
+{
+  my $dir = cwd();
+  for my $plugin (<$file>)
+  {
+    print($plugin);
+    chomp($plugin);
+    chdir($plugin);
+    for my $file (glob "data/*.lang")
+    {
+      system('git','add',$file);
+    }
+    system('git','commit','-m','I18n update');
+    system('git','remote','set-url','origin',"git\@github.com:JOSM/$plugin.git");
+    system('git','push');
+    chdir($dir);
+  }
+
+}
 else
 {
   my $dir = cwd();
