@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.turnlanes.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -47,6 +48,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         EditAction() {
             super(tr("Edit"), "dialogs/edit", tr("Edit turn relations and lane lengths for selected node."), null,
                     false);
+            putValue("help", ht("/Action/TurnLanesEdit"));
         }
 
         @Override
@@ -65,6 +67,7 @@ public class TurnLanesDialog extends ToggleDialog implements ActiveLayerChangeLi
         ValidateAction() {
             super(tr("Validate"), "dialogs/validator", tr("Validate turn- and lane-length-relations for consistency."),
                     null, false);
+            putValue("help", ht("/Action/TurnLanesValidate"));
         }
 
         @Override

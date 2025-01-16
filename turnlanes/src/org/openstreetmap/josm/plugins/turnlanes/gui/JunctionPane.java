@@ -284,7 +284,7 @@ class JunctionPane extends JComponent {
 
         rotation = 0;
 
-        scale = Math.min(getHeight() / 2 / bounds.getHeight(), getWidth() / 2 / bounds.getWidth());
+        scale = Math.min(getHeight() / 2.0 / bounds.getHeight(), getWidth() / 2.0 / bounds.getWidth());
 
         translationX = -bounds.getCenterX();
         translationY = -bounds.getCenterY();
