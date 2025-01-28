@@ -105,9 +105,7 @@ public final class ReplaceGeometryUtils {
     public static ReplaceGeometryCommand buildReplaceNodeWithNewCommand(Node firstNode, Node secondNode) {
         if (firstNode.isNew() && !secondNode.isNew())
             return buildReplaceNodeCommand(secondNode, firstNode);
-        else if (!firstNode.isNew() && secondNode.isNew())
-            return buildReplaceNodeCommand(firstNode, secondNode);
-        else
+        else // if (!firstNode.isNew() && secondNode.isNew()) -- merge same code branches
             // both nodes are new OR uploaded, act like MergeNodes, moving first
             // node to second
             return buildReplaceNodeCommand(firstNode, secondNode);
