@@ -15,6 +15,7 @@
         </developer>
     </developers>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <plugin.src.dir>src</plugin.src.dir>
         <plugin.main.version>19044</plugin.main.version>
         <plugin.author>Frederik Ramm</plugin.author>

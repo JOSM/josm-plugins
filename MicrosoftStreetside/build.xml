@@ -5,24 +5,22 @@
          -->
   <!-- enter the SVN commit message -->
   <property name="commit.message" value="Commit message"/>
-    <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
-    <property name="plugin.main.version" value="19044"/>
-
-    <!-- Configure these properties (replace "..." accordingly).
+  <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
+  <property name="plugin.main.version" value="19044"/>
+  <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
     -->
-    <property name="plugin.author" value="Microsoft"/>
-    <property name="plugin.class" value="org.openstreetmap.josm.plugins.streetside.StreetsidePlugin"/>
-    <property name="plugin.description" value="Allows the user to work with pictures hosted at Microsoft Streetside"/>
-    <property name="plugin.icon" value="images/streetside-logo.svg"/>
-    <property name="plugin.link" value="https://josm.openstreetmap.de/browser/osm/applications/editors/josm/plugins/MicrosoftStreetside"/>
-    <!--<property name="plugin.early" value="..."/>-->
-    <!--<property name="plugin.requires" value="..."/>-->
-    <!--<property name="plugin.stage" value="..."/>-->
-    <property name="plugin.canloadatruntime" value="true" />
-    <property name="plugin.minimum.java.version" value="21" />
-    <property name="plugin.requires" value="apache-commons;javafx"/>
-  <property file="${basedir}/gradle.properties"/>
+  <property name="plugin.author" value="Microsoft"/>
+  <property name="plugin.class" value="org.openstreetmap.josm.plugins.streetside.StreetsidePlugin"/>
+  <property name="plugin.description" value="Allows the user to work with pictures hosted at Microsoft Streetside"/>
+  <property name="plugin.icon" value="images/streetside-logo.svg"/>
+  <property name="plugin.link" value="https://josm.openstreetmap.de/browser/osm/applications/editors/josm/plugins/MicrosoftStreetside"/>
+  <!--<property name="plugin.early" value="..."/>-->
+  <!--<property name="plugin.requires" value="..."/>-->
+  <!--<property name="plugin.stage" value="..."/>-->
+  <property name="plugin.canloadatruntime" value="true"/>
+  <property name="plugin.minimum.java.version" value="21"/>
+  <property name="plugin.requires" value="apache-commons;javafx"/>
   <property name="josm" location="../../core/dist/josm-custom.jar"/>
   <property name="plugin.dist.dir" value="../../dist"/>
   <property name="java.lang.version" value="21"/>
