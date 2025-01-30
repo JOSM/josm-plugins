@@ -197,7 +197,6 @@ public class CustomizeStopAreaOperation extends StopAreaOperationBase {
      * @param target Platform node or way
      * @param commands Original command list
      * @param stopArea Stop area object
-     * @param isSelected true, if this platform is selected in editor
      * @param isFirst true, if this platform is first in stop area
      * @return Resulting command list
      */
