@@ -13,7 +13,7 @@ public final class PMTestUtils {
 
     public static final URI ODBL_VECTOR_FIRENZE = new File("protomaps(vector)ODbL_firenze.pmtiles").exists() ?
             new File("protomaps(vector)ODbL_firenze.pmtiles").toURI() :
-            URI.create("https://github.com/protomaps/PMTiles/raw/main/spec/v3/protomaps(vector)ODbL_firenze.pmtiles");
+            URI.create("https://github.com/protomaps/PMTiles/raw/3126ad0244f847be9727b3313aaac8d516b3d033/spec/v3/protomaps(vector)ODbL_firenze.pmtiles");
 
     /** A sample raster tileset */
     public static final URI ODBL_RASTER_STAMEN = new File("stamen_toner(raster)CC-BY%2BODbL_z3.pmtiles").exists() ?
