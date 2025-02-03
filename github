@@ -46,8 +46,10 @@ elsif(($ARGV[0]||'') eq 'i18nupdate')
     print($plugin);
     chomp($plugin);
     chdir($plugin);
-    for my $file (glob "data/*.lang")
+    my $p = Cwd::abs_path('data');
+    for my $file (glob "$p/*.lang")
     {
+      system('git','add',$file);
       system('git','add',$file);
     }
     system('git','commit','-m','I18n update');
