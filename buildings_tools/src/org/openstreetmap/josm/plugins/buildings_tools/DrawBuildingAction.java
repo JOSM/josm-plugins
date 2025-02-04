@@ -38,6 +38,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.openstreetmap.josm.plugins.buildings_tools.BuildingsToolsPlugin.latlon2eastNorth;
 import static org.openstreetmap.josm.tools.I18n.marktr;
@@ -49,21 +50,24 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 public class DrawBuildingAction extends MapMode implements MapViewPaintable, DataSelectionListener,
         KeyPressReleaseListener, ModifierExListener {
     private static final long serialVersionUID = -3515263157730927711L;
+    private static final String CROSSHAIR = "crosshair";
+    private static final String BUILDING_STRING = "building";
+    private static final String DRAW_BUILDINGS = marktr("Draw buildings");
     // We need to avoid opening many file descriptors on Linux under Wayland -- see JOSM #21929. This will probably also
     // improve performance, since we aren't creating cursors all the time.
-    private static final Cursor CURSOR_SILO = ImageProvider.getCursor("crosshair", "silo");
-    private static final Cursor CURSOR_BUILDING = ImageProvider.getCursor("crosshair", "building");
+    private static final Cursor CURSOR_SILO = ImageProvider.getCursor(CROSSHAIR, "silo");
+    private static final Cursor CURSOR_BUILDING = ImageProvider.getCursor(CROSSHAIR, BUILDING_STRING);
 
     private enum Mode {
-        None, Drawing, DrawingWidth, DrawingAngFix
+        NONE, DRAWING, DRAWING_WIDTH, DRAWING_ANG_FIX
     }
 
     private final Cursor cursorJoinNode;
     private final Cursor cursorJoinWay;
     private Cursor customCursor;
 
-    private Mode mode = Mode.None;
-    private Mode nextMode = Mode.None;
+    private Mode mode = Mode.NONE;
+    private Mode nextMode = Mode.NONE;
 
     private Color selectedColor = Color.red;
     private Point drawStartPos;
@@ -73,23 +77,23 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     final transient Building building = new Building();
 
-    private final PreferenceChangedListener shapeChangeListener = event -> updCursor();
+    private final transient PreferenceChangedListener shapeChangeListener = event -> updCursor();
 
     /**
      * Create a new {@link DrawBuildingAction} object
      */
     public DrawBuildingAction() {
-        super(tr("Draw buildings"), "building", tr("Draw buildings"),
+        super(tr(DRAW_BUILDINGS), BUILDING_STRING, tr(DRAW_BUILDINGS),
                 Shortcut.registerShortcut("mapmode:buildings",
-                        tr("Mode: {0}", tr("Draw buildings")),
+                        tr("Mode: {0}", tr(DRAW_BUILDINGS)),
                         KeyEvent.VK_B, Shortcut.DIRECT),
                 // Set super.cursor to crosshair without overlay because super.cursor is final,
                 // but we use two different cursors with overlays for rectangular and circular buildings
                 // the actual cursor is drawn in enterMode()
-                ImageProvider.getCursor("crosshair", null));
+                ImageProvider.getCursor(CROSSHAIR, null));
 
-        cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
-        cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
+        cursorJoinNode = ImageProvider.getCursor(CROSSHAIR, "joinnode");
+        cursorJoinWay = ImageProvider.getCursor(CROSSHAIR, "joinway");
     }
 
     private static Cursor getCursor() {
@@ -159,16 +163,16 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         SelectionEventManager.getInstance().removeSelectionListener(this);
         Config.getPref().removeKeyPreferenceChangeListener("buildings_tool.shape", shapeChangeListener);
 
-        if (mode != Mode.None)
+        if (mode != Mode.NONE)
             map.mapView.repaint();
-        mode = Mode.None;
+        mode = Mode.NONE;
     }
 
     /**
      * Cancel the drawing of a building
      */
     public final void cancelDrawing() {
-        mode = Mode.None;
+        mode = Mode.NONE;
         MapFrame map = MainApplication.getMap();
         if (map == null || map.mapView == null)
             return;
@@ -187,7 +191,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         if (ctrl != oldCtrl || shift != oldShift) {
             processMouseEvent(null);
             updCursor();
-            if (mode != Mode.None)
+            if (mode != Mode.NONE)
                 MainApplication.getMap().mapView.repaint();
         }
     }
@@ -195,7 +199,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     @Override
     public void doKeyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (mode != Mode.None)
+            if (mode != Mode.NONE)
                 e.consume();
 
             cancelDrawing();
@@ -205,12 +209,13 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             return;
         }
         e.consume();
-        switch (ToolSettings.getShape()) {
-            case CIRCLE:
-                ToolSettings.saveShape(ToolSettings.Shape.RECTANGLE);
-                break;
-            case RECTANGLE:
-                ToolSettings.saveShape(ToolSettings.Shape.CIRCLE);
+        ToolSettings.Shape shape = ToolSettings.getShape();
+        if (Objects.requireNonNull(shape) == ToolSettings.Shape.CIRCLE) {
+            ToolSettings.saveShape(ToolSettings.Shape.RECTANGLE);
+        } else if (shape == ToolSettings.Shape.RECTANGLE) {
+            ToolSettings.saveShape(ToolSettings.Shape.CIRCLE);
+        } else {
+            throw new IllegalStateException("Unknown shape " + shape);
         }
     }
 
@@ -226,7 +231,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
                 return latlon2eastNorth(n);
             IWaySegment<Node, Way> ws = MainApplication.getMap().mapView.getNearestWaySegment(mousePos,
                     OsmPrimitive::isSelectable);
-            if (ws != null && ws.getWay().get("building") != null) {
+            if (ws != null && ws.getWay().get(BUILDING_STRING) != null) {
                 EastNorth p1 = latlon2eastNorth(ws.getFirstNode());
                 EastNorth p2 = latlon2eastNorth(ws.getSecondNode());
                 EastNorth enX = Geometry.closestPointToSegment(p1, p2,
@@ -249,37 +254,41 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         if (isRectDrawing()) {
             building.setPlaceRect(p);
             if (Math.abs(building.getLength()) < MIN_LEN_WIDTH)
-                return Mode.Drawing;
-            return shift ? Mode.DrawingAngFix : Mode.None;
+                return Mode.DRAWING;
+            return shift ? Mode.DRAWING_ANG_FIX : Mode.NONE;
         } else if (ToolSettings.Shape.CIRCLE == ToolSettings.getShape()) {
-            if (ToolSettings.getWidth() != 0) {
-                building.setPlaceCircle(p, ToolSettings.getWidth(), shift);
-            } else {
-                building.setPlace(p, ToolSettings.getWidth(), ToolSettings.getLenStep(), shift);
-            }
-            if (building.getLength() < MIN_LEN_WIDTH)
-                return Mode.Drawing;
-            MainApplication.getMap().statusLine.setDist(building.getLength());
-            return Mode.None;
+            return modeDrawingCircle(p);
         } else {
             building.setPlace(p, ToolSettings.getWidth(), ToolSettings.getLenStep(), shift);
             if (building.getLength() < MIN_LEN_WIDTH)
-                return Mode.Drawing;
+                return Mode.DRAWING;
             MainApplication.getMap().statusLine.setDist(building.getLength());
-            return ToolSettings.getWidth() == 0 ? Mode.DrawingWidth : Mode.None;
+            return ToolSettings.getWidth() == 0 ? Mode.DRAWING_WIDTH : Mode.NONE;
         }
+    }
+
+    private Mode modeDrawingCircle(EastNorth p) {
+        if (ToolSettings.getWidth() != 0) {
+            building.setPlaceCircle(p, ToolSettings.getWidth(), shift);
+        } else {
+            building.setPlace(p, ToolSettings.getWidth(), ToolSettings.getLenStep(), shift);
+        }
+        if (building.getLength() < MIN_LEN_WIDTH)
+            return Mode.DRAWING;
+        MainApplication.getMap().statusLine.setDist(building.getLength());
+        return Mode.NONE;
     }
 
     private Mode modeDrawingWidth() {
         building.setWidth(getEastNorth());
         double width = Math.abs(building.getWidth());
         MainApplication.getMap().statusLine.setDist(width);
-        return width < MIN_LEN_WIDTH ? Mode.DrawingWidth : Mode.None;
+        return width < MIN_LEN_WIDTH ? Mode.DRAWING_WIDTH : Mode.NONE;
     }
 
     private Mode modeDrawingAngFix() {
         building.angFix(getEastNorth());
-        return Mode.None;
+        return Mode.NONE;
     }
 
     private void processMouseEvent(MouseEvent e) {
@@ -287,16 +296,16 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             mousePos = e.getPoint();
             updateKeyModifiers(e);
         }
-        if (mode == Mode.None) {
-            nextMode = Mode.None;
+        if (mode == Mode.NONE) {
+            nextMode = Mode.NONE;
             return;
         }
 
-        if (mode == Mode.Drawing) {
+        if (mode == Mode.DRAWING) {
             nextMode = modeDrawing();
-        } else if (mode == Mode.DrawingWidth) {
+        } else if (mode == Mode.DRAWING_WIDTH) {
             nextMode = modeDrawingWidth();
-        } else if (mode == Mode.DrawingAngFix) {
+        } else if (mode == Mode.DRAWING_ANG_FIX) {
             nextMode = modeDrawingAngFix();
         } else {
             throw new AssertionError("Invalid drawing mode");
@@ -305,7 +314,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-        if (mode == Mode.None || building.getLength() == 0) {
+        if (mode == Mode.NONE || building.getLength() == 0) {
             return;
         }
 
@@ -323,13 +332,13 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
         drawStartPos = mousePos;
         EastNorth en = getEastNorth();
         building.setBase(en);
-        mode = Mode.Drawing;
+        mode = Mode.DRAWING;
         updateStatusLine();
     }
 
     private void drawingAdvance(MouseEvent e) {
         processMouseEvent(e);
-        if (this.mode != Mode.None && this.nextMode == Mode.None) {
+        if (this.mode != Mode.NONE && this.nextMode == Mode.NONE) {
             drawingFinish();
         } else {
             mode = this.nextMode;
@@ -345,21 +354,25 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             } else {
                 w = building.createRectangle(ctrl);
             }
-            if (w != null) {
-                if (!alt || ToolSettings.isUsingAddr())
-                    for (Map.Entry<String, String> kv : ToolSettings.getTags().entrySet()) {
-                        w.put(kv.getKey(), kv.getValue());
-                    }
-                if (ToolSettings.isUsingAddr())
-                    showAddrDialog(w);
-                if (ToolSettings.isAutoSelect()
-                        && (getLayerManager().getEditDataSet().getSelected().isEmpty() || shift ||
-                            ToolSettings.isAutoSelectReplaceSelection())) {
-                    getLayerManager().getEditDataSet().setSelected(w);
-                }
-            }
+            drawingFinish(w);
         }
         cancelDrawing();
+    }
+
+    private void drawingFinish(Way w) {
+        if (w != null) {
+            if (!alt || ToolSettings.isUsingAddr())
+                for (Map.Entry<String, String> kv : ToolSettings.getTags().entrySet()) {
+                    w.put(kv.getKey(), kv.getValue());
+                }
+            if (ToolSettings.isUsingAddr())
+                showAddrDialog(w);
+            if (ToolSettings.isAutoSelect()
+                    && (getLayerManager().getEditDataSet().getSelected().isEmpty() || shift ||
+                    ToolSettings.isAutoSelectReplaceSelection())) {
+                getLayerManager().getEditDataSet().setSelected(w);
+            }
+        }
     }
 
     @Override
@@ -371,7 +384,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
 
         requestFocusInMapView();
 
-        if (mode == Mode.None)
+        if (mode == Mode.NONE)
             drawingStart(e);
     }
 
@@ -379,7 +392,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
     public void mouseDragged(MouseEvent e) {
         processMouseEvent(e);
         updCursor();
-        if (mode != Mode.None)
+        if (mode != Mode.NONE)
             MainApplication.getMap().mapView.repaint();
     }
 
@@ -398,9 +411,9 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             }
         }
 
-        if (mode == Mode.Drawing && !dragged)
+        if (mode == Mode.DRAWING && !dragged)
             return;
-        if (mode == Mode.None)
+        if (mode == Mode.NONE)
             return;
 
         drawingAdvance(e);
@@ -417,7 +430,7 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
                 return;
             } else {
                 Way w = MainApplication.getMap().mapView.getNearestWay(mousePos, OsmPrimitive::isSelectable);
-                if (w != null && w.get("building") != null) {
+                if (w != null && w.get(BUILDING_STRING) != null) {
                     setCursor(cursorJoinWay);
                     return;
                 }
@@ -436,17 +449,17 @@ public class DrawBuildingAction extends MapMode implements MapViewPaintable, Dat
             return;
         processMouseEvent(e);
         updCursor();
-        if (mode != Mode.None)
+        if (mode != Mode.NONE)
             MainApplication.getMap().mapView.repaint();
     }
 
     @Override
     public String getModeHelpText() {
-        if (mode == Mode.None)
+        if (mode == Mode.NONE)
             return tr("Point on the corner of the building to start drawing");
-        if (mode == Mode.Drawing)
+        if (mode == Mode.DRAWING)
             return tr("Point on opposite end of the building");
-        if (mode == Mode.DrawingWidth)
+        if (mode == Mode.DRAWING_WIDTH)
             return tr("Set width of the building");
         return "";
     }

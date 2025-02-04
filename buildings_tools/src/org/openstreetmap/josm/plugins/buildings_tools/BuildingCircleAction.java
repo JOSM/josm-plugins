@@ -9,8 +9,14 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * The action for drawing building circles
+ */
 public class BuildingCircleAction extends JosmAction {
 
+    /**
+     * Create a new building circle action
+     */
     public BuildingCircleAction() {
         super(tr("Set building shape to circle"), "mapmode/silo", tr("Set building shape to circle"),
                 Shortcut.registerShortcut("buildings_tools:circle",

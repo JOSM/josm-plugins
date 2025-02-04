@@ -10,18 +10,33 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Pair;
 
+/**
+ * A class for getting angles for snapping
+ */
 public class AngleSnap {
     private static final double PI_2 = Math.PI / 2;
     final TreeSet<Double> snapSet = new TreeSet<>();
 
+    /**
+     * Clear the snap directions
+     */
     public final void clear() {
         snapSet.clear();
     }
 
+    /**
+     * Add a snap direction
+     * @param snap The direction in radians
+     */
     public final void addSnap(double snap) {
         snapSet.add(snap % PI_2);
     }
 
+    /**
+     * Add node pairs to the possible snap directions (the heading and 45 degrees from heading)
+     * @param nodes The nodes to iterate through
+     * @return The heading between the nodes in radians
+     */
     public final Double addSnap(Node[] nodes) {
         if (nodes.length == 2) {
             EastNorth p1 = latlon2eastNorth(nodes[0]);
@@ -35,6 +50,10 @@ public class AngleSnap {
         }
     }
 
+    /**
+     * Add way segments to the possible snap directions
+     * @param way The way to add node pairs from to the snap directions
+     */
     public final void addSnap(Way way) {
         for (Pair<Node, Node> pair : way.getNodePairs(false)) {
             EastNorth a = latlon2eastNorth(pair.a);
@@ -44,6 +63,10 @@ public class AngleSnap {
         }
     }
 
+    /**
+     * Get the angle between the first and last snaps added
+     * @return The angle between the first and last snaps added
+     */
     public final Double getAngle() {
         if (snapSet.isEmpty()) {
             return null;
@@ -63,6 +86,11 @@ public class AngleSnap {
         }
     }
 
+    /**
+     * Get the snap angle given a starting angle
+     * @param angle The angle to get the snap for
+     * @return The best angle for snapping, or the originating angle
+     */
     public final double snapAngle(double angle) {
         if (snapSet.isEmpty()) {
             return angle;
@@ -77,23 +105,31 @@ public class AngleSnap {
             next = snapSet.first() + PI_2;
 
         if (Math.abs(ang - next) > Math.abs(ang - prev)) {
-            if (Math.abs(ang - prev) > Math.PI / 8) {
-                return angle;
-            } else {
-                double ret = prev + PI_2 * quadrant;
-                if (ret < 0)
-                    ret += 2 * Math.PI;
-                return ret;
-            }
+            return prevSnapAngle(quadrant, prev, ang, angle);
         } else {
-            if (Math.abs(ang - next) > Math.PI / 8) {
-                return angle;
-            } else {
-                double ret = next + PI_2 * quadrant;
-                if (ret > 2 * Math.PI)
-                    ret -= 2 * Math.PI;
-                return ret;
-            }
+            return nextSnapAngle(quadrant, next, ang, angle);
+        }
+    }
+
+    private static double nextSnapAngle(double quadrant, double next, double ang, double angle) {
+        if (Math.abs(ang - next) > Math.PI / 8) {
+            return angle;
+        } else {
+            double ret = next + PI_2 * quadrant;
+            if (ret > 2 * Math.PI)
+                ret -= 2 * Math.PI;
+            return ret;
+        }
+    }
+
+    private static double prevSnapAngle(double quadrant, double prev, double ang, double angle) {
+        if (Math.abs(ang - prev) > Math.PI / 8) {
+            return angle;
+        } else {
+            double ret = prev + PI_2 * quadrant;
+            if (ret < 0)
+                ret += 2 * Math.PI;
+            return ret;
         }
     }
 }
