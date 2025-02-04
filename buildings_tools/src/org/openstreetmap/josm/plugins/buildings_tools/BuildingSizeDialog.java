@@ -3,8 +3,7 @@ package org.openstreetmap.josm.plugins.buildings_tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.GridBagConstraints;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -16,6 +15,9 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * A dialog for setting building sizes and other information
+ */
 public class BuildingSizeDialog extends MyDialog {
     private final JFormattedTextField twidth = new JFormattedTextField(NumberFormat.getInstance());
     private final JFormattedTextField tlenstep = new JFormattedTextField(NumberFormat.getInstance());
@@ -26,6 +28,9 @@ public class BuildingSizeDialog extends MyDialog {
     private final JRadioButton circleRadio = new JRadioButton(tr("Circle"));
     private final JRadioButton rectangleRadio = new JRadioButton(tr("Rectangle"));
 
+    /**
+     * Create a new dialog for building sizes
+     */
     public BuildingSizeDialog() {
         super(tr("Set buildings size and shape"));
 
@@ -35,15 +40,15 @@ public class BuildingSizeDialog extends MyDialog {
         circleRadio.setSelected(ToolSettings.Shape.CIRCLE == ToolSettings.getShape());
         rectangleRadio.setSelected(ToolSettings.Shape.RECTANGLE == ToolSettings.getShape());
 
-        panel.add(rectangleRadio, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(circleRadio, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(rectangleRadio, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(circleRadio, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         addLabelled(tr("Buildings width/diameter:"), twidth);
         addLabelled(tr("Length step:"), tlenstep);
-        panel.add(caddr, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cAutoSelect, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cAutoSelectReplaceSelection, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cAddrNode, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(caddr, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cAutoSelect, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cAutoSelectReplaceSelection, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cAddrNode, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         twidth.setValue(ToolSettings.getWidth());
         tlenstep.setValue(ToolSettings.getLenStep());
@@ -53,21 +58,22 @@ public class BuildingSizeDialog extends MyDialog {
         cAddrNode.setSelected(ToolSettings.PROP_USE_ADDR_NODE.get());
 
         JButton bAdv = new JButton(tr("Advanced..."));
-        bAdv.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                AdvancedSettingsDialog dlg = new AdvancedSettingsDialog();
-                if (dlg.getValue() == 1) {
-                    dlg.saveSettings();
-                }
+        bAdv.addActionListener(ignored -> {
+            AdvancedSettingsDialog dlg = new AdvancedSettingsDialog();
+            if (dlg.getValue() == 1) {
+                dlg.saveSettings();
             }
         });
-        panel.add(bAdv, GBC.eol().insets(0, 5, 0, 0).anchor(GBC.EAST));
+        panel.add(bAdv, GBC.eol().insets(0, 5, 0, 0).anchor(GridBagConstraints.EAST));
 
         setupDialog();
         showDialog();
     }
 
+    /**
+     * Get the specified max width/diameter
+     * @return The maximum width/diameter for rectangles/circles
+     */
     public final double width() {
         try {
             return NumberFormat.getInstance().parse(twidth.getText()).doubleValue();
@@ -76,6 +82,10 @@ public class BuildingSizeDialog extends MyDialog {
         }
     }
 
+    /**
+     * Get the step length for drawing rectangular buildings
+     * @return The discrete steps to increase rectanglular building sizes
+     */
     public double lenstep() {
         try {
             return NumberFormat.getInstance().parse(tlenstep.getText()).doubleValue();
@@ -84,10 +94,17 @@ public class BuildingSizeDialog extends MyDialog {
         }
     }
 
+    /**
+     * Check if the user wants to use addresses from underlying nodes
+     * @return {@code true} if the user wants to use addresses
+     */
     public final boolean useAddr() {
         return caddr.isSelected();
     }
 
+    /**
+     * Save the settings for this dialog
+     */
     public final void saveSettings() {
         if (circleRadio.isSelected()) {
             ToolSettings.saveShape(ToolSettings.Shape.CIRCLE);

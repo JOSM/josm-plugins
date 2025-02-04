@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins.buildings_tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.util.Map;
 
 import javax.swing.JCheckBox;
@@ -30,17 +31,17 @@ public class AdvancedSettingsDialog extends MyDialog {
     public AdvancedSettingsDialog() {
         super(tr("Advanced settings"));
 
-        panel.add(new JLabel(tr("Buildings tags:")), GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(new JLabel(tr("Buildings tags:")), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         for (Map.Entry<String, String> entry : ToolSettings.getTags().entrySet()) {
             tagsModel.add(entry.getKey(), entry.getValue());
         }
-        panel.add(new TagEditorPanel(tagsModel, null, Changeset.MAX_CHANGESET_TAG_LENGTH), GBC.eop().fill(GBC.BOTH));
+        panel.add(new TagEditorPanel(tagsModel, null, Changeset.MAX_CHANGESET_TAG_LENGTH), GBC.eop().fill(GridBagConstraints.BOTH));
 
-        panel.add(cBigMode, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cSoftCur, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cNoClickDrag, GBC.eol().fill(GBC.HORIZONTAL));
-        panel.add(cToggleMapMode, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(cBigMode, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cSoftCur, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cNoClickDrag, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panel.add(cToggleMapMode, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
         cBigMode.setSelected(ToolSettings.isBBMode());
         cSoftCur.setSelected(ToolSettings.isSoftCursor());

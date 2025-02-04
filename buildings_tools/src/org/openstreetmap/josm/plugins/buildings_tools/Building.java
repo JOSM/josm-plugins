@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -52,15 +53,29 @@ class Building {
     private Double drawingAngle;
     private static final double EQUAL_NODE_DIST_TOLERANCE = 1e-6;
 
+    /**
+     * Clear the current angle information
+     */
     public void clearAngleSnap() {
         angleSnap.clear();
         drawingAngle = null;
     }
 
+    /**
+     * Add nodes to the angle snap collection and set the current drawing angle to the heading between
+     * the nodes.
+     * @param nodes The node array to use
+     * @see AngleSnap#addSnap(Node[])
+     */
     public void addAngleSnap(Node[] nodes) {
         drawingAngle = angleSnap.addSnap(nodes);
     }
 
+    /**
+     * Add a way to the angle snap collection and set the drawing angle if it is not already set
+     * @param way The way to add to the angle snap
+     * @see AngleSnap#addSnap(Way)
+     */
     public void addAngleSnap(Way way) {
         angleSnap.addSnap(way);
         if (drawingAngle == null) {
@@ -76,15 +91,26 @@ class Building {
         return width;
     }
 
+    /**
+     * Check if we are currently drawing a rectangle
+     * @return {@code true} if we are drawing a rectangle
+     */
     public boolean isRectDrawing() {
         return drawingAngle != null && ToolSettings.getWidth() == 0 && ToolSettings.getLenStep() == 0
                 && ToolSettings.Shape.RECTANGLE == ToolSettings.getShape();
     }
 
+    /**
+     * Get the current drawing angle
+     * @return The current drawing angle. May be {@code null}.
+     */
     public Double getDrawingAngle() {
         return drawingAngle;
     }
 
+    /**
+     * Reset the current building drawing
+     */
     public void reset() {
         len = 0;
 
@@ -93,6 +119,11 @@ class Building {
         }
     }
 
+    /**
+     * Get the east north point specified
+     * @param num The point to get from the {@link #en} array
+     * @return The EastNorth point
+     */
     public EastNorth getPoint(int num) {
         return en[num];
     }
@@ -208,6 +239,11 @@ class Building {
         en[2] = en3;
     }
 
+    /**
+     * Paint the way to be generated on mouse release
+     * @param g The graphics to paint on
+     * @param mv The current map view
+     */
     public void paint(Graphics2D g, MapView mv) {
         // Make a local copy to avoid other threads resetting what we are drawing.
         // See JOSM #21833 for at least one instance where _something_ happens to cause
@@ -254,24 +290,24 @@ class Building {
         for (Node n : MainApplication.getLayerManager().getEditDataSet().searchNodes(bbox)) {
             if (n.isUsable() && findUsableTag(n)) {
                 EastNorth enTest = n.getEastNorth();
-                if (area.contains(enTest.getX(), enTest.getY())) {
-                    boolean useNode = true;
-                    for (OsmPrimitive p : n.getReferrers()) {
-                        // Don't use nodes if they're referenced by ways
-                        if (p.getType() == OsmPrimitiveType.WAY) {
-                            useNode = false;
-                            break;
-                        }
-                    }
-                    if (useNode) {
-                        nodes.add(n);
-                    }
+                if (area.contains(enTest.getX(), enTest.getY()) && usableAddressNode(n)) {
+                    nodes.add(n);
                 }
             }
         }
         if (nodes.size() != 1)
             return null;
         return nodes.get(0);
+    }
+
+    private static boolean usableAddressNode(IPrimitive node) {
+        for (IPrimitive p : node.getReferrers()) {
+            // Don't use nodes if they're referenced by ways
+            if (p.getType() == OsmPrimitiveType.WAY) {
+                return false;
+            }
+        }
+        return true;
     }
 
     static boolean findUsableTag(OsmPrimitive p) {
@@ -283,6 +319,10 @@ class Building {
         return false;
     }
 
+    /**
+     * Create a circle in the dataset
+     * @return The created circle
+     */
     public Way createCircle() {
         DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> selectedPrimitives = ds.getAllSelected();
@@ -357,6 +397,11 @@ class Building {
         }
     }
 
+    /**
+     * Create a rectangle on the current edit dataset
+     * @param ctrl {@code true} if the ctrl button is held
+     * @return The created rectangle or {@code null}
+     */
     public Way createRectangle(boolean ctrl) {
         if (len == 0)
             return null;
@@ -473,28 +518,32 @@ class Building {
         if (Boolean.TRUE.equals(ToolSettings.PROP_USE_ADDR_NODE.get())) {
             Node addrNode = getAddressNode(w);
             if (addrNode != null) {
-                Collection<Command> addressCmds = cmdList != null ? cmdList : new LinkedList<>();
-                addrNode.getKeys().forEach(w::put);
-                for (OsmPrimitive p : addrNode.getReferrers()) {
-                    Relation r = (Relation) p;
-                    List<RelationMember> members = new ArrayList<>(r.getMembers());
-                    for (int i = 0; i < members.size(); i++) {
-                        RelationMember member = members.get(i);
-                        if (addrNode.equals(member.getMember())) {
-                            members.set(i, new RelationMember(member.getRole(), w));
-                        }
-                    }
-                    addressCmds.add(new ChangeMembersCommand(r, members));
-                }
-                final Command deleteCommand = DeleteCommand.delete(Collections.singleton(addrNode));
-                if (deleteCommand != null) {
-                    addressCmds.add(deleteCommand);
-                }
-                if (cmdList == null) {
-                    Command c = new SequenceCommand(tr("Add address for building"), addressCmds);
-                    UndoRedoHandler.getInstance().add(c);
+                addAddressCommand(w, cmdList, addrNode);
+            }
+        }
+    }
+
+    private static void addAddressCommand(Way w, Collection<Command> cmdList, Node addrNode) {
+        Collection<Command> addressCmds = cmdList != null ? cmdList : new LinkedList<>();
+        addrNode.getKeys().forEach(w::put);
+        for (OsmPrimitive p : addrNode.getReferrers()) {
+            Relation r = (Relation) p;
+            List<RelationMember> members = new ArrayList<>(r.getMembers());
+            for (int i = 0; i < members.size(); i++) {
+                RelationMember member = members.get(i);
+                if (addrNode.equals(member.getMember())) {
+                    members.set(i, new RelationMember(member.getRole(), w));
                 }
             }
+            addressCmds.add(new ChangeMembersCommand(r, members));
+        }
+        final Command deleteCommand = DeleteCommand.delete(Collections.singleton(addrNode));
+        if (deleteCommand != null) {
+            addressCmds.add(deleteCommand);
+        }
+        if (cmdList == null) {
+            Command c = new SequenceCommand(tr("Add address for building"), addressCmds);
+            UndoRedoHandler.getInstance().add(c);
         }
     }
 }

@@ -9,8 +9,14 @@ import java.awt.event.KeyEvent;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Draw rectangle buildings
+ */
 public class BuildingRectangleAction extends JosmAction {
 
+    /**
+     * Create a new action for drawing rectangular buildings
+     */
     public BuildingRectangleAction() {
         super(tr("Set building shape to rectangle"), "mapmode/rectangular", tr("Set building shape to rectangle"),
                 Shortcut.registerShortcut("buildings_tools:rectangle",
