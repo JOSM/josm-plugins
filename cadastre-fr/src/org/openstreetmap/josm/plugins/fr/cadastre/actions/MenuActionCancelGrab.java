@@ -16,7 +16,7 @@ public class MenuActionCancelGrab extends JosmAction {
 
     private static final String NAME = marktr("Cancel current grab");
 
-    private WMSLayer wmsLayer;
+    private final transient WMSLayer wmsLayer;
 
     /**
      * Constructs a new {@code MenuActionCancelGrab}.

@@ -26,14 +26,15 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class MenuActionLoadFromCache extends JosmAction {
     private static final long serialVersionUID = 1L;
+    private static final String ERROR = marktr("Error");
 
-    private static final String name = marktr("Load layer from cache");
+    private static final String ACTION_NAME = marktr("Load layer from cache");
 
     /**
      * Constructs a new {@code MenuActionLoadFromCache}.
      */
     public MenuActionLoadFromCache() {
-        super(tr(name), "cadastre_small",
+        super(tr(ACTION_NAME), "cadastre_small",
                 tr("Load location from cache (only if cache is enabled)"), null, false, "cadastrefr/loadfromcache", true);
     }
 
@@ -45,63 +46,81 @@ public class MenuActionLoadFromCache extends JosmAction {
 
         File[] files = fc.getSelectedFiles();
         int layoutZone = CadastrePlugin.getCadastreProjectionLayoutZone();
-        nextFile:
         for (File file : files) {
             if (file.exists()) {
                 String filename = file.getName();
-                String ext = (filename.lastIndexOf('.') == -1) ? "" : filename.substring(filename.lastIndexOf('.')+1, filename.length());
-                if ((ext.length() == 3 && ext.substring(0, CacheControl.C_LAMBERT_CC_9Z.length()).equals(CacheControl.C_LAMBERT_CC_9Z) &&
-                    !CadastrePlugin.isLambert_cc9())
-                    || (ext.length() == 4 && ext.substring(0, CacheControl.C_UTM20N.length()).equals(CacheControl.C_UTM20N) &&
-                            !CadastrePlugin.isUtm_france_dom())
+                String ext = getExtension(filename);
+                if ((extIsLambertCC9Z(ext) && !CadastrePlugin.isLambert_cc9())
+                    || (extIsUTM20N(ext) && !CadastrePlugin.isUtm_france_dom())
                     || (ext.length() == 1 && !CadastrePlugin.isLambert())) {
                         JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                                 tr("{0} not allowed with the current projection", filename),
                                 tr("Error"), JOptionPane.ERROR_MESSAGE);
-                        continue;
                 } else {
-                    String location = filename.substring(0, filename.lastIndexOf('.'));
-                    if (ext.length() == 3 && ext.substring(0, CacheControl.C_LAMBERT_CC_9Z.length()).equals(CacheControl.C_LAMBERT_CC_9Z))
-                        ext = ext.substring(2);
-                    else if (ext.length() == 4 && ext.substring(0, CacheControl.C_UTM20N.length()).equals(CacheControl.C_UTM20N))
-                        ext = ext.substring(3);
-                    // check the extension and its compatibility with current projection
-                    try {
-                        int cacheZone = Integer.parseInt(ext) - 1;
-                        if (cacheZone >= 0 && cacheZone <= 9) {
-                            if (cacheZone != layoutZone) {
-                                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                                        tr("Cannot load cache {0} which is not compatible with current projection zone", filename),
-                                        tr("Error"), JOptionPane.ERROR_MESSAGE);
-                                continue nextFile;
-                            } else
-                                Logging.info("Load cache " + filename);
-                        }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                                tr("Selected file {0} is not a cache file from this plugin (invalid extension)", filename),
-                                tr("Error"), JOptionPane.ERROR_MESSAGE);
-                        continue nextFile;
-                    }
-                    // check if the selected cache is not already displayed
-                    if (MainApplication.getMap() != null) {
-                        for (Layer l : MainApplication.getLayerManager().getLayers()) {
-                            if (l instanceof WMSLayer && l.getName().equals(location)) {
-                                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                                        tr("The location {0} is already on screen. Cache not loaded.", filename),
-                                        tr("Error"), JOptionPane.ERROR_MESSAGE);
-                                continue nextFile;
-                            }
-                        }
-                    }
-                    // create layer and load cache
-                    WMSLayer wmsLayer = new WMSLayer("", "", Integer.parseInt(ext)-1);
-                    if (wmsLayer.grabThread.getCacheControl().loadCache(file, layoutZone)) {
-                        CadastrePlugin.addWMSLayer(wmsLayer);
-                    }
+                    actionPerformed(file, filename, ext, layoutZone);
                 }
             }
         }
+    }
+
+    private static String getExtension(String filename) {
+        return (filename.lastIndexOf('.') == -1) ? "" : filename.substring(filename.lastIndexOf('.')+1);
+    }
+
+    private static String simplifyExtension(String ext) {
+        if (extIsLambertCC9Z(ext))
+            return ext.substring(2);
+        else if (extIsUTM20N(ext))
+            return ext.substring(3);
+        return ext;
+    }
+
+    private static void actionPerformed(File file, String filename, String ext, int layoutZone) {
+        String location = filename.substring(0, filename.lastIndexOf('.'));
+        // check the extension and its compatibility with current projection
+        ext = simplifyExtension(ext);
+        try {
+            int cacheZone = Integer.parseInt(ext) - 1;
+            if (cacheZone >= 0 && cacheZone <= 9) {
+                if (cacheZone != layoutZone) {
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                            tr("Cannot load cache {0} which is not compatible with current projection zone", filename),
+                            tr(ERROR), JOptionPane.ERROR_MESSAGE);
+                    return;
+                } else {
+                    Logging.info("Load cache " + filename);
+                }
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                    tr("Selected file {0} is not a cache file from this plugin (invalid extension)", filename),
+                    tr(ERROR), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // check if the selected cache is not already displayed
+        if (MainApplication.getMap() != null) {
+            for (Layer l : MainApplication.getLayerManager().getLayers()) {
+                if (l instanceof WMSLayer && l.getName().equals(location)) {
+                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                            tr("The location {0} is already on screen. Cache not loaded.", filename),
+                            tr(ERROR), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+        }
+        // create layer and load cache
+        WMSLayer wmsLayer = new WMSLayer("", "", Integer.parseInt(ext)-1);
+        if (wmsLayer.grabThread.getCacheControl().loadCache(file, layoutZone)) {
+            CadastrePlugin.addWMSLayer(wmsLayer);
+        }
+    }
+
+    private static boolean extIsLambertCC9Z(String ext) {
+        return ext.length() == 3 && ext.startsWith(CacheControl.C_LAMBERT_CC_9Z);
+    }
+
+    private static boolean extIsUTM20N(String ext) {
+        return ext.length() == 4 && ext.startsWith(CacheControl.C_UTM20N);
     }
 
     protected static JFileChooser createAndOpenFileChooser() {

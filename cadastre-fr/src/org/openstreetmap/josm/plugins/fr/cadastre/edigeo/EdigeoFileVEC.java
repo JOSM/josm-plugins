@@ -353,9 +353,9 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
 
         @Override
         void processRecord(EdigeoRecord r) {
-            switch (r.name) {
-            case "REF": refPoint = safeGetEastNorth(r); break;
-            default:
+            if ("REF".equals(r.name)) {
+                refPoint = safeGetEastNorth(r);
+            } else {
                 super.processRecord(r);
             }
         }
@@ -557,12 +557,12 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
         Projection proj = lot.geo.getCoorReference().getProjection();
         List<OsmPrimitive> toPurge = new ArrayList<>();
         for (ObjectBlock obj : getObjects()) {
-            if (!ignoredObjects.stream().anyMatch(p -> p.test(obj))) {
+            if (ignoredObjects.stream().noneMatch(p -> p.test(obj))) {
                 OsmPrimitive p;
                 switch (obj.scdRef.kind) {
-                    case POINT: p = fillPoint(ds, proj, obj, obj.getConstructionRelations(), obj.getSemanticRelations()); break;
-                    case LINE: p = fillLine(ds, proj, obj, obj.getConstructionRelations(), obj.getSemanticRelations()); break;
-                    case AREA: p = fillArea(ds, proj, obj, obj.getConstructionRelations(), obj.getSemanticRelations()); break;
+                    case POINT: p = fillPoint(ds, proj, obj, obj.getConstructionRelations()); break;
+                    case LINE: p = fillLine(ds, proj, obj, obj.getConstructionRelations()); break;
+                    case AREA: p = fillArea(ds, proj, obj, obj.getConstructionRelations()); break;
                     case COMPLEX: // TODO (not used in PCI)
                     default: throw new IllegalArgumentException(obj.toString());
                 }
@@ -573,7 +573,7 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
                             if (e.filter.test(data, p)) {
                                 purged = toPurge.add(p);
                                 if (p instanceof Relation) {
-									toPurge.addAll(((Relation) p).getMemberPrimitivesList());
+                                    toPurge.addAll(((Relation) p).getMemberPrimitivesList());
                                 }
                             } else {
                                 e.consumer.accept(obj, p);
@@ -629,7 +629,7 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
     }
 
     private static Node fillPoint(DataSet ds, Projection proj, ObjectBlock obj,
-            List<RelationBlock> constructionRelations, List<RelationBlock> semanticRelations) {
+            List<RelationBlock> constructionRelations) {
         assert constructionRelations.size() == 1 : constructionRelations;
         List<NodeBlock> blocks = extract(NodeBlock.class, constructionRelations, RelationKind.IS_MADE_OF);
         assert blocks.size() == 1 : blocks;
@@ -643,12 +643,12 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
     }
 
     private static Way fillLine(DataSet ds, Projection proj, ObjectBlock obj,
-            List<RelationBlock> constructionRelations, List<RelationBlock> semanticRelations) {
-        assert constructionRelations.size() >= 1 : constructionRelations;
+            List<RelationBlock> constructionRelations) {
+        assert !constructionRelations.isEmpty() : constructionRelations;
         // Retrieve all arcs for the linear object
         final List<ArcBlock> arcs = extract(ArcBlock.class, constructionRelations, RelationKind.IS_MADE_OF_ARC);
         final double EPSILON = 1e-2;
-        assert arcs.size() >= 1;
+        assert !arcs.isEmpty();
         // Some lines are made of several arcs, but they need to be sorted
         if (arcs.size() > 1) {
             List<ArcBlock> newArcs = arcs.stream().filter(
@@ -692,10 +692,10 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
     }
 
     private static OsmPrimitive fillArea(DataSet ds, Projection proj, ObjectBlock obj,
-            List<RelationBlock> constructionRelations, List<RelationBlock> semanticRelations) {
-        assert constructionRelations.size() >= 1 : constructionRelations;
+            List<RelationBlock> constructionRelations) {
+        assert !constructionRelations.isEmpty() : constructionRelations;
         List<FaceBlock> faces = extract(FaceBlock.class, constructionRelations, RelationKind.IS_MADE_OF);
-        assert faces.size() >= 1;
+        assert !faces.isEmpty();
         if (faces.size() == 1) {
             return addPrimitiveAndTags(ds, obj, faceToOsmPrimitive(ds, proj, faces.get(0)));
         } else {
@@ -712,7 +712,7 @@ public class EdigeoFileVEC extends EdigeoLotFile<VecBlock<?>> {
         List<ArcBlock> allArcs = new ArrayList<>();
         allArcs.addAll(extract(ArcBlock.class, face.getConstructionRelations(), RelationKind.HAS_FOR_LEFT_FACE));
         allArcs.addAll(extract(ArcBlock.class, face.getConstructionRelations(), RelationKind.HAS_FOR_RIGHT_FACE));
-        assert allArcs.size() >= 1;
+        assert !allArcs.isEmpty();
         if (allArcs.size() == 1) {
             ArcBlock ab = allArcs.get(0);
             assert ab.isClosed();

@@ -21,7 +21,6 @@ public class MenuActionBoundaries extends JosmAction {
     private static final String NAME = marktr("Administrative boundary");
 
     private static final long serialVersionUID = 1L;
-    private WMSLayer wmsLayer = null;
 
     /**
      * Constructs a new {@code MenuActionBoundaries}.
@@ -32,7 +31,7 @@ public class MenuActionBoundaries extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-        wmsLayer = WMSDownloadAction.getLayer();
+        WMSLayer wmsLayer = WMSDownloadAction.getLayer();
         if (wmsLayer != null) {
             if (wmsLayer.isRaster()) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(),

@@ -8,12 +8,15 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.geotools.api.referencing.FactoryException;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -36,9 +39,9 @@ public class MenuActionSaveRasterAs extends JosmAction {
 
     private static final String NAME = marktr("Save image as...");
 
-    private final WMSLayer wmsLayer;
+    private final transient WMSLayer wmsLayer;
 
-    static class FiltrePng extends FileFilter {
+    static class FiltrePng extends FileFilter implements Serializable {
         @Override
         public boolean accept(File file) {
             if (file.isDirectory()) {
@@ -53,7 +56,7 @@ public class MenuActionSaveRasterAs extends JosmAction {
         }
     }
 
-    static class FiltreTiff extends FileFilter {
+    static class FiltreTiff extends FileFilter implements Serializable {
         @Override
         public boolean accept(File file) {
             if (file.isDirectory()) {
@@ -113,7 +116,7 @@ public class MenuActionSaveRasterAs extends JosmAction {
                     final File output = new File(file.getParent(), file.getName()+".tif");
                     GeoTiffWriter gtwriter = new GeoTiffWriter(output);
                     GeoTiffWriteParams wp = new GeoTiffWriteParams();
-                    wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+                    wp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                     wp.setCompressionType("LZW");
                     wp.setCompressionQuality(0.75F);
                     final GeoTiffFormat format = new GeoTiffFormat();
@@ -125,7 +128,7 @@ public class MenuActionSaveRasterAs extends JosmAction {
                     gtwriter.write(coverage, params.values().toArray(new GeneralParameterValue[1]));
                     gtwriter.dispose();
                     coverage.dispose(true);
-                } catch (Exception e) {
+                } catch (IOException | FactoryException e) {
                     Logging.error(e);
                 }
             }

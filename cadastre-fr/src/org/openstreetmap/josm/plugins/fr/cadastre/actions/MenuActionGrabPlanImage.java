@@ -29,9 +29,9 @@ public class MenuActionGrabPlanImage extends JosmAction implements Runnable {
 
     public static final String NAME = marktr("Georeference an image");
 
-    private DownloadWMSPlanImage downloadWMSPlanImage;
-    private WMSLayer wmsLayer;
-    private RasterImageGeoreferencer rasterImageGeoreferencer;
+    private transient DownloadWMSPlanImage downloadWMSPlanImage;
+    private transient WMSLayer wmsLayer;
+    private transient RasterImageGeoreferencer rasterImageGeoreferencer;
 
     /**
      * Constructs a new {@code MenuActionGrabPlanImage}.
@@ -55,7 +55,7 @@ public class MenuActionGrabPlanImage extends JosmAction implements Runnable {
     public void actionPerformed(ActionEvent ae) {
         if (MainApplication.getMap() != null) {
             if (CadastrePlugin.isCadastreProjection()) {
-                wmsLayer = new MenuActionNewLocation().addNewLayer(new ArrayList<WMSLayer>());
+                wmsLayer = new MenuActionNewLocation().addNewLayer(new ArrayList<>());
                 if (wmsLayer == null) return;
                 downloadWMSPlanImage = new DownloadWMSPlanImage();
                 downloadWMSPlanImage.download(wmsLayer);
@@ -73,7 +73,7 @@ public class MenuActionGrabPlanImage extends JosmAction implements Runnable {
         boolean loadedFromCache = downloadWMSPlanImage.waitFinished();
         if (loadedFromCache) {
             wmsLayer.invalidate();
-        } else if (wmsLayer.getImages().size() == 0) {
+        } else if (wmsLayer.getImages().isEmpty()) {
             // action canceled or image loaded from cache (and already georeferenced)
             rasterImageGeoreferencer.actionInterrupted();
         } else {
@@ -89,7 +89,7 @@ public class MenuActionGrabPlanImage extends JosmAction implements Runnable {
                 rasterImageGeoreferencer.transformGeoreferencedImg();
             } else {
                 rasterImageGeoreferencer.addListener();
-                if (Config.getPref().getBoolean("cadastrewms.noImageCropping", false) == false)
+                if (!Config.getPref().getBoolean("cadastrewms.noImageCropping", false))
                     rasterImageGeoreferencer.startCropping(wmsLayer);
                 else
                     rasterImageGeoreferencer.startGeoreferencing(wmsLayer);

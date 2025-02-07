@@ -3,10 +3,12 @@ package org.openstreetmap.josm.plugins.fr.cadastre.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.plugins.fr.cadastre.edigeo.pci.EdigeoPciImporter;
@@ -34,7 +36,7 @@ public class CadastreServerReader extends OsmServerReader {
         try {
             progressMonitor.beginTask(tr("Contacting Server..."), 10);
             return new EdigeoPciImporter().parseDataSet(url, data);
-        } catch (Exception e) {
+        } catch (IOException | IllegalDataException e) {
             throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();

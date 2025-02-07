@@ -26,7 +26,7 @@ public abstract class EdigeoLotFile<B extends ChildBlock> extends EdigeoFile {
     private final Map<String, Class<? extends B>> classes = new HashMap<>();
     protected final ClassToInstancesMap<B> blocks = new MutableClassToInstancesMap<>();
 
-    EdigeoLotFile(Lot lot, String subsetId, Path path) throws IOException {
+    EdigeoLotFile(Lot lot, String subsetId, Path path) {
         super(path);
         this.lot = Objects.requireNonNull(lot, "lot");
         this.subsetId = Objects.requireNonNull(subsetId, "subsetId");

@@ -12,7 +12,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -115,21 +114,18 @@ public class CacheControl implements Runnable {
         }
         File file = new File(CadastrePlugin.cacheDir + wmsLayer.getName() + "." + WMSFileExtension());
         if (file.exists()) {
-            int reply = GuiHelper.runInEDTAndWaitAndReturn(new Callable<Integer>() {
-                @Override
-                public Integer call() throws Exception {
-                    JOptionPane pane = new JOptionPane(
-                            tr("Location \"{0}\" found in cache.\n"+
-                            "Load cache first ?\n"+
-                            "(No = new cache)", wmsLayer.getName()),
-                            JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null);
-                    // this below is a temporary workaround to fix the "always on top" issue
-                    JDialog dialog = pane.createDialog(MainApplication.getMainFrame(), tr("Select Feuille"));
-                    CadastrePlugin.prepareDialog(dialog);
-                    dialog.setVisible(true);
-                    return (Integer) pane.getValue();
-                    // till here
-                }
+            int reply = GuiHelper.runInEDTAndWaitAndReturn(() -> {
+                JOptionPane pane = new JOptionPane(
+                        tr("Location \"{0}\" found in cache.\n" +
+                                "Load cache first ?\n" +
+                                "(No = new cache)", wmsLayer.getName()),
+                        JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null);
+                // this below is a temporary workaround to fix the "always on top" issue
+                JDialog dialog = pane.createDialog(MainApplication.getMainFrame(), tr("Select Feuille"));
+                CadastrePlugin.prepareDialog(dialog);
+                dialog.setVisible(true);
+                return (Integer) pane.getValue();
+                // till here
             });
 
             if (reply == JOptionPane.OK_OPTION && loadCache(file, wmsLayer.getLambertZone())) {
@@ -158,7 +154,7 @@ public class CacheControl implements Runnable {
         boolean successfulRead = false;
         try (
             FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            ObjectInputStream ois = new ObjectInputStream(fis)
         ) {
             wmsLayer.setAssociatedFile(file);
             successfulRead = wmsLayer.read(ois, currentLambertZone);
@@ -231,6 +227,7 @@ public class CacheControl implements Runnable {
                 wait();
             } catch (InterruptedException e) {
                 Logging.error(e);
+                Thread.currentThread().interrupt();
             }
         }
     }

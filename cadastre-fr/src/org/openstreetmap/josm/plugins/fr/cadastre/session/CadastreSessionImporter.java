@@ -20,6 +20,7 @@ import org.openstreetmap.josm.io.session.SessionLayerImporter;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
 import org.openstreetmap.josm.plugins.fr.cadastre.wms.CacheControl;
 import org.openstreetmap.josm.plugins.fr.cadastre.wms.WMSLayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.w3c.dom.Element;
 
 public class CadastreSessionImporter implements SessionLayerImporter {
@@ -60,7 +61,7 @@ public class CadastreSessionImporter implements SessionLayerImporter {
             return wmsLayer;
 
         } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
     }
 

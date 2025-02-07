@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -39,6 +39,11 @@ import org.openstreetmap.josm.tools.Utils;
  * Reader for French Cadastre - Edigéo files.
  */
 public class EdigeoPciReader extends AbstractReader {
+    private static final String SYM_ID = "SYM_id";
+    private static final String HIGHWAY = "highway";
+    private static final String TEX_ID = "TEX_id";
+    private static final String TEX2_ID = "TEX2_id";
+    private static final String IDU_ID = "IDU_id";
 
     private static final BiPredicate<CadastreDownloadData, OsmPrimitive> water = (x, p) -> !x.isDownloadWater();
     private static final BiPredicate<CadastreDownloadData, OsmPrimitive> build = (x, p) -> !x.isDownloadBuilding();
@@ -64,7 +69,7 @@ public class EdigeoPciReader extends AbstractReader {
                 "BOULON_id",   // Property boundary marker for Alsace and Moselle
                 "CROIX_id",    // Property boundary marker for Alsace and Moselle
                 "SYMBLIM_id"); // Common wall symbol
-        EdigeoFileVEC.addIgnoredObject("SYM_id",
+        EdigeoFileVEC.addIgnoredObject(SYM_ID,
                 "30", // Water stream arrow
                 "31", // Connecting arrows between parcelles and numbers
                 "32", // Surface boundary not forming parcel
@@ -93,9 +98,9 @@ public class EdigeoPciReader extends AbstractReader {
                     highwayValue = "footway";
                 }
             }
-            p.put("highway", highwayValue);
-            p.remove("SYM_id");
-        }, symbo, "SYM_id", "23"); // Path / Footway
+            p.put(HIGHWAY, highwayValue);
+            p.remove(SYM_ID);
+        }, symbo, SYM_ID, "23"); // Path / Footway
         EdigeoFileVEC.addObjectPostProcessor("24", symbo, "man_made=pipeline"); // Pipeline
         EdigeoFileVEC.addObjectPostProcessor("25", symbo, "man_made=pipeline"); // Aqueduct
         EdigeoFileVEC.addObjectPostProcessor("26", symbo, "aerialway=cable_car"); // Aerialway
@@ -116,9 +121,9 @@ public class EdigeoPciReader extends AbstractReader {
 
         // Mapping TEX*_id => name (first step)
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
-            StringBuffer sb = new StringBuffer(p.get("TEX_id").trim());
-            p.remove("TEX_id");
-            for (String t : Arrays.asList("TEX2_id", "TEX3_id", "TEX4_id", "TEX5_id", "TEX6_id", "TEX7_id", "TEX8_id", "TEX9_id")) {
+            StringBuilder sb = new StringBuilder(p.get(TEX_ID).trim());
+            p.remove(TEX_ID);
+            for (String t : Arrays.asList(TEX2_ID, "TEX3_id", "TEX4_id", "TEX5_id", "TEX6_id", "TEX7_id", "TEX8_id", "TEX9_id")) {
                 String v = p.get(t);
                 if (v == null) {
                     break;
@@ -127,22 +132,21 @@ public class EdigeoPciReader extends AbstractReader {
                 p.remove(t);
             }
             setName(p, sb.toString());
-        }, (x, p) -> false, "TEX_id");
+        }, (x, p) -> false, TEX_ID);
 
         // Objects mapping
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
-            p.put("highway", "road");
+            p.put(HIGHWAY, "road");
             String name = p.get("name");
             if (name != null && name.contains(" ")) {
                 String[] words = name.split(" ");
-                if (!setCorrectHighway(p, words)) {
-                    if (highways.values().stream().anyMatch(l -> l.contains(words[words.length - 1]))) {
-                        String[] newWords = new String[words.length];
-                        newWords[0] = words[words.length - 1];
-                        System.arraycopy(words, 0, newWords, 1, words.length - 1);
-                        p.put("name", String.join(" ", newWords));
-                        setCorrectHighway(p, newWords);
-                    }
+                if (!setCorrectHighway(p, words)
+                && highways.values().stream().anyMatch(l -> l.contains(words[words.length - 1]))) {
+                    String[] newWords = new String[words.length];
+                    newWords[0] = words[words.length - 1];
+                    System.arraycopy(words, 0, newWords, 1, words.length - 1);
+                    p.put("name", String.join(" ", newWords));
+                    setCorrectHighway(p, newWords);
                 }
             }
         }, o -> o.hasScdIdentifier("ZONCOMMUNI_id"), symbo);
@@ -150,16 +154,16 @@ public class EdigeoPciReader extends AbstractReader {
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
             p.put("boundary", "administrative");
             p.put("admin_level", "8");
-            p.put("ref:INSEE", "XX"+p.get("IDU_id")); // TODO: find department number
-            p.put("name", WordUtils.capitalizeFully(p.get("TEX2_id")));
-            p.remove("IDU_id");
-            p.remove("TEX2_id");
+            p.put("ref:INSEE", "XX"+p.get(IDU_ID)); // TODO: find department number
+            p.put("name", WordUtils.capitalizeFully(p.get(TEX2_ID)));
+            p.remove(IDU_ID);
+            p.remove(TEX2_ID);
         }, o -> o.hasScdIdentifier("COMMUNE_id"), commu);
 
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
             p.put("boundary", "cadastral");
-            p.put("ref", p.get("IDU_id"));
-            p.remove("IDU_id");
+            p.put("ref", p.get(IDU_ID));
+            p.remove(IDU_ID);
             p.remove("ICL_id");
             p.remove("COAR_id");
             p.remove("COPL_id");
@@ -190,21 +194,17 @@ public class EdigeoPciReader extends AbstractReader {
             p.put("fixme", "place type");
         }, o -> o.hasScdIdentifier("LIEUDIT_id"), local);
 
-        EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
-            p.remove("ORI_id");
-        }, o -> o.hasScdIdentifier("TPOINT_id"), (x, p) -> false);
+        EdigeoFileVEC.addObjectPostProcessor((o, p) -> p.remove("ORI_id"), o -> o.hasScdIdentifier("TPOINT_id"), (x, p) -> false);
 
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
-            p.put("highway", "road");
+            p.put(HIGHWAY, "road");
             p.put("area", "yes");
         }, o -> o.hasScdIdentifier("TRONROUTE_id"), symbo);
 
-        EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
-            p.put("waterway", "riverbank");
-        }, o -> o.hasScdIdentifier("TRONFLUV_id"), water);
+        EdigeoFileVEC.addObjectPostProcessor((o, p) -> p.put("waterway", "riverbank"), o -> o.hasScdIdentifier("TRONFLUV_id"), water);
 
         // Mapping TEX*_id => name (last step)
-        for (String t : Arrays.asList("TEX2_id", "TEX3_id", "TEX4_id", "TEX5_id", "TEX6_id", "TEX7_id", "TEX8_id", "TEX9_id")) {
+        for (String t : Arrays.asList(TEX2_ID, "TEX3_id", "TEX4_id", "TEX5_id", "TEX6_id", "TEX7_id", "TEX8_id", "TEX9_id")) {
             EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
                 setName(p, p.get(t));
                 p.remove(t);
@@ -238,11 +238,11 @@ public class EdigeoPciReader extends AbstractReader {
 
     private static void setName(OsmPrimitive p, String input) {
         if (input != null) {
-            String name = input.replaceAll("    ", " ").replaceAll("   ", " ").replaceAll("  ", " ");
+            String name = input.replaceAll(" {4}", " ").replaceAll(" {3}", " ").replaceAll(" {2}", " ");
             if (name.matches("([A-Za-z] )+[A-Za-z]")) {
-                name = name.replaceAll(" ", "");
+                name = name.replace(" ", "");
             }
-            if (name.length() > 2 && StringUtils.isAllUpperCase(name.replaceAll(" ", "").replaceAll("'", "").replaceAll("-", ""))) {
+            if (name.length() > 2 && StringUtils.isAllUpperCase(name.replace(" ", "").replace("'", "").replace("-", ""))) {
                 name = WordUtils.capitalizeFully(name);
             }
             if (!name.equals(p.get("addr:housenumber"))) {
@@ -255,7 +255,7 @@ public class EdigeoPciReader extends AbstractReader {
         String type = words[0];
         for (Entry<String, List<String>> e : highways.entrySet()) {
             if (e.getValue().contains(type)) {
-                p.put("highway", e.getKey());
+                p.put(HIGHWAY, e.getKey());
                 return true;
             }
         }
@@ -274,9 +274,7 @@ public class EdigeoPciReader extends AbstractReader {
         }
         try {
             return new EdigeoPciReader().parse(file.toPath(), data, instance);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception | AssertionError e) {
+        } catch (ReflectiveOperationException | AssertionError e) {
             Logging.error(e);
             throw new IOException(e);
         }
@@ -294,7 +292,7 @@ public class EdigeoPciReader extends AbstractReader {
                 ) {
                     TarArchiveEntry entry;
                     tmpDir = Files.createTempDirectory(Utils.getJosmTempDir().toPath(), "cadastre");
-                    while ((entry = tar.getNextTarEntry()) != null) {
+                    while ((entry = tar.getNextEntry()) != null) {
                         File file = tmpDir.resolve(entry.getName()).toFile();
                         try (FileOutputStream out = new FileOutputStream(file)) {
                             if (IOUtils.copy(tar, out) < entry.getSize()) {

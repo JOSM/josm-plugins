@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.fr.cadastre.wms;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.util.Locale;
 import javax.swing.filechooser.FileFilter;
 
 public final class CacheFileLambert4ZoneFilter extends FileFilter {
+    private static final String LAMBERT_ZONE_MESSAGE = marktr("Lambert Zone {0} cache file (.{0})");
 
     /**
      * Derived from ExtensionFileFilter writen by imi
@@ -20,10 +22,10 @@ public final class CacheFileLambert4ZoneFilter extends FileFilter {
      * Filters for each one of the 4 Lambert zones.
      */
     public static final CacheFileLambert4ZoneFilter[] filters = {
-        new CacheFileLambert4ZoneFilter("1", tr("Lambert Zone {0} cache file (.{0})", 1)),
-        new CacheFileLambert4ZoneFilter("2", tr("Lambert Zone {0} cache file (.{0})", 2)),
-        new CacheFileLambert4ZoneFilter("3", tr("Lambert Zone {0} cache file (.{0})", 3)),
-        new CacheFileLambert4ZoneFilter("4", tr("Lambert Zone {0} cache file (.{0})", 4))
+        new CacheFileLambert4ZoneFilter("1", tr(LAMBERT_ZONE_MESSAGE, 1)),
+        new CacheFileLambert4ZoneFilter("2", tr(LAMBERT_ZONE_MESSAGE, 2)),
+        new CacheFileLambert4ZoneFilter("3", tr(LAMBERT_ZONE_MESSAGE, 3)),
+        new CacheFileLambert4ZoneFilter("4", tr(LAMBERT_ZONE_MESSAGE, 4))
         };
 
     /**

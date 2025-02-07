@@ -10,6 +10,7 @@ import java.util.List;
  * @param <B> the common supertype that all entries must share
  */
 public class MutableClassToInstancesMap<B> extends HashMap<Class<? extends B>, List<B>> implements ClassToInstancesMap<B> {
+    private static final long serialVersionUID = 1L;
 
     @Override
     @SuppressWarnings("unchecked")

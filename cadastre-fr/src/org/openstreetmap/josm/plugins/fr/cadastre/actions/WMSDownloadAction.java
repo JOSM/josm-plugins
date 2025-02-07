@@ -24,26 +24,30 @@ final class WMSDownloadAction {
         // check if we already have a layer created. if not, create; if yes, reuse.
         ArrayList<WMSLayer> existingWMSlayers = new ArrayList<>();
         if (MainApplication.getMap() != null) {
-            Layer activeLayer = MainApplication.getLayerManager().getActiveLayer();
-            if (activeLayer instanceof WMSLayer)
-                return (WMSLayer) activeLayer;
-            for (Layer l : MainApplication.getLayerManager().getLayers()) {
-                if (l instanceof WMSLayer) {
-                    existingWMSlayers.add((WMSLayer) l);
-                }
-            }
-            if (existingWMSlayers.size() == 1)
-                return existingWMSlayers.get(0);
-            if (existingWMSlayers.size() == 0)
-                return new MenuActionNewLocation().addNewLayer(existingWMSlayers);
-            if (Config.getPref().getBoolean("cadastrewms.autoFirstLayer", false)) {
-                return existingWMSlayers.get(0);
-            } else {
-                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                        tr("More than one WMS layer present\nSelect one of them first, then retry"));
-            }
+            return getMapLayer(existingWMSlayers);
         } else {
             return new MenuActionNewLocation().addNewLayer(existingWMSlayers);
+        }
+    }
+
+    private static WMSLayer getMapLayer(ArrayList<WMSLayer> existingWMSlayers) {
+        Layer activeLayer = MainApplication.getLayerManager().getActiveLayer();
+        if (activeLayer instanceof WMSLayer)
+            return (WMSLayer) activeLayer;
+        for (Layer l : MainApplication.getLayerManager().getLayers()) {
+            if (l instanceof WMSLayer) {
+                existingWMSlayers.add((WMSLayer) l);
+            }
+        }
+        if (existingWMSlayers.size() == 1)
+            return existingWMSlayers.get(0);
+        if (existingWMSlayers.isEmpty())
+            return new MenuActionNewLocation().addNewLayer(existingWMSlayers);
+        if (Config.getPref().getBoolean("cadastrewms.autoFirstLayer", false)) {
+            return existingWMSlayers.get(0);
+        } else {
+            JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
+                    tr("More than one WMS layer present\nSelect one of them first, then retry"));
         }
         return null;
     }
