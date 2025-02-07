@@ -19,8 +19,8 @@ public class MenuActionRefineGeoRef extends JosmAction {
 
     private static final String NAME = marktr("Refine georeferencing");
 
-    private WMSLayer wmsLayer;
-    private RasterImageGeoreferencer rasterImageGeoreferencer;
+    private final transient WMSLayer wmsLayer;
+    private final transient RasterImageGeoreferencer rasterImageGeoreferencer;
 
     /**
      * Constructs a new {@code MenuActionRefineGeoRef}.

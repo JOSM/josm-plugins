@@ -62,7 +62,8 @@ public class CadastreDownloadTask extends DownloadOsmTask {
         List<Future<?>> tasks = new ArrayList<>();
         try {
             for (String id : CadastreAPI.getSheets(downloadArea)) {
-                String url = String.join("/", CADASTRE_URL, id.substring(0, id.startsWith("97") ? 3 : 2), id.substring(0, 5), "edigeo-"+id+".tar.bz2");
+                String url = String.join("/", CADASTRE_URL, id.substring(0, id.startsWith("97") ? 3 : 2),
+                        id.substring(0, 5), "edigeo-"+id+".tar.bz2");
                 tasks.add(MainApplication.worker.submit(new InternalDownloadTask(settings, url, progressMonitor, zoomAfterDownload)));
             }
         } catch (IOException e) {
@@ -74,8 +75,11 @@ public class CadastreDownloadTask extends DownloadOsmTask {
             for (Future<?> f : tasks) {
                 try {
                     f.get();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (ExecutionException e) {
                     Logging.error(e);
+                } catch (InterruptedException e) {
+                    Logging.error(e);
+                    Thread.currentThread().interrupt();
                 }
             }
             List<CadastreDataLayer> layers = MainApplication.getLayerManager().getLayersOfType(CadastreDataLayer.class);

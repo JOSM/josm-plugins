@@ -58,7 +58,7 @@ public class CheckSourceUploadHook implements UploadHook {
      * @param osm primitive to check
      * @return true if one of keys is "source"
      */
-    private boolean tagSourceExist(OsmPrimitive osm) {
+    private static boolean tagSourceExist(OsmPrimitive osm) {
         return osm.hasKey("source");
     }
 
@@ -67,7 +67,7 @@ public class CheckSourceUploadHook implements UploadHook {
      * source="cadastre.." if it is approved.
      * @param sel the list of elements added without a key "source"
      */
-    private void displaySource(Collection<OsmPrimitive> sel) {
+    private static void displaySource(Collection<OsmPrimitive> sel) {
         if (!sel.isEmpty()) {
             JPanel p = new JPanel(new GridBagLayout());
             PrimitiveRenderer renderer = new PrimitiveRenderer();

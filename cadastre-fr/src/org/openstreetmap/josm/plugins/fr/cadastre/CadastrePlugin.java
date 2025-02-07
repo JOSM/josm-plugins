@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.io.session.SessionReader.registerSessionLay
 import static org.openstreetmap.josm.io.session.SessionWriter.registerSessionLayerExporter;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Arrays;
@@ -21,6 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -177,26 +176,28 @@ public class CadastrePlugin extends Plugin {
     public static String source = "";
 
     // true if the checkbox "auto-sourcing" is set in the plugin menu
-    public static boolean autoSourcing = false;
+    public static boolean autoSourcing;
 
     // true when the plugin is first used, e.g. grab from WMS or download cache file
-    public static boolean pluginUsed = false;
+    public static boolean pluginUsed;
 
-    public static String cacheDir = null;
+    public static String cacheDir;
 
-    public static boolean alterColors = false;
+    public static boolean alterColors;
 
-    public static boolean backgroundTransparent = false;
+    public static boolean backgroundTransparent;
 
     public static float transparency = 1.0f;
 
-    public static boolean drawBoundaries = false;
+    public static boolean drawBoundaries;
 
-    public static int imageWidth, imageHeight;
+    public static int imageWidth;
+    public static int imageHeight;
 
-    public static String grabLayers, grabStyles = null;
+    public static String grabLayers;
+    public static String grabStyles;
 
-    private static boolean menuEnabled = false;
+    private static boolean menuEnabled;
 
     private static final String LAYER_BULDINGS = "CDIF:BATIMENT,CDIF:LS2";
     private static final String STYLE_BUILDING = "BATIMENT_90,LS2_90";
@@ -223,7 +224,7 @@ public class CadastrePlugin extends Plugin {
      */
     public CadastrePlugin(PluginInformation info) {
         super(info);
-        Logging.info("Pluging cadastre-fr v"+VERSION+" started...");
+        Logging.info("Plugin cadastre-fr v"+VERSION+" started...");
         initCacheDir();
 
         refreshConfiguration();
@@ -264,12 +265,9 @@ public class CadastrePlugin extends Plugin {
             JMenuItem menuSettings = new JMenuItem(new MenuActionNewLocation());
             final JCheckBoxMenuItem menuSource = new JCheckBoxMenuItem(tr("Auto sourcing"));
             menuSource.setSelected(autoSourcing);
-            menuSource.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    Config.getPref().putBoolean("cadastrewms.autosourcing", menuSource.isSelected());
-                    autoSourcing = menuSource.isSelected();
-                }
+            menuSource.addActionListener(ev -> {
+                Config.getPref().putBoolean("cadastrewms.autosourcing", menuSource.isSelected());
+                autoSourcing = menuSource.isSelected();
             });
 
             //JMenuItem menuResetCookie = new JMenuItem(new MenuActionResetCookie());
@@ -295,6 +293,9 @@ public class CadastrePlugin extends Plugin {
         setEnabledAll(menuEnabled);
     }
 
+    /**
+     * Update the configuration values
+     */
     public static void refreshConfiguration() {
         source = checkSourceMillesime();
         autoSourcing = Config.getPref().getBoolean("cadastrewms.autosourcing", true);
@@ -308,9 +309,9 @@ public class CadastrePlugin extends Plugin {
             transparency = 1.0f;
         }
         String currentResolution = Config.getPref().get("cadastrewms.resolution", "high");
-        if (currentResolution.equals("high")) {
+        if ("high".equals(currentResolution)) {
             imageWidth = 1000; imageHeight = 800;
-        } else if (currentResolution.equals("medium")) {
+        } else if ("medium".equals(currentResolution)) {
             imageWidth = 800; imageHeight = 600;
         } else {
             imageWidth = 600; imageHeight = 400;
@@ -465,6 +466,7 @@ public class CadastrePlugin extends Plugin {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             Logging.debug(e);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -476,11 +478,12 @@ public class CadastrePlugin extends Plugin {
                 dialog.setAlwaysOnTop(true);
             } catch (SecurityException e) {
                 Logging.warn(tr("Warning: failed to put option pane dialog always on top. Exception was: {0}", e.toString()));
+                Logging.trace(e);
             }
         }
         dialog.setModal(true);
         dialog.toFront();
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -507,7 +510,7 @@ public class CadastrePlugin extends Plugin {
     private static String checkSourceMillesime() {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String src = Config.getPref().get("cadastrewms.source",
-            "cadastre-dgi-fr source : Direction G\u00e9n\u00e9rale des Imp\u00f4ts - Cadastre. Mise \u00e0 jour : AAAA");
+            "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : AAAA");
         String srcYear = src.substring(src.lastIndexOf(" ")+1);
         Integer year = null;
         try {
@@ -515,7 +518,7 @@ public class CadastrePlugin extends Plugin {
         } catch (NumberFormatException e) {
             Logging.debug(e);
         }
-        if (srcYear.equals("AAAA") || (year != null && year < currentYear)) {
+        if ("AAAA".equals(srcYear) || (year != null && year < currentYear)) {
             Logging.info("Replace source year "+srcYear+" by current year "+currentYear);
             src = src.substring(0, src.lastIndexOf(" ")+1)+currentYear;
             Config.getPref().put("cadastrewms.source", src);

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.fr.cadastre.session;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,7 +46,7 @@ public class CadastreSessionExporter implements SessionLayerExporter {
         lbl.setToolTipText(layer.getToolTipText());
         p.add(export, GBC.std());
         p.add(lbl, GBC.std());
-        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GridBagConstraints.HORIZONTAL));
         return p;
     }
 

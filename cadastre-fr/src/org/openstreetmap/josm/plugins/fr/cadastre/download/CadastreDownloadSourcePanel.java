@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
 
@@ -82,7 +83,7 @@ public class CadastreDownloadSourcePanel extends AbstractDownloadSourcePanel<Cad
                 DownloadDialog.getInstance().getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
 
         // adding the download tasks
-        add(new JLabel(tr("Objects:")), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));
+        add(new JLabel(tr("Objects:")), GBC.std().insets(5, 5, 1, 5).anchor(GridBagConstraints.CENTER));
         cbDownloadBuilding = createCheckBox(tr("building"), DOWNLOAD_BUILDING,
                 tr("Select to download buildings in the selected download area."));
         cbDownloadAddress = createCheckBox(tr("address"), DOWNLOAD_ADDRESS,

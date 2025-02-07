@@ -3,9 +3,12 @@ package org.openstreetmap.josm.plugins.fr.cadastre.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -29,6 +32,8 @@ import org.openstreetmap.josm.tools.Logging;
 public class MenuActionNewLocation extends JosmAction {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String CADASTREWMS_CODE_DEPARTEMENT = "cadastrewms.codeDepartement";
 
     // CHECKSTYLE.OFF: LineLength
     // CHECKSTYLE.OFF: SingleSpaceSeparator
@@ -71,15 +76,12 @@ public class MenuActionNewLocation extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        WMSLayer wmsLayer = addNewLayer(new ArrayList<WMSLayer>());
+        WMSLayer wmsLayer = addNewLayer(new ArrayList<>());
         if (wmsLayer != null)
             DownloadWMSVectorImage.download(wmsLayer);
     }
 
-    public WMSLayer addNewLayer(ArrayList<WMSLayer> existingLayers) {
-        String location = "";
-        String codeDepartement = "";
-        String codeCommune = "";
+    public WMSLayer addNewLayer(List<WMSLayer> existingLayers) {
         JLabel labelSectionNewLocation = new JLabel(tr("Add a new municipality layer"));
         JPanel p = new JPanel(new GridBagLayout());
         JLabel labelLocation = new JLabel(tr("Commune"));
@@ -92,17 +94,17 @@ public class MenuActionNewLocation extends JosmAction {
             inputDepartement.addItem(departements[i]);
         }
         inputDepartement.setToolTipText(tr("<html>Departement number (optional)</html>"));
-        if (!Config.getPref().get("cadastrewms.codeDepartement").equals("")) {
+        if (!"".equals(Config.getPref().get(CADASTREWMS_CODE_DEPARTEMENT))) {
             for (int i = 0; i < departements.length; i += 2) {
-                if (departements[i].equals(Config.getPref().get("cadastrewms.codeDepartement")))
+                if (departements[i].equals(Config.getPref().get(CADASTREWMS_CODE_DEPARTEMENT)))
                     inputDepartement.setSelectedIndex(i/2);
             }
         }
         p.add(labelSectionNewLocation, GBC.eol());
         p.add(labelLocation, GBC.std().insets(10, 0, 0, 0));
-        p.add(inputTown, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        p.add(inputTown, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
         p.add(labelDepartement, GBC.std().insets(10, 0, 0, 0));
-        p.add(inputDepartement, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        p.add(inputDepartement, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 0, 0, 5));
         JOptionPane pane = new JOptionPane(p, JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null) {
             private static final long serialVersionUID = 1L;
 
@@ -116,13 +118,19 @@ public class MenuActionNewLocation extends JosmAction {
         if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
             return null;
 
+        return getWmsLayer(inputTown, inputDepartement, existingLayers);
+    }
+
+    private static WMSLayer getWmsLayer(JTextField inputTown, JComboBox<String> inputDepartement,
+                                        List<WMSLayer> existingLayers) {
         WMSLayer wmsLayer = null;
-        if (!inputTown.getText().equals("")) {
-            location = inputTown.getText().toUpperCase();
-            codeDepartement = departements[inputDepartement.getSelectedIndex()*2];
+        if (!"".equals(inputTown.getText())) {
+            String codeCommune = "";
+            String location = inputTown.getText().toUpperCase(Locale.getDefault());
+            String codeDepartement = departements[inputDepartement.getSelectedIndex()*2];
             Config.getPref().put("cadastrewms.location", location);
             Config.getPref().put("cadastrewms.codeCommune", codeCommune);
-            Config.getPref().put("cadastrewms.codeDepartement", codeDepartement);
+            Config.getPref().put(CADASTREWMS_CODE_DEPARTEMENT, codeDepartement);
             if (MainApplication.getMap() != null) {
                 for (Layer l : MainApplication.getLayerManager().getLayers()) {
                     if (l instanceof WMSLayer && l.getName().equalsIgnoreCase(location)) {
@@ -136,7 +144,7 @@ public class MenuActionNewLocation extends JosmAction {
             wmsLayer.setDepartement(codeDepartement);
             CadastrePlugin.addWMSLayer(wmsLayer);
             Logging.info("Add new layer with Location:" + inputTown.getText());
-        } else if (existingLayers != null && existingLayers.size() > 0
+        } else if (existingLayers != null && !existingLayers.isEmpty()
                 && MainApplication.getLayerManager().getActiveLayer() instanceof WMSLayer) {
             wmsLayer = (WMSLayer) MainApplication.getLayerManager().getActiveLayer();
         }

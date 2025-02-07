@@ -28,7 +28,8 @@
         <plugin.link>https://wiki.openstreetmap.org/wiki/FR:JOSM/Fr:Plugin/Cadastre</plugin.link>
         <plugin.stage>60</plugin.stage>
         <plugin.requires>apache-commons;ejml;jts;geotools</plugin.requires>
-        <plugin.minimum.java.version>11</plugin.minimum.java.version>
+        <java.lang.version>17</java.lang.version>
+        <plugin.minimum.java.version>${java.lang.version}</plugin.minimum.java.version>
     </properties>
     <dependencies>
         <dependency>
