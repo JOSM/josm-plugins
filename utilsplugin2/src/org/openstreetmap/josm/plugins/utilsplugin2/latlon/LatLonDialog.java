@@ -93,17 +93,17 @@ public class LatLonDialog extends ExtendedDialog {
         //Radio button setup
         bgType = new ButtonGroup();
 
-        rbNodes = new JRadioButton("Nodes", true);
+        rbNodes = new JRadioButton(tr("Nodes"), true);
         rbNodes.setActionCommand("nodes");
         bgType.add(rbNodes);
         pnl.add(rbNodes);
 
-        rbWay = new JRadioButton("Way");
+        rbWay = new JRadioButton(tr("Way"));
         rbWay.setActionCommand("way");
         bgType.add(rbWay);
         pnl.add(rbWay);
 
-        rbClosedWay = new JRadioButton("Closed Way (Area)");
+        rbClosedWay = new JRadioButton(tr("Closed Way (Area)"));
         rbClosedWay.setActionCommand("area");
         bgType.add(rbClosedWay);
         pnl.add(rbClosedWay, GBC.eol());
