@@ -16,6 +16,7 @@
     <property name="plugin.stage" value="60"/>
     <property name="plugin.requires" value="apache-commons;ejml;jts;geotools"/>
     <property name="plugin.minimum.java.version" value="17"/>
+    <property name="java.lang.version" value="17" />
 
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
