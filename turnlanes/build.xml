@@ -5,6 +5,11 @@
     <property name="commit.message" value="fix toolbar warnings - toolbar still does not work"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
     <property name="plugin.main.version" value="19044"/>
+    <property name="plugin.author" value="Benjamin Schulz"/>
+    <property name="plugin.class" value="org.openstreetmap.josm.plugins.turnlanes.TurnLanesPlugin"/>
+    <property name="plugin.description" value="Provides a straightforward GUI for adding, editing and deleting turn lanes."/>
+    <property name="plugin.icon" value="images/dialogs/turnlanes.pn"/>
+    <property name="plugin.link" value="https://wiki.openstreetmap.org/wiki/Relations/Proposed/turn_lanes#Plugin"/>
 
     <!--
     **********************************************************
