@@ -173,7 +173,7 @@ public final class StreetsideDownloader {
         return switch (getMode()) {
         case VISIBLE_AREA -> "\n"
                 + I18n.tr("To solve this problem, you could zoom in and load a smaller area of the map.");
-        case OSM_AREA -> "\n" + I18n.tr("To solve this problem, you could switch to download mode ''{0}'' and"
+        case OSM_AREA -> "\n" + I18n.tr("To solve this problem, you could switch to download mode ''{0}'' and "
                 + "load Streetside images for a smaller portion of the map.");
         case MANUAL_ONLY -> "";
         };
