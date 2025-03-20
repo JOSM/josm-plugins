@@ -12,7 +12,7 @@
     <!-- Specific plugins -->
     <property name="java21_plugins" value="FIT/build.xml
                                             MicrosoftStreetside/build.xml" />
-    <property name="java17_plugins" value="cadastre-fr(build.xml
+    <property name="java17_plugins" value="cadastre-fr/build.xml
                                             javafx/build.xml
                                             imageio/build.xml
                                             Mapillary/build.xml
