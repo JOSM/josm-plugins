@@ -7,7 +7,7 @@
   <settings defaultResolver="chained-resolver"/>
   <resolvers>
     <chain name="chained-resolver">
-      <ibiblio name="josm-nexus" root="https://josm.openstreetmap.de/nexus/content/repositories/releases/" m2compatible="true"/>
+      <ibiblio name="josm-nexus" root="https://josm.openstreetmap.de/repository/releases/" m2compatible="true"/>
       <ibiblio name="central" m2compatible="true"/>
     </chain>
   </resolvers>

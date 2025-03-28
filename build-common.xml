@@ -735,7 +735,7 @@
     </target>
     <target name="download-ivy">
         <mkdir dir="${ivy.jar.dir}"/>
-        <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
+        <get src="https://josm.openstreetmap.de/repository/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
              dest="${ivy.jar.file}"
              usetimestamp="true"/>
     </target>
@@ -787,7 +787,7 @@
     </target>
     <target name="download-maven" depends="is-maven" if="isMaven">
         <mkdir dir="${maven.artifact.resolver.parent.dir}"/>
-        <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/maven/resolver/maven-resolver-ant-tasks/${maven.artifact.resolver.version}/maven-resolver-ant-tasks-${maven.artifact.resolver.version}-uber.jar"
+        <get src="https://josm.openstreetmap.de/repository/public/org/apache/maven/resolver/maven-resolver-ant-tasks/${maven.artifact.resolver.version}/maven-resolver-ant-tasks-${maven.artifact.resolver.version}-uber.jar"
              dest="${maven.artifact.resolver.jar.file}"
              usetimestamp="true"/>
     </target>
@@ -803,8 +803,8 @@
         <!-- This stanza is necessary since the maven resolver doesn't read repo settings from the pom.xml file -->
         <!-- resolver.repositories makes it global -->
         <mvn:remoterepos id="resolver.repositories">
-            <mvn:remoterepo id="JOSM" url="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
-            <mvn:remoterepo id="JOSM-snapshots" url="https://josm.openstreetmap.de/nexus/content/repositories/snapshots/" snapshots="true" />
+            <mvn:remoterepo id="JOSM" url="https://josm.openstreetmap.de/repository/public/" />
+            <mvn:remoterepo id="JOSM-snapshots" url="https://josm.openstreetmap.de/repository/snapshots/" snapshots="true" />
         </mvn:remoterepos>
         <mkdir dir="${plugin.lib.dir}"/>
         <mvn:resolve>
