@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openstreetmap.josm.plugins</groupId>
         <artifactId>plugin-root</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>cadastre-fr</artifactId>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>apache-commons</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- We need to override this from the parent pom; otherwise, it will be test only -->
@@ -47,19 +47,19 @@
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>ejml</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>jts</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openstreetmap.josm.plugins</groupId>
             <artifactId>geotools</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
