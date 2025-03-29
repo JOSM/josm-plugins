@@ -36,7 +36,7 @@
     <manifest.unixoid>MANIFEST-unixoid</manifest.unixoid>
     <manifest.windows>MANIFEST-windows</manifest.windows>
     <manifest.osx>MANIFEST-osx</manifest.osx>
-    <plugin.compile.version>SNAPSHOT</plugin.compile.version>
+    <plugin.compile.version>1.5-SNAPSHOT</plugin.compile.version>
     <plugin.jar>${project.name}.jar</plugin.jar>
     <plugin.unixoid.jar>${project.name}-unixoid.jar</plugin.unixoid.jar>
     <plugin.windows.jar>${project.name}-windows.jar</plugin.windows.jar>
@@ -127,7 +127,6 @@
     <module>lwjgl/modules</module>
     <module>livegps</module>
     <module>log4j</module>
-    <module>markseen</module>
     <module>measurement</module>
     <module>merge-overlap</module>
     <module>michigan_left</module>
@@ -568,6 +567,11 @@
       <id>MapRoulette</id>
       <activation><file><exists>MapRoulette/pom.xml</exists></file><jdk>[17,]</jdk></activation>
       <modules><module>MapRoulette</module></modules>
+    </profile>
+    <profile>
+      <id>markseen</id>
+      <activation><file><exists>markseen/pom.xml</exists></file></activation>
+      <modules><module>markseen</module></modules>
     </profile>
     <profile>
       <id>osm-obj-info</id>
