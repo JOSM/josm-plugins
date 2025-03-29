@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.openstreetmap.josm</groupId>
     <artifactId>josm-parent</artifactId>
-    <version>SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <relativePath>../core/nodist/pom.xml</relativePath>
   </parent>
 
@@ -127,6 +127,7 @@
     <module>lwjgl/modules</module>
     <module>livegps</module>
     <module>log4j</module>
+    <module>markseen</module>
     <module>measurement</module>
     <module>merge-overlap</module>
     <module>michigan_left</module>
@@ -137,7 +138,6 @@
     <module>opendata/modules</module>
     <module>OpeningHoursEditor</module>
     <module>openvisible</module>
-    <module>OsmInspectorPlugin</module>
     <module>pbf</module>
     <module>pdfimport</module>
     <module>photo_geotagging</module>
@@ -159,7 +159,6 @@
     <module>simplifyarea</module>
     <module>smed</module>
     <module>splinex</module>
-    <module>sumoconvert</module>
     <module>surveyor</module>
     <module>tageditor</module>
     <module>tagging-preset-tester</module>
@@ -167,7 +166,6 @@
     <module>touchscreenhelper</module>
     <module>tracer</module>
     <module>tracer2</module>
-    <module>trustosm</module>
     <module>turnlanes</module>
     <module>turnrestrictions</module>
     <module>undelete</module>
