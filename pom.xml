@@ -190,7 +190,7 @@
       <dependency>
         <groupId>org.openstreetmap.josm</groupId>
         <artifactId>josm-unittest</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.5-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
