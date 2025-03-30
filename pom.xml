@@ -80,7 +80,7 @@
   </mailingLists>
   <modules>
     <module>../core/nodist/pom.xml</module>
-    <module>addrinterpolation</module>
+    <module>AddrInterpolation</module>
     <module>alignways</module>
     <module>apache-commons</module>
     <module>apache-http</module>
@@ -115,11 +115,11 @@
     <module>imagery-xml-bounds</module>
     <module>imagery_cachexport</module>
     <module>imagery_offset_db</module>
-    <module>imagewaypoint</module>
+    <module>ImageWayPoint</module>
     <module>ImportImagePlugin</module>
     <module>importvec</module>
     <module>indoor_sweepline</module>
-    <module>infomode</module>
+    <module>InfoMode</module>
     <module>jackson</module>
     <module>jaxb</module>
     <module>jna</module>
@@ -149,14 +149,14 @@
     <module>rasterfilters</module>
     <module>reltoolbox</module>
     <module>reverter</module>
-    <module>roadsigns</module>
+    <module>RoadSigns</module>
     <module>routes</module>
     <module>routing</module>
     <module>SaudiNationalAddress</module>
     <module>sds</module>
-    <module>seachart</module>
+    <module>SeaChart</module>
     <module>seachartedit</module>
-    <module>simplifyarea</module>
+    <module>SimplifyArea</module>
     <module>smed</module>
     <module>splinex</module>
     <module>surveyor</module>
@@ -164,8 +164,8 @@
     <module>tagging-preset-tester</module>
     <module>terracer</module>
     <module>touchscreenhelper</module>
-    <module>tracer</module>
-    <module>tracer2</module>
+    <module>Tracer</module>
+    <module>Tracer2</module>
     <module>turnlanes</module>
     <module>turnrestrictions</module>
     <module>undelete</module>
@@ -485,7 +485,7 @@
       </activation>
       <modules>
         <module>javafx</module>
-        <module>imageio</module>
+        <module>ImageIo</module>
         <module>pmtiles</module>
       </modules>
     </profile>
