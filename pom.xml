@@ -485,7 +485,7 @@
       </activation>
       <modules>
         <module>javafx</module>
-        <module>ImageIo</module>
+        <module>ImageIO</module>
         <module>pmtiles</module>
       </modules>
     </profile>
