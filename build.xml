@@ -14,7 +14,7 @@
                                             MicrosoftStreetside/build.xml" />
     <property name="java17_plugins" value="cadastre-fr/build.xml
                                             javafx/build.xml
-                                            ImageIo/build.xml
+                                            ImageIO/build.xml
                                             Mapillary/build.xml
                                             MapRoulette/build.xml
                                             pmtiles/build.xml
