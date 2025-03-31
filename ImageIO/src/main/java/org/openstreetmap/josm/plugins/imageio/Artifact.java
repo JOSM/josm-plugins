@@ -61,7 +61,7 @@ record Artifact(String group, String artifact, @Nullable String version) impleme
     }
 
     private String baseUrl() {
-        return Config.getPref().get("imageio.nexus.url", "https://josm.openstreetmap.de/nexus/service/local/repositories/central/content/");
+        return Config.getPref().get("imageio.nexus.url", "https://josm.openstreetmap.de/repository/public/");
     }
 
     private String dotGroup() {
