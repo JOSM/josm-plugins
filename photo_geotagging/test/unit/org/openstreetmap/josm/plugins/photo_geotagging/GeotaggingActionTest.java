@@ -1,5 +1,6 @@
+// License: GPL. For details, see LICENSE file.
+// SPDX-License-Identifier: GPL-2.0-or-later
 package org.openstreetmap.josm.plugins.photo_geotagging;
-
 
 import java.io.File;
 import java.io.IOException;

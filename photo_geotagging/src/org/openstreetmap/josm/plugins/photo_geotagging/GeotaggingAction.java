@@ -64,7 +64,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
     static final int MTIME_MODE_GPS = 1;
     static final int MTIME_MODE_PREVIOUS_VALUE = 2;
 
-    public GeotaggingAction() {
+    GeotaggingAction() {
         super(tr("Write coordinates to image header"), ImageProvider.get("geotagging"));
     }
 
@@ -85,7 +85,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         DecimalFormat dFormatter = new DecimalFormat("###0.000000");
 
         for (ImageEntry e : layer.getImages()) {
-             /* Only write lat/lon to the file, if the position is known and
+            /* Only write lat/lon to the file, if the position is known and
                 the GPS data changed. */
             if (e.getPos() != null && e.hasNewGpsData()) {
                 String pth = e.getFile().getAbsolutePath();
@@ -134,27 +134,27 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         final JPanel settingsPanel = new JPanel(new GridBagLayout());
         settingsPanel.setBorder(BorderFactory.createTitledBorder(tr("settings")));
-        cont.add(settingsPanel, GBC.eol().insets(3,10,3,0));
+        cont.add(settingsPanel, GBC.eol().insets(3, 10, 3, 0));
 
         final JCheckBox backups = new JCheckBox(tr("keep backup files"), Config.getPref().getBoolean(KEEP_BACKUP, true));
-        settingsPanel.add(backups, GBC.eol().insets(3,3,0,0));
+        settingsPanel.add(backups, GBC.eol().insets(3, 3, 0, 0));
 
         final JCheckBox setMTime = new JCheckBox(tr("change file modification time:"), Config.getPref().getBoolean(CHANGE_MTIME, false));
-        settingsPanel.add(setMTime, GBC.std().insets(3,3,5,3));
+        settingsPanel.add(setMTime, GBC.std().insets(3, 3, 5, 3));
 
         final String[] mTimeModeArray = {"----", tr("to gps time"), tr("to previous value (unchanged mtime)")};
         final JComboBox<String> mTimeMode = new JComboBox<>(mTimeModeArray);
-        {
-            String mTimeModePref = Config.getPref().get(MTIME_MODE, null);
-            int mTimeIdx = 0;
-            if ("gps".equals(mTimeModePref)) {
-                mTimeIdx = 1;
-            } else if ("previous".equals(mTimeModePref)) {
-                mTimeIdx = 2;
-            }
-            mTimeMode.setSelectedIndex(setMTime.isSelected() ? mTimeIdx : 0);
+
+        String mTimeModePrefName = Config.getPref().get(MTIME_MODE, null);
+        int mTimeIdx = 0;
+        if ("gps".equals(mTimeModePrefName)) {
+            mTimeIdx = 1;
+        } else if ("previous".equals(mTimeModePrefName)) {
+            mTimeIdx = 2;
         }
-        settingsPanel.add(mTimeMode, GBC.eol().insets(3,3,3,3));
+        mTimeMode.setSelectedIndex(setMTime.isSelected() ? mTimeIdx : 0);
+
+        settingsPanel.add(mTimeMode, GBC.eol().insets(3, 3, 3, 3));
 
         setMTime.addActionListener(e -> {
             if (setMTime.isSelected()) {
@@ -218,13 +218,12 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         private int currentIndex;
 
-        public GeoTaggingRunnable(List<ImageEntry> images, boolean keep_backup, int mTimeMode) {
+        GeoTaggingRunnable(List<ImageEntry> images, boolean keep_backup, int mTimeMode) {
             super(tr("Photo Geotagging Plugin"));
             this.images = images;
             this.keep_backup = keep_backup;
             this.mTimeMode = mTimeMode;
         }
-
 
         @Override
         protected void realRun() {
@@ -257,7 +256,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                         }
                     }
                     sb.append("</ul><br>")
-                      .append(tr("This can likely be fixed by rewriting the entire EXIF section, however some (rare) unknown tags may get lost in the process.<br>"
+                      .append(tr("This can likely be fixed by rewriting the entire EXIF section, however some"
+                              + " (rare) unknown tags may get lost in the process.<br>"
                               + "Would you like to proceed anyway?"));
 
                     dlg.setContent(sb.toString())
@@ -359,7 +359,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                     mTime = e.getExifGpsInstant();
                 }
             }
-            if ( mTimeMode == MTIME_MODE_PREVIOUS_VALUE
+            if (mTimeMode == MTIME_MODE_PREVIOUS_VALUE
                  // this is also the fallback if one of the other
                  // modes failed to determine the modification time
                  || (mTimeMode != 0 && mTime == null)) {
@@ -370,8 +370,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
             chooseFiles(e.getFile());
             if (canceled) return;
-            ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e.getPos().lat(), e.getPos().lon(),
-                    e.getGpsInstant(), e.getSpeed(), e.getElevation(), e.getExifImgDir(), lossy);
+            ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e, lossy);
 
             if (mTime != null) {
                 if (!fileTo.setLastModified(mTime.toEpochMilli()))
@@ -390,7 +389,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
                 return;
             }
 
-            File fileBackup = new File(file.getParentFile(),file.getName()+"_");
+            File fileBackup = new File(file.getParentFile(), file.getName()+"_");
             if (fileBackup.exists()) {
                 confirm_override();
                 if (canceled)
@@ -510,7 +509,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
     }
 
     private GeoImageLayer getLayer() {
-        return (GeoImageLayer)LayerListDialog.getInstance().getModel().getSelectedLayers().get(0);
+        return (GeoImageLayer) LayerListDialog.getInstance().getModel().getSelectedLayers().get(0);
     }
 
     /**
@@ -538,3 +537,4 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         return layers.size() == 1 && layers.get(0) instanceof GeoImageLayer;
     }
 }
+

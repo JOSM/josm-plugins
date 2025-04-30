@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -25,6 +24,7 @@ import org.apache.commons.imaging.formats.tiff.constants.GpsTagConstants;
 import org.apache.commons.imaging.formats.tiff.write.TiffImageWriterLossy;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
+import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 
 /**
  * Wrapper class for sanselan library
@@ -40,27 +40,24 @@ public final class ExifGPSTagger {
      *
      * @param imageFile A source image file.
      * @param dst The output file.
-     * @param lat latitude
-     * @param lon longitude
-     * @param gpsTime time - can be null if not available
-     * @param speed speed in km/h - can be null if not available
-     * @param ele elevation - can be null if not available
-     * @param imgDir image direction in degrees (0..360) - can be null if not available
+     * @param imageEntry the image object from Josm core
      * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
+     * @since 36436 separate image parameters (lat, lon, gpsTime, speed, ele, imgDir), replaced by the whole ImageEntry object.
      */
-    public static void setExifGPSTag(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed,
-            Double ele, Double imgDir, boolean lossy) throws IOException {
+
+    public static void setExifGPSTag(File imageFile, File dst, ImageEntry imageEntry,
+            boolean lossy) throws IOException {
         try {
-            setExifGPSTagWorker(imageFile, dst, lat, lon, gpsTime, speed, ele, imgDir, lossy);
+            setExifGPSTagWorker(imageFile, dst, imageEntry, lossy);
         } catch (ImagingException ire) {
             // This used to be two separate exceptions; ImageReadException and imageWriteException
             throw new IOException(tr("Read/write error: " + ire.getMessage()), ire);
         }
     }
 
-    public static void setExifGPSTagWorker(File imageFile, File dst, double lat, double lon, Instant gpsTime, Double speed,
-            Double ele, Double imgDir, boolean lossy) throws IOException {
+    public static void setExifGPSTagWorker(File imageFile, File dst, ImageEntry imageEntry,
+            boolean lossy) throws IOException {
 
         TiffOutputSet outputSet = null;
         ImageMetadata metadata = Imaging.getMetadata(imageFile);
@@ -80,16 +77,16 @@ public final class ExifGPSTagger {
 
         TiffOutputDirectory gpsDirectory = outputSet.getOrCreateGpsDirectory();
         gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_VERSION_ID);
-        gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_VERSION_ID, (byte)2, (byte)3, (byte)0, (byte)0);
+        gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_VERSION_ID, (byte) 2, (byte) 3, (byte) 0, (byte) 0);
 
-        if (gpsTime != null) {
+        if (imageEntry.getGpsInstant() != null) {
             Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-            calendar.setTimeInMillis(gpsTime.toEpochMilli());
+            calendar.setTimeInMillis(imageEntry.getGpsInstant().toEpochMilli());
 
-            final int year =   calendar.get(Calendar.YEAR);
-            final int month =  calendar.get(Calendar.MONTH) + 1;
-            final int day =    calendar.get(Calendar.DAY_OF_MONTH);
-            final int hour =   calendar.get(Calendar.HOUR_OF_DAY);
+            final int year = calendar.get(Calendar.YEAR);
+            final int month = calendar.get(Calendar.MONTH) + 1;
+            final int day = calendar.get(Calendar.DAY_OF_MONTH);
+            final int hour = calendar.get(Calendar.HOUR_OF_DAY);
             final int minute = calendar.get(Calendar.MINUTE);
             final int second = calendar.get(Calendar.SECOND);
 
@@ -117,40 +114,76 @@ public final class ExifGPSTagger {
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_DATE_STAMP, dateStamp);
         }
 
-        outputSet.setGpsInDegrees(lon, lat);
+        outputSet.setGpsInDegrees(imageEntry.getPos().lon(), imageEntry.getPos().lat());
 
-        if (speed != null) {
+        if (imageEntry.getSpeed() != null) {
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_SPEED_REF);
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_SPEED_REF,
                              GpsTagConstants.GPS_TAG_GPS_SPEED_REF_VALUE_KMPH);
 
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_SPEED);
-            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_SPEED, RationalNumber.valueOf(speed));
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_SPEED, RationalNumber.valueOf(imageEntry.getSpeed()));
         }
 
-        if (ele != null) {
-            byte eleRef =  ele >= 0 ? (byte) 0 : (byte) 1;
+        if (imageEntry.getElevation() != null) {
+            byte eleRef = imageEntry.getElevation() >= 0 ? (byte) 0 : (byte) 1;
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_ALTITUDE_REF);
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_ALTITUDE_REF, eleRef);
 
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_ALTITUDE);
-            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_ALTITUDE, RationalNumber.valueOf(Math.abs(ele)));
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_ALTITUDE, RationalNumber.valueOf(Math.abs(imageEntry.getElevation())));
         }
 
-        if (imgDir != null) {
+        if (imageEntry.getExifImgDir() != null) {
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION_REF);
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION_REF,
                              GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION_REF_VALUE_TRUE_NORTH);
-            // make sure the value is in the range 0.0...<360.0
-            if (imgDir < 0.0) {
-                imgDir %= 360.0; // >-360.0...-0.0
-                imgDir += 360.0; // >0.0...360.0
-            }
-            if (imgDir >= 360.0) {
-                imgDir %= 360.0;
-            }
+            Double imgDir = checkAngle(imageEntry.getExifImgDir());
             gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION);
             gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_IMG_DIRECTION, RationalNumber.valueOf(imgDir));
+        }
+
+        if (imageEntry.getExifGpsTrack() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_TRACK_REF);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_TRACK_REF,
+                             GpsTagConstants.GPS_TAG_GPS_TRACK_REF_VALUE_TRUE_NORTH);
+            // make sure the value is in the range 0.0...<360.0
+            Double gpsTrack = checkAngle(imageEntry.getExifGpsTrack());
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_TRACK);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_TRACK, RationalNumber.valueOf(gpsTrack));
+        }
+
+        if (imageEntry.getGpsDiffMode() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_DIFFERENTIAL);
+            // make sure the gpsDiffMode value is 0 (no diffential) or 1 (differential)
+            if (imageEntry.getGpsDiffMode().equals(0) || imageEntry.getGpsDiffMode().equals(1)) {
+                gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_DIFFERENTIAL, imageEntry.getGpsDiffMode().shortValue());
+            }
+        }
+        
+        if (imageEntry.getGps2d3dMode() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_MEASURE_MODE);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_MEASURE_MODE, imageEntry.getGps2d3dMode().toString());
+        }
+
+        if (imageEntry.getExifGpsProcMethod() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_PROCESSING_METHOD);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_PROCESSING_METHOD, imageEntry.getExifGpsProcMethod());
+        }
+
+        if (imageEntry.getExifGpsDatum() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_MAP_DATUM);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_MAP_DATUM, imageEntry.getExifGpsDatum().toString());
+        }
+        
+        if (imageEntry.getExifHPosErr() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_HOR_POSITIONING_ERROR);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_HOR_POSITIONING_ERROR, RationalNumber.valueOf(imageEntry.getExifHPosErr()));
+        }
+
+        if (imageEntry.getExifGpsDop() != null) {
+            gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_DOP);
+            gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_DOP, RationalNumber.valueOf(imageEntry.getExifGpsDop()));
         }
 
         try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(dst))) {
@@ -164,5 +197,22 @@ public final class ExifGPSTagger {
                 new TiffImageWriterLossy().write(os, outputSet);
             }
         }
+    }
+
+    /**
+     * Normalizes an angle to the range [0.0, 360.0[ degrees.
+     * This will fix any angle value <0 and >= 360 
+     * @param angle the angle to normalize (in degrees)
+     * @return the equivalent angle value in the range [0.0, 360.0[
+     */
+    private static Double checkAngle(Double angle) {
+        if (angle < 0.0) {
+            angle %= 360.0; // >-360.0...-0.0
+            angle += 360.0; // >0.0...360.0
+        }
+        if (angle >= 360.0) {
+            angle %= 360.0;
+        }
+        return angle;
     }
 }
