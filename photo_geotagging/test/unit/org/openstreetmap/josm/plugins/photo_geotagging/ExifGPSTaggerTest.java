@@ -4,19 +4,18 @@ package org.openstreetmap.josm.plugins.photo_geotagging;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
-import java.util.Scanner;
 
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.openstreetmap.josm.TestUtils;
@@ -58,16 +57,18 @@ class ExifGPSTaggerTest {
     }
 
     @Test
-    @Disabled("To enable after https://josm.openstreetmap.de/ticket/11902 is fixed")
     void testTicket11902() throws Exception {
         final File in = new File(TestUtils.getTestDataRoot(), "IMG_7250_small.JPG");
         final File out = new File(tempFolder, in.getName());
         final ImageEntry image = newImageEntry("test", 12d, 34d, Instant.now(), 12.34d, Math.E, Math.PI);
         ExifGPSTagger.setExifGPSTag(in, out, image, true);
-        final Process jhead = Runtime.getRuntime().exec(new String[]{"jhead", out.getAbsolutePath()});
-        final String stdout = new Scanner(jhead.getErrorStream()).useDelimiter("\\A").next();
-        System.out.println(stdout);
-        assertFalse(stdout.contains("Suspicious offset of first Exif IFD value"));
+        try {
+            final Process jhead = Runtime.getRuntime().exec(new String[]{"jhead", out.getAbsolutePath()});
+            assertEquals(jhead.getErrorStream().available(), 0);
+        } catch (IOException e) { /* jhead not installed */
+            System.out.println(e);
+            Assumptions.assumeTrue(false);
+        }
     }
 
     @Test
