@@ -117,6 +117,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
     }
 
     protected static LatLon getLatLonByDptCode(EastNorth en, String dpt, boolean useCC9) {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         // CHECKSTYLE.OFF: LineLength
         if (dpt.equals("971") || dpt.equals("972") || dpt.equals("977") || dpt.equals("978")) {    // Antilles
             return utm20.eastNorth2latlon(en);
@@ -150,6 +151,7 @@ public abstract class FrenchDataSetHandler extends SimpleDataSetHandler implemen
             throw new IllegalArgumentException("Unsupported department code: "+dpt);
         }
         // CHECKSTYLE.ON: LineLength
+        // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
     private static void replaceFaxPhone(OsmPrimitive p, String dataKey, String osmKey) {

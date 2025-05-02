@@ -143,7 +143,7 @@ public final class MifReader extends AbstractMapInfoReader {
         params += param(Param.lon_0, originLon);
 
         // Origin, latitude
-        switch(proj) {
+        switch (proj) {
         case Albers_Equal_Area_Conic:
         case Azimuthal_Equidistant_polar_aspect_only:
         case Equidistant_Conic_also_known_as_Simple_Conic:

@@ -88,7 +88,7 @@ public abstract class AbstractDataSetHandler {
         setGeoPackageHandler(new DefaultGeoPackageHandler());
     }
 
-    private static boolean acceptsFilename(String filename, String[] expected, String ... extensions) {
+    private static boolean acceptsFilename(String filename, String[] expected, String... extensions) {
         if (filename != null) {
             for (String expectedName : expected) {
                 for (String ext : extensions) {

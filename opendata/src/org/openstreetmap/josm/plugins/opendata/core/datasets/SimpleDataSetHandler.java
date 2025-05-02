@@ -64,7 +64,7 @@ public abstract class SimpleDataSetHandler extends AbstractDataSetHandler {
         this.relevantUnion = false;
     }
 
-    protected SimpleDataSetHandler(boolean relevantUnion, Tag ... relevantTags) {
+    protected SimpleDataSetHandler(boolean relevantUnion, Tag... relevantTags) {
         addRelevantTag(relevantTags);
         this.relevantUnion = relevantUnion;
     }

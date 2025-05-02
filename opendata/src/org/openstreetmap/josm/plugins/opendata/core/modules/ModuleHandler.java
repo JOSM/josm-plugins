@@ -168,7 +168,7 @@ public final class ModuleHandler {
                 );
 
         if (pnlMessage.isRememberDecision()) {
-            switch(ret) {
+            switch (ret) {
             case 0:
                 Config.getPref().put(togglePreferenceKey, "always");
                 break;
@@ -330,7 +330,7 @@ public final class ModuleHandler {
             for (ModuleInformation pi: task.getAvailableModules()) {
                 ret.put(pi.name, pi);
             }
-            return ret;
+            return Collections.unmodifiableMap(ret);
         } finally {
             monitor.finishTask();
         }
