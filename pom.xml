@@ -25,6 +25,7 @@
     <plugin.test.data.dir>${plugin.test.dir}/data</plugin.test.data.dir>
     <plugin.test.src.dir>${plugin.test.dir}/unit</plugin.test.src.dir>
     <plugin.src.dir>src</plugin.src.dir>
+    <plugin.version>${project.version}</plugin.version>
     <!-- most plugins default to resource directories in root, e.g. ./data, ./images, ./resources -->
     <plugin.resources.dir>${project.basedir}</plugin.resources.dir>
     <plugin.doc.dir>javadoc</plugin.doc.dir>
@@ -133,7 +134,7 @@
     <module>michigan_left</module>
     <module>namemanager</module>
     <module>NanoLog</module>
-    <module>native-password-manager</module>
+    <module>native_password_manager</module>
     <module>o5m</module>
     <module>opendata/modules</module>
     <module>OpeningHoursEditor</module>
@@ -396,7 +397,7 @@
               <manifestEntries>
                 <!-- For full documentation, see https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins#ThemanifestfileforaJOSMplugin -->
                 <Plugin-Mainversion>${plugin.main.version}</Plugin-Mainversion>
-                <Plugin-Version>${project.version}</Plugin-Version>
+                <Plugin-Version>${plugin.version}</Plugin-Version>
                 <Plugin-Class>${plugin.class}</Plugin-Class>
                 <Plugin-Description>${plugin.description}</Plugin-Description>
                 <!-- These are optional, but are either added almost all the time or can be auto generated -->
@@ -558,6 +559,11 @@
       <id>kartverketimport</id>
       <activation><file><exists>kartverketimport/pom.xml</exists></file></activation>
       <modules><module>kartverketimport</module></modules>
+    </profile>
+    <profile>
+      <id>kendzi3d</id>
+      <activation><file><exists>kendzi3d/pom.xml</exists></file></activation>
+      <modules><module>kendzi3d</module></modules>
     </profile>
     <profile>
       <id>Mapillary</id>
