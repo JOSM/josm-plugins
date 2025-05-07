@@ -59,6 +59,29 @@ elsif(($ARGV[0]||'') eq 'i18nupdate')
   }
 
 }
+elsif(($ARGV[0]||'') eq 'broken')
+{
+  my $dir = cwd();
+  my $branch = 'master';
+  for my $plugin (<$file>)
+  {
+    chomp($plugin);
+    chdir($plugin);
+    my $workflow = `gh run list --limit 1 --workflow 'Java CI' --branch $branch --json databaseId --jq '.[].databaseId'`;
+    chomp($workflow);
+    my $conclusion = 'not implemented';
+    if($workflow ne '')
+    {
+        $conclusion = `gh run view $workflow --json conclusion --jq .conclusion`;
+        chomp($conclusion);
+    }
+    if($conclusion ne 'success')
+    {
+      print($plugin . "\n");
+    }
+    chdir($dir);
+  }
+}
 else
 {
   my $dir = cwd();
