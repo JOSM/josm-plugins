@@ -5,7 +5,18 @@ use Cwd;
 
 open(my $file, '<', 'github_plugins') or die;
 
-if(($ARGV[0]||'') eq 'checkout')
+if(($ARGV[0]||'') eq 'help')
+{
+  print
+  "broken     show broken CI\n" .
+  "checkout   checkout all repos\n" .
+  "i18nupdate send I18n updates (don't use without checking before)\n" .
+  "reset      reset all changes\n" .
+  "status     show current repository states\n" .
+  "\n" .
+  "<default>  do pullrequests\n";
+}
+elsif(($ARGV[0]||'') eq 'checkout')
 {
   for my $plugin (<$file>)
   {
