@@ -380,10 +380,10 @@ public class ChangesetReverter {
             return true;
         // Handle case where a deleted note has been restored to avoid false conflicts (fix #josm8660)
         if (currentCoor != null && historyCoor == null) {
-        	if (nds.getPrimitiveById(history.getPrimitiveId()) != null) {
-        		LatLon previousCoor = ((Node) nds.getPrimitiveById(history.getPrimitiveId())).getCoor();
-        		return previousCoor != null && previousCoor.equals(currentCoor);
-        	}
+            if (nds.getPrimitiveById(history.getPrimitiveId()) != null) {
+                LatLon previousCoor = ((Node) nds.getPrimitiveById(history.getPrimitiveId())).getCoor();
+                return previousCoor != null && previousCoor.equals(currentCoor);
+            }
         }
         return false;
     }
