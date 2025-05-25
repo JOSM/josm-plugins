@@ -21,6 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
+import org.openstreetmap.josm.tools.ExifReader;
 
 class ExifGPSTaggerTest {
 
@@ -72,18 +73,25 @@ class ExifGPSTaggerTest {
     }
 
     @Test
-    public void testTicket24278() {
+    public void testTicket24278() throws Exception{
         final File in = new File(TestUtils.getTestDataRoot(), "_DSC1234.jpg");
         final File out = new File(tempFolder, in.getName());
         final ImageEntry image = newImageEntry("test", 12d, 34d, Instant.now(), 12.34d, Math.E, Math.PI);
-        image.setExifGpsTrack(Math.PI);
-        image.setGpsDiffMode(2);
+        image.setExifGpsTrack(97.99);
+        image.setGpsDiffMode(1);
         image.setGps2d3dMode(3);
         image.setExifGpsProcMethod("GPS");
         image.setExifHPosErr(1.2d);
         image.setExifGpsDop(2.5d);
         image.setExifGpsDatum("WGS84");
-        assertDoesNotThrow(() -> ExifGPSTagger.setExifGPSTag(in, out, image, true));
-        /* TODO read temp file and assertEquals EXIF metadata values */
+        ExifGPSTagger.setExifGPSTag(in, out, image, true);
+        assertEquals(Math.PI, ExifReader.readDirection(out), 0.001);
+        assertEquals(97.99, ExifReader.readGpsTrackDirection(out));
+        assertEquals(1, ExifReader.readGpsDiffMode(out));
+        assertEquals(3, ExifReader.readGpsMeasureMode(out));
+        assertEquals("GPS", ExifReader.readGpsProcessingMethod(out));
+        assertEquals(1.2, ExifReader.readHpositioningError(out));
+        assertEquals(2.5, ExifReader.readGpsDop(out));
+        assertEquals("WGS84", ExifReader.readGpsDatum(out));
     }
 }
