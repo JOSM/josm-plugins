@@ -74,7 +74,6 @@ public class TurnRestrictionCellRenderer extends JPanel implements ListCellRende
      */
     protected boolean isValidRestrictionType(String restrictionType) {
         if (restrictionType == null) return false;
-        restrictionType = restrictionType.trim().toLowerCase();
         return RESTRICTION_TYPES.contains(restrictionType);
     }
 
