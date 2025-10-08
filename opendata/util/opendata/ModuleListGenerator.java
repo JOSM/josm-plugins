@@ -24,7 +24,7 @@ public final class ModuleListGenerator {
      * @param args Main program arguments
      */
     public static void main(String[] args) {
-        final String url = "https://josm.openstreetmap.de/export/latest/osm/applications/editors/josm/plugins/opendata/opendata/dist/";
+        final String url = "https://josm.openstreetmap.de/export/latest/osm/applications/editors/josm/plugins/opendata/dist/";
         String baseDir = "";
         if (args.length > 0) {
             baseDir = args[0];
