@@ -307,7 +307,7 @@ public class ReadRemoteModuleInformationTask extends PleaseWaitRunnable {
                 getProgressMonitor().worked(1);
                 if (canceled) return;
             }
-            downloadModuleIcons(site.replace(".txt", "")+"-icons.zip",
+            downloadModuleIcons(site.replace(".txt", "-icons.zip"),
                     createSiteCacheFile(moduleDir, site, CacheType.ICON_LIST), getProgressMonitor().createSubTaskMonitor(0, false));
         }
         for (File file: siteCacheFiles) {
