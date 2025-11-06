@@ -15,6 +15,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageViewerDialog;
+import org.openstreetmap.josm.gui.util.imagery.Vector3D;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class that does the actual work.
@@ -239,8 +241,10 @@ public class PhotoAdjustWorker {
             return;
         }
         final LatLon mouseLL = MainApplication.getMap().mapView.getLatLon(evt.getX(), evt.getY());
+        Vector3D viewerVector = ImageViewerDialog.getInstance().getRotation(photo);
+        double viewerAngle = viewerVector != null ? Utils.toDegrees(viewerVector.getPolarAngle()) : 0d;
         // The projection doesn't matter here.
-        double direction = photoLL.bearing(mouseLL) * 360.0 / 2.0 / Math.PI;
+        double direction = photoLL.bearing(mouseLL) * 360.0 / 2.0 / Math.PI - viewerAngle;
         if (direction < 0.0) {
             direction += 360.0;
         } else if (direction >= 360.0) {

@@ -25,44 +25,10 @@
 	
     <!-- ** include targets that all plugins have in common ** -->
     <import file="../build-common.xml"/>
-    <!-- ** internationalization ** -->
-    <import file="i18n/build-i18n.xml"/>
-
-    <target name="pot" description="Extract translatable strings from source." depends="gettext-init">
-        <mkdir dir="${plugin.po.dir}"/>
-        <gettext-extract keysFile="${ant.project.name}.pot" poDirectory="${plugin.po.dir}" keywords="-k -ktrc:1c,2 -kmarktrc:1c,2 -ktr -kmarktr -ktrn:1,2 -ktrnc:1c,2,3">
-            <fileset dir="${plugin.src.dir}" includes="**/*.java"/>
-        </gettext-extract>
-        <echo file="${plugin.po.dir}/${ant.project.name}.pot" append="true">
-#. Plugin ${ant.project.name}
-#: build.xml:1
-msgid "${plugin.description}"
-msgstr ""
-</echo>
-    </target>
-
-    <!--
+  <!--
     **********************************************************
-    ** javadoc - create the plugin documentation
+    ** compile - complies the source tree
     **********************************************************
     -->
-    <target name="javadoc" description="generate documentation">
-        <javadoc destdir="${plugin.javadoc.dir}"
-                sourcepath="${plugin.src.dir}"
-                windowtitle="${ant.project.name}"
-                linksource="true"
-                private="true">
-            <classpath>
-                <pathelement location="${josm}"/>
-            </classpath>
-            <!-- Paths are relative to javadoc destdir (${plugin.javadoc.dir}). -->
-            <link href="../../../core/javadoc/"/>
-            <link href="https://josm.openstreetmap.de/doc/"/>
-            <link href="https://docs.oracle.com//javase/8/docs/api/"/>
-        </javadoc>
-    </target>
-
-    <target name="additional-manifest">
-        <antcall target="mftrans"/>
-    </target>
+  
 </project>
