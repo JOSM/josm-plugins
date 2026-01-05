@@ -41,15 +41,17 @@ public final class ExifGPSTagger {
      * @param imageFile A source image file.
      * @param dst The output file.
      * @param imageEntry the image object from Josm core
+     * @param writeGpsTime write the EXIF tags GPSDateStamp and GPSTimeStamp
      * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
      * @since 36436 separate image parameters (lat, lon, gpsTime, speed, ele, imgDir), replaced by the whole ImageEntry object.
+     * @since xxx added writeGpsTime parameter
      */
 
     public static void setExifGPSTag(File imageFile, File dst, ImageEntry imageEntry,
-            boolean lossy) throws IOException {
+            boolean writeGpsTime, boolean lossy) throws IOException {
         try {
-            setExifGPSTagWorker(imageFile, dst, imageEntry, lossy);
+            setExifGPSTagWorker(imageFile, dst, imageEntry, writeGpsTime, lossy);
         } catch (ImagingException ire) {
             // This used to be two separate exceptions; ImageReadException and imageWriteException
             throw new IOException(tr("Read/write error: " + ire.getMessage()), ire);
@@ -57,7 +59,7 @@ public final class ExifGPSTagger {
     }
 
     public static void setExifGPSTagWorker(File imageFile, File dst, ImageEntry imageEntry,
-            boolean lossy) throws IOException {
+            boolean writeGpsTime, boolean lossy) throws IOException {
 
         TiffOutputSet outputSet = null;
         ImageMetadata metadata = Imaging.getMetadata(imageFile);
@@ -79,7 +81,7 @@ public final class ExifGPSTagger {
         gpsDirectory.removeField(GpsTagConstants.GPS_TAG_GPS_VERSION_ID);
         gpsDirectory.add(GpsTagConstants.GPS_TAG_GPS_VERSION_ID, (byte) 2, (byte) 3, (byte) 0, (byte) 0);
 
-        if (imageEntry.getGpsInstant() != null) {
+        if (writeGpsTime && imageEntry.getGpsInstant() != null) {
             Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
             calendar.setTimeInMillis(imageEntry.getGpsInstant().toEpochMilli());
 
@@ -201,7 +203,7 @@ public final class ExifGPSTagger {
 
     /**
      * Normalizes an angle to the range [0.0, 360.0[ degrees.
-     * This will fix any angle value <0 and >= 360 
+     * This will fix any angle value &lt; 0 and &gt;= 360 
      * @param angle the angle to normalize (in degrees)
      * @return the equivalent angle value in the range [0.0, 360.0[
      */

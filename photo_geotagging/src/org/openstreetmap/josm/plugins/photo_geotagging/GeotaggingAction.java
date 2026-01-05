@@ -55,6 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The action to ask the user for confirmation and then do the tagging.
+ * @since xxx added checkbox option to write GPS date and time
  */
 class GeotaggingAction extends AbstractAction implements LayerAction {
 
@@ -136,13 +137,16 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         settingsPanel.setBorder(BorderFactory.createTitledBorder(tr("settings")));
         cont.add(settingsPanel, GBC.eol().insets(3, 10, 3, 0));
 
-        final JCheckBox backups = new JCheckBox(tr("keep backup files"), Config.getPref().getBoolean(KEEP_BACKUP, true));
-        settingsPanel.add(backups, GBC.eol().insets(3, 3, 0, 0));
+        final JCheckBox cbWriteGpsTime = new JCheckBox(tr("Write EXIF GPS date and time"),  false);
+        settingsPanel.add(cbWriteGpsTime, GBC.eol().insets(3, 3, 0, 0));
 
-        final JCheckBox setMTime = new JCheckBox(tr("change file modification time:"), Config.getPref().getBoolean(CHANGE_MTIME, false));
-        settingsPanel.add(setMTime, GBC.std().insets(3, 3, 5, 3));
+        final JCheckBox cbBackups = new JCheckBox(tr("Keep backup files"), Config.getPref().getBoolean(KEEP_BACKUP, true));
+        settingsPanel.add(cbBackups, GBC.eol().insets(3, 3, 0, 0));
 
-        final String[] mTimeModeArray = {"----", tr("to gps time"), tr("to previous value (unchanged mtime)")};
+        final JCheckBox cbSetMTime = new JCheckBox(tr("Change file modification time:"), Config.getPref().getBoolean(CHANGE_MTIME, false));
+        settingsPanel.add(cbSetMTime, GBC.std().insets(3, 3, 5, 3));
+
+        final String[] mTimeModeArray = {"----", tr("to GPS time"), tr("to previous value (unchanged mtime)")};
         final JComboBox<String> mTimeMode = new JComboBox<>(mTimeModeArray);
 
         String mTimeModePrefName = Config.getPref().get(MTIME_MODE, null);
@@ -152,12 +156,12 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         } else if ("previous".equals(mTimeModePrefName)) {
             mTimeIdx = 2;
         }
-        mTimeMode.setSelectedIndex(setMTime.isSelected() ? mTimeIdx : 0);
+        mTimeMode.setSelectedIndex(cbSetMTime.isSelected() ? mTimeIdx : 0);
 
         settingsPanel.add(mTimeMode, GBC.eol().insets(3, 3, 3, 3));
 
-        setMTime.addActionListener(e -> {
-            if (setMTime.isSelected()) {
+        cbSetMTime.addActionListener(e -> {
+            if (cbSetMTime.isSelected()) {
                 mTimeMode.setEnabled(true);
             } else {
                 mTimeMode.setSelectedIndex(0);
@@ -166,8 +170,8 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         });
 
         // Toggle the checkbox to fire actionListener
-        setMTime.setSelected(!setMTime.isSelected());
-        setMTime.doClick();
+        cbSetMTime.setSelected(!cbSetMTime.isSelected());
+        cbSetMTime.doClick();
 
         int result = new ExtendedDialog(
                 MainApplication.getMainFrame(),
@@ -182,8 +186,9 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         if (result != 1)
             return;
 
-        final boolean keep_backup = backups.isSelected();
-        final boolean change_mtime = setMTime.isSelected();
+        final boolean write_gpstime = cbWriteGpsTime.isSelected();
+        final boolean keep_backup = cbBackups.isSelected();
+        final boolean change_mtime = cbSetMTime.isSelected();
         Config.getPref().putBoolean(KEEP_BACKUP, keep_backup);
         Config.getPref().putBoolean(CHANGE_MTIME, change_mtime);
         if (change_mtime) {
@@ -201,11 +206,12 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
             Config.getPref().put(MTIME_MODE, mTimeModePref);
         }
 
-        MainApplication.worker.execute(new GeoTaggingRunnable(images, keep_backup, mTimeMode.getSelectedIndex()));
+        MainApplication.worker.execute(new GeoTaggingRunnable(images, write_gpstime, keep_backup, mTimeMode.getSelectedIndex()));
     }
 
     static class GeoTaggingRunnable extends PleaseWaitRunnable {
         private final List<ImageEntry> images;
+        private final boolean write_gpstime;
         private final boolean keep_backup;
         private final int mTimeMode;
 
@@ -218,9 +224,10 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
         private int currentIndex;
 
-        GeoTaggingRunnable(List<ImageEntry> images, boolean keep_backup, int mTimeMode) {
+        GeoTaggingRunnable(List<ImageEntry> images, boolean write_gpstime, boolean keep_backup, int mTimeMode) {
             super(tr("Photo Geotagging Plugin"));
             this.images = images;
+            this.write_gpstime = write_gpstime;
             this.keep_backup = keep_backup;
             this.mTimeMode = mTimeMode;
         }
@@ -370,7 +377,7 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
 
             chooseFiles(e.getFile());
             if (canceled) return;
-            ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e, lossy);
+            ExifGPSTagger.setExifGPSTag(fileFrom, fileTo, e, write_gpstime, lossy);
 
             if (mTime != null) {
                 if (!fileTo.setLastModified(mTime.toEpochMilli()))
@@ -537,4 +544,3 @@ class GeotaggingAction extends AbstractAction implements LayerAction {
         return layers.size() == 1 && layers.get(0) instanceof GeoImageLayer;
     }
 }
-

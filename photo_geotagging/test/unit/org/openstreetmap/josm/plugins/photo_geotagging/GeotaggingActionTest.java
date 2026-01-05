@@ -34,7 +34,7 @@ class GeotaggingActionTest {
         entry.setPos(new LatLon(1, 2));
         List<ImageEntry> list = Arrays.asList(entry);
 
-        GeoTaggingRunnable runnable = new GeotaggingAction.GeoTaggingRunnable(list, true, 0);
+        GeoTaggingRunnable runnable = new GeotaggingAction.GeoTaggingRunnable(list, true, true, 0);
         //this causes some warnings from the PleaseWaitRunnable because not all resources are available
         //but that's irrelevant to the test
         runnable.getProgressMonitor().beginTask("test");
@@ -44,7 +44,7 @@ class GeotaggingActionTest {
         //test if overriding backup works:
         assertEquals(0, runnable.processEntries(list, true).size());
 
-        runnable = new GeotaggingAction.GeoTaggingRunnable(list, false, 0);
+        runnable = new GeotaggingAction.GeoTaggingRunnable(list, true, false, 0);
         runnable.getProgressMonitor().beginTask("test");
         //file is now "repaired" from operation above and lossless writing should work:
         assertEquals(0, runnable.processEntries(list, false).size());
