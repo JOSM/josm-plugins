@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The action to ask the user for confirmation and then do the tagging.
- * @since xxx added checkbox option to write GPS date and time
+ * @since 36466 added checkbox option to write GPS date and time
  */
 class GeotaggingAction extends AbstractAction implements LayerAction {
 

@@ -45,7 +45,7 @@ public final class ExifGPSTagger {
      * @param lossy whether to use lossy approach when writing metadata (overwriting unknown tags)
      * @throws IOException in case of I/O error
      * @since 36436 separate image parameters (lat, lon, gpsTime, speed, ele, imgDir), replaced by the whole ImageEntry object.
-     * @since xxx added writeGpsTime parameter
+     * @since 36466 added writeGpsTime parameter
      */
 
     public static void setExifGPSTag(File imageFile, File dst, ImageEntry imageEntry,
