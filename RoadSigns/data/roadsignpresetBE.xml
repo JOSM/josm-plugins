@@ -1374,9 +1374,10 @@
   </sign>
   <sign ref="BE:F99a"
     name="Access only for pedestrians, speed pedelecs, cyclists and horses"
-    nl.name="Enkel voetgangers, fietsers, ruiters en landbouwvoertuigen"
+    nl.name="Enkel voetgangers, fietsers, ruiters en bestuurders van speed pedelecs"
     help="Variations of this sign exist. Remove the tags that do not appear on the sign">
-    <tag key="access" value="destination"/>
+    <tag key="vehicle" value="no"/>
+    <tag key="access:conditional" value="yes @ permit"/>
     <tag key="foot" value="yes"/>
     <tag key="speed_pedelec" value="yes"/>
     <tag key="bicycle" value="yes"/>
@@ -1384,10 +1385,23 @@
     <tag key="emergency" value="yes"/>
     <tag key="maxspeed" value="30"/>
   </sign>
+  <sign ref="BE:F99a_variant"
+    name="Access only for pedestrians and cyclists"
+    nl.name="Enkel voetgangers en fietsers"             
+    help="This is an often used variant of F99a">
+    <tag key="vehicle" value="no"/>                                                              
+    <tag key="access:conditional" value="yes @ permit"/>                                           
+    <tag key="foot" value="yes"/>
+    <tag key="bicycle" value="yes"/>
+    <tag key="horse" value="no"/>
+    <tag key="emergency" value="yes"/>
+    <tag key="maxspeed" value="30"/>
+  </sign>
   <sign ref="BE:F99b"
     name="Road reserved for pedestrians and bicycles."
     help="Variations of this sign exist. Remove the tags that do not appear on the sign">
-    <tag key="access" value="destination"/>
+    <tag key="vehicle" value="no"/>
+    <tag key="access:conditional" value="yes @ permit"/>
     <tag key="foot" value="yes"/>
     <tag key="bicycle" value="yes"/>
     <tag key="emergency" value="yes"/>
