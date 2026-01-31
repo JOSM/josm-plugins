@@ -79,7 +79,7 @@ public class GTFSImporterDialog extends AbstractImporterDialog<GTFSImporterActio
         gridbag.setConstraints(tfGPSTimeStart, layoutCons);
         contentPane.add(tfGPSTimeStart);
 
-        /* I18n: Don't change the time format, you only may translate the letters */
+        /* I18n: Do not change the time format, you only may translate the letters */
         label = new JLabel(tr("HH:MM:SS.sss"));
 
         layoutCons.gridx = 1;
