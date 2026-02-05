@@ -3,14 +3,17 @@ package org.openstreetmap.josm.plugins.fixAddresses;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Plugin preferences.
@@ -20,7 +23,7 @@ public final class FixAddressesPreferences extends DefaultTabPreferenceSetting {
     private static final String FIX_ADDRESSES_SELECT_GUESSED_OBJECTS_KEY = "fixAddresses.selectGuessedObjects";
 
     private JCheckBox cbSelectGuessedObjects = new JCheckBox(tr("Include objects used for guesses"));
-    private JCheckBox cbIgnorePostCode = new JCheckBox();
+    private JCheckBox cbIgnorePostCode = new JCheckBox(tr("Ignore post code"));
 
     /**
      * Internal factory class. Call <code>FixAddressesPreferences.Factory().createPreferenceSetting()</code> to
@@ -37,6 +40,7 @@ public final class FixAddressesPreferences extends DefaultTabPreferenceSetting {
      * Internal constructor.
      */
     private FixAddressesPreferences() {
+        super(/* ICON(preferences/) */ "fixaddresses", tr("Fix addresses"), tr("Fix addresses"));
         loadFromPrefs();
     }
 
@@ -58,10 +62,14 @@ public final class FixAddressesPreferences extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
+        JPanel panel = new JPanel(new GridBagLayout());
         // Import settings
         ButtonGroup fixAddrOptions = new ButtonGroup();
         fixAddrOptions.add(cbSelectGuessedObjects);
         fixAddrOptions.add(cbIgnorePostCode);
+        panel.add(cbSelectGuessedObjects, GBC.eol());
+        panel.add(cbIgnorePostCode, GBC.eop().fill());
+        createPreferenceTabWithScrollPane(gui, panel);
     }
 
     @Override
