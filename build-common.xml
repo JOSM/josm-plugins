@@ -41,7 +41,7 @@
     <property name="ivy.home"               location="${user.home}/.ant"/>
     <property name="ivy.jar.dir"            location="${ivy.home}/lib"/>
     <property name="ivy.jar.file"           location="${ivy.jar.dir}/ivy.jar"/>
-    <property name="ivy.version"            value="2.5.1"/>
+    <property name="ivy.version"            value="2.5.3"/>
     <property name="maven.artifact.resolver.version" value="1.5.1"/>
     <property name="maven.artifact.resolver.parent.dir" value="${user.home}/.m2/repository/org/apache/maven/resolver/maven-resolver-ant-tasks/${maven.artifact.resolver.version}/"/>
     <property name="maven.artifact.resolver.jar.file" value="${maven.artifact.resolver.parent.dir}/maven-resolver-ant-tasks-${maven.artifact.resolver.version}-uber.jar"/>
