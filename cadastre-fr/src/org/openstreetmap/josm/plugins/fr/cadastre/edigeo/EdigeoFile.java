@@ -91,7 +91,8 @@ abstract class EdigeoFile {
         }
 
         protected final void safeGet(EdigeoRecord r, Consumer<String> callback) {
-            (lastReadString = callback).accept(r.length > 0 ? r.values.get(0) : null);
+            lastReadString = callback;
+            lastReadString.accept(r.length > 0 ? r.values.get(0) : null);
         }
 
         protected final char safeGetChar(EdigeoRecord r) {
@@ -119,7 +120,8 @@ abstract class EdigeoFile {
             if (r.length > 0) {
                 String v = r.values.get(0);
                 Logging.info(msg + ": " + v);
-                (lastReadString = callback).accept(v);
+                lastReadString = callback;
+                lastReadString.accept(v);
             }
         }
 
@@ -147,7 +149,7 @@ abstract class EdigeoFile {
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.ISO_8859_1)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (!line.isEmpty()) {
+                if (line.length() >= 4) {
                     // Read record
                     EdigeoRecord r = new EdigeoRecord(line);
                     // Process begin of file

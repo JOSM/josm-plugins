@@ -118,6 +118,7 @@ public class EdigeoPciReader extends AbstractReader {
         EdigeoFileVEC.addObjectPostProcessor("53", symbo, "landuse=cemetery;religion=jewish"); // Jewish cemetery
         EdigeoFileVEC.addObjectPostProcessor("63", symbo, "man_made=water_well"); // Well
         EdigeoFileVEC.addObjectPostProcessor("65", water, "leisure=swimming_pool;access=private"); // Swimming pool
+        EdigeoFileVEC.addObjectPostProcessor("66", water, "leisure=swimming_pool;access=private;note=IA"); // Swimming pool traced by AI
 
         // Mapping TEX*_id => name (first step)
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
@@ -179,6 +180,7 @@ public class EdigeoPciReader extends AbstractReader {
              || o.hasScdIdentifier("PARCELLE_id") || o.hasScdIdentifier("SUBDFISC_id") || o.hasScdIdentifier("CHARGE_id"), parce);
 
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> p.put("wall", "no"), build, "DUR_id", "02");
+        EdigeoFileVEC.addObjectPostProcessor((o, p) -> p.put("note", "IA"), build, "DUR_id", "03");
         EdigeoFileVEC.addObjectPostProcessor((o, p) -> {
             p.put("building", "yes");
             p.remove("DUR_id");
