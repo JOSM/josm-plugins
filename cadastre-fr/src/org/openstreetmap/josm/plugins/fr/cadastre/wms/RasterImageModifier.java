@@ -85,7 +85,6 @@ public class RasterImageModifier extends ImageModifier {
             }
             setBufferedImage(bi);
         }
-        return;
     }
 
     /**

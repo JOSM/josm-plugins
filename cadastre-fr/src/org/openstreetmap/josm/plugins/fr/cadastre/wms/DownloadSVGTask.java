@@ -140,7 +140,7 @@ public class DownloadSVGTask extends PleaseWaitRunnable {
         MainApplication.getMap().repaint();
     }
 
-    private double createNodes(String SVGpath, ArrayList<EastNorth> eastNorth) {
+    private double createNodes(String SVGpath, List<EastNorth> eastNorth) {
         // looks like "M981283.38 368690.15l143.81 72.46 155.86 ..."
         String[] coor = SVGpath.split("[MlZ ]"); //coor[1] is x, coor[2] is y
         double dx = Double.parseDouble(coor[1]);

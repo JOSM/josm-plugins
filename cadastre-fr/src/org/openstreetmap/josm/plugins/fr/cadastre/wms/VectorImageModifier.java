@@ -108,6 +108,5 @@ public class VectorImageModifier extends ImageModifier {
                     backgroundPixel);
             setBufferedImage(new BufferedImage(icm2, raster, bufferedImage.isAlphaPremultiplied(), null));
         }
-        return;
     }
 }
