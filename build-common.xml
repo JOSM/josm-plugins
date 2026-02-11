@@ -136,7 +136,9 @@
             <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" unless:set="noErrorProne"/>
             <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" unless:set="noErrorProne"/>
             <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" unless:set="noErrorProne"/>
-            <compilerarg line="-XDcompilePolicy=simple"/>
+            <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" unless:set="noErrorProne"/>
+            <compilerarg value="-XDaddTypeAnnotationsToSymbol=true" if:set="isJava21" unless:set="noErrorProne"/>
+            <compilerarg value="-XDcompilePolicy=simple"/>
             <compilerarg value="--should-stop=ifError=FLOW" />
             <compilerarg value="-processorpath"/>
             <compilerarg pathref="errorprone.classpath"/>
