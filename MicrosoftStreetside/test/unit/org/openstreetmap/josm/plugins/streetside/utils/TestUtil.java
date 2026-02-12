@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins.streetside.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
@@ -65,8 +66,10 @@ public final class TestUtil {
             assertEquals(1, c.getDeclaredConstructors().length);
             final Constructor<?> constructor = c.getDeclaredConstructors()[0];
             // constructor has to be private
-            assertTrue(!constructor.isAccessible() && Modifier.isPrivate(constructor.getModifiers()));
+            assertFalse(constructor.canAccess(null));
+            assertTrue(Modifier.isPrivate(constructor.getModifiers()));
             constructor.setAccessible(true);
+            assertTrue(constructor.canAccess(null));
             // Call private constructor for code coverage
             constructor.newInstance();
             for (Method m : c.getMethods()) {
