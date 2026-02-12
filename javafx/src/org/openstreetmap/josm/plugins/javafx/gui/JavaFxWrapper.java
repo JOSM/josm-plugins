@@ -29,10 +29,11 @@ public class JavaFxWrapper<T extends Node> extends JFXPanel {
      */
     private static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
         private final Thread.UncaughtExceptionHandler currentHandler;
-        public UncaughtExceptionHandler() {
+        UncaughtExceptionHandler() {
             currentHandler = Thread.currentThread().getUncaughtExceptionHandler();
             Thread.currentThread().setUncaughtExceptionHandler(this);
         }
+
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             if (currentHandler != null && !(e instanceof NoClassDefFoundError)) {

@@ -21,7 +21,7 @@
         <plugin.early>true</plugin.early>
         <plugin.stage>5</plugin.stage>
         <plugin.minimum.java.version>17</plugin.minimum.java.version>
-        <javafx.version>21.0.2</javafx.version>
+        <javafx.version>21.0.10</javafx.version>
     </properties>
     <!-- These dependencies should be installed on the host machine - our installers bundle them -->
     <dependencies>
