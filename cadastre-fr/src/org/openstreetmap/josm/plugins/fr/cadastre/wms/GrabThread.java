@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,7 +26,7 @@ public class GrabThread extends Thread {
 
     private Lock lockImagesToGrag = new ReentrantLock();
 
-    private ArrayList<EastNorthBound> imagesToGrab = new ArrayList<>();
+    private List<EastNorthBound> imagesToGrab = new ArrayList<>();
 
     private CacheControl cacheControl = null;
 
@@ -37,7 +38,7 @@ public class GrabThread extends Thread {
      * Call directly grabber for raster images or prepare thread for vector images
      * @param moreImages more images to grab
      */
-    void addImages(ArrayList<EastNorthBound> moreImages) {
+    void addImages(List<EastNorthBound> moreImages) {
         lockImagesToGrag.lock();
         try {
             imagesToGrab.addAll(moreImages);
@@ -62,8 +63,8 @@ public class GrabThread extends Thread {
         }
     }
 
-    ArrayList<EastNorthBound> getImagesToGrabCopy() {
-        ArrayList<EastNorthBound> copyList = new ArrayList<>();
+    List<EastNorthBound> getImagesToGrabCopy() {
+        List<EastNorthBound> copyList = new ArrayList<>();
         lockImagesToGrag.lock();
         try {
             for (EastNorthBound img : imagesToGrab) {
@@ -90,11 +91,17 @@ public class GrabThread extends Thread {
         for (;;) {
             while (getImagesToGrabSize() > 0) {
                 lockImagesToGrag.lock();
-                lockCurrentGrabImage.lock();
-                currentGrabImage = imagesToGrab.get(0);
-                lockCurrentGrabImage.unlock();
-                imagesToGrab.remove(0);
-                lockImagesToGrag.unlock();
+                try {
+                    lockCurrentGrabImage.lock();
+                    try {
+                        currentGrabImage = imagesToGrab.get(0);
+                        lockCurrentGrabImage.unlock();
+                    } finally {
+                        imagesToGrab.remove(0);
+                    }
+                } finally {
+                    lockImagesToGrag.unlock();
+                }
                 if (canceled) {
                     break;
                 } else {
@@ -144,8 +151,11 @@ public class GrabThread extends Thread {
             }
             Logging.info("grab thread list empty");
             lockCurrentGrabImage.lock();
-            currentGrabImage = null;
-            lockCurrentGrabImage.unlock();
+            try {
+                currentGrabImage = null;
+            } finally {
+                lockCurrentGrabImage.unlock();
+            }
             if (canceled) {
                 clearImagesToGrab();
                 canceled = false;
@@ -167,10 +177,13 @@ public class GrabThread extends Thread {
         if (CacheControl.cacheEnabled) {
             getCacheControl().deleteCacheFile();
             wmsLayer.imagesLock.lock();
-            for (GeorefImage image : wmsLayer.getImages()) {
-                getCacheControl().saveCache(image);
+            try {
+                for (GeorefImage image : wmsLayer.getImages()) {
+                    getCacheControl().saveCache(image);
+                }
+            } finally {
+                wmsLayer.imagesLock.unlock();
             }
-            wmsLayer.imagesLock.unlock();
         }
     }
 
@@ -203,16 +216,19 @@ public class GrabThread extends Thread {
 
     void paintBoxesToGrab(Graphics g, MapView mv) {
         if (getImagesToGrabSize() > 0) {
-            ArrayList<EastNorthBound> imagesToGrab = getImagesToGrabCopy();
+            List<EastNorthBound> imagesToGrab = getImagesToGrabCopy();
             for (EastNorthBound img : imagesToGrab) {
                 paintBox(g, mv, img, Color.red);
             }
         }
         lockCurrentGrabImage.lock();
-        if (currentGrabImage != null) {
-            paintBox(g, mv, currentGrabImage, Color.orange);
+        try {
+            if (currentGrabImage != null) {
+                paintBox(g, mv, currentGrabImage, Color.orange);
+            }
+        } finally {
+            lockCurrentGrabImage.unlock();
         }
-        lockCurrentGrabImage.unlock();
     }
 
     private void paintBox(Graphics g, MapView mv, EastNorthBound img, Color color) {

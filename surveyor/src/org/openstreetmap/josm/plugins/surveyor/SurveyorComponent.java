@@ -79,8 +79,8 @@ public class SurveyorComponent extends JComponent implements PropertyChangeListe
     }
 
     /**
-     * Set the width as a string.
-     * @param widthString the width of the component.
+     * Set the height as a string.
+     * @param heightString the height of the component.
      */
     public void setHeight(String heightString) {
         height = Integer.parseInt(heightString);

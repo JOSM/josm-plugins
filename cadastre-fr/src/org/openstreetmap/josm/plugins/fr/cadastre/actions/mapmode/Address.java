@@ -181,7 +181,7 @@ public class Address extends MapMode {
                     applyInputNumberChange();
             }
             setSelectedWay(null);
-        } else if (houseStreet == null){
+        } else if (houseStreet == null) {
             // check if the node belongs to an associatedStreet relation
             Way wayInRelationAddr = findWayInRelationAddr(currentMouseNode);
             if (wayInRelationAddr == null) {

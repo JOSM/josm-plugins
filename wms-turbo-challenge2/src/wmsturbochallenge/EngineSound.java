@@ -1,6 +1,4 @@
-/*
- * GPLv2 or 3, Copyright (c) 2010  Andrzej Zaborowski
- */
+// License: GPL. For details, see LICENSE file.
 package wmsturbochallenge;
 
 import java.util.Timer;
@@ -15,6 +13,7 @@ import javax.sound.sampled.SourceDataLine;
  * This class simulates a car engine.  What does a car engine do?  It
  * makes a pc-speaker-like buzz.  The PC Speaker could only emit
  * a (nearly) square wave and we simulate it here for maximum realism.
+ * @author Andrzej Zaborowski
  */
 class EngineSound {
     EngineSound() {

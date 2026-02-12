@@ -406,7 +406,7 @@ public class LatLonDialog extends ExtendedDialog {
         return new LatLon(latLon.lat, latLon.lon);
     }
 
-    private static class LatLonHolder {
+    private static final class LatLonHolder {
         double lat, lon;
     }
 
@@ -450,7 +450,7 @@ public class LatLonDialog extends ExtendedDialog {
         taLatLon.setText(text);
     }
 
-    private class CoordinateListener implements DocumentListener {
+    private final class CoordinateListener implements DocumentListener {
         @Override public void changedUpdate(DocumentEvent e) {
             //not fired
         }

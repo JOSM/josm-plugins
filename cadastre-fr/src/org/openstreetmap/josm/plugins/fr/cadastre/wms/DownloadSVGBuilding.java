@@ -215,8 +215,7 @@ public class DownloadSVGBuilding extends PleaseWaitRunnable {
 
     private String grabBoundary(EastNorthBound bbox) throws IOException, OsmTransferException {
         try {
-            URL url = null;
-            url = getURLsvg(bbox);
+            URL url = getURLsvg(bbox);
             return grabSVG(url);
         } catch (MalformedURLException e) {
             throw (IOException) new IOException(tr("CadastreGrabber: Illegal url.")).initCause(e);

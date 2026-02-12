@@ -1,6 +1,4 @@
-/*
- * GPLv2 or 3, Copyright (c) 2010  Andrzej Zaborowski
- */
+// License: GPL. For details, see LICENSE file.
 package wmsturbochallenge;
 
 import java.awt.Graphics;
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
  *    WMSLayer for and WMSLayer created the Grabber passing it
  *    our MapView.  Otherwise we wouldn't be able to tell when
  *    this happened and could only guess.
+ * @author Andrzej Zaborowski
  */
 class FakeMapView extends MapView {
     public ProjectionBounds view_bounds;

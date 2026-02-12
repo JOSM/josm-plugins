@@ -118,7 +118,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         t.setColumnSelectionAllowed(true);
         t.setDefaultRenderer(OsmPrimitiveType.class, new PrimitiveTypeIconRenderer());
         t.setDefaultRenderer(String.class, new ColoredRenderer());
-        t.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        t.putClientProperty("terminateEditOnFocusLost", true);
         t.getSelectionModel().addListSelectionListener(selectionListener);
         return t;
     }
@@ -256,7 +256,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         return menu;
     }
 
-    private static class PrimitiveTypeIconRenderer extends DefaultTableCellRenderer {
+    private static final class PrimitiveTypeIconRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -300,7 +300,7 @@ public class MultiTagDialog extends ExtendedDialog implements DataSelectionListe
         }
     }
 
-    private class TagSetChanger extends AbstractAction implements ItemListener {
+    private final class TagSetChanger extends AbstractAction implements ItemListener {
         String oldTags;
 
         @Override

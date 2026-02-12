@@ -25,7 +25,7 @@ public class WMSAdjustAction extends MapMode {
     private transient WMSLayer modifiedLayer;
     private boolean rasterMoved;
     private EastNorth prevEastNorth;
-    enum Mode {MOVE_XY, MOVE_Z, ROTATE}
+    enum Mode { MOVE_XY, MOVE_Z, ROTATE }
 
     private static Mode mode;
     private static final EastNorth[] croppedRaster = new EastNorth[5];

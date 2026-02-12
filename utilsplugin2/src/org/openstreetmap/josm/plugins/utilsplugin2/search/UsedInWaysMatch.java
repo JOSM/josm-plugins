@@ -23,7 +23,7 @@ public class UsedInWaysMatch extends RangeMatch {
         this(tokenizer.readRange(tr("Range of attached ways count")));
     }
 
-    private static class WayCounter implements OsmPrimitiveVisitor {
+    private static final class WayCounter implements OsmPrimitiveVisitor {
         int count;
         @Override
         public void visit(Way w) {

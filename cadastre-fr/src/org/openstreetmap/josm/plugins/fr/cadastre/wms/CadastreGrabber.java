@@ -43,7 +43,8 @@ public class CadastreGrabber {
     }
 
     private static URL getURLRaster(WMSLayer wmsLayer, EastNorth lambertMin, EastNorth lambertMax) throws MalformedURLException {
-        // GET /scpc/wms?version=1.1&request=GetMap&layers=CDIF:PMC@QH4480001701&format=image/png&bbox=-1186,0,13555,8830&width=576&height=345&exception=application/vnd.ogc.se_inimage&styles= HTTP/1.1
+        // GET /scpc/wms?version=1.1&request=GetMap&layers=CDIF:PMC@QH4480001701&format=image/png&bbox=-1186,0,13555,8830
+        // &width=576&height=345&exception=application/vnd.ogc.se_inimage&styles= HTTP/1.1
         final int cRasterX = CadastrePlugin.imageWidth; // keep width constant and adjust width to original image proportions
         String str = CadastreInterface.BASE_URL+"/scpc/wms?version=1.1&request=GetMap";
         str += "&layers=CDIF:PMC@";
@@ -53,7 +54,8 @@ public class CadastreGrabber {
         str += "&bbox=";
         str += wmsLayer.eastNorth2raster(lambertMin, lambertMax);
         str += "&width="+cRasterX+"&height="; // maximum allowed by wms server (576/345, 800/378, 1000/634)
-        str += (int) (cRasterX*(wmsLayer.communeBBox.max.getY() - wmsLayer.communeBBox.min.getY())/(wmsLayer.communeBBox.max.getX() - wmsLayer.communeBBox.min.getX()));
+        str += (int) (cRasterX*(wmsLayer.communeBBox.max.getY() - wmsLayer.communeBBox.min.getY())
+            / (wmsLayer.communeBBox.max.getX() - wmsLayer.communeBBox.min.getX()));
         str += "&exception=application/vnd.ogc.se_inimage&styles="; // required for raster images
         Logging.info("URL="+str);
         return new URL(str.replace(" ", "%20"));

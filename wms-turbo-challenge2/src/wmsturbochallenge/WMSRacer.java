@@ -1,6 +1,4 @@
-/*
- * GPLv2 or 3, Copyright (c) 2010  Andrzej Zaborowski
- */
+// License: GPL. For details, see LICENSE file.
 package wmsturbochallenge;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 
 /**
  * This is the main class for the game plugin.
+ * @author Andrzej Zaborowski
  */
 public class WMSRacer extends Plugin implements LayerChangeListener, ActiveLayerChangeListener {
     public WMSRacer(PluginInformation info) {

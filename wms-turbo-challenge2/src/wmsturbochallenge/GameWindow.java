@@ -1,6 +1,4 @@
-/*
- * GPLv2 or 3, Copyright (c) 2010  Andrzej Zaborowski
- */
+// License: GPL. For details, see LICENSE file.
 package wmsturbochallenge;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -38,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
  * This implements the game logic.
+ * @author Andrzej Zaborowski
  */
 public class GameWindow extends JFrame implements ActionListener {
     public GameWindow(Layer ground) {
@@ -165,7 +164,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
     /* TODO: figure out how to load these dynamically after splash
      * screen is shown */
-    protected static final ImageIcon car[] = new ImageIcon[] {
+    protected static final ImageIcon[] car = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/car0-l.png"))),
@@ -185,17 +184,17 @@ public class GameWindow extends JFrame implements ActionListener {
                     WMSRacer.class.getResource(
                             "/images/car1-r.png"))),
     };
-    protected static final ImageIcon bg[] = new ImageIcon[] {
+    protected static final ImageIcon[] bg = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/bg0.png"))),
     };
-    protected static final ImageIcon skyline[] = new ImageIcon[] {
+    protected static final ImageIcon[] skyline = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/horizon.png"))),
     };
-    protected static final ImageIcon cactus[] = new ImageIcon[] {
+    protected static final ImageIcon[] cactus = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/cactus0.png"))),
@@ -206,7 +205,7 @@ public class GameWindow extends JFrame implements ActionListener {
                     WMSRacer.class.getResource(
                             "/images/cactus2.png"))),
     };
-    protected static final ImageIcon cloud[] = new ImageIcon[] {
+    protected static final ImageIcon[] cloud = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/cloud0.png"))),
@@ -223,7 +222,7 @@ public class GameWindow extends JFrame implements ActionListener {
                     WMSRacer.class.getResource(
                             "/images/cloud4.png"))),
     };
-    protected static final ImageIcon aircraft[] = new ImageIcon[] {
+    protected static final ImageIcon[] aircraft = new ImageIcon[] {
             new ImageIcon(Toolkit.getDefaultToolkit().createImage(
                     WMSRacer.class.getResource(
                             "/images/aircraft0.png"))),
@@ -245,7 +244,7 @@ public class GameWindow extends JFrame implements ActionListener {
     protected double heading = 0.0;
     protected double wheelangle = 0.0;
     protected double speed = 0.0;
-    protected boolean key_down[] = new boolean[] {
+    protected boolean[] key_down = new boolean[] {
             false, false, false, false, };
 
     protected void move() {
@@ -365,11 +364,12 @@ public class GameWindow extends JFrame implements ActionListener {
         sprites_paint();
     }
 
-    static double max3(double x[]) {
+    static double max3(double[] x) {
         return x[0] > x[1] ? x[2] > x[0] ? x[2] : x[0] :
             (x[2] > x[1] ? x[2] : x[1]);
     }
-    static double min3(double x[]) {
+
+    static double min3(double[] x) {
         return x[0] < x[1] ? x[2] < x[0] ? x[2] : x[0] :
             (x[2] < x[1] ? x[2] : x[1]);
     }
@@ -384,11 +384,11 @@ public class GameWindow extends JFrame implements ActionListener {
          */
         double left_x = maxdist * (width - centre) / height;
         double right_x = maxdist * (0 - centre) / height;
-        double e_lat[] = new double[] {
+        double[] e_lat = new double[] {
                 lat + (maxdist - cardist) * cos - left_x * sin,
                 lat + (maxdist - cardist) * cos - right_x * sin,
                 lat - cardist * cos, };
-        double e_lon[] = new double[] {
+        double[] e_lon = new double[] {
                 lon + (maxdist - cardist) * sin + left_x * cos,
                 lon + (maxdist - cardist) * sin + right_x * cos,
                 lon - cardist * sin, };
@@ -503,7 +503,7 @@ public class GameWindow extends JFrame implements ActionListener {
     protected static final int sizes = 8;
 
     protected static final int maxsprites = 32;
-    protected sprite_pos sprites[] = new sprite_pos[maxsprites];
+    protected sprite_pos[] sprites = new sprite_pos[maxsprites];
 
     protected void sprites_paint() {
         /* The vehicle */
@@ -552,13 +552,14 @@ public class GameWindow extends JFrame implements ActionListener {
         }
 
         Arrays.sort(sprites, 0, i);
-        for (sprite_pos sprite : sprites)
+        for (sprite_pos sprite : sprites) {
             if (i-- > 0)
                 screen.drawImage(sprite.sprite,
                         sprite.x, sprite.y,
                         sprite.sx, sprite.sy, this);
             else
                 break;
+        }
 
         if (splashframe >= 0) {
             splashframe++;

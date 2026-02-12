@@ -220,8 +220,8 @@ public class SplitObjectAction extends JosmAction {
         // both nodes aren't allowed to be consecutive
         if ((splitWay == null || splitWay.getNodesCount() == 2)
                 && (nodeIndex1 == nodeIndex2 + 1 || nodeIndex2 == nodeIndex1 + 1 ||
-                // minus 2 because we've a circular way where
-                // the penultimate node is the last unique one
+                        // minus 2 because we've a circular way where
+                        // the penultimate node is the last unique one
                         (nodeIndex1 == 0 && nodeIndex2 == selectedWay.getNodesCount() - 2)
                         || (nodeIndex2 == 0 && nodeIndex1 == selectedWay.getNodesCount() - 2))) {
             showWarningNotification(

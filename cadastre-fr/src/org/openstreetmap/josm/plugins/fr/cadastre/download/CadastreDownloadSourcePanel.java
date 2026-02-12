@@ -240,19 +240,6 @@ public class CadastreDownloadSourcePanel extends AbstractDownloadSourcePanel<Cad
             sizeCheck.setForeground(Color.darkGray);
             return;
         }
-/*
-        boolean isAreaTooLarge = false;
-        if (!isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
-            isAreaTooLarge = false;
-        } else if (isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
-            // see max_note_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-            isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area-notes", 25);
-        } else {
-            // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-            isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area", 0.25);
-        }
-
-        displaySizeCheckResult(isAreaTooLarge);*/
     }
 
     private void displaySizeCheckResult(boolean isAreaTooLarge) {

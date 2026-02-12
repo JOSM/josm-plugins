@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.utilsplugin2.actions;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -123,7 +124,7 @@ class SplitObjectActionTest {
         assertEquals(2, relation.getMembersCount());
     }
 
-    private static class AlwaysDeleteCallback implements DeleteCommand.DeletionCallback {
+    private static final class AlwaysDeleteCallback implements DeleteCommand.DeletionCallback {
 
         @Override
         public boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore) {

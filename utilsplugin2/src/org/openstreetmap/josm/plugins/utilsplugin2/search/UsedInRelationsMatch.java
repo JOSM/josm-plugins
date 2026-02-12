@@ -23,7 +23,7 @@ public class UsedInRelationsMatch extends RangeMatch {
         this(tokenizer.readRange(tr("Range of referencing relation count")));
     }
 
-    private static class RelationCounter implements OsmPrimitiveVisitor {
+    private static final class RelationCounter implements OsmPrimitiveVisitor {
         int count;
         @Override
         public void visit(Way w) {

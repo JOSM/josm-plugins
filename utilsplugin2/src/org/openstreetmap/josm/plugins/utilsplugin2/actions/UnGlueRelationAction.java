@@ -65,7 +65,7 @@ public class UnGlueRelationAction extends JosmAction {
                 }
                 if (!first) {
                     OsmPrimitive newp;
-                    switch(p.getType()) {
+                    switch (p.getType()) {
                     case NODE: newp = new Node((Node) p, true); break;
                     case WAY: newp = new Way((Way) p, true); break;
                     case RELATION: newp = new Relation((Relation) p, true); break;

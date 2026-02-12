@@ -71,17 +71,6 @@ public class EdigeoFileGEN extends EdigeoLotFile<GenBlock> {
          * @return the bounds
          */
         public Bounds getBounds() {
-/*
-            for (String s : Projections.getAllProjectionCodes()) {
-                Projection p = Projections.getProjectionByCode(s);
-                LatLon en = p.eastNorth2latlon(min);
-                double lat = en.lat();
-                double lon = en.lon();
-                if (43 <= lat && lat <= 44 && 1.38 <= lon && lon <= 1.45) {
-                    System.out.println(s + ": " + p);
-                }
-            }
-*/
             Projection proj = lot.geo.getCoorReference().getProjection();
             return new Bounds(proj.eastNorth2latlon(min), proj.eastNorth2latlon(max));
         }
