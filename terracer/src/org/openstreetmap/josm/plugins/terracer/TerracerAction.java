@@ -215,7 +215,7 @@ public final class TerracerAction extends JosmAction {
             // Special case of one outline and one address node.
             // Don't open the dialog
             terraceBuilding(outline, init, street, associatedStreet, 0, null, null, 0,
-                    housenumbers, streetname, associatedStreet != null, false, "yes");
+                    housenumbers, streetname, associatedStreet != null, false, "yes", false);
         } else {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
             // show input dialog.
@@ -300,10 +300,11 @@ public final class TerracerAction extends JosmAction {
      *        existing relation
      * @param keepOutline If the outline way should be kept
      * @param buildingValue The value for {@code building} key to add
+     * @param invertSide If true, splits on the short side instead of the long side
      */
     public void terraceBuilding(final Way outline, Node init, Way street, Relation associatedStreet, Integer segments,
                 String start, String end, int step, List<Node> housenumbers, String streetName, boolean handleRelations,
-                boolean keepOutline, String buildingValue) {
+                boolean keepOutline, String buildingValue, boolean invertSide) {
         final int nb;
         Integer to;
         Integer from = null;
@@ -326,7 +327,7 @@ public final class TerracerAction extends JosmAction {
         }
 
         // now find which is the longest side connecting the first node
-        Pair<Way, Way> interp = findFrontAndBack(outline);
+        Pair<Way, Way> interp = findFrontAndBack(outline, invertSide);
 
         final boolean swap = init != null && (init.equals(interp.a.lastNode()) || init.equals(interp.b.lastNode()));
 
@@ -596,9 +597,11 @@ public final class TerracerAction extends JosmAction {
      * which cannot be contiguous.
      *
      * @param w The way to analyse.
+     * @param invertSide If true, forces the use of the alternative (adjacent) pair
+     *                   of sides, effectively rotating the split axis.
      * @return A pair of ways (front, back) pointing in the same directions.
      */
-    private static Pair<Way, Way> findFrontAndBack(Way w) {
+    private static Pair<Way, Way> findFrontAndBack(Way w, boolean invertSide) {
         // calculate the "side-ness" score for each segment of the way
         double[] sideness = calculateSideness(w);
 
@@ -623,6 +626,13 @@ public final class TerracerAction extends JosmAction {
         // same for all sides.
         if (sideLength(w, side1) > sideLength(w, side1 + 1)
                 && Math.abs(sideness[side1] - sideness[(side1 + 1) % (w.getNodesCount() - 1)]) < 0.001) {
+            side1 = (side1 + 1) % (w.getNodesCount() - 1);
+            side2 = (side2 + 1) % (w.getNodesCount() - 1);
+        }
+
+        // if inverted, shift the selection to the adjacent segments to use the
+        // alternative pair of sides (e.g. top/bottom instead of left/right).
+        if (invertSide) {
             side1 = (side1 + 1) % (w.getNodesCount() - 1);
             side2 = (side2 + 1) % (w.getNodesCount() - 1);
         }
@@ -790,11 +800,11 @@ public final class TerracerAction extends JosmAction {
         /**
          * The value to sort
          */
-        public final double x;
+        private final double x;
         /**
          * The index in the original array
          */
-        public final int i;
+        private final int i;
 
         SortWithIndex(double a, int b) {
             x = a;

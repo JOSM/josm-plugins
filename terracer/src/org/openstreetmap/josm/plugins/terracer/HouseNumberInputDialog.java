@@ -94,7 +94,7 @@ public class HouseNumberInputDialog extends ExtendedDialog {
             String buildingType, boolean relationExists, List<Node> houseNumbers) {
         super(MainApplication.getMainFrame(),
                 tr("Terrace a house"),
-                new String[] {tr("OK"), tr("Cancel")},
+                new String[] {tr("Long side"), tr("Short side"), tr("Cancel")},
                 true
         );
         this.inputHandler = handler;
@@ -106,7 +106,7 @@ public class HouseNumberInputDialog extends ExtendedDialog {
         handler.dialog = this;
         JPanel content = getInputPanel();
         setContent(content);
-        setButtonIcons("ok", "cancel");
+        setButtonIcons("ok", "ok", "cancel");
         getJContentPane();
         initialize();
         setDefaultButton(1);

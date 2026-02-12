@@ -128,9 +128,12 @@ public class HouseNumberInputHandler extends JosmAction implements FocusListener
         isOk &= checkNumberStringField(dialog.segments, tr("Segments"),
                         message);
 
-        JButton okButton = getButton(dialog, "OK");
-        if (okButton != null)
-            okButton.setEnabled(isOk);
+        JButton longSideButton = getButton(dialog, tr("Long side"));
+        if (longSideButton != null)
+            longSideButton.setEnabled(isOk);
+        JButton shortSideButton = getButton(dialog, tr("Short side"));
+        if (shortSideButton != null)
+            shortSideButton.setEnabled(isOk);
         if (isOk) {
 
             // For some reason the messageLabel doesn't want to show up
@@ -271,7 +274,7 @@ public class HouseNumberInputHandler extends JosmAction implements FocusListener
         // OK or Cancel button-actions
         if (e.getSource() instanceof JButton) {
             JButton button = (JButton) e.getSource();
-            if (tr("OK").equals(button.getActionCommand()) && button.isEnabled()) {
+            if (tr("Long side").equals(button.getActionCommand()) && button.isEnabled()) {
                 if (validateInput()) {
                     saveValues();
 
@@ -287,7 +290,29 @@ public class HouseNumberInputHandler extends JosmAction implements FocusListener
                         housenumbers,
                         streetName(),
                         doHandleRelation(),
-                        doKeepOutline(), buildingType());
+                        doKeepOutline(), buildingType(),
+                        false);
+
+                    this.dialog.setVisible(false);
+                }
+            } else if (tr("Short side").equals(button.getActionCommand()) && button.isEnabled()) {
+                if (validateInput()) {
+                    saveValues();
+
+                    terracerAction.terraceBuilding(
+                        outline,
+                        init,
+                        street,
+                        associatedStreet,
+                        segments(),
+                        dialog.lo.getText(),
+                        dialog.hi.getText(),
+                        stepSize(),
+                        housenumbers,
+                        streetName(),
+                        doHandleRelation(),
+                        doKeepOutline(), buildingType(),
+                        true);
 
                     this.dialog.setVisible(false);
                 }

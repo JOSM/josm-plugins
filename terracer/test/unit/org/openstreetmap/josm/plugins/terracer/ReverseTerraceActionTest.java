@@ -51,7 +51,7 @@ class ReverseTerraceActionTest {
         way2.addNode(way2.firstNode());
         dataSet.setSelected(way2);
         new TerracerAction().terraceBuilding(way2, null, null, null, 5,
-                "80", "88", 2, Collections.emptyList(), null, false, false, "apartments");
+                "80", "88", 2, Collections.emptyList(), null, false, false, "apartments", false);
         final List<Way> addressedWays = dataSet.getWays().stream().filter(w -> w != way1)
                 .sorted(Comparator.comparingLong(w -> -w.getUniqueId())).collect(Collectors.toList());
         assertAll("Terrace should work as expected", () -> assertEquals(5, addressedWays.size()),
