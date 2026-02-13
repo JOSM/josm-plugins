@@ -216,7 +216,7 @@ public class StreetsideImageDisplay extends JComponent {
         return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, getSize().width, getSize().height));
     }
 
-    private class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
+    private final class ImgDisplayMouseListener implements MouseListener, MouseWheelListener, MouseMotionListener {
         private boolean mouseIsDragging;
         private long lastTimeForMousePoint;
         private Point mousePointInImg;

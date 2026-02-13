@@ -51,7 +51,7 @@ public class StreetsidePlugin extends Plugin {
     }
 
     static StreetsideDataListener[] getStreetsideDataListeners() {
-        return new StreetsideDataListener[] { WALK_ACTION, ZOOM_ACTION, CubemapBuilder.getInstance() };
+        return new StreetsideDataListener[] {WALK_ACTION, ZOOM_ACTION, CubemapBuilder.getInstance()};
     }
 
     /**

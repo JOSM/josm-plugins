@@ -49,7 +49,8 @@ class StreetsideLayerTest {
         assertTrue(((String) comp).length() >= 9);
     }
 
-    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless", disabledReason = "Listener for destruction is only registered in non-headless environments")
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless",
+        disabledReason = "Listener for destruction is only registered in non-headless environments")
     @Test
     void testClearInstance() {
         StreetsideLayer.getInstance();

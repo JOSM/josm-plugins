@@ -44,8 +44,8 @@ public class StreetsidePreferenceSetting implements SubPreferenceSetting {
     private static final Logger logger = Logger.getLogger(StreetsidePreferenceSetting.class.getCanonicalName());
 
     private final JComboBox<String> downloadModeComboBox = new JComboBox<>(
-            new String[] { DOWNLOAD_MODE.VISIBLE_AREA.getLabel(), DOWNLOAD_MODE.OSM_AREA.getLabel(),
-                    DOWNLOAD_MODE.MANUAL_ONLY.getLabel() });
+            new String[] {DOWNLOAD_MODE.VISIBLE_AREA.getLabel(), DOWNLOAD_MODE.OSM_AREA.getLabel(),
+                    DOWNLOAD_MODE.MANUAL_ONLY.getLabel()});
 
     private final JCheckBox displayHour = new JCheckBox(I18n.tr("Display hour when the picture was taken"),
             StreetsideProperties.DISPLAY_HOUR.get());

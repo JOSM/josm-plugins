@@ -394,8 +394,8 @@ public final class StreetsideLayer extends AbstractModifiableLayer
 
     @Override
     public Action[] getMenuEntries() {
-        return new Action[] { LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(), new LayerListPopup.InfoAction(this) };
+        return new Action[] {LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(), new LayerListPopup.InfoAction(this)};
     }
 
     @Override
@@ -486,9 +486,9 @@ public final class StreetsideLayer extends AbstractModifiableLayer
     }
 
     private record NearestImgToTargetComparator(StreetsideAbstractImage target) implements Comparator<StreetsideAbstractImage> {
-
-    @Override
-    public int compare(StreetsideAbstractImage img1, StreetsideAbstractImage img2) {
-        return (int) Math.signum(img1.greatCircleDistance(target) - img2.greatCircleDistance(target));
+        @Override
+        public int compare(StreetsideAbstractImage img1, StreetsideAbstractImage img2) {
+            return (int) Math.signum(img1.greatCircleDistance(target) - img2.greatCircleDistance(target));
+        }
     }
-}}
+}

@@ -29,7 +29,7 @@ public final class ImageUtil {
      */
     public static ImageIcon scaleImageIcon(final ImageIcon icon, int size) {
         if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
-            LOGGER.log(Logging.LEVEL_DEBUG, "Scale icon {0} → {1}", new Object[] { icon.getIconWidth(), size });
+            LOGGER.log(Logging.LEVEL_DEBUG, "Scale icon {0} → {1}", new Object[] {icon.getIconWidth(), size});
         }
         return new ImageIcon(
                 icon.getImage()

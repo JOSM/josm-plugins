@@ -94,7 +94,9 @@ public final class TestUtil {
                 + "{faceId}{tileId}?g=14336&key=Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU", lat,
                 lon, 268.811, 1.395, -4.875, Instant.ofEpochMilli(1614556800000L), Instant.ofEpochMilli(1614643199999L),
                 "https://dev.virtualearth.net/Branding/logo_powered_by.png",
-                "Copyright © 2024 Microsoft and its suppliers. All rights reserved. This API cannot be accessed and the content and any results may not be used, reproduced or transmitted in any manner without express written permission from Microsoft Corporation.",
+                "Copyright © 2024 Microsoft and its suppliers. All rights reserved. This API cannot be accessed and the "
+                + "content and any results may not be used, reproduced or transmitted in any manner without express "
+                + "written permission from Microsoft Corporation.",
                 1, 3, 256, 256, Arrays.asList("t0", "t1", "t2", "t3"));
     }
 }

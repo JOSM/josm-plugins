@@ -119,7 +119,7 @@ public class TileDownloadingTask implements Callable<List<String>> {
             if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
                 long endTime = System.currentTimeMillis();
                 long runTime = (endTime - startTime) / 1000;
-                LOGGER.log(Logging.LEVEL_DEBUG, "Loaded image for {0} in {1} seconds.", new Object[] { url, runTime });
+                LOGGER.log(Logging.LEVEL_DEBUG, "Loaded image for {0} in {1} seconds.", new Object[] {url, runTime});
             }
         } catch (IOException e) {
             LOGGER.log(Logging.LEVEL_ERROR, MessageFormat.format("Error downloading image for tileId {0}", url), e);

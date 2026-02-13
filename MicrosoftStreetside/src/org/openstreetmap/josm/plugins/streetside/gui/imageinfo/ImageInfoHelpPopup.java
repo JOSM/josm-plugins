@@ -46,11 +46,12 @@ public class ImageInfoHelpPopup extends JPopupMenu {
         JTextPane mainText = new JTextPane();
         mainText.setContentType("text/html");
         mainText.setFont(SelectableLabel.DEFAULT_FONT);
-        mainText.setText("<html><div style='width:250px'>"
-                + "Welcome to the Microsoft Streetside JOSM Plugin. To view the vector bubbles for the 360 degree imagery, select Imagery->Streetside from the JOSM menu."
+        mainText.setText(I18n.tr("<html><div style='width:250px'>"
+                + "Welcome to the Microsoft Streetside JOSM Plugin. To view the vector bubbles for the 360 degree imagery, "
+                + "select Imagery->Streetside from the JOSM menu."
                 + "<br><br>"
                 + "Once the blue bubbles appear on the map, click on a vector bubble and undock/maximize the 360 viewer to view the imagery."
-                + "</div></html>");
+                + "</div></html>"));
         add(mainText, BorderLayout.CENTER);
 
         JPanel bottomBar = new JPanel();

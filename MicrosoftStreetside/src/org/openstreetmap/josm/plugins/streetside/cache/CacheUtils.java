@@ -135,8 +135,7 @@ public final class CacheUtils {
         CUBEMAP
     }
 
-    private static class IgnoreDownload implements ICachedLoaderListener {
-
+    private static final class IgnoreDownload implements ICachedLoaderListener {
         @Override
         public void loadingFinished(CacheEntry arg0, CacheEntryAttributes arg1, LoadResult arg2) {
             // Ignore download

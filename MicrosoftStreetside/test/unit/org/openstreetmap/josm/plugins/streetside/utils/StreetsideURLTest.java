@@ -66,7 +66,7 @@ class StreetsideURLTest {
         Method method = StreetsideURL.class.getDeclaredMethod("string2URL", String[].class);
         method.setAccessible(true);
         // this simply invokes string2URL("malformed URL")
-        Assertions.assertNull(method.invoke(null, (Object) new String[] { "malformed URL" }));
+        Assertions.assertNull(method.invoke(null, (Object) new String[] {"malformed URL"}));
         // invokes string2URL(null)
         Assertions.assertNull(method.invoke(null, (Object) null));
     }

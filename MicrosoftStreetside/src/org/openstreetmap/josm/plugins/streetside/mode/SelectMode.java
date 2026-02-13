@@ -50,12 +50,12 @@ public class SelectMode extends AbstractMode {
         if (editLayer != null) {
             if (closestTemp != null && !imageHighlighted) {
                 if (MainApplication.getMap().mapMode != null) {
-                    MainApplication.getMap().mapMode.putValue("active", Boolean.FALSE);
+                    MainApplication.getMap().mapMode.putValue("active", false);
                 }
                 imageHighlighted = true;
             } else if (closestTemp == null && imageHighlighted && nothingHighlighted) {
                 if (MainApplication.getMap().mapMode != null) {
-                    MainApplication.getMap().mapMode.putValue("active", Boolean.TRUE);
+                    MainApplication.getMap().mapMode.putValue("active", true);
                 }
                 nothingHighlighted = false;
             } else if (imageHighlighted && !nothingHighlighted && editLayer.data != null) {

@@ -61,7 +61,7 @@ public abstract class AbstractMode extends MouseAdapter implements ZoomChangeLis
         }
     }
 
-    private static class SemiautomaticThread extends Thread {
+    private static final class SemiautomaticThread extends Thread {
 
         /**
          * If in semiautomatic mode, the last Epoch time when there was a download

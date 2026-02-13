@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.streetside.io.download;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
@@ -38,7 +40,7 @@ public abstract class BoundsDownloadRunnable implements Runnable {
             while (nextURL != null) {
                 if (Thread.interrupted()) {
                     LOGGER.log(Logging.LEVEL_ERROR, "{0} for {1} interrupted!",
-                            new Object[] { getClass().getSimpleName(), bounds });
+                            new Object[] {getClass().getSimpleName(), bounds});
                     return;
                 }
                 final URLConnection con = nextURL.openConnection();
@@ -46,7 +48,7 @@ public abstract class BoundsDownloadRunnable implements Runnable {
                 nextURL = APIv3.parseNextFromLinkHeaderValue(con.getHeaderField("Link"));
             }
         } catch (IOException e) {
-            String message = "Could not read from URL " + nextURL + "!";
+            String message = tr("Could not read from URL %s!", nextURL);
             LOGGER.log(Logging.LEVEL_WARN, message, e);
             if (!GraphicsEnvironment.isHeadless()) {
                 new Notification(message).setIcon(StreetsidePlugin.LOGO.setSize(ImageSizes.LARGEICON).get())
@@ -55,5 +57,5 @@ public abstract class BoundsDownloadRunnable implements Runnable {
         }
     }
 
-    public abstract void run(final URLConnection connection) throws IOException;
+    public abstract void run(URLConnection connection) throws IOException;
 }

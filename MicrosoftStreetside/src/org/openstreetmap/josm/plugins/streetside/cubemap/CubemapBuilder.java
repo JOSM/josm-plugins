@@ -137,7 +137,7 @@ public final class CubemapBuilder implements ITileDownloadingTaskListener, Stree
             long runTime = (System.currentTimeMillis() - startTime) / 1000;
             if (Boolean.TRUE.equals(StreetsideProperties.DEBUGING_ENABLED.get())) {
                 LOGGER.log(Logging.LEVEL_DEBUG, "Completed downloading tiles for {0} in {1} seconds.",
-                        new Object[] { newImage.id(), runTime });
+                        new Object[] {newImage.id(), runTime});
             }
         }
     }
@@ -274,8 +274,8 @@ public final class CubemapBuilder implements ITileDownloadingTaskListener, Stree
                 long runTime = (endTime - startTime) / 1000;
                 LOGGER.log(Logging.LEVEL_DEBUG,
                         "{0} tile images ready for building cumbemap faces for cubemap {1} in {2} seconds.",
-                        new Object[] { currentTileCount.get(), CubemapBuilder.getInstance().getCubemap().id(),
-                                Long.toString(runTime) });
+                        new Object[] {currentTileCount.get(), CubemapBuilder.getInstance().getCubemap().id(),
+                                Long.toString(runTime)});
             }
 
             buildCubemapFaces();

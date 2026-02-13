@@ -9,6 +9,8 @@ import jakarta.annotation.Nonnull;
 /**
  * A StreetsideImage object represents each of the images stored in Streetside.
  *
+ * @author nokutu
+ * @author renerr18
  * @param id The unique id for the cubemap
  * @param lat The latitude of the image
  * @param lon The longitude of the image
@@ -24,10 +26,6 @@ import jakarta.annotation.Nonnull;
  * @param imageHeight The height for this image tiles
  * @param imageWidth The width for this image tiles
  * @param imageUrlSubdomains The subdomains for this image
- *
- * @author nokutu
- * @author renerr18
- *
  * @see StreetsideData
  */
 public record StreetsideImage(String id, double lat, double lon, double heading, double pitch, double roll,

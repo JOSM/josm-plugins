@@ -73,7 +73,7 @@ public final class SequenceDownloadRunnable extends BoundsDownloadRunnable imple
             parseJson(parser);
             final long endTime = System.currentTimeMillis();
             LOG.log(Level.INFO, "Successfully loaded {0} Microsoft Streetside images in {1} seconds.",
-                    new Object[] { this.images.size(), (endTime - startTime) / 1000 });
+                    new Object[] {this.images.size(), (endTime - startTime) / 1000});
         } catch (DateTimeParseException dateTimeParseException) {
             // Added to debug #23658 -- a valid date string caused an exception
             BugReport.intercept(dateTimeParseException).put("url", con.getURL()).warn();

@@ -27,7 +27,7 @@ public class CubemapBox extends Group {
     private final ImageView left = new ImageView();
     private final ImageView up = new ImageView();
     private final ImageView down = new ImageView();
-    private final ImageView[] views = new ImageView[] { front, right, back, left, up, down };
+    private final ImageView[] views = new ImageView[] {front, right, back, left, up, down};
     private final Image frontImg;
     private final Image rightImg;
     private final Image backImg;

@@ -26,8 +26,7 @@ import jakarta.annotation.Nonnull;
 public sealed
 
 interface StreetsideAbstractImage extends ILatLon, IQuadBucketType, Comparable<StreetsideAbstractImage>, Serializable
-permits StreetsideImage
-{
+permits StreetsideImage {
 
     /**
      * Get the ID for this image
