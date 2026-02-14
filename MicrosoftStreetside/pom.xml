@@ -25,7 +25,7 @@
     <plugin.canloadatruntime>true</plugin.canloadatruntime>
     <java.lang.version>21</java.lang.version>
     <plugin.requires>apache-commons;javafx</plugin.requires>
-    <javafx.version>19</javafx.version>
+    <javafx.version>21</javafx.version>
   </properties>
   <dependencies>
     <dependency>
@@ -64,6 +64,12 @@
       <artifactId>javafx-graphics</artifactId>
       <version>${javafx.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.pdfsam</groupId>
+      <artifactId>javafx-monocle</artifactId>
+      <version>${javafx.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>

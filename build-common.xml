@@ -626,6 +626,7 @@
                     <fileset refid="plugin.requires.jars"/>
                     <path refid="test.classpath"/>
                     <pathelement path="${plugin.test.dir}/build/unit"/>
+                    <path refid="plugin.classpath.actual"/>
                 </classpath>
                 <testclasses outputDir="${plugin.test.dir}/report">
                     <fileset dir="${plugin.test.dir}/build/unit" includes="**/*Test.class"/>
@@ -642,6 +643,7 @@
                         <jvmarg value="--add-exports" />
                         <jvmarg value="java.desktop/com.sun.imageio.spi=ALL-UNNAMED"  />
                         <jvmarg value="-XX:+ShowCodeDetailsInExceptionMessages" if:set="isJava14" unless:set="isJava15" />
+                        <jvmarg value="--enable-native-access=ALL-UNNAMED" />
                         <sysproperty key="josm.home" value="../00_core_test_config/unit-josm.home"/>
                         <sysproperty key="josm.test.data" value="${plugin.test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="true"/>
