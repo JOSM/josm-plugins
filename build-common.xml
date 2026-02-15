@@ -643,7 +643,7 @@
                         <jvmarg value="--add-exports" />
                         <jvmarg value="java.desktop/com.sun.imageio.spi=ALL-UNNAMED"  />
                         <jvmarg value="-XX:+ShowCodeDetailsInExceptionMessages" if:set="isJava14" unless:set="isJava15" />
-                        <jvmarg value="--enable-native-access=ALL-UNNAMED" />
+                        <jvmarg value="--enable-native-access=ALL-UNNAMED" if:set="isJava17" />
                         <sysproperty key="josm.home" value="../00_core_test_config/unit-josm.home"/>
                         <sysproperty key="josm.test.data" value="${plugin.test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="true"/>
