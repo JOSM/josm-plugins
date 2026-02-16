@@ -5,8 +5,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 
 /**
+ * Utility class for layer handling
  * @author cdaller
- *
  */
 public final class LayerUtil {
 

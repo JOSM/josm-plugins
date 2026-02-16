@@ -10,8 +10,8 @@ import org.openstreetmap.josm.plugins.surveyor.SurveyorAction;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
+ * Action to issue a Beep
  * @author cdaller
- *
  */
 public class BeepAction implements SurveyorAction {
     int beepNumber = 1;

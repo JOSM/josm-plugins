@@ -66,10 +66,10 @@ public class MetaAction extends AbstractAction {
 
         // toggle on/off
         Boolean selected = (Boolean) getValue(ActionConstants.SELECTED_KEY);
-        if (selected == null || selected == Boolean.FALSE) {
-            selected = Boolean.TRUE;
+        if (selected == null || selected == false) {
+            selected = true;
         } else {
-            selected = Boolean.FALSE;
+            selected = false;
         }
         putValue(ActionConstants.SELECTED_KEY, selected);
 

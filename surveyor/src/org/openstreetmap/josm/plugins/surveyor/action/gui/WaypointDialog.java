@@ -7,8 +7,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /**
+ * Dialog for waypoints
  * @author cdaller
- *
  */
 public class WaypointDialog {
 

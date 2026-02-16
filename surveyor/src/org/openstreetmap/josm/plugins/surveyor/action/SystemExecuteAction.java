@@ -11,8 +11,8 @@ import org.openstreetmap.josm.plugins.surveyor.GpsActionEvent;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
+ * Action class to execute GPS system command
  * @author cdaller
- *
  */
 public class SystemExecuteAction extends AbstractSurveyorAction {
 

@@ -35,7 +35,7 @@ public class AutoSaveGpsLayerTimerTask extends TimerTask {
     /**
      * Constructor using the file to write to and the name of the layer.
      * @param filename the file to write to.
-     * @param gpsLayername the name of the layer holding the gps data.
+     * @param layerName the name of the layer holding the gps data.
      */
     public AutoSaveGpsLayerTimerTask(String filename, String layerName) {
         super();

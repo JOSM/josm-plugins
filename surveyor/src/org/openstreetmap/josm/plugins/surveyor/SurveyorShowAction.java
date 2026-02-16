@@ -32,8 +32,8 @@ import org.xml.sax.SAXException;
 import livegps.LiveGpsPlugin;
 
 /**
+ * Show Surveyor menu
  * @author cdaller
- *
  */
 public class SurveyorShowAction extends JosmAction {
     private static final long serialVersionUID = 2184570223633094734L;
@@ -76,7 +76,7 @@ public class SurveyorShowAction extends JosmAction {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (MainApplication.getMap() != null && MainApplication.getMap().mapView != null) {
-                        MainApplication.getMap().mapView.zoomToFactor(1/2);
+                        MainApplication.getMap().mapView.zoomToFactor(0.5);
                     }
                 }
             });

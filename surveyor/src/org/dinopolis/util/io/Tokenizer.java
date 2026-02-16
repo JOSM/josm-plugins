@@ -250,18 +250,6 @@ public class Tokenizer
 
 //----------------------------------------------------------------------
 /**
- * Get the first delimiter character.
- *
- * @return the delimiter character.
- * @deprecated use the getDelimiters() method now
- */
-  public int getDelimiter()
-  {
-    return(delimiters_.charAt(0));
-  }
-
-//----------------------------------------------------------------------
-/**
  * Set the delimiter characters. All characters in the delimiters are
  * used as delimiter.
  *
@@ -280,7 +268,7 @@ public class Tokenizer
  */
   public String getDelimiters()
   {
-    return(delimiters_);
+    return delimiters_;
   }
 
 //----------------------------------------------------------------------
@@ -302,7 +290,7 @@ public class Tokenizer
  */
   public int getEscapeChar()
   {
-    return(escapeChar_);
+    return escapeChar_;
   }
 
 //----------------------------------------------------------------------
@@ -326,7 +314,7 @@ public class Tokenizer
  */
   public boolean respectEscapedCharacters()
   {
-    return(respectEscapedChars_);
+    return respectEscapedChars_;
   }
 
 //----------------------------------------------------------------------
@@ -337,7 +325,7 @@ public class Tokenizer
  */
   public int getQuoteChar()
   {
-    return (quoteChar_);
+    return quoteChar_;
   }
 
 //----------------------------------------------------------------------
@@ -372,7 +360,7 @@ public class Tokenizer
  */
   public boolean respectQuotedWords()
   {
-    return(respectQuotedWords_);
+    return respectQuotedWords_;
   }
 
 //----------------------------------------------------------------------
@@ -401,7 +389,7 @@ public class Tokenizer
  */
   public boolean isEolSignificant()
   {
-    return(eolIsSignificant_);
+    return eolIsSignificant_;
   }
 
 
@@ -413,7 +401,7 @@ public class Tokenizer
  */
   public int getLineNumber()
   {
-    return(lineCount_);
+    return lineCount_;
   }
 
 //----------------------------------------------------------------------
@@ -425,7 +413,7 @@ public class Tokenizer
  */
   public String getWord()
   {
-    return(buffer_.toString());
+    return buffer_.toString();
   }
 
 //----------------------------------------------------------------------
@@ -436,7 +424,7 @@ public class Tokenizer
  */
   public int getLastToken()
   {
-    return(lastToken_);
+    return lastToken_;
   }
 
 //----------------------------------------------------------------------
@@ -453,9 +441,9 @@ public class Tokenizer
   {
         // check for escape mode:
     if(escapeMode_)
-      return(false);
+      return false;
 
-    return(delimiters_.indexOf(character) >= 0);
+    return delimiters_.indexOf(character) >= 0;
   }
 
 //----------------------------------------------------------------------
@@ -471,13 +459,13 @@ public class Tokenizer
   protected boolean isQuoteChar(int character)
   {
     if(!respectQuotedWords_)
-      return(false);
+      return false;
 
         // check for escape mode:
     if(escapeMode_)
-      return(false);
+      return false;
 
-    return(character == quoteChar_);
+    return character == quoteChar_;
   }
 
 //----------------------------------------------------------------------
@@ -492,13 +480,13 @@ public class Tokenizer
   protected boolean isEscapeChar(int character)
   {
     if(!respectEscapedChars_)
-      return(false);
+      return false;
 
         // check for escape mode:
     if(escapeMode_)
-      return(false);
+      return false;
 
-    return(character == escapeChar_);
+    return character == escapeChar_;
   }
 
 //----------------------------------------------------------------------
@@ -519,12 +507,12 @@ public class Tokenizer
     {
       if(character == '\n')   // add line count, even if in escape mode!
         lineCount_++;
-      return(false);
+      return false;
     }
     if(character == -1)
       eofReached_ = true;
 
-    return((character=='\n') || (character=='\r') || (character == -1));
+    return (character=='\n') || (character=='\r') || (character == -1);
   }
 
 //----------------------------------------------------------------------
@@ -583,7 +571,7 @@ public class Tokenizer
     {
       next_char = readNextChar();
     }
-    return(next_char);
+    return next_char;
   }
 
 //----------------------------------------------------------------------
@@ -608,7 +596,7 @@ public class Tokenizer
     if(eofReached_)
     {
       lastToken_ = EOF;
-      return(EOF);
+      return EOF;
     }
 
         // handle EOL:
@@ -618,12 +606,12 @@ public class Tokenizer
       if(eolIsSignificant_)
       {
         lastToken_ = EOL;
-        return(EOL);
+        return EOL;
       }
       else
       {
         lastToken_ = DELIMITER;
-        return(DELIMITER);
+        return DELIMITER;
       }
     }
 
@@ -631,7 +619,7 @@ public class Tokenizer
     if(isDelimiter(next_char))
     {
       lastToken_ = DELIMITER;
-      return(DELIMITER);
+      return DELIMITER;
     }
 
         // handle quoted words:
@@ -643,14 +631,14 @@ public class Tokenizer
         if(isEndOfLine(next_char))
         {
           lastToken_ = ERROR;
-          return(ERROR);
+          return ERROR;
         }
         else
         {
           if(isQuoteChar(next_char))
           {
             lastToken_ = QUOTED_WORD;
-            return(QUOTED_WORD);
+            return QUOTED_WORD;
           }
 
               // no special char, then append to buffer:
@@ -668,7 +656,7 @@ public class Tokenizer
       {
         reader_.unread(next_char);
         lastToken_ = WORD;
-        return(WORD);
+        return WORD;
       }
     }
   }
@@ -684,17 +672,17 @@ public class Tokenizer
     throws IOException
   {
     if(lastToken_ == EOF)
-      return(false);
+      return false;
 
     if((lastToken_ == EOL) || (lastToken_ == NOT_STARTED))
     {
       int next_char = readNextChar();
       if(next_char == -1)
-        return(false);
+        return false;
 
       reader_.unread(next_char);
     }
-    return(true);
+    return true;
   }
 
 
@@ -734,13 +722,13 @@ public class Tokenizer
         case Tokenizer.EOL:
         case Tokenizer.EOF:
           list.add(word);
-          return(list);
+          return list;
         default:
           System.err.println("Unknown Token: "+token);
       }
       token = nextToken();
     }
-//    return(list);
+//    return list;
   }
 
 //----------------------------------------------------------------------
@@ -783,6 +771,6 @@ public class Tokenizer
         if(value.length() != 0)
           new_list.add(value);
       }
-      return(new_list);
+      return new_list;
     }
 }

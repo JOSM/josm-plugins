@@ -5,8 +5,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.plugins.surveyor.GpsActionEvent;
 
 /**
+ * Action to print coordinates to standard output
  * @author cdaller
- *
  */
 public class ConsolePrinterAction extends AbstractSurveyorAction {
 

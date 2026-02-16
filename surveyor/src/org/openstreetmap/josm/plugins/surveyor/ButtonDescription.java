@@ -47,7 +47,10 @@ public class ButtonDescription {
     }
     
     /**
-     * @param actions a list of actions to be performed.
+     * @param label label of the button
+     * @param hotkey Hotkey for the button action
+     * @param iconName name of the icon to display
+     * @param buttonAction the actions to be performed.
      * @param type if <code>null</code> {@link ButtonType#SINGLE} is used.
      */
     public ButtonDescription(String label, String hotkey, String iconName, String buttonAction, ButtonType type) {
@@ -55,7 +58,10 @@ public class ButtonDescription {
     }
 
     /**
-     * @param actions a list of actions to be performed.
+     * @param label label of the button
+     * @param hotkey Hotkey for the button action
+     * @param iconName name of the icon to display
+     * @param actionDescription the action to be performed.
      * @param type if <code>null</code> {@link ButtonType#SINGLE} is used.
      */
     public ButtonDescription(String label, String hotkey, String iconName, SurveyorActionDescription actionDescription, ButtonType type) {
@@ -64,7 +70,7 @@ public class ButtonDescription {
 
     /**
      * Helper method to create a list from one element.
-     * @param buttonActionClassName the action's class name.
+     * @param actionDescription the action's class name.
      * @return a list holding one ButtonActionDescription element.
      */
     private static List<SurveyorActionDescription> createFromOneElement(SurveyorActionDescription actionDescription) {
@@ -74,6 +80,9 @@ public class ButtonDescription {
     }
 
     /**
+     * @param label label of the button
+     * @param hotkey Hotkey for the button action
+     * @param iconName name of the icon to display
      * @param actions a list of actions to be performed.
      * @param type if <code>null</code> {@link ButtonType#SINGLE} is used.
      */

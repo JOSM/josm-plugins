@@ -14,8 +14,8 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
+ * Thread for dialog closing
  * @author cdaller
- *
  */
 public class DialogClosingThread extends Thread implements KeyListener, DocumentListener {
     public static final long DEFAULT_TIMEOUT = 5000;

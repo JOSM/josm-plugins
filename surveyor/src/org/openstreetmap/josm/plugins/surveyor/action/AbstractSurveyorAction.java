@@ -6,8 +6,8 @@ import java.util.List;
 import org.openstreetmap.josm.plugins.surveyor.SurveyorAction;
 
 /**
+ * Abstract base action
  * @author cdaller
- *
  */
 public abstract class AbstractSurveyorAction implements SurveyorAction {
     private List<String> parameters;

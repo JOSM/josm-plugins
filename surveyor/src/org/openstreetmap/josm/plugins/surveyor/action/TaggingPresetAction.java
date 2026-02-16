@@ -12,8 +12,8 @@ import org.openstreetmap.josm.plugins.surveyor.GpsActionEvent;
 import org.openstreetmap.josm.plugins.surveyor.SurveyorAction;
 
 /**
+ * Tagging action
  * @author cdaller
- *
  */
 public class TaggingPresetAction implements SurveyorAction {
     private String presetName;
