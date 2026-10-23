@@ -280,7 +280,6 @@ public class UploadDataGui extends ExtendedDialog {
 
         c.setHeader("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
         c.setHeader("Connection", "close"); // counterpart of keep-alive
-        c.setHeader("Expect", "");
 
         return c;
     }
