@@ -23,20 +23,35 @@ public class LaunchAction extends JosmAction implements DataSelectionListener {
     private OsmPrimitive selection;
 
     private final File pluginDir;
+    private final boolean switchIncrement;
 
     /**
      * Constructs a new {@code LaunchAction}.
      * @param pluginDir plugin directory
      */
     public LaunchAction(File pluginDir) {
-        super(tr("HouseNumberTaggingTool"),
+        this(pluginDir, false);
+    }
+
+    /**
+     * Constructs a new {@code LaunchAction}.
+     * @param pluginDir plugin directory
+     * @param switchIncrement if {@code true}, switch between incrementing the number and the suffix,
+     * e.g. 1 to 1a or 1c to 2 (shortcut Shift+K)
+     */
+    public LaunchAction(File pluginDir, boolean switchIncrement) {
+        super(switchIncrement ? tr("HouseNumberTaggingTool (switch number/suffix)") : tr("HouseNumberTaggingTool"),
               "home-icon32", 
               tr("Launches the HouseNumberTaggingTool dialog"),
-              Shortcut.registerShortcut("edit:housenumbertaggingtool", tr("Data: {0}", "HouseNumberTaggingTool"),
-                KeyEvent.VK_K, Shortcut.DIRECT),
+              switchIncrement
+                ? Shortcut.registerShortcut("edit:housenumbertaggingtool:switch",
+                    tr("Data: {0}", tr("HouseNumberTaggingTool (switch number/suffix)")), KeyEvent.VK_K, Shortcut.SHIFT)
+                : Shortcut.registerShortcut("edit:housenumbertaggingtool", tr("Data: {0}", "HouseNumberTaggingTool"),
+                    KeyEvent.VK_K, Shortcut.DIRECT),
               true);
 
         this.pluginDir = pluginDir;
+        this.switchIncrement = switchIncrement;
         SelectionEventManager.getInstance().addSelectionListener(this);
         setEnabled(false);
     }
@@ -49,7 +64,7 @@ public class LaunchAction extends JosmAction implements DataSelectionListener {
             return;
         }
       
-        TagDialog dialog = new TagDialog(pluginDir, selection);
+        TagDialog dialog = new TagDialog(pluginDir, selection, switchIncrement);
         dialog.showDialog();
     }
 

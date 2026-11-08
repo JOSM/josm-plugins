@@ -22,6 +22,7 @@ public class Dto implements Serializable {
     private boolean saveHousenumber = true;
 
     private boolean tagStreet = true; // use tag addr:street or addr:place
+    private boolean incrementSuffix = false; // increment 1a, 1b, ... instead of 1, 2, ...
    
     private String building = "yes";
     private String source;
@@ -161,6 +162,14 @@ public class Dto implements Serializable {
 
     public void setTagStreet(boolean tagStreet) {
         this.tagStreet = tagStreet;
+    }
+
+    public boolean isIncrementSuffix() {
+        return incrementSuffix;
+    }
+
+    public void setIncrementSuffix(boolean incrementSuffix) {
+        this.incrementSuffix = incrementSuffix;
     }
 
     public String getPlace() {

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -110,6 +111,9 @@ public class TagDialog extends ExtendedDialog {
     private JComboBox<String> building;
     private JRadioButton streetRadio;
     private JRadioButton placeRadio;
+    private JRadioButton incrementNumberRadio;
+    private JRadioButton incrementSuffixRadio;
+    private final boolean switchIncrement;
 
     /**
      * Constructs a new {@code TagDialog}.
@@ -117,14 +121,25 @@ public class TagDialog extends ExtendedDialog {
      * @param selection selected primitive
      */
     public TagDialog(File pluginDir, OsmPrimitive selection) {
+        this(pluginDir, selection, false);
+    }
+
+    /**
+     * Constructs a new {@code TagDialog}.
+     * @param pluginDir plugin directory
+     * @param selection selected primitive
+     * @param switchIncrement if {@code true}, switch between incrementing the number and the suffix
+     */
+    public TagDialog(File pluginDir, OsmPrimitive selection, boolean switchIncrement) {
         super(MainApplication.getMainFrame(), tr("House Number Editor"), new String[] {tr("OK"), tr("Cancel")}, true);
         this.pluginDir = pluginDir;
         this.selection = selection;
+        this.switchIncrement = switchIncrement;
 
         JPanel editPanel = createContentPane();
 
-        setPreferredSize(new Dimension(900, 500));
-        setMinimumSize(new Dimension(900, 500));
+        setPreferredSize(new Dimension(900, 550));
+        setMinimumSize(new Dimension(900, 550));
 
         setContent(editPanel);
         setButtonIcons("ok", "cancel");
@@ -283,13 +298,41 @@ public class TagDialog extends ExtendedDialog {
         housenumberEnabled = generateCheckbox(TAG_ADDR_HOUSENUMBER, dto.isSaveHousenumber());
         editPanel.add(housenumberEnabled, columnOne);
 
-        housenumber = generateTextField(HouseNumberHelper.incrementHouseNumber(dto.getHousenumber(), dto.getHousenumberChangeValue()));
+        String lastNumber = dto.getHousenumber();
+        boolean incrementSuffix = dto.isIncrementSuffix();
+        if (switchIncrement) {
+            incrementSuffix = !HouseNumberHelper.hasSuffix(lastNumber);
+            if (!incrementSuffix) {
+                lastNumber = HouseNumberHelper.removeSuffix(lastNumber);
+            }
+        }
+        if (incrementSuffix) {
+            housenumber = generateTextField(HouseNumberHelper.incrementHouseNumberSuffix(lastNumber));
+        } else {
+            housenumber = generateTextField(HouseNumberHelper.incrementHouseNumber(lastNumber, dto.getHousenumberChangeValue()));
+        }
         housenumber.setEditable(true);
 
         editPanel.add(housenumber, columnTwo);
 
         editPanel.add(generateAcceptButton(actionEvent -> housenumber.setText(selection.get(TAG_ADDR_HOUSENUMBER))), columnThree);
         editPanel.add(generateTextField(selection.get(TAG_ADDR_HOUSENUMBER)), columnFour);
+
+        // increment number or suffix
+        incrementNumberRadio = new JRadioButton(tr("Increment number"));
+        incrementNumberRadio.setSelected(!incrementSuffix);
+
+        incrementSuffixRadio = new JRadioButton(tr("Increment suffix"));
+        incrementSuffixRadio.setToolTipText(tr("Increment letter or number suffixes, e.g. 1a or 1/1"));
+        incrementSuffixRadio.setSelected(incrementSuffix);
+
+        ButtonGroup incrementGroup = new ButtonGroup();
+        incrementGroup.add(incrementNumberRadio);
+        incrementGroup.add(incrementSuffixRadio);
+
+        editPanel.add(Box.createHorizontalGlue(), GBC.std());
+        editPanel.add(incrementNumberRadio, GBC.std().insets(5, 5, 0, 5));
+        editPanel.add(incrementSuffixRadio, GBC.eol().insets(5, 5, 0, 5));
 
         // increment
         JLabel seqLabel = new JLabel(tr("House number increment:"));
@@ -410,6 +453,7 @@ public class TagDialog extends ExtendedDialog {
             dto.setSaveStreet(streetEnabled.isSelected());
             dto.setTagStreet(streetRadio.isSelected());
             dto.setSaveSuburb(suburbEnabled.isSelected());
+            dto.setIncrementSuffix(incrementSuffixRadio.isSelected());
 
             dto.setBuilding((String) building.getSelectedItem());
             dto.setSource(getAutoCompletingComboBoxValue(source));
