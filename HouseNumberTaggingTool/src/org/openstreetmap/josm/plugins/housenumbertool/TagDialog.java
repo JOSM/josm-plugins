@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -138,8 +139,9 @@ public class TagDialog extends ExtendedDialog {
 
         JPanel editPanel = createContentPane();
 
-        setPreferredSize(new Dimension(900, 550));
-        setMinimumSize(new Dimension(900, 550));
+        Dimension size = new Dimension(900, 550);
+        setPreferredSize(size);
+        setMinimumSize(size);
 
         setContent(editPanel);
         setButtonIcons("ok", "cancel");
@@ -147,8 +149,9 @@ public class TagDialog extends ExtendedDialog {
         setupDialog();
         getRootPane().setDefaultButton(defaultButton);
 
-        // middle of the screen
-        setLocationRelativeTo(null);
+        // remember position and size, default: centered on the JOSM main window
+        setRememberWindowGeometry(getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), size));
 
         SwingUtilities.invokeLater(() -> {
             housenumber.requestFocus();
