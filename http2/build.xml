@@ -4,14 +4,14 @@
     <property name="commit.message" value="Commit message"/>
     <!-- enter the *lowest* JOSM version this plugin is currently compatible with -->
     <property name="plugin.main.version" value="15229"/>
-    <property name="java.lang.version" value="11" />
+    <property name="java.lang.version" value="17" />
     <!-- Configure these properties (replace "..." accordingly).
          See https://josm.openstreetmap.de/wiki/DevelopersGuide/DevelopingPlugins
     -->
     <property name="plugin.author" value="Don-vip"/>
     <property name="plugin.class" value="org.openstreetmap.josm.plugins.http2.Http2Plugin"/>
-    <property name="plugin.description" value="Provides HTTP/2 support. Requires Java 11 or later."/>
-    <property name="plugin.minimum.java.version" value="11"/>
+    <property name="plugin.description" value="Provides HTTP/2 support."/>
+    <property name="plugin.minimum.java.version" value="17"/>
     <property name="plugin.canloadatruntime" value="true"/>
     <property name="plugin.early" value="true"/>
     <property name="plugin.icon" value="images/http2.png"/>

@@ -18,8 +18,8 @@
         <plugin.main.version>15229</plugin.main.version>
         <plugin.author>Don-vip</plugin.author>
         <plugin.class>org.openstreetmap.josm.plugins.http2.Http2Plugin</plugin.class>
-        <plugin.description>Provides HTTP/2 support. Requires Java 11 or later.</plugin.description>
-        <java.lang.version>11</java.lang.version>
+        <plugin.description>Provides HTTP/2 support.</plugin.description>
+        <java.lang.version>17</java.lang.version>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.early>true</plugin.early>
         <plugin.icon>images/http2.png</plugin.icon>

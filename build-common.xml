@@ -26,7 +26,7 @@
     <property name="plugin.lib.dir"         location="lib"/>
     <!-- this is the directory where the plugin jar is copied to -->
     <property name="plugin.dist.dir"        location="../../dist"/>
-    <property name="java.lang.version"      value="11" />
+    <property name="java.lang.version"      value="17" />
     <property name="javadoc.executable"     value="javadoc" />
     <property name="manifest"               value="MANIFEST"/>
     <property name="manifest.unixoid"       value="MANIFEST-unixoid"/>
@@ -54,15 +54,13 @@
     <condition property="isUnix"><os family="Unix"/></condition>
     <condition property="isMac"><os family="Mac"/></condition>
     <!-- For Java specific stuff by version -->
-    <condition property="isJava14"><matches string="${ant.java.version}" pattern="1[4-9]|[2-9][0-9]" /></condition>
-    <condition property="isJava15"><matches string="${ant.java.version}" pattern="1[5-9]|[2-9][0-9]" /></condition>
-    <condition property="isJava17"><matches string="${ant.java.version}" pattern="1[7-9]|[2-9][0-9]" /></condition>
     <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
+    <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[5-9]|[3-9][0-9]" /></condition>
 
     <!-- set the javadoc location -->
-    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/11/docs/api/" unless:set="isJava17"/>
-    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/17/docs/api/" if:set="isJava17" unless:set="isJava21"/>
-    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/21/docs/api/" if:set="isJava21"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/17/docs/api/" unless:set="isJava21"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/21/docs/api/" if:set="isJava21" unless:set="isJava25"/>
+    <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/25/docs/api/" if:set="isJava25"/>
 
     <!-- Disable jacoco on Java 21+ (Jacoco does not yet support Java 21+) -->
     <condition property="coverageByDefault">
@@ -638,8 +636,7 @@
                         <jvmarg value="java.desktop/javax.imageio.spi=ALL-UNNAMED" />
                         <jvmarg value="--add-exports" />
                         <jvmarg value="java.desktop/com.sun.imageio.spi=ALL-UNNAMED"  />
-                        <jvmarg value="-XX:+ShowCodeDetailsInExceptionMessages" if:set="isJava14" unless:set="isJava15" />
-                        <jvmarg value="--enable-native-access=ALL-UNNAMED" if:set="isJava17" />
+                        <jvmarg value="--enable-native-access=ALL-UNNAMED" />
                         <sysproperty key="josm.home" value="../00_core_test_config/unit-josm.home"/>
                         <sysproperty key="josm.test.data" value="${plugin.test.dir}/data"/>
                         <sysproperty key="java.awt.headless" value="true"/>

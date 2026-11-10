@@ -23,7 +23,7 @@
         <plugin.icon>images/ejml.png</plugin.icon>
         <plugin.canloadatruntime>true</plugin.canloadatruntime>
         <plugin.stage>15</plugin.stage>
-        <plugin.minimum.java.version>11</plugin.minimum.java.version>
+        <plugin.minimum.java.version>17</plugin.minimum.java.version>
     </properties>
     <dependencies>
         <dependency>

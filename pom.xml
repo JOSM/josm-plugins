@@ -17,7 +17,7 @@
   <properties>
     <josm>../../core/dist/josm-custom.jar</josm>
     <josm.test.build.dir>../../core/test/build</josm.test.build.dir>
-    <java.lang.version>11</java.lang.version>
+    <java.lang.version>17</java.lang.version>
     <maven.compiler.release>${java.lang.version}</maven.compiler.release>
     <plugin.tools.dir>../00_tools</plugin.tools.dir>
     <plugin.build.dir>build</plugin.build.dir>
@@ -561,15 +561,19 @@
       </modules>
     </profile>
     <profile>
-      <id>java-17-plugins</id>
-      <activation>
-        <jdk>[17,]</jdk>
-      </activation>
-      <modules>
-        <module>javafx</module>
-        <module>ImageIO</module>
-        <module>pmtiles</module>
-      </modules>
+      <id>javafx</id>
+      <activation><file><exists>javafx/pom.xml</exists></file></activation>
+      <modules><module>javafx</module></modules>
+    </profile>
+    <profile>
+      <id>ImageIO</id>
+      <activation><file><exists>ImageIO/pom.xml</exists></file></activation>
+      <modules><module>ImageIO</module></modules>
+    </profile>
+    <profile>
+      <id>pmtiles</id>
+      <activation><file><exists>pmtiles/pom.xml</exists></file></activation>
+      <modules><module>pmtiles</module></modules>
     </profile>
     <profile>
       <id>areaselector</id>
