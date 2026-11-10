@@ -652,12 +652,12 @@
     </profile>
     <profile>
       <id>Mapillary</id>
-      <activation><file><exists>Mapillary/pom.xml</exists></file><jdk>[17,]</jdk></activation>
+      <activation><file><exists>Mapillary/pom.xml</exists></file></activation>
       <modules><module>Mapillary</module></modules>
     </profile>
     <profile>
       <id>MapRoulette</id>
-      <activation><file><exists>MapRoulette/pom.xml</exists></file><jdk>[17,]</jdk></activation>
+      <activation><file><exists>MapRoulette/pom.xml</exists></file></activation>
       <modules><module>MapRoulette</module></modules>
     </profile>
     <profile>
@@ -677,7 +677,7 @@
     </profile>
     <profile>
       <id>pt_assistant</id>
-      <activation><file><exists>pt_assistant/pom.xml</exists></file><jdk>[17,]</jdk></activation>
+      <activation><file><exists>pt_assistant/pom.xml</exists></file></activation>
       <modules><module>pt_assistant</module></modules>
     </profile>
     <profile>
@@ -692,7 +692,7 @@
     </profile>
     <profile>
       <id>todo</id>
-      <activation><file><exists>todo/pom.xml</exists></file><jdk>[17,]</jdk></activation>
+      <activation><file><exists>todo/pom.xml</exists></file></activation>
       <modules><module>todo</module></modules>
     </profile>
     <profile>

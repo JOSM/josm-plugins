@@ -55,7 +55,7 @@
     <condition property="isMac"><os family="Mac"/></condition>
     <!-- For Java specific stuff by version -->
     <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[1-9]|[3-9][0-9]" /></condition>
-    <condition property="isJava21"><matches string="${ant.java.version}" pattern="2[5-9]|[3-9][0-9]" /></condition>
+    <condition property="isJava25"><matches string="${ant.java.version}" pattern="2[5-9]|[3-9][0-9]" /></condition>
 
     <!-- set the javadoc location -->
     <property name="javadoc.link"           value="https://docs.oracle.com/en/java/javase/17/docs/api/" unless:set="isJava21"/>
