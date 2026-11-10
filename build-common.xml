@@ -122,10 +122,6 @@
     </target>
     <target name="compile" depends="init, pre-compile, resolve-tools, plugin-classpath-actual" unless="skip-compile">
         <echo message="compiling sources for ${plugin.jar} ..."/>
-        <path id="jdk.boot.classpath">
-            <path refid="errorprone_javac.classpath"/>
-            <fileset refid="jaxb.jars"/>
-        </path>
         <javac srcdir="${plugin.src.dir}" debug="true" destdir="${plugin.build.dir}" includeantruntime="false"
             encoding="UTF-8" release="${java.lang.version}" fork="yes">
             <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" unless:set="noErrorProne"/>
@@ -758,7 +754,6 @@
         <ivy:settings file="${josm.ivysettings}"/>
         <ivy:resolve file="${core.tools.ivy}"/>
         <ivy:cachepath file="${core.tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
-        <ivy:cachepath file="${core.tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
         <ivy:cachepath file="${core.tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
         <ivy:cachepath file="${core.tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
     </target>
