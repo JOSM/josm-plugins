@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 package org.openstreetmap.josm.plugins.photo_geotagging;
 
-import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
